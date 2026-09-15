@@ -11,12 +11,15 @@ Légende : ✅ aucun arbitrage — ⚠️ arbitrage à trancher par Guillaume
 
 ---
 
-## 1. `01-ventes-distance.mp4` ✅
-**Source** : `12. VENTES DE DISTANCE.mp4`
+## 1. `01-ventes-distance.mp4` ✅ **PRODUIT ET VALIDÉ**
+**Source** : `12. VENTES DE DISTANCE.mp4` (1080×1920, 32,72 s, 50 fps)
 **Hook** : « 70% des voitures de cette agence sont vendues à distance »
 
-**Coupe** : quasi intégral. Démarrer sur « J'ai eu des stats sympas à ce sujet »,
-terminer sur « 70 % à distance, c'est vraiment impressionnant ».
+**Coupe retenue : 2,0 s → 32,72 s** (durée finale 30,7 s).
+Retire l'amorce « J'ai eu des stats sympas d'ailleurs à ce sujet », sans valeur
+hors contexte d'interview. Se termine sur la chute « c'est vraiment impressionnant ».
+Le hook masque 2,0→5,0 s : l'image se révèle exactement sur « font 70% de leurs
+ventes ». « Pour cette vidéo », audible sous le carton noir, est conservé (arbitré).
 
 **Analyse** : aucune occurrence de « franchise », « franchisé » ou « réseau ».
 Le clip se comprend seul. « L'agence dans laquelle on se trouve » fonctionne comme

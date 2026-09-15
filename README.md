@@ -24,10 +24,23 @@ fin trait doré `#C9A84C` sous le texte.
 Georgia n'existant pas sous Linux, la serif utilisée est **DejaVu Serif Bold**
 (graisse et chasse proches). Alternative : Liberation Serif, plus fine.
 
-**Sous-titres** : incrustés, blanc gras, bordure noire fine, centrés dans le
-tiers bas, 2 lignes maximum par cue.
+## État réel des rushes — décision de production
 
-## Sous-titrage sans modèle ASR
+Les fichiers fournis ne sont pas des rushes bruts d'interview 16:9, mais des clips
+**déjà montés en 1080×1920, sous-titres incrustés compris** (plan studio, prise de
+parole seule). En conséquence, décision validée le 15/09 :
+
+- **aucun recadrage** n'est appliqué (la source est déjà au format) ;
+- **aucun sous-titre n'est ajouté** : ceux d'origine sont conservés, pour éviter
+  la superposition. Ils sont blancs, gras, en majuscules, dans le tiers bas —
+  proches de la charte, sans la bordure noire.
+
+Le travail se limite donc aux **coupes éditoriales** et à l'**ajout du hook**.
+
+Le sous-titrage décrit plus bas reste opérationnel et sera réactivé tel quel si
+les rushes bruts sont un jour récupérés : lancer `make-clip.sh` avec `--text`.
+
+## Sous-titrage sans modèle ASR (en réserve)
 
 Aucun modèle Whisper n'est téléchargeable depuis cet environnement (huggingface.co
 et les miroirs sont hors politique réseau). À la place :
