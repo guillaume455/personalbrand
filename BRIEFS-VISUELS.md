@@ -68,12 +68,10 @@ générateurs les escamotent régulièrement sur le français.
 
 Dérivés des hooks et du contenu réel de chaque rush. À ajuster librement.
 
-### Clip 2 — de salarié à gérant
-- Sur-titre : IL Y A QUELQUES MOIS
-- Titre : **IL ÉTAIT SALARIÉ.** (« SALARIÉ » en accent)
-- Donnée : aujourd'hui gérant indépendant
-- Puces : Sorti son premier salaire · Aucune hiérarchie · Vit de sa passion
-- Citation : « Comment je fais pour optimiser ma fiscalité ? »
+### Clip 2 — de salarié à gérant ✅ produite
+`assets/cover-02.png` — « DES SALARIÉS AUX CHEFS D'ENTREPRISE ».
+Version épurée, sans encadré ni puces : plus lisible en 3 secondes que la
+cover du clip 1. À prendre comme référence pour les suivantes.
 
 ### Clip 3 — types de locaux
 - Sur-titre : ON A DÉMARRÉ DANS
