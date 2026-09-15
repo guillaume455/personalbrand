@@ -107,16 +107,21 @@ build_hook_text() {
 VF="crop=${CROP_W}:${SRC_H}:${CROP_X}:0,scale=${OUT_W}:${OUT_H}:flags=lanczos,setsar=1,fps=${FPS}"
 if [[ -n "$SUBS" ]]; then VF="${VF},ass='${SUBS}'"; fi
 
-# Habillage du hook : image de fond fournie, sinon aplat noir profond.
-HOOK_OVERLAY=""
-if [[ -n "$HOOK" && "$HOOK_MODE" == "overlay" ]]; then
+# Habillage du hook. Trois cas :
+#  - image seule  : la cover porte déjà son texte, on ne surimprime rien ;
+#  - image + texte : le texte et le trait doré se posent sur l'image ;
+#  - texte seul   : aplat noir profond derrière le texte.
+HOOK_OVERLAY=""; HOOK_TEXT_CHAIN=""
+if [[ ( -n "$HOOK" || -n "$HOOK_BG" ) && "$HOOK_MODE" == "overlay" ]]; then
   EN="enable='lt(t,${HOOK_DUR})'"
   if [[ -n "$HOOK_BG" ]]; then
     HOOK_OVERLAY="yes"
   else
     VF="${VF},drawbox=x=0:y=0:w=${OUT_W}:h=${OUT_H}:color=${NOIR_PROFOND}@1:t=fill:${EN}"
   fi
-  HOOK_TEXT_CHAIN="$(build_hook_text "$EN"),drawbox=x=${RULE_X}:y=${RULE_Y}:w=${HOOK_RULE_W}:h=${HOOK_RULE_H}:color=${DORE}@1:t=fill:${EN}"
+  if [[ -n "$HOOK" ]]; then
+    HOOK_TEXT_CHAIN="$(build_hook_text "$EN"),drawbox=x=${RULE_X}:y=${RULE_Y}:w=${HOOK_RULE_W}:h=${HOOK_RULE_H}:color=${DORE}@1:t=fill:${EN}"
+  fi
   if [[ -z "$HOOK_OVERLAY" ]]; then VF="${VF}${HOOK_TEXT_CHAIN}"; fi
 fi
 
@@ -155,7 +160,7 @@ elif [[ -n "$HOOK_OVERLAY" ]]; then
 [1:v]scale=${OUT_W}:${OUT_H}:force_original_aspect_ratio=increase,\
 crop=${OUT_W}:${OUT_H},setsar=1[bg];\
 [v][bg]overlay=0:0:enable='lt(t,${HOOK_DUR})'[ov];\
-[ov]${HOOK_TEXT_CHAIN#,}[vout]" \
+[ov]${HOOK_TEXT_CHAIN:+${HOOK_TEXT_CHAIN#,}}${HOOK_TEXT_CHAIN:-null}[vout]" \
     -map "[vout]" -map 0:a:0 \
     -c:v "$V_CODEC" -preset "$V_PRESET" -crf "$V_CRF" \
     -profile:v "$V_PROFILE" -pix_fmt "$PIX_FMT" \
