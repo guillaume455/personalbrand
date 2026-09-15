@@ -19,10 +19,12 @@ recrutement de franchisés. Les arbitrages clip par clip sont dans
 | Audio | AAC 192 kb/s, 48 kHz, stéréo — son direct, pas de musique |
 | Montage | coupe franche, aucune transition, aucun effet |
 
-**Hook** : 3 premières secondes, fond `#0A0A0A`, texte serif blanc centré,
-fin trait doré `#C9A84C` sous le texte.
-Georgia n'existant pas sous Linux, la serif utilisée est **DejaVu Serif Bold**
-(graisse et chasse proches). Alternative : Liberation Serif, plus fine.
+**Cover d'ouverture** : 3 premières secondes, image fournie dans `assets/`,
+portant déjà son texte. Le son démarre dessous, pour la rétention.
+Charte : accent orange `#FC7E15`, sans-serif condensée grasse — voir
+[`BRIEFS-VISUELS.md`](BRIEFS-VISUELS.md).
+
+**Cover de fin** : 3 secondes, `assets/outro-bg.png`, commune aux six clips.
 
 ## État réel des rushes — décision de production
 

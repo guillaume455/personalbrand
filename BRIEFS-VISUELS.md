@@ -1,120 +1,127 @@
-# Briefs visuels — page de garde et visuel de fin
+# Charte visuelle et covers
 
-Prompts destinés à un générateur d'images (Midjourney, Flux, GPT Image, Firefly).
+Charte arrêtée le 15/09, alignée sur les carrousels existants : covers produites
+avec ChatGPT, texte compris dans l'image.
 
-## Règle de base
+## Couleurs
 
-L'IA génère **le fond uniquement**, jamais le texte. Deux raisons :
+| Rôle | Valeur | Usage |
+|---|---|---|
+| Accent | `#FC7E15` | chiffres clés, mots à faire ressortir, soulignés, puces |
+| Texte | `#FFFFFF` | titres et corps |
+| Fond | noir profond | dégradé sombre, ou photo assombrie |
+| Encadré | crème clair | fond des blocs de données, texte noir dessus |
 
-1. les générateurs déforment la typographie, surtout les accents français ;
-2. le texte incrusté par `make-clip.sh` est rigoureusement identique d'un clip
-   à l'autre — c'est ce qui fait la signature de série.
+L'accent est relevé directement sur la cover du clip 1 (valeur dominante mesurée :
+`rgb(252,126,21)`). C'est la même valeur dans `scripts/lib.sh`, variable `ACCENT`.
 
-Le fond doit donc réserver une **zone calme au centre** (là où le texte se pose)
-et concentrer l'intérêt visuel en haut et en bas du cadre.
+## Typographie
 
-## Spécifications de livraison
+Sans-serif condensée grasse en capitales pour les titres, sans-serif régulière
+pour le corps, manuscrite pour la citation de bas de cover. Pas de serif :
+la direction Georgia envisagée au départ est abandonnée.
 
-| | |
-|---|---|
-| Ratio | 9:16 strict |
-| Définition | 1080×1920 minimum (plus grand accepté, je recadre) |
-| Format | PNG ou JPG qualité maximale |
-| Où | `assets/hook-bg.png` et `assets/outro-bg.png` |
+## Format
 
-Zone à garder lisible : une bande centrale d'environ 1080×600 px, sans détail
-contrasté ni texture agitée.
+**1080×1920 px**, ratio 9:16 strict. Les premières covers ont été livrées en
+941×1672 : ça fonctionne, mais impose un agrandissement de 15 % qui adoucit les
+textes fins. Demander explicitement 1080×1920 à la génération.
 
----
+## Structure de la cover d'ouverture
 
-## 1. Page de garde — direction A : matière (recommandée)
+Celle du clip 1 sert de gabarit :
 
-La plus polyvalente : elle fonctionne pour les six clips sans se répéter à l'écran,
-et ne date pas.
+1. **sur-titre** court, blanc, capitales, deux lignes maximum ;
+2. **titre principal**, très gros, capitales, avec le chiffre clé en accent,
+   souligné d'un trait tracé à la main ;
+3. **encadré crème** avec une donnée dérivée et son pictogramme ;
+4. **trois puces** cochées, une idée chacune ;
+5. **citation manuscrite** en bas, à la première personne.
 
-```
-Vertical 9:16 cinematic still. Extreme close-up of brushed dark metal meeting
-matte black leather, shot in very low key light. Near-black background, deep
-charcoal tones. A single thin warm gold light streak rakes across the bottom
-edge of the frame, catching the texture. Large uncluttered negative space
-across the entire centre of the image — smooth, unlit, no detail there.
-Visual interest concentrated only at the top and bottom edges. Directional key
-light from the left, deep shadow falloff, fine film grain. Restrained editorial
-luxury aesthetic, masculine, expensive, understated. No text, no letters, no
-logo, no people, no faces, no visible car. 85mm lens, shallow depth of field.
-```
+Seul le titre principal est lu pendant les 3 secondes d'affichage. Le reste est
+du renfort visuel — ne pas y placer d'information indispensable.
 
-Paramètres : Midjourney `--ar 9:16 --style raw --stylize 150` · GPT Image
-« format portrait 1024×1792 » · Flux ratio 9:16.
+## Gabarit de prompt
 
-## 2. Page de garde — direction B : carrosserie
-
-Plus explicitement automobile. À réserver si tu veux que le sujet se lise
-immédiatement.
+À reprendre pour chaque clip en remplaçant les crochets :
 
 ```
-Vertical 9:16 cinematic still. Extreme macro of a dark car body panel curve,
-deep black paint with a soft satin finish. One warm gold reflection line traces
-the panel edge along the lower portion of the frame. The upper and central
-areas fall into near-black shadow with generous empty space. Studio lighting,
-single large softbox, no environment visible, no reflections of people.
-Moody, premium, restrained. Fine film grain. No text, no letters, no logo,
-no badge, no brand marking, no wheels, no headlights.
+Crée une cover verticale 1080x1920 pour un Reel, dans ce style :
+fond photo sombre avec éclairage bleuté, texte blanc en capitales
+sans-serif condensée grasse, accents en orange #FC7E15.
+
+Structure de haut en bas :
+- sur-titre blanc sur deux lignes : "[SUR-TITRE]"
+- titre principal très gros, avec "[MOTS EN ACCENT]" en orange,
+  souligné d'un trait orange tracé à la main
+- encadré crème avec un pictogramme et la donnée : "[DONNÉE CLÉ]"
+- trois puces cochées en orange : "[PUCE 1]", "[PUCE 2]", "[PUCE 3]"
+- en bas, citation manuscrite blanche : "[CITATION]"
+
+Français correct, accents inclus. Pas de logo, pas de nom de marque.
 ```
 
-Attention : exiger explicitement l'absence de badge ou de marque, sinon le
-générateur ajoute des logos automobiles inventés.
+Vérifier systématiquement les accents et la ponctuation à la sortie : les
+générateurs les escamotent régulièrement sur le français.
 
-## 3. Page de garde — direction C : espace
+## Textes proposés pour les covers restantes
 
-Plus « autorité » que « automobile ». Intéressant si tu veux t'éloigner du
-registre produit.
+Dérivés des hooks et du contenu réel de chaque rush. À ajuster librement.
 
-```
-Vertical 9:16 cinematic still. Empty dark industrial space, polished concrete
-floor, bare walls receding into black. A single shaft of warm low-angle light
-enters from the left and grazes the floor at the bottom of the frame. The
-centre and upper area are deep shadow, almost pure black, completely empty.
-Architectural, silent, monumental. Fine film grain, no haze machine look.
-No text, no people, no furniture, no vehicles, no signage.
-```
+### Clip 2 — de salarié à gérant
+- Sur-titre : IL Y A QUELQUES MOIS
+- Titre : **IL ÉTAIT SALARIÉ.** (« SALARIÉ » en accent)
+- Donnée : aujourd'hui gérant indépendant
+- Puces : Sorti son premier salaire · Aucune hiérarchie · Vit de sa passion
+- Citation : « Comment je fais pour optimiser ma fiscalité ? »
 
----
+### Clip 3 — types de locaux
+- Sur-titre : ON A DÉMARRÉ DANS
+- Titre : **40 M² EN CENTRE-VILLE.** (« 40 M² » en accent)
+- Donnée : aujourd'hui, l'inverse exactement
+- Puces : Périphérie · Entrepôt et stockage · Showroom
+- Citation : « Le modèle s'est adapté au fur et à mesure. »
 
-## 4. Visuel de fin
+### Clip 4 — retours sur investissement
+- Sur-titre : UN MARCHAND CLASSIQUE
+- Titre : **REMBOURSE EN 7 ANS.** (« 7 ANS » en accent)
+- Donnée : en intermédiation, quelques mois
+- Puces : Pas de stock immobilisé · Charges réduites · Retour rapide
+- Citation : « Les retours sont beaucoup plus rapides. »
 
-Plus sobre que la page de garde : c'est une respiration, pas une accroche.
-Il doit se lire comme la même famille visuelle, en plus fermé.
+### Clip 5 — un métier pas pour tout le monde
+- Sur-titre : DANS L'AUTOMOBILE
+- Titre : **L'ENVIE NE SUFFIT PAS.** (« NE SUFFIT PAS » en accent)
+- Donnée : ce qui fait vraiment la différence
+- Puces : Le tempérament · Les expériences passées · La capacité à s'adapter
+- Citation : « Il y a ces premières fois où il faut se faire violence. »
 
-```
-Vertical 9:16 abstract background. Almost entirely deep near-black, matte,
-with a very subtle dark texture like fine brushed metal catching almost no
-light. One faint warm gold glow bleeding softly from the bottom edge, barely
-visible. Completely empty and calm across the centre and upper two-thirds.
-Minimal, quiet, expensive, like the closing frame of a film. Fine grain.
-No text, no letters, no logo, no objects, no people.
-```
+### Clip 6 — tous les âges
+- Sur-titre : CEUX QUI SE LANCENT ONT
+- Titre : **DE 19 À PLUS DE 60 ANS.** (« 19 » et « 60 » en accent)
+- Donnée : aucun profil type
+- Puces : Aucun diplôme requis · Tous les parcours · Tous les âges
+- Citation : « Il n'y a pas de profil type. »
 
-Volontairement plus vide que la page de garde : le nom incrusté doit y être
-l'unique point d'attention.
+**Contrainte à respecter sur toutes les covers** : aucune occurrence de
+« franchise », « franchisé » ou « réseau », aucun logo ni nom d'enseigne, aucune
+mention de FORGE. Voir `PLAN-EDITORIAL.md`.
 
----
+## Cover de fin
+
+Une seule suffit pour les six clips : « Tu veux plus de contenu auto ?
+Abonne-toi. » Elle est dans `assets/outro-bg.png` et s'applique telle quelle,
+3 secondes, sans texte surimprimé.
 
 ## Intégration
 
 ```bash
 bash scripts/make-clip.sh \
   --src "rushes/…" --start … --end … \
-  --hook "…" --hook-bg assets/hook-bg.png \
-  --outro assets/outro-bg.png --outro-text "Guillaume Herbin" \
+  --hook-bg assets/cover-0X.png \
+  --outro assets/outro-bg.png --outro-dur 3 \
   --out exports/0X-….mp4
 ```
 
-Réglages associés dans `scripts/lib.sh` : `OUTRO_DUR_DEFAULT` (2,5 s),
-`HOOK_FONTSIZE`, `HOOK_RULE_*` pour le trait doré.
-
-## Si un fond passe mal à l'écran
-
-Le texte blanc doit rester lisible. Deux correctifs possibles sans regénérer :
-assombrir le fond sous le texte, ou réduire son contraste. Les deux se règlent
-au montage — signaler le clip concerné plutôt que relancer le générateur.
+Une cover qui porte son texte s'utilise sans `--hook`, ce qui empêche toute
+surimpression. `--hook` n'est utile que pour un carton de secours en texte seul.

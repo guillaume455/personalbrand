@@ -17,20 +17,22 @@ FPS=30
 
 # --- Signature visuelle ---
 NOIR_PROFOND="0x0A0A0A"
-DORE="0xC9A84C"
+# Orange de la charte, relevé directement sur les covers (valeur dominante
+# mesurée : rgb(252,126,21)). Référence commune aux clips et aux carrousels.
+ACCENT="0xFC7E15"
+DORE="$ACCENT"             # ancien nom, conservé pour compatibilité
 BLANC="0xFFFFFF"
 
 # --- Hook (carton d'ouverture) ---
+# Les covers fournies portent déjà leur texte : ces réglages ne servent que
+# de secours, pour un clip dont la cover manquerait.
 HOOK_DUR=3
-# Georgia n'est pas disponible sous Linux. DejaVu Serif est la serif la plus
-# proche en graisse et en chasse ; Liberation Serif est l'alternative
-# (métriquement compatible Times New Roman, donc plus fine).
-HOOK_FONT="/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
+HOOK_FONT="/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 HOOK_FONTSIZE=70
 HOOK_LINE_SPACING=22
 HOOK_MAX_CHARS=20          # largeur de wrap, en caractères
-HOOK_RULE_W=180            # trait doré : largeur
-HOOK_RULE_H=3              # trait doré : épaisseur
+HOOK_RULE_W=180            # trait d'accent : largeur
+HOOK_RULE_H=6              # trait d'accent : épaisseur
 HOOK_RULE_GAP=72           # espace entre le bas du texte et le trait
 
 # --- Sous-titres incrustés ---
