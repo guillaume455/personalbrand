@@ -18,6 +18,7 @@ source scripts/lib.sh
 
 SRC=""; START=""; END=""; HOOK=""; TEXT=""; OUT=""
 CROP_BIAS=$CROP_BIAS_DEFAULT; HOOK_MODE="overlay"; SUB_OFFSET=0
+HOOK_BG=""; OUTRO=""; OUTRO_DUR="$OUTRO_DUR_DEFAULT"; OUTRO_TEXT=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --src) SRC="$2"; shift 2;;
@@ -29,9 +30,15 @@ while [[ $# -gt 0 ]]; do
     --crop-bias) CROP_BIAS="$2"; shift 2;;
     --hook-mode) HOOK_MODE="$2"; shift 2;;
     --sub-offset) SUB_OFFSET="$2"; shift 2;;
+    --hook-bg) HOOK_BG="$2"; shift 2;;
+    --outro) OUTRO="$2"; shift 2;;
+    --outro-dur) OUTRO_DUR="$2"; shift 2;;
+    --outro-text) OUTRO_TEXT="$2"; shift 2;;
     *) echo "Option inconnue : $1" >&2; exit 1;;
   esac
 done
+[[ -z "$HOOK_BG" || -f "$HOOK_BG" ]] || { echo "Image de hook introuvable : $HOOK_BG" >&2; exit 1; }
+[[ -z "$OUTRO" || -f "$OUTRO" ]] || { echo "Image de fin introuvable : $OUTRO" >&2; exit 1; }
 [[ -n "$SRC" && -n "$START" && -n "$END" && -n "$OUT" ]] || {
   echo "Paramètres manquants (--src --start --end --out)" >&2; exit 1; }
 [[ -f "$SRC" ]] || { echo "Introuvable : $SRC" >&2; exit 1; }
@@ -100,14 +107,25 @@ build_hook_text() {
 VF="crop=${CROP_W}:${SRC_H}:${CROP_X}:0,scale=${OUT_W}:${OUT_H}:flags=lanczos,setsar=1,fps=${FPS}"
 if [[ -n "$SUBS" ]]; then VF="${VF},ass='${SUBS}'"; fi
 
+# Habillage du hook : image de fond fournie, sinon aplat noir profond.
+HOOK_OVERLAY=""
 if [[ -n "$HOOK" && "$HOOK_MODE" == "overlay" ]]; then
   EN="enable='lt(t,${HOOK_DUR})'"
-  VF="${VF},drawbox=x=0:y=0:w=${OUT_W}:h=${OUT_H}:color=${NOIR_PROFOND}@1:t=fill:${EN}"
-  VF="${VF}$(build_hook_text "$EN")"
-  VF="${VF},drawbox=x=${RULE_X}:y=${RULE_Y}:w=${HOOK_RULE_W}:h=${HOOK_RULE_H}:color=${DORE}@1:t=fill:${EN}"
+  if [[ -n "$HOOK_BG" ]]; then
+    HOOK_OVERLAY="yes"
+  else
+    VF="${VF},drawbox=x=0:y=0:w=${OUT_W}:h=${OUT_H}:color=${NOIR_PROFOND}@1:t=fill:${EN}"
+  fi
+  HOOK_TEXT_CHAIN="$(build_hook_text "$EN"),drawbox=x=${RULE_X}:y=${RULE_Y}:w=${HOOK_RULE_W}:h=${HOOK_RULE_H}:color=${DORE}@1:t=fill:${EN}"
+  if [[ -z "$HOOK_OVERLAY" ]]; then VF="${VF}${HOOK_TEXT_CHAIN}"; fi
 fi
 
-echo "Encodage -> $OUT"
+# Sortie principale : fichier final, ou segment intermédiaire si un visuel
+# de fin doit être concaténé derrière.
+MAIN="$OUT"
+if [[ -n "$OUTRO" ]]; then MAIN="work/${BASE}-main.mp4"; fi
+
+echo "Encodage -> $MAIN"
 if [[ "$HOOK_MODE" == "card" && -n "$HOOK" ]]; then
   CARD="work/${BASE}-card.mp4"
   ffmpeg -y -v warning -stats \
@@ -129,10 +147,52 @@ if [[ "$HOOK_MODE" == "card" && -n "$HOOK" ]]; then
     -c:v "$V_CODEC" -preset "$V_PRESET" -crf "$V_CRF" \
     -profile:v "$V_PROFILE" -pix_fmt "$PIX_FMT" \
     -c:a "$A_CODEC" -b:a "$A_BITRATE" -ar "$A_RATE" -ac 2 \
-    -movflags +faststart "$OUT"
+    -movflags +faststart "$MAIN"
+elif [[ -n "$HOOK_OVERLAY" ]]; then
+  # Image de hook en surimpression sur les premières secondes, texte par-dessus.
+  ffmpeg -y -v warning -stats -ss "$START" -t "$DUR" -i "$SRC" -i "$HOOK_BG" \
+    -filter_complex "[0:v]${VF}[v];\
+[1:v]scale=${OUT_W}:${OUT_H}:force_original_aspect_ratio=increase,\
+crop=${OUT_W}:${OUT_H},setsar=1[bg];\
+[v][bg]overlay=0:0:enable='lt(t,${HOOK_DUR})'[ov];\
+[ov]${HOOK_TEXT_CHAIN#,}[vout]" \
+    -map "[vout]" -map 0:a:0 \
+    -c:v "$V_CODEC" -preset "$V_PRESET" -crf "$V_CRF" \
+    -profile:v "$V_PROFILE" -pix_fmt "$PIX_FMT" \
+    -c:a "$A_CODEC" -b:a "$A_BITRATE" -ar "$A_RATE" -ac 2 \
+    -movflags +faststart "$MAIN"
 else
   ffmpeg -y -v warning -stats -ss "$START" -t "$DUR" -i "$SRC" \
     -vf "$VF" \
+    -c:v "$V_CODEC" -preset "$V_PRESET" -crf "$V_CRF" \
+    -profile:v "$V_PROFILE" -pix_fmt "$PIX_FMT" \
+    -c:a "$A_CODEC" -b:a "$A_BITRATE" -ar "$A_RATE" -ac 2 \
+    -movflags +faststart "$MAIN"
+fi
+
+# --- Visuel de fin ---
+if [[ -n "$OUTRO" ]]; then
+  echo "Visuel de fin (${OUTRO_DUR}s) -> $OUT"
+  OUTRO_SEG="work/${BASE}-outro.mp4"
+  OUTRO_VF="scale=${OUT_W}:${OUT_H}:force_original_aspect_ratio=increase,crop=${OUT_W}:${OUT_H},setsar=1,fps=${FPS}"
+  if [[ -n "$OUTRO_TEXT" ]]; then
+    rm -f "work/${BASE}-outrotxt"-*.txt
+    ON=$(HOOK_MAX_CHARS="$HOOK_MAX_CHARS" python3 scripts/wrap_hook.py "$OUTRO_TEXT" "work/${BASE}-outrotxt")
+    OY=$(( (OUT_H - (ON * LINE_H - HOOK_LINE_SPACING)) / 2 ))
+    for ((i = 0; i < ON; i++)); do
+      OUTRO_VF+=",drawtext=expansion=none:fontfile='${HOOK_FONT}':textfile='work/${BASE}-outrotxt-${i}.txt'"
+      OUTRO_VF+=":fontcolor=${BLANC}:fontsize=${HOOK_FONTSIZE}:x=(w-text_w)/2:y=$((OY + i * LINE_H))"
+    done
+  fi
+  ffmpeg -y -v warning -stats -loop 1 -t "$OUTRO_DUR" -i "$OUTRO" \
+    -f lavfi -t "$OUTRO_DUR" -i "anullsrc=channel_layout=stereo:sample_rate=${A_RATE}" \
+    -vf "$OUTRO_VF" \
+    -c:v "$V_CODEC" -preset "$V_PRESET" -crf "$V_CRF" \
+    -profile:v "$V_PROFILE" -pix_fmt "$PIX_FMT" \
+    -c:a "$A_CODEC" -b:a "$A_BITRATE" -ar "$A_RATE" -ac 2 -shortest "$OUTRO_SEG"
+
+  printf "file '%s'\nfile '%s'\n" "$PWD/$MAIN" "$PWD/$OUTRO_SEG" > "work/${BASE}-outrolist.txt"
+  ffmpeg -y -v warning -stats -f concat -safe 0 -i "work/${BASE}-outrolist.txt" \
     -c:v "$V_CODEC" -preset "$V_PRESET" -crf "$V_CRF" \
     -profile:v "$V_PROFILE" -pix_fmt "$PIX_FMT" \
     -c:a "$A_CODEC" -b:a "$A_BITRATE" -ar "$A_RATE" -ac 2 \

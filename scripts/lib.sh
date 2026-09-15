@@ -46,3 +46,6 @@ SUB_MAX_CHARS=27           # largeur d'une ligne de sous-titre (2 lignes max par
 # CROP_BIAS décale la fenêtre horizontalement : 0 = centré,
 # négatif = vers la gauche, positif = vers la droite (en pixels source).
 CROP_BIAS_DEFAULT=0
+
+# --- Visuel de fin ---
+OUTRO_DUR_DEFAULT=2.5       # durée d'affichage du carton de fin, en secondes
