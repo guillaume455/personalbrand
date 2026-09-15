@@ -51,11 +51,17 @@ d'accueil sans la nommer. Je le considère comme acceptable (décor), à confirm
 
 ---
 
-## 3. `03-types-locaux.mp4` ✅
-**Source** : `03. CHANGEMENT DES TYPES DE LOCAUX.mp4`
+## 3. `03-types-locaux.mp4` ✅ **PRODUIT**
+**Source** : `03. CHANGEMENT DES TYPES DE LOCAUX.mp4` (1080×1920, 25,64 s)
 **Hook** : « On a démarré avec des agences de 40 m². Aujourd'hui on fait l'inverse »
 
-**Coupe** : **démarrer sur « quand on a eu nos premières agences »**, pas avant.
+**Coupe retenue : 1,28 s → 25,64 s** (durée finale 27,4 s avec la cover de fin).
+Le rush ouvre sur « Quand on a vraiment lancé **la franchise**, quand on a eu nos
+premières agences… ». L'analyse d'énergie audio situe la pause après « franchise, »
+à 1,18-1,28 s, « quand on » reprenant à 1,30 s : la coupe à 1,28 s retire le mot
+sans casser la syntaxe. La cover masque jusqu'à 4,28 s, le sous-titre d'origine
+« LA FRANCHISE, QUAND ON » restant affiché jusqu'à 1,50 s. L'image se révèle sur
+« vraiment pas les mêmes qu'aujourd'hui », en fin de proposition.
 
 **Analyse** : le rush ouvre sur « Quand on a vraiment lancé **la franchise**, quand on a eu
 nos premières agences... ». Les deux propositions disent la même chose : on supprime la
