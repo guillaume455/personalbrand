@@ -1,0 +1,9 @@
+# Médias : jamais versionnés (volume), ils vivent sur le Drive
+rushes/*
+!rushes/.gitkeep
+exports/*
+!exports/.gitkeep
+work/*
+!work/.gitkeep
+*.mp4
+*.mov
