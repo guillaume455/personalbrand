@@ -1,9 +1,9 @@
-# Médias : jamais versionnés (volume), ils vivent sur le Drive
-rushes/*
-!rushes/.gitkeep
+# Exports et fichiers de travail : régénérables, hors du dépôt.
 exports/*
 !exports/.gitkeep
 work/*
 !work/.gitkeep
-*.mp4
-*.mov
+
+# Les rushes source dans rushes/ sont volontairement autorisés : c'est par eux
+# qu'ils arrivent jusqu'à la session de montage. À purger de l'historique une
+# fois les 6 clips validés (voir README).
