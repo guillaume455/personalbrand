@@ -209,3 +209,48 @@ garantie mécanique, vitrage depuis 2018, notion de centre à trois métiers.
 | `32. PLUS QU'UNE FORMATION` | BH Academy, animateur réseau, siège social |
 | `38. LE RECRUTEMENT DES FUTURS FRANCHISÉS` | recrutement de franchisés + nom d'un collaborateur |
 | `GUILLAUME 1` / `GUILLAUME 2` | vœux d'entreprise : groupe BH, 30 nouveaux franchisés, 15 ans de la marque |
+
+---
+
+# Clips montés sur vidéos tierces
+
+Format distinct des six clips d'interview : on reprend une vidéo trouvée sur les
+réseaux et on la commente. Deux points valent pour tous les clips de cette
+série : le compte d'origine doit être crédité à l'écran, et le texte anglais ou
+la pastille de sous-titre d'origine doit être recouvert, jamais laissé visible.
+
+## `07-scam-italie.mp4`
+Source `rushes/scam italy.mp4`. Voir `transcripts/scam-italy.md` pour le relevé
+et `captions/07-scam-italie.md` pour la légende.
+
+**Arbitrage retenu** : ne jamais écrire que l'acheteur est passé par une vente
+aux enchères. La source ne parle que de photos d'annonce. L'angle publié est
+« acheter sans avoir vu la voiture », qui englobe enchères, annonce et import
+sans rien affirmer d'invérifiable.
+
+## `08-voie-de-gauche.mp4`
+Source `rushes/on roule a gauche.mp4` (6,1 s, 720x1280). POV autoroute au volant
+d'une Porsche. La pastille blanche d'origine (« Y A QUE SUR L'AUTOROUTE QU'ON EST
+DE GAUCHE », coords source y=208..348) est recouverte par un bandeau à la charte
+portant le texte réécrit. Carton de fin : question d'engagement.
+
+**⚠️ À trancher — la vitesse est lisible.** L'afficheur numérique du combiné passe
+de 130 à 185 km/h en six secondes, parfaitement lisible à l'image. Sur une
+autoroute européenne, c'est un excès de vitesse caractérisé, et la vidéo est une
+séquence d'accélération : l'image ne montre pas un dépassement, elle montre une
+montée en vitesse.
+
+Deux exports sont produits :
+
+| Fichier | État |
+|---|---|
+| `exports/08-voie-de-gauche.mp4` | tel que demandé, vitesse lisible |
+| `exports/08-voie-de-gauche-flou.mp4` | afficheur numérique flouté |
+
+Le floutage porte sur une fenêtre de 300x170 px en coords source à (250, 715),
+relevée sur les 36 images de la séquence pour couvrir la dérive due aux secousses.
+Le compte-tours reste visible : il ne donne pas de vitesse.
+
+**Pas de carton d'abonnement sur ce clip.** Le corps ne dure que 6,1 s : la chute
+est une punchline qui gagne à boucler. Ajouter 2,5 s de carton supplémentaire
+casserait la boucle, qui compte beaucoup pour la portée en Reels.
