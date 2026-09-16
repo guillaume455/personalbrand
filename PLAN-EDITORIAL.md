@@ -73,23 +73,35 @@ ce rush, qui parle de locaux : promesse corrigée.
 
 ---
 
-## 4. `04-retours-investissement.mp4` ⚠️
-**Source** : `40. RETOURS SUR INVESTISSEMENT.mp4`
-**Hook** : « Un marchand classique rembourse son investissement en 7 ans »
+## 4. `04-retours-investissement.mp4` ✅ **PRODUIT ET VALIDÉ**
+**Source** : `40. retours sur invest.mp4` (1080×1920, 20,50 s)
+**Cover** : `assets/cover-04.png` — « Rentabiliser son activité plus vite qu'on le croit »
 
-**Coupe** : deux suppressions.
-- **En tête** : couper toute l'intro « Demain, si tu te viens franchiser chez nous, tu peux
-  rembourser tes charges de structure dès les premiers mois d'activité. » Démarrer net sur
-  « Contrairement à un marchand classique... » (demandé, et nécessaire).
-- **En fin** : couper « en tout cas avec le modèle BHK ». Terminer sur « beaucoup plus
-  rapides dans l'intermédiation ».
+**Coupe retenue : 2,58 s → 18,84 s**, durée finale 18,1 s.
 
-**⚠️ À signaler** : après ces deux coupes, il reste « **nous**, les retours sur
-investissement sont beaucoup plus rapides ». Le « nous » n'est plus rattaché à rien
-d'explicite — il se lit comme « nous, les intermédiaires », ce qui sert le propos.
-C'est le clip le plus court des six (~15 s). Si tu veux plus de matière, on peut
-récupérer « tu peux rembourser tes charges de structure dès les premiers mois »
-en coupant seulement « si tu viens te franchiser chez nous » — dis-moi.
+- **En tête** : le silence à 2,09-2,60 s permet de retirer « Demain, si tu deviens
+  franchisés chez nous » tout en gardant « tu peux rembourser tes charges de structure,
+  en tout cas dès les premiers mois d'activité ». Version longue plutôt que les ~15 s
+  redoutées. La cover masque jusqu'à 5,58 s, soit le silence de 5,44-6,00 s : l'image
+  se révèle juste avant « Contrairement à un marchand classique ».
+- **En fin** : coupe à 18,84 s, après « en tout cas », avant « avec le modèle BHCAR ».
+
+**Montage particulier — cover de fin anticipée.** Le sous-titre d'origine groupe
+« L'INTERMÉDIATION, EN TOUT CAS AVEC » dans un seul bloc affiché dès 17,60 s. Impossible
+de garder le mot à l'audio sans afficher ce « AVEC » jamais prononcé, ce qui donnait
+l'impression d'un son coupé. Effacement par interpolation et flou localisé ont tous deux
+été essayés : traînées et bande floue visibles, inutilisables.
+
+Solution retenue : **la cover de fin apparaît à 15,02 s, pendant la fin de la phrase.**
+L'audio se poursuit jusqu'à 16,26 s sur l'image de fin. Le sous-titre gênant n'est jamais
+affiché, sans aucune retouche visible. Assemblage en trois segments :
+
+```bash
+# A : source 2,58 -> 17,60, cover d'ouverture en surimpression sur 3 s
+# B : source 17,60 -> 18,84, image = cover de fin, son = fin de la phrase
+# C : cover de fin en silence, 1,8 s
+# puis concat A + B + C
+```
 
 ---
 
