@@ -1,0 +1,22 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: FR,DejaVu Sans,56,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,4,1,2,60,60,330,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:02.60,0:00:05.20,FR,,0,0,0,,J'ai acheté cette voiture en Italie.
+Dialogue: 0,0:00:06.40,0:00:07.60,FR,,0,0,0,,Je n'en reviens pas.
+Dialogue: 0,0:00:07.80,0:00:09.60,FR,,0,0,0,,Regardez ça.
+Dialogue: 0,0:00:10.00,0:00:13.80,FR,,0,0,0,,Ils ont mis du scotch\Nsur le voyant moteur.
+Dialogue: 0,0:00:14.00,0:00:16.90,FR,,0,0,0,,Mais c'est quoi ces gens ?
+Dialogue: 0,0:00:17.20,0:00:19.50,FR,,0,0,0,,Le voyant moteur est allumé.
+Dialogue: 0,0:00:19.70,0:00:22.05,FR,,0,0,0,,Regardez : du scotch par-dessus.
+Dialogue: 0,0:00:22.40,0:00:24.60,FR,,0,0,0,,Tout était masqué
+Dialogue: 0,0:00:24.70,0:00:27.05,FR,,0,0,0,,sur les photos de l'annonce.
