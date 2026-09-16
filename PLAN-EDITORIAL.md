@@ -63,10 +63,13 @@ sans casser la syntaxe. La cover masque jusqu'à 4,28 s, le sous-titre d'origine
 « LA FRANCHISE, QUAND ON » restant affiché jusqu'à 1,50 s. L'image se révèle sur
 « vraiment pas les mêmes qu'aujourd'hui », en fin de proposition.
 
-**Analyse** : le rush ouvre sur « Quand on a vraiment lancé **la franchise**, quand on a eu
-nos premières agences... ». Les deux propositions disent la même chose : on supprime la
-première, on garde la seconde. Zéro perte de sens, mot évacué. Cas d'école de la règle.
-Le reste est un pur propos de stratégie immobilière et d'adaptation de modèle.
+**Analyse** : les deux propositions d'ouverture disent la même chose, on supprime la
+première et on garde la seconde. Zéro perte de sens, mot évacué. Le reste est un pur
+propos de stratégie immobilière et d'adaptation de modèle.
+
+**Cover** : `assets/cover-03.png` — « Comment notre modèle a évolué au fil des années ».
+Une première version annonçait « le concept d'intermédiation », mot jamais prononcé dans
+ce rush, qui parle de locaux : promesse corrigée.
 
 ---
 
