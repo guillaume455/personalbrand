@@ -194,9 +194,33 @@ une source portrait (→ 1080x1920) et une source paysage (→ 1920x1080).
 Reçues sous les noms `video 160926 s26ultra marrakech (1..5).mp4`, 14,7 à 23 Mo.
 L'envoi est passé : la limite GitHub est respectée.
 
-**Ce ne sont pas les cinq prises des transcriptions.** Celles-ci durent 20 à 31 s ;
-les transcriptions Fireflies décrivent des monologues dont le dernier repère est
-à 01:16. Autre tournage, même journée, en extérieur à Marrakech.
+**Ce sont bien les cinq prises des transcriptions** — corrige ce que j'avais
+d'abord conclu de leur seule durée. La transcription menée ici restitue mot pour
+mot le texte de Fireflies, ce qui lève tout doute sur la correspondance :
+
+| Fichier reçu | Transcription | Sujet |
+|---|---|---|
+| `marrakech (1)` | `163152` | se lancer en gardant son CDI |
+| `marrakech (2)` | `163508` | retour sur le post Lotus |
+| `marrakech (3)` | `163652` | les débuts à 20 m² |
+| `marrakech (4)` | `163845` | les faux précurseurs |
+| `marrakech (5)` | `164134` | immobilier vs automobile |
+
+**Mais les cinq sont coupées avant la fin.** Chacune s'arrête en cours de propos,
+et le texte manquant figure dans les transcriptions Fireflies :
+
+| | Reçu | Dernier mot entendu | La suite existe |
+|---|---|---|---|
+| 1 | 31,4 s | « et cette réalité de se dire » | repère Fireflies à 01:16 |
+| 2 | 19,9 s | « pour poser des questions sur savoir » | phrase inachevée |
+| 3 | 20,3 s | « on a pris deux fois 20 mètres carrés » | repère à 00:52 |
+| 4 | 26,6 s | « j'ai vu dans un poste récemment » | repère à 00:53 |
+| 5 | 30,9 s | « on fait le lien entre un acheteur et un vendeur » | repère à 01:15 |
+
+Le début, lui, est intact : la prise 4 ouvre bien sur « Bien sûr que ça me fait
+rire quand je regarde sur les réseaux ». Seule la fin manque, et il manque au
+moins les deux tiers de chaque prise. La même conversion ayant aussi enfermé
+l'image dans un cadre paysage, c'est elle qu'il faut soupçonner.
 
 ## Le problème : l'image a été enfermée dans un cadre paysage
 
@@ -257,11 +281,19 @@ fonctionne en Reels, bien mieux que les 90 s des cinq premières prises.
 
 ## Ce qui manque pour avancer
 
-**Le contenu parlé.** Aucun modèle de transcription n'est téléchargeable depuis
-cette session : `huggingface.co`, ses miroirs, `alphacephei.com` et
-`openaipublic.azureedge.net` sont tous hors politique réseau. Je vois l'image,
-je mesure le son, mais je ne sais pas ce qui est dit — donc je ne peux ni trier,
-ni proposer de coupe, ni vérifier qu'aucune mention de franchise ne traîne.
+**Plus les transcriptions : la transcription tourne maintenant ici.**
+`huggingface.co`, ses miroirs, `alphacephei.com` et `openaipublic.azureedge.net`
+restent hors politique réseau, mais les modèles publiés en *release* GitHub,
+eux, passent. `scripts/transcrire.py` utilise Whisper small au format ONNX
+récupéré par cette voie, normalise le son avant reconnaissance et cale les
+blocs sur les vraies pauses de parole.
 
-Il faut les passer par Fireflies comme les cinq premières, et déposer les PDF
-dans `rushes/`. C'est le même geste que la dernière fois.
+```bash
+python3 scripts/transcrire.py "rushes/mon-rush.mp4"
+```
+
+Plus besoin de passer par Fireflies pour les prochains rushes.
+
+**Il manque donc seulement les vidéos entières**, en vertical et non tronquées.
+Tant qu'elles s'arrêtent au premier tiers, aucune des cinq ne tient debout :
+les quatre chutes qui portent les clips sont toutes dans la partie absente.
