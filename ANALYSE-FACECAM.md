@@ -160,3 +160,29 @@ transcriptions : pas de calage de coupe possible, et surtout aucun moyen de
 vérifier ce qui compte vraiment — cadrage, lumière, son, regard caméra, et si
 les coupes proposées ci-dessus s'entendent ou non. Envoie les cinq `.mp4` dans
 `rushes/` et je démarre par la prise 1.
+
+---
+
+## Acheminement des vidéos — pourquoi ça bloque, et la sortie
+
+Les cinq fichiers pèsent 152, 155, 203, 236 et 240 Mo, soit près d'1 Go.
+
+| Limite | Valeur |
+|---|---|
+| Glisser-déposer sur github.com | **25 Mo** par fichier |
+| `git push` en ligne de commande | **100 Mo** par fichier, refus au-delà |
+
+Les envois précédents passaient parce qu'ils étaient légers (8,8 Mo et 1,8 Mo).
+
+Le Drive n'est pas une porte de sortie non plus : la politique réseau de la
+session bloque `drive.google.com`, et l'outil Drive renvoie les fichiers encodés
+en base64, ce qui ferait 320 Mo de texte pour une vidéo de 240 Mo.
+
+**La vraie anomalie est ailleurs** : 240 Mo pour environ 95 secondes, c'est
+20 Mb/s. Instagram ré-encode tout ce qu'on lui envoie autour de 3 à 5 Mb/s. On
+transporte donc cinq fois ce qui sera conservé. Compresser ne coûte rien de
+visible — et le fichier compressé sert de source au montage final sans réserve.
+
+`scripts/compresser-avant-envoi.sh` fait le travail en deux passes vers une
+cible de 22 Mo, ce qui laisse le glisser-déposer web utilisable. Vérifié sur
+une source portrait (→ 1080x1920) et une source paysage (→ 1920x1080).
