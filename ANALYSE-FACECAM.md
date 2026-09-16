@@ -186,3 +186,82 @@ visible — et le fichier compressé sert de source au montage final sans réser
 `scripts/compresser-avant-envoi.sh` fait le travail en deux passes vers une
 cible de 22 Mo, ce qui laisse le glisser-déposer web utilisable. Vérifié sur
 une source portrait (→ 1080x1920) et une source paysage (→ 1920x1080).
+
+---
+
+# Deuxième envoi — cinq prises Marrakech (commit `newrushgh`)
+
+Reçues sous les noms `video 160926 s26ultra marrakech (1..5).mp4`, 14,7 à 23 Mo.
+L'envoi est passé : la limite GitHub est respectée.
+
+**Ce ne sont pas les cinq prises des transcriptions.** Celles-ci durent 20 à 31 s ;
+les transcriptions Fireflies décrivent des monologues dont le dernier repère est
+à 01:16. Autre tournage, même journée, en extérieur à Marrakech.
+
+## Le problème : l'image a été enfermée dans un cadre paysage
+
+| | |
+|---|---|
+| Conteneur | 1280x720, paysage |
+| Image réellement utile | **406x720**, à x=437 |
+| Ratio de l'image utile | 0,564, soit 9:16 |
+
+Les cinq fichiers présentent exactement la même géométrie. Ce n'est pas la
+caméra : 720 × 9/16 = 405. C'est la signature d'une conversion qui a forcé une
+sortie paysage et calé la vidéo verticale au milieu, avec du noir de chaque côté.
+Un preset HandBrake « 1080p30 » ou « 720p30 » fait précisément cela.
+
+**Conséquence :** il reste 406 pixels de large là où le téléphone en produisait
+au moins 1080. Deux tiers de la définition sont perdus, et un export en
+1080x1920 demanderait un agrandissement de 2,66x — nettement plus destructeur
+que le 1,5x des deux clips déjà produits. L'image est nette à sa taille native,
+elle ne le restera pas.
+
+**À refaire :** relancer la conversion en conservant le format vertical.
+`scripts/compresser-avant-envoi.sh` gère les deux orientations, c'est vérifié.
+Sous HandBrake, il faut aller dans l'onglet *Dimensions* et retirer la limite
+de résolution du preset, sinon le cadre paysage revient.
+
+## Le son est bon, mais trop bas
+
+| | LUFS | Crête | Vent |
+|---|---|---|---|
+| v1 | −22,0 | −2,7 dBTP | non |
+| v2 | −24,0 | −5,2 dBTP | non |
+| v3 | **−19,1** | **+0,1 dBTP** | non |
+| v4 | −24,8 | −7,0 dBTP | non |
+| v5 | −23,1 | −1,1 dBTP | non |
+
+Cible sociale usuelle : −14 LUFS. Les cinq sont donc 5 à 11 LU trop bas, ce
+qu'un passage de `loudnorm` corrige sans difficulté. La v3 dépasse légèrement
+le zéro en crête, à rattraper en même temps.
+
+Bonne nouvelle en revanche sur le vent : retirer tout ce qui est sous 150 Hz ne
+fait perdre que 0,3 à 1,0 dB. Il n'y a pas de grondement de micro, alors que
+c'est le défaut le plus courant en extérieur — et le seul qu'on ne sait pas
+réparer.
+
+## Deux remarques de tournage
+
+**Les lunettes de soleil, sur les cinq prises.** On ne voit jamais les yeux.
+Sur du face caméra dont tout l'objet est d'installer une autorité personnelle,
+le regard fait l'essentiel du travail — c'est lui qui fait qu'on croit ce qui
+est dit. Aucun montage ne rattrape ça.
+
+**L'angle est très bas sur plusieurs prises**, la v5 en particulier : téléphone
+tenu sous le menton, contre-plongée. Ça déforme et ça donne un air d'improvisé.
+Tenir l'appareil à hauteur d'œil coûte zéro seconde au tournage.
+
+Le format court, lui, est le bon : 20 à 31 s est exactement la durée qui
+fonctionne en Reels, bien mieux que les 90 s des cinq premières prises.
+
+## Ce qui manque pour avancer
+
+**Le contenu parlé.** Aucun modèle de transcription n'est téléchargeable depuis
+cette session : `huggingface.co`, ses miroirs, `alphacephei.com` et
+`openaipublic.azureedge.net` sont tous hors politique réseau. Je vois l'image,
+je mesure le son, mais je ne sais pas ce qui est dit — donc je ne peux ni trier,
+ni proposer de coupe, ni vérifier qu'aucune mention de franchise ne traîne.
+
+Il faut les passer par Fireflies comme les cinq premières, et déposer les PDF
+dans `rushes/`. C'est le même geste que la dernière fois.
