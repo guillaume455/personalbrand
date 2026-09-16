@@ -156,3 +156,56 @@ entre les deux prises de parole), je te le signale avant export et on avise.
 | 4 | « le modèle BHK » | supprimé (fin) |
 | 5 | — | rien à traiter |
 | 6 | « franchisés » (×3), « réseau », 4 noms propres | supprimés, clip réduit aux âges |
+
+---
+
+# Clip 6 : abandonné
+
+Décision du 16/09. Après retrait de tous les prénoms et noms, le rush ne laissait
+que 4,3 s de parole exploitable sur 41 s. Le montage produit
+(`exports/06-tous-les-ages.mp4`, 10,3 s dont 6 s de cartons) est conservé pour
+mémoire mais n'est pas destiné à la publication.
+
+Le message « il n'y a pas d'âge pour se lancer » reste valable et la cover
+`assets/cover-06.png` est prête : il demande une prise tournée en solo.
+
+---
+
+# Rushes restants : que reste-t-il d'exploitable ?
+
+Analyse des 12 autres fichiers du dossier Drive `Vidéo`, à partir des
+transcriptions Fireflies. Critère : le clip doit tenir sans « franchise »,
+« franchisé », « réseau », sans marque BH/BHK ni nom de personne.
+
+## Exploitable en l'état
+
+**`09. DIGITALISATION DES PROCESS.mp4`** (92 Mo) — **aucune mention à traiter.**
+Automatisation des tâches sans valeur ajoutée, puis comparaison 2013 / aujourd'hui :
+mandats imprimés et remplis à la main, tour du véhicule et fiche technique sur papier,
+contre un véhicule en ligne dès le départ du client. L'interlocuteur porte le récit du
+« avant », comme dans le clip 5. Le meilleur candidat restant.
+
+## Exploitables avec coupes
+
+**`08. AUTOMATISATION & CRM.mp4`** (38 Mo) — une seule occurrence de « franchisés »,
+au milieu d'une phrase. Le reste est propre : automatisations, CRM amélioré de mois en
+mois, efficacité sur le cœur de métier — « rentrer des mandats et vendre des véhicules ».
+Court, à vérifier au calage.
+
+**`15. LE TRI-METIER.mp4`** (91 Mo) — mentions concentrées au début (« par rapport au
+réseau qui existe ») et à la fin (« les nouveaux franchisés », « intégrer la franchise »,
+« ouvrir un BHK »). Le milieu tient seul : point de contrôle, passage à l'atelier,
+garantie mécanique, vitrage depuis 2018, notion de centre à trois métiers.
+
+## Inexploitables
+
+| Fichier | Motif |
+|---|---|
+| `17. LOGICIELS DEV. EN INTERNE` | le propos repose sur « on est le seul réseau », cite BHK |
+| `21. LA FRANCHISE C'EST COMME AVOIR UN ASSOCIÉ` | la franchise est le sujet même |
+| `23. LE RESEAU EN CONVENTION` | conventions nationales, réunions secteur |
+| `24. L'HISTOIRE DE JEREMY` | « de franchisé à franchiseur », BHK, bhcar.fr |
+| `30. LA BH ACADEMY` | la marque est le sujet |
+| `32. PLUS QU'UNE FORMATION` | BH Academy, animateur réseau, siège social |
+| `38. LE RECRUTEMENT DES FUTURS FRANCHISÉS` | recrutement de franchisés + nom d'un collaborateur |
+| `GUILLAUME 1` / `GUILLAUME 2` | vœux d'entreprise : groupe BH, 30 nouveaux franchisés, 15 ans de la marque |
