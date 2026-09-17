@@ -99,15 +99,39 @@ def split_text(text):
     # Dernier filet : rien ne dépasse 2 lignes pleines.
     final = []
     for u in units:
-        while len(u) > MAX_CHARS * 2:
-            cut = u.rfind(" ", 0, MAX_CHARS * 2)
-            if cut <= 0:
-                break
-            final.append(u[:cut])
-            u = u[cut + 1:]
-        if u:
-            final.append(u)
-    return final
+        final.extend(split_balanced(u, MAX_CHARS * 2))
+
+    # Un fragment de deux mots seul à l'écran se lit mal et, en fin de clip,
+    # n'a même plus de parole pour durer. On le rattache au précédent.
+    fusion = []
+    for u in final:
+        if fusion and len(u) < 12 and len(fusion[-1]) + 1 + len(u) <= MAX_CHARS * 2:
+            fusion[-1] += " " + u
+        else:
+            fusion.append(u)
+    return fusion
+
+
+def split_balanced(u, limit):
+    """Découpe en parts de longueurs voisines plutôt qu'en remplissant chaque
+    ligne au maximum : une coupe gloutonne laisse le reliquat en fin d'unité,
+    d'où les sous-titres d'un seul mot."""
+    if len(u) <= limit:
+        return [u]
+    n = -(-len(u) // limit)
+    cible = len(u) / n
+    parts, buf = [], ""
+    for mot in u.split():
+        essai = f"{buf} {mot}".strip()
+        if buf and (len(essai) > limit
+                    or (len(buf) >= cible and len(parts) < n - 1)):
+            parts.append(buf)
+            buf = mot
+        else:
+            buf = essai
+    if buf:
+        parts.append(buf)
+    return parts
 
 
 def wrap(s):

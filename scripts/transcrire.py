@@ -6,7 +6,7 @@ utilise Whisper small au format ONNX, publié en release GitHub par sherpa-onnx.
 Le son est normalisé avant reconnaissance : les rushes extérieurs sortent 5 à
 11 LU sous la cible et Whisper y perd des mots.
 """
-import re, subprocess, sys, wave
+import math, re, subprocess, sys, wave
 from pathlib import Path
 import numpy as np, sherpa_onnx
 
@@ -21,7 +21,7 @@ def wav16k(src, dst):
 def segments(wav):
     """Bornes de parole, d'après les silences détectés."""
     out = subprocess.run(["ffmpeg", "-i", str(wav), "-af",
-                          "silencedetect=noise=-32dB:d=0.35", "-f", "null", "-"],
+                          "silencedetect=noise=-30dB:d=0.22", "-f", "null", "-"],
                          capture_output=True, text=True).stderr
     starts = [float(x) for x in re.findall(r"silence_start: ([\d.]+)", out)]
     ends = [float(x) for x in re.findall(r"silence_end: ([\d.]+)", out)]
@@ -34,14 +34,23 @@ def segments(wav):
         cur = next((e for e in ends if e > s), dur)
     if dur > cur + 0.2:
         speech.append([cur, dur])
-    # regroupe en morceaux de 25 s au plus
+    # Regroupe en morceaux de 25 s au plus.
     chunks = []
     for s, e in speech:
         if chunks and e - chunks[-1][0] <= MAX_CHUNK:
             chunks[-1][1] = e
         else:
             chunks.append([s, e])
-    return chunks or [[0.0, dur]]
+    chunks = chunks or [[0.0, dur]]
+    # Un passage débité sans pause franche dépasse la fenêtre de Whisper, qui
+    # n'en garderait que les 30 premières secondes. On le redécoupe en parts
+    # égales : la coupure tombe en plein mot, mais rien n'est perdu.
+    taille = []
+    for s, e in chunks:
+        n = max(1, math.ceil((e - s) / MAX_CHUNK))
+        pas = (e - s) / n
+        taille += [[s + i * pas, s + (i + 1) * pas] for i in range(n)]
+    return taille
 
 def main(paths):
     rec = sherpa_onnx.OfflineRecognizer.from_whisper(

@@ -254,3 +254,44 @@ Le compte-tours reste visible : il ne donne pas de vitesse.
 **Pas de carton d'abonnement sur ce clip.** Le corps ne dure que 6,1 s : la chute
 est une punchline qui gagne à boucler. Ajouter 2,5 s de carton supplémentaire
 casserait la boucle, qui compte beaucoup pour la portée en Reels.
+
+---
+
+## `09-se-lancer-avec-un-cdi.mp4` ✅ **PRODUIT**
+**Source** : `rushes/0917 (1).mp4` — 1080x1920 natif, 94,18 s, HEVC, plein cadre.
+Première prise face caméra correctement exportée : format vertical respecté,
+durée complète, aucun habillage incrusté, aucun carton CapCut.
+
+**Coupe retenue : 0 → 94,18 s, intégrale.** Durée finale 99,7 s avec les cartons.
+
+**Pourquoi rien n'est coupé.** Le propos est une seule phrase enchaînée, du
+premier au dernier mot : chaque segment reprend la subordonnée du précédent
+(« … ce deuxième travail » / « parce que si vous avez un travail à côté… » /
+« et cette liberté, vous allez pouvoir l'avoir à partir du moment où… »).
+Retirer le milieu casse la syntaxe. Le relevé technique va dans le même sens :
+`silencedetect` ne trouve **aucune pause de plus de 0,25 s avant 57,9 s**.
+Il n'existe donc pas de point de coupe propre dans la première minute — c'est
+94 s ou rien.
+
+**Analyse éditoriale** : aucune occurrence de « franchise », « franchisé » ou
+« réseau ». « Intermédiation » est prononcé une fois, conservé comme au clip 4 :
+c'est du vocabulaire métier, pas un nom de marque. Le clip tient seul.
+
+**Deux écarts par rapport aux six clips d'interview**, tous deux dans
+`scripts/make-cdi.sh` :
+
+- **Son normalisé en amont.** La prise sort à −23,7 LUFS, la cible sociale est
+  à −14. La piste est refaite au `loudnorm`, la vidéo copiée sans ré-encodage.
+  Sortie mesurée : −15,6 LUFS intégré, crête −0,66 dBTP.
+- **Un carton de constat avant le carton d'abonnement.** Le propos s'achève sur
+  « les marges générées vous suffiront à quitter votre CDI » — une fin de
+  phrase, pas une chute. Le carton porte la chute à sa place : « Le vrai sujet,
+  ce n'est pas le temps. C'est de savoir pourquoi on le fait. » C'est une
+  proposition de ma part, pas une citation : à retirer d'une ligne si tu la
+  trouves de trop.
+
+**Correction apportée au pipeline commun.** `build_subs.py` remplissait chaque
+ligne au maximum, ce qui laissait le reliquat seul en fin de phrase : le dernier
+sous-titre du clip était « CDI. », affiché 0,08 s. Le découpage est désormais
+équilibré et les fragments de moins de douze caractères sont rattachés au
+précédent. Résultat : 33 sous-titres, le plus court durant 1,31 s.
