@@ -295,3 +295,47 @@ ligne au maximum, ce qui laissait le reliquat seul en fin de phrase : le dernier
 sous-titre du clip était « CDI. », affiché 0,08 s. Le découpage est désormais
 équilibré et les fragments de moins de douze caractères sont rattachés au
 précédent. Résultat : 33 sous-titres, le plus court durant 1,31 s.
+
+### `09-cdi-v2.mp4` — version resserrée
+
+Produite après retour extérieur : trop longue, manque de rythme, bruit de rue,
+et une accroche qui n'accroche pas. Les quatre points étaient fondés.
+
+**Ce que la v1 avait de faux.** J'avais conclu « 94 s ou rien » en cherchant des
+silences où couper. Mauvais critère : on ne coupe pas une vidéo sociale sur les
+respirations, on la coupe sur les redites. Il y en avait trois.
+
+**Montage retenu** — 58,6 s contre 99,7 :
+
+| Segment source | Contenu |
+|---|---|
+| 86,70 → 88,62 + 91,28 → 92,85 | accroche prélevée, hésitation retirée |
+| *carton 1,7 s* | « Peut-on se lancer dans l'auto en gardant son CDI ? » |
+| 14,45 → 32,30 | la réponse, puis la réalité des journées |
+| 36,05 → 54,75 | l'autodiscipline, savoir pourquoi |
+| 76,25 → 88,62 + 91,28 → 92,85 | la liberté, et la chute en rappel |
+
+Écarté : le préambule de 14 s, la parenthèse sur les enfants, et la redite du
+milieu (« parce que si vous avez un travail à côté… soit votre situation
+financière ne vous convient pas »).
+
+**L'accroche prélevée.** La phrase de chute contenait une hésitation de 2,5 s,
+mesurée à l'enveloppe audio : « les marges générées vous suffiront » / silence /
+« à quitter votre CDI ». Les deux moitiés sont recollées, la phrase tient en
+3,5 s. Elle revient à la fin, en rappel.
+
+Le carton qui suit n'est pas décoratif : le préambule ayant sauté, « la réponse
+est oui » ne répondait plus à rien.
+
+**Bruit.** Mesure sur une pause : plancher à −49,9 dB pour une parole à −28,5,
+soit 22 dB de rapport signal/bruit. L'énergie du bruit est concentrée entre 200
+et 1000 Hz, en plein dans la voix — c'est de l'ambiance urbaine, le type le plus
+difficile à retirer. `afftdn` en réglage moyen gagne 4 dB, bande vocale préservée
+à 0,3 dB près à la mesure. La mesure ne détecte pas les artefacts : à écouter au
+casque. Le correctif réel est un micro-cravate au tournage.
+
+**Dérive des sous-titres corrigée.** `build_subs.py` répartit le texte au prorata
+des caractères ; sur une prise débitée sans pause, l'écart s'accumule — jusqu'à
+2,5 s de retard en fin de v1. Les sous-titres sont désormais générés segment par
+segment puis recollés par `fusion_ass.py`. Vérifié sur six points de contrôle en
+comparant le texte affiché à ce qui est prononcé : concordant partout.
