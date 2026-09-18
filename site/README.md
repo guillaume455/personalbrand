@@ -4,6 +4,14 @@ Site statique. Pas de framework, pas d'étape de build : les fichiers `.html` du
 dossier sont exactement ce que le serveur envoie. On les ouvre, on les modifie,
 on les remet en ligne.
 
+Deux ensembles cohabitent :
+
+- le **site vitrine** (accueil, parcours, presse, contact, mentions légales),
+  bilingue, sans aucun cookie ni appel tiers ;
+- le **tunnel `/accompagnement`** et ses pages associées, en français, qui
+  vendent le diagnostic individuel. Il a sa propre feuille de style, sa propre
+  logique et sa propre documentation : voir [`TUNNEL.md`](TUNNEL.md).
+
 ## Structure
 
 ```
@@ -11,9 +19,13 @@ site/
 ├── index.html  parcours.html  presse.html  contact.html  mentions-legales.html
 ├── index-en.html  parcours-en.html  presse-en.html  contact-en.html
 │                                             mentions-legales-en.html
+├── accompagnement/  candidature/ merci/ reservation/ confirmation/
+├── calcul-marge/  calcul-marge/merci/  temoignages/  cgv/  confidentialite/
 ├── assets/
-│   ├── css/style.css     toute la mise en forme du site, un seul fichier
+│   ├── css/style.css     mise en forme du site vitrine
+│   ├── css/tunnel.css    mise en forme du tunnel, autonome
 │   ├── js/app.js         menu mobile, apparitions au scroll, filtres
+│   ├── js/config.js      LE fichier à renseigner pour brancher le tunnel
 │   ├── fonts/            Archivo (variable), auto-hébergée
 │   └── img/              photos en .webp + repli .jpg/.png
 ├── favicon.svg  site.webmanifest  robots.txt  sitemap.xml
