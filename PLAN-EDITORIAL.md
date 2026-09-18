@@ -339,3 +339,32 @@ des caractères ; sur une prise débitée sans pause, l'écart s'accumule — ju
 2,5 s de retard en fin de v1. Les sous-titres sont désormais générés segment par
 segment puis recollés par `fusion_ass.py`. Vérifié sur six points de contrôle en
 comparant le texte affiché à ce qui est prononcé : concordant partout.
+
+
+### `08-voie-de-gauche-v2` — bandeau réécrit
+
+Le bandeau ne porte plus la phrase réécrite mais une amorce de récit :
+
+> **C'est l'histoire d'un gars...**
+> *Lis la légende pour la suite de l'histoire*
+
+Accroche en blanc 62 px, appel à l'action en orange 44 px sous le trait, pour
+que les deux rôles se distinguent au premier coup d'œil. Le bandeau couvre
+toujours la pastille d'origine (source y=208..348).
+
+**Le carton de fin entre en conflit avec cette amorce.** « Et toi sur
+l'autoroute, t'es plus voie de droite ou voie de gauche ? » envoie en
+commentaire, quand le bandeau envoie en légende : la dernière consigne vue
+contredit la première. Deux exports sont donc produits, tous deux avec la
+vitesse floutée :
+
+| Fichier | Carton de fin |
+|---|---|
+| `…-flou-question.mp4` | la question d'origine, sur les voies |
+| `…-flou-legende.mp4` | « La suite de l'histoire **est en légende** » |
+
+**La légende existante ne convient plus.** `captions/08-voie-de-gauche.md` est
+un post de débat sur les files de circulation ; le clip promet désormais une
+histoire. Tant que l'histoire n'est pas écrite, la promesse du bandeau n'est
+pas tenue — et une amorce de récit sans récit derrière est le seul vrai risque
+de ce montage.
