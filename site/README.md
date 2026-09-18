@@ -13,7 +13,7 @@ site/
 │                                             mentions-legales-en.html
 ├── assets/
 │   ├── css/style.css     toute la mise en forme du site, un seul fichier
-│   ├── js/app.js         menu mobile, thème, apparitions, filtres
+│   ├── js/app.js         menu mobile, apparitions au scroll, filtres
 │   ├── fonts/            Archivo (variable), auto-hébergée
 │   └── img/              photos en .webp + repli .jpg/.png
 ├── favicon.svg  site.webmanifest  robots.txt  sitemap.xml
@@ -73,6 +73,12 @@ n'envoie rien.
   total, contre 1 706 Ko pour quatre pages avant.
 - **Police auto-hébergée.** Pas de requête vers Google Fonts : un aller-retour
   DNS de moins avant le premier rendu, et aucune adresse IP transmise à un tiers.
+- **Thème clair uniquement.** Pas de mode sombre, y compris si le système du
+  visiteur est réglé en sombre. Les blocs sombres — bandeau de chiffres, fiches
+  techniques, témoignages — sont un parti pris graphique et utilisent les jetons
+  `--inverse-*` ; ce n'est pas un thème. Conséquence utile : le site n'écrit
+  rien du tout dans le navigateur, donc aucun bandeau de consentement n'est
+  nécessaire.
 - **Pas d'`animation-timeline: view()`.** Cette animation native est pilotée par
   le défilement : un bloc déjà à l'écran au chargement reste figé à mi-opacité
   tant que la page ne bouge pas, ce qui fait passer son texte sous le seuil de
@@ -84,6 +90,5 @@ n'envoie rien.
 
 ## Contrôles
 
-Le site est vérifié sans violation axe-core (WCAG 2.1 AA) sur les dix pages, en
-thème clair et sombre, sans erreur console ni débordement horizontal, du mobile
-360 px au grand écran.
+Le site est vérifié sans violation axe-core (WCAG 2.1 AA) sur les dix pages,
+sans erreur console ni débordement horizontal, du mobile 360 px au grand écran.

@@ -11,8 +11,7 @@
 <link rel="alternate" hreflang="en" href="https://guillaumeherbin.fr/presse-en.html">
 <link rel="alternate" hreflang="x-default" href="https://guillaumeherbin.fr/presse.html">
 
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0F1113" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff">
 
 <meta property="og:site_name" content="Guillaume Herbin">
 <meta property="og:locale" content="fr_FR">
@@ -33,11 +32,10 @@
 <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/style.css">
 
-<script>/* Applique le thème avant le premier rendu : évite le flash de couleur.
-   `js-anim` autorise le CSS à masquer les blocs en attente d'apparition ; si
-   app.js ne s'exécute pas, le filet ci-dessous les réaffiche au lieu de laisser
-   la page vide. */
-(function(){var d=document.documentElement;try{var t=localStorage.getItem('gh-theme');if(t){d.setAttribute('data-theme',t)}}catch(e){}d.classList.add('js-anim');setTimeout(function(){if(!d.dataset.pret){d.classList.remove('js-anim')}},1200)})();</script>
+<script>/* `js-anim` autorise le CSS à masquer les blocs en attente d'apparition ;
+   si app.js ne s'exécute pas, le filet ci-dessous les réaffiche au bout de
+   1,2 s au lieu de laisser la page vide. */
+(function(){var d=document.documentElement;d.classList.add('js-anim');setTimeout(function(){if(!d.dataset.pret){d.classList.remove('js-anim')}},1200)})();</script>
 <script src="assets/js/app.js" defer></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Guillaume Herbin","givenName":"Guillaume","familyName":"Herbin","url":"https://guillaumeherbin.fr/","image":"https://guillaumeherbin.fr/assets/img/portrait-officiel-nb.jpg","birthPlace":{"@type":"Place","name":"Orléans, France"},"nationality":{"@type":"Country","name":"France"},"homeLocation":{"@type":"Place","name":"Marrakech, Maroc"},"email":"contact@guillaumeherbin.fr","sameAs":["https://www.linkedin.com/in/guillaume-herbin-15296b83/","https://www.instagram.com/guillaumeherbin_/"],"worksFor":[{"@type":"Organization","name":"Groupe BH","url":"https://bhcar.fr"},{"@type":"Organization","name":"Hexagone Automotive","url":"https://hexagone-automotive.fr/"},{"@type":"Organization","name":"ProGarage","url":"https://progarage.fr"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Presse & médias — Guillaume Herbin","url":"https://guillaumeherbin.fr/presse.html","hasPart":[{"@type":"NewsArticle","headline":"BH Car, l'intermédiaire de la vente de véhicules d'occasion","url":"https://www.leparisien.fr/economie/business/bh-car-l-intermediaire-de-la-vente-de-vehicules-d-occasion-06-05-2019-8066586.php","publisher":{"@type":"Organization","name":"Le Parisien"}},{"@type":"NewsArticle","headline":"Groupe BH : l'ascension multi-métiers d'un intermédiaire du véhicule d'occasion","url":"https://www.auto-infos.fr/article/groupe-bh-l-ascension-multi-metiers-d-un-intermediaire-du-vehicule-d-occasion.289023","publisher":{"@type":"Organization","name":"Auto Infos"}},{"@type":"NewsArticle","headline":"Le réseau d'agences automobiles BH Car poursuit son développement","url":"https://www.franchise-magazine.com/news-franchise/reseau-agence-automobile-bh-car-novembre-2025","publisher":{"@type":"Organization","name":"Franchise Magazine"}},{"@type":"NewsArticle","headline":"Equip Auto 2025 : Hexagone Automotive présente son label Federauto","url":"https://journalauto.com/services/equip-auto-2025-hexagone-automotive-presente-son-label-federauto/","publisher":{"@type":"Organization","name":"Le Journal de l'Automobile"}},{"@type":"NewsArticle","headline":"BH Atelier s'active pour convaincre les garagistes indépendants","url":"https://journalauto.com/services/bh-atelier-sactive-pour-convaincre-les-garagistes-independants/","publisher":{"@type":"Organization","name":"Le Journal de l'Automobile"}},{"@type":"NewsArticle","headline":"Pour s'étendre, les franchises BH Atelier et BH Pare-Brise misent sur des abonnements","url":"https://www.auto-infos.fr/article/pour-enfin-s-etendre-les-franchises-bh-atelier-et-bh-pare-brise-misent-sur-des-abonnements.291242","publisher":{"@type":"Organization","name":"Auto Infos"}},{"@type":"NewsArticle","headline":"Le Groupe BH accélère son développement","url":"https://j2rauto.com/reseaux/le-groupe-bh-accelere-son-developpement/","publisher":{"@type":"Organization","name":"J2R"}},{"@type":"NewsArticle","headline":"BH Atelier veut grandir","url":"https://auto.zepros.fr/reparateurs/bh-atelier-veut-grandir","publisher":{"@type":"Organization","name":"Zepros Auto"}},{"@type":"NewsArticle","headline":"Le label Vroomiz sort de l'ombre","url":"https://www.auto-infos.fr/article/le-label-vroomiz-sort-de-l-ombre.280115","publisher":{"@type":"Organization","name":"Auto Infos"}},{"@type":"NewsArticle","headline":"Vroomiz et la FNA deviennent partenaires","url":"https://journalauto.com/distribution/vroomiz-et-la-fna-deviennent-partenaires/","publisher":{"@type":"Organization","name":"Le Journal de l'Automobile"}},{"@type":"NewsArticle","headline":"À Pluneret, un atelier mobile pour les réparations de voitures","url":"https://www.ouest-france.fr/bretagne/pluneret-56400/pluneret-un-atelier-mobile-pour-les-reparations-de-voitures-7011329","publisher":{"@type":"Organization","name":"Ouest-France"}},{"@type":"NewsArticle","headline":"BH Car vous aide à revendre votre voiture","url":"https://www.larep.fr/fay-aux-loges-45450/economie/bh-car-vous-aide-a-revendre-votre-voiture_12903343/","publisher":{"@type":"Organization","name":"La République du Centre"}}]}</script>
@@ -58,10 +56,6 @@
     </div>
 
     <div class="nav-outils">
-      <button class="nav-theme" type="button" data-theme-toggle aria-label="Changer de thème">
-        <svg class="i-jour" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
-        <svg class="i-nuit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.6 8.6 0 1 0 10.8 10.8z"/></svg>
-      </button>
       <a class="nav-lang" href="presse-en.html" lang="en" hreflang="en">EN</a>
       <button class="nav-burger" type="button" data-burger aria-expanded="false" aria-controls="nav-liens" aria-label="Ouvrir le menu">
         <span></span><span></span><span></span>

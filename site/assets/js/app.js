@@ -8,38 +8,6 @@
   // charge ; sans ce drapeau, il réaffiche tout au bout de 1,2 s.
   document.documentElement.dataset.pret = '1';
 
-  /* ---------- Thème clair / sombre ---------- */
-  var racine = document.documentElement;
-  var bascule = document.querySelector('[data-theme-toggle]');
-
-  function themeActif() {
-    var force = racine.getAttribute('data-theme');
-    if (force) return force;
-    return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-
-  function libelle() {
-    if (!bascule) return;
-    var vers = themeActif() === 'dark' ? 'clair' : 'sombre';
-    var en = document.documentElement.lang === 'en';
-    bascule.setAttribute('aria-label', en ? 'Switch to ' + (vers === 'clair' ? 'light' : 'dark') + ' mode'
-                                          : 'Passer en mode ' + vers);
-  }
-
-  if (bascule) {
-    libelle();
-    bascule.addEventListener('click', function () {
-      var suivant = themeActif() === 'dark' ? 'light' : 'dark';
-      racine.setAttribute('data-theme', suivant);
-      try { localStorage.setItem('gh-theme', suivant); } catch (e) {}
-      libelle();
-    });
-  }
-  // Suivre le système tant que l'utilisateur n'a rien forcé.
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
-    try { if (!localStorage.getItem('gh-theme')) libelle(); } catch (e) { libelle(); }
-  });
-
   /* ---------- Menu mobile ---------- */
   var burger = document.querySelector('[data-burger]');
   var menu = document.getElementById('nav-liens');
