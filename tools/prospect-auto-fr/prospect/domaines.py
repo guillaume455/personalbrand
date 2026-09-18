@@ -39,19 +39,28 @@ SUFFIXES_DOUBLES = {"gouv.fr", "asso.fr", "com.fr", "tm.fr", "nom.fr", "prd.fr",
                     "aeroport.fr", "co.uk", "com.br"}
 
 
-def _ouvrir(path: Path):
-    """Ouvre un .zip, .gz ou fichier texte et renvoie un flux de lignes."""
+def _ouvrir(path: Path) -> tuple[io.TextIOBase, list]:
+    """Ouvre un .zip, .gz ou fichier texte.
+
+    Renvoie (flux de lignes, objets à fermer) : le ZipFile doit rester ouvert
+    tant qu'on lit son membre, et être fermé ensuite — sinon Windows garde un
+    verrou sur le fichier.
+    """
     nom = path.name.lower()
     if nom.endswith(".zip"):
         zf = zipfile.ZipFile(path)
         interne = next((n for n in zf.namelist()
                         if n.lower().endswith((".csv", ".txt", ".tsv"))), None)
         if interne is None:
+            zf.close()
             raise RuntimeError(f"aucun csv/txt dans {path.name}")
-        return io.TextIOWrapper(zf.open(interne), encoding="utf-8", errors="replace")
+        flux = io.TextIOWrapper(zf.open(interne), encoding="utf-8", errors="replace")
+        return flux, [flux, zf]
     if nom.endswith(".gz"):
-        return gzip.open(path, "rt", encoding="utf-8", errors="replace")
-    return open(path, "r", encoding="utf-8", errors="replace")
+        flux = gzip.open(path, "rt", encoding="utf-8", errors="replace")
+        return flux, [flux]
+    flux = open(path, "r", encoding="utf-8", errors="replace")
+    return flux, [flux]
 
 
 def _depuis_host_inverse(valeur: str) -> str | None:
@@ -85,7 +94,7 @@ def domaine_enregistrable(valeur: str) -> str | None:
 
 def iter_domaines(path: Path, tlds: tuple[str, ...] = ("fr",)) -> Iterator[str]:
     """Extrait les domaines de n'importe lequel des formats supportés."""
-    flux = _ouvrir(path)
+    flux, a_fermer = _ouvrir(path)
     suffixes = tuple("." + t.lstrip(".") for t in tlds)
     vus: set[str] = set()
     try:
@@ -102,7 +111,13 @@ def iter_domaines(path: Path, tlds: tuple[str, ...] = ("fr",)) -> Iterator[str]:
             if colonne is None:
                 colonne = 0
         else:
-            flux = io.StringIO(premiere + flux.read())  # pas d'en-tête : tout relire
+            # Pas d'en-tête : on relit tout depuis le début, et on referme le
+            # fichier source tout de suite plutôt que de le laisser pendre.
+            contenu = premiere + flux.read()
+            for objet in a_fermer:
+                objet.close()
+            a_fermer = []
+            flux = io.StringIO(contenu)
         lecteur = csv.reader(flux, delimiter=delimiteur)
         for ligne in lecteur:
             if not ligne:
@@ -116,8 +131,11 @@ def iter_domaines(path: Path, tlds: tuple[str, ...] = ("fr",)) -> Iterator[str]:
                 vus.add(domaine)
                 yield domaine
     finally:
-        if hasattr(flux, "close"):
-            flux.close()
+        for objet in a_fermer:
+            try:
+                objet.close()
+            except OSError:
+                pass
 
 
 def _tokens_domaine(sld: str) -> list[str]:
