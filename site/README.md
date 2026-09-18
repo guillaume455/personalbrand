@@ -55,21 +55,15 @@ cohérents si l'accent change.
 
 ## Avant la mise en ligne
 
-Les informations de l'éditeur (RB1 PARTICIPATIONS SAS), du siège, du SIREN /
-SIRET et de l'hébergeur (OVH) sont renseignées. **Deux champs restent encadrés
-en orange** dans `mentions-legales.html` et `mentions-legales-en.html` :
+Les mentions légales sont complètes : éditeur (RB1 PARTICIPATIONS SAS, capital
+10 000,00 €, RCS Orléans), siège, SIREN / SIRET, hébergeur (OVH SAS) et durée de
+conservation des messages. Il n'y a plus de champ en attente.
 
-1. le montant du **capital social**
-2. la **ville d'immatriculation au RCS** (probablement Orléans, pour un siège
-   dans le Loiret — à confirmer sur l'extrait Kbis)
-
-Pour une SAS, l'article R.123-237 du code de commerce les rend obligatoires sur
-tout document destiné aux tiers, site internet compris. Une fois renseignés,
-supprimer le paragraphe `.rappel` en haut de chaque page.
-
-Vérifier également que `contact@guillaumeherbin.fr` est bien confirmée côté
-[FormSubmit](https://formsubmit.co) : sans cette validation, le formulaire
-n'envoie rien.
+Une seule chose vit hors du dépôt : l'adresse `contact@guillaumeherbin.fr` doit
+rester validée côté [FormSubmit](https://formsubmit.co), sinon le formulaire
+cesse d'acheminer les messages sans que le site ne signale quoi que ce soit.
+Après chaque changement d'adresse ou de prestataire, envoyer un message de test
+depuis la page contact en ligne.
 
 ### Cookies et RGPD
 

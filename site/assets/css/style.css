@@ -571,19 +571,9 @@ html:not(.js-anim) [data-reveal]{opacity:1;transform:none}
   a[href^="http"]::after{content:" (" attr(href) ")";font-size:9pt;color:#555}
 }
 
-/* ---------- Champ à renseigner (mentions légales) ---------- */
-.a-remplir{
-  background:var(--accent-soft);border:1px dashed var(--accent);
-  border-radius:6px;padding:1px 9px;font-size:.92em;color:var(--accent-ink);
-  font-weight:650;white-space:nowrap;
-}
+/* ---------- Mentions légales ---------- */
 .legal h2{font-size:clamp(1.15rem,2.2vw,1.45rem);margin-bottom:14px;margin-top:38px}
 .legal h2:first-of-type{margin-top:0}
 .legal p,.legal li{color:var(--ink-2)}
 .legal ul{margin:0 0 0 20px;display:grid;gap:7px}
 .legal p + p{margin-top:.9em}
-.rappel{
-  border-left:3px solid var(--accent);background:var(--accent-soft);
-  border-radius:0 var(--r-m) var(--r-m) 0;padding:18px 22px;margin-bottom:34px;
-  font-size:14.5px;color:var(--ink-2);
-}
