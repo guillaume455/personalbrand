@@ -55,15 +55,37 @@ cohérents si l'accent change.
 
 ## Avant la mise en ligne
 
-`mentions-legales.html` et `mentions-legales-en.html` contiennent des champs
-encadrés en orange (classe `.a-remplir`) : statut juridique, adresse, numéro
-SIREN/SIRET, hébergeur, durée de conservation des messages. Ils sont obligatoires
-au titre de la LCEN et doivent être renseignés. Supprimer aussi le paragraphe
-`.rappel` en haut de chaque page une fois que c'est fait.
+`mentions-legales.html` et `mentions-legales-en.html` contiennent sept champs
+encadrés en orange (classe `.a-remplir`) :
+
+1. forme juridique de l'éditeur
+2. adresse postale du siège
+3. numéro SIREN ou SIRET
+4. nom de l'hébergeur du site
+5. adresse postale de l'hébergeur
+6. transfert des données hors UE, à confirmer auprès de FormSubmit
+7. durée de conservation des messages
+
+Les cinq premiers sont obligatoires au titre de l'article 6 de la LCEN, les deux
+derniers au titre de l'article 13 du RGPD. Une fois renseignés, supprimer aussi
+le paragraphe `.rappel` en haut de chaque page.
 
 Vérifier également que `contact@guillaumeherbin.fr` est bien confirmée côté
 [FormSubmit](https://formsubmit.co) : sans cette validation, le formulaire
 n'envoie rien.
+
+### Cookies et RGPD
+
+La navigation ne dépose **aucun cookie**, n'écrit **rien** dans le navigateur
+(ni stockage local, ni session, ni identifiant) et n'appelle **aucun domaine
+tiers** — police comprise, puisqu'elle est auto-hébergée. Aucun bandeau de
+consentement n'est donc nécessaire.
+
+Le seul traitement de données est le formulaire de contact. FormSubmit y est un
+sous-traitant au sens de l'article 28 du RGPD : cela suppose un contrat de
+sous-traitance, et la question du transfert hors UE reste à trancher (champ 6
+ci-dessus). Une alternative hébergée dans l'UE, ou l'envoi direct par `mailto:`,
+supprimerait entièrement le sujet.
 
 ## Choix techniques, et pourquoi
 
