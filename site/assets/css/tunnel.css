@@ -434,6 +434,15 @@ textarea{min-height:130px;resize:vertical}
 .b-accept{background:var(--accent);color:var(--ink)}
 .b-accept:hover{filter:brightness(1.07)}
 
+/* Le bandeau est fixé en bas : sans cette réserve, il recouvre le pied de page
+   et rend inaccessibles les liens vers les mentions légales, les CGV et la
+   politique de confidentialité — y compris celui que le bandeau lui-même
+   propose. La réserve disparaît dès que le choix est fait. */
+body[data-bandeau="visible"]{padding-bottom:210px}
+@media (min-width:820px){ body[data-bandeau="visible"]{padding-bottom:130px} }
+body[data-bandeau="visible"][data-barre-basse="actif"]{padding-bottom:280px}
+@media (min-width:860px){ body[data-bandeau="visible"][data-barre-basse="actif"]{padding-bottom:130px} }
+
 /* ---------- Pied de page ---------- */
 .pied{
   border-top:1px solid var(--line);padding-block:30px;

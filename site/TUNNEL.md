@@ -25,6 +25,22 @@ il se parcourt de bout en bout, les envois sont journalisés dans la console du
 navigateur au lieu de partir, et un avertissement s'affiche dans cette même
 console. Rien ne casse, rien ne part.
 
+## Regarder les pages en local
+
+Les chemins sont **relatifs**, pas absolus : il suffit de double-cliquer
+n'importe quel `index.html` pour voir la page complète, mise en forme comprise.
+Le parcours entier se déroule ainsi, formulaire compris.
+
+Deux détails propres à l'ouverture directe, sans effet une fois en ligne :
+
+- la console signale que `archivo-latin.woff2` n'a pas pu être préchargé. Le
+  préchargement exige `crossorigin`, que `file://` refuse par principe. La
+  police se charge quand même, par la feuille de style ;
+- les liens vers un dossier sont complétés en `…/index.html` par le script,
+  parce qu'un navigateur ouvrant un fichier local affiche le contenu du dossier
+  au lieu d'y chercher l'index. Une fois le site servi par OVH, la condition est
+  fausse et les adresses restent propres.
+
 ## Ce qu'il faut renseigner
 
 Tout tient dans **`/assets/js/config.js`**. Aucune clé n'est écrite ailleurs.
@@ -163,6 +179,8 @@ Vérifié automatiquement, et rejouable :
   2,10 s en 4G simulée, CLS 0
 - navigateur Instagram émulé (iOS et Android) : pas de débordement, champs à
   16 px donc pas de zoom automatique iOS
+- parcours complet en ouverture directe des fichiers, sans serveur
+- le pied de page et ses liens légaux restent atteignables bandeau affiché
 
 À vérifier par toi, parce que ça ne se simule pas :
 

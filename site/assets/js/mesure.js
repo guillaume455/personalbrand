@@ -91,14 +91,23 @@
     if (choix === 'oui') { activer(); return; }
     if (choix === 'non') return;
 
-    // Aucun choix enregistré : on propose, sans rien charger.
-    requestAnimationFrame(function () { el.setAttribute('data-visible', 'true'); });
+    // Aucun choix enregistré : on propose, sans rien charger. Le drapeau posé
+    // sur le body réserve la place occupée par le bandeau, pour qu'il ne
+    // recouvre pas le pied de page et ses liens légaux.
+    requestAnimationFrame(function () {
+      el.setAttribute('data-visible', 'true');
+      document.body.setAttribute('data-bandeau', 'visible');
+    });
 
+    function refermer() {
+      el.removeAttribute('data-visible');
+      document.body.removeAttribute('data-bandeau');
+    }
     el.querySelector('[data-accepter]').addEventListener('click', function () {
-      ecrire('oui'); el.removeAttribute('data-visible'); activer();
+      ecrire('oui'); refermer(); activer();
     });
     el.querySelector('[data-refuser]').addEventListener('click', function () {
-      ecrire('non'); el.removeAttribute('data-visible'); file = [];
+      ecrire('non'); refermer(); file = [];
     });
   }
 

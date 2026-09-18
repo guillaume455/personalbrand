@@ -112,6 +112,20 @@
     if (form) form.hidden = true;
   }
 
+  /* ---------- Ouverture directe du fichier (file://) ----------------------
+     Un lien vers un dossier, « cgv/ », est résolu en « cgv/index.html » par un
+     serveur web, mais pas par le navigateur quand la page est ouverte depuis
+     le disque : il affiche le contenu du dossier. On complète donc ces liens,
+     et uniquement dans ce cas. Sur le site en ligne, la condition est fausse
+     et rien ne se passe : les adresses restent propres. */
+  if (location.protocol === "file:") {
+    document.querySelectorAll("a[href$=\"/\"], [data-merci$=\"/\"]").forEach(function (el) {
+      var att = el.hasAttribute("data-merci") ? "data-merci" : "href";
+      var h = el.getAttribute(att);
+      if (h && !/^[a-z]+:/i.test(h)) el.setAttribute(att, h + "index.html");
+    });
+  }
+
   /* ---------- Année du copyright ---------- */
   document.querySelectorAll('[data-annee]').forEach(function (el) {
     el.textContent = new Date().getFullYear();
