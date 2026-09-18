@@ -23,8 +23,7 @@ from .match import FORMES_JURIDIQUES, normaliser
 TLDS = (".fr", ".com")
 # Mots de liaison : « garage dupré et fils » s'écrit aussi bien garagedupre-fils.fr
 MOTS_LIAISON = {"et", "and", "de", "du", "des", "la", "le", "les", "d", "l", "aux", "au"}
-MOTS_GENERIQUES = {"auto", "autos", "automobile", "automobiles", "garage", "cars",
-                   "car", "motors", "moto", "motos", "vo", "vehicules", "occasion"}
+MOTS_GENERIQUES = config.MOTS_GENERIQUES_AUTO
 SIGNES_PARKING = (
     "ce domaine est à vendre", "this domain is for sale", "domain for sale",
     "parked domain", "sedoparking", "afterhostingpage", "site en construction",
@@ -117,9 +116,19 @@ def _tester_domaine(domaine: str, etab: sqlite3.Row, sess) -> tuple[str, int, st
     return None
 
 
-def _resoudre_un(etab: sqlite3.Row, sess, searx: str | None) -> list[dict]:
+def _resoudre_un(etab: sqlite3.Row, sess, searx: str | None,
+                 depuis_index: list[tuple[str, int]] | None = None) -> list[dict]:
     noms = [etab["enseigne"], etab["raison_sociale"]]
     resultats = []
+    # Les domaines issus de l'index existent pour de vrai : on les teste d'abord.
+    for domaine, indice in (depuis_index or []):
+        essai = _tester_domaine(domaine, etab, sess)
+        if essai:
+            url, score, _ = essai
+            resultats.append({"url": url, "confiance": score + (1 if indice >= 6 else 0),
+                              "source": "index"})
+            if resultats[-1]["confiance"] >= config.MIN_SITE_CONFIDENCE:
+                return resultats
     for domaine in candidats_domaines([n for n in noms if n]):
         essai = _tester_domaine(domaine, etab, sess)
         if essai:
@@ -177,6 +186,21 @@ def run(conn: sqlite3.Connection, *, limite: int | None = None, workers: int | N
     if not etabs:
         print("Rien à résoudre (utilise --refaire pour tout reprendre).")
         return 0
+    # L'index de domaines (AFNIC / Common Crawl) est interrogé dans le thread
+    # principal : une connexion SQLite ne se partage pas entre threads.
+    from . import domaines as _domaines
+    index_candidats: dict[str, list[tuple[str, int]]] = {}
+    if _domaines.index_disponible(conn):
+        print(f"Index de domaines : {store.count(conn, 'domaines')} domaines connus, "
+              "interrogation locale avant toute requête réseau...")
+        for etab in etabs:
+            index_candidats[etab["siret"]] = _domaines.candidats(
+                conn, [etab["enseigne"], etab["raison_sociale"]], etab["commune"])
+        avec = sum(1 for v in index_candidats.values() if v)
+        print(f"  {avec}/{len(etabs)} établissements ont au moins un domaine candidat.")
+    else:
+        print("Pas d'index de domaines (`python -m prospect domaines --fichier ...`) : "
+              "on se rabat sur la déduction + DNS, moins efficace.")
     print(f"Résolution de site web pour {len(etabs)} établissements "
           f"({workers or config.CRAWL_WORKERS} threads)...")
     sess = net.session()
@@ -184,7 +208,8 @@ def run(conn: sqlite3.Connection, *, limite: int | None = None, workers: int | N
     trouves = 0
     lignes: list[dict] = []
     with futures.ThreadPoolExecutor(max_workers=workers or config.CRAWL_WORKERS) as pool:
-        taches = {pool.submit(_resoudre_un, e, sess, searx): e for e in etabs}
+        taches = {pool.submit(_resoudre_un, e, sess, searx,
+                              index_candidats.get(e["siret"])): e for e in etabs}
         for i, tache in enumerate(futures.as_completed(taches), 1):
             etab = taches[tache]
             try:

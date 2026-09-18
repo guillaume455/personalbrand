@@ -48,14 +48,29 @@ def cles(nom: str | None, code_postal: str | None, commune: str | None) -> list[
     return out
 
 
-def run(conn: sqlite3.Connection) -> int:
-    """Crée les sites candidats et les emails issus d'OSM. Renvoie le nb d'appariements."""
+def index_etablissements(conn: sqlite3.Connection) -> dict[str, str]:
+    """{clé normalisée: siret} — partagé par l'appariement OSM et annuaires."""
     index: dict[str, str] = {}
     for row in store.iter_rows(conn, "SELECT siret, raison_sociale, enseigne, "
                                      "code_postal, commune FROM etablissements"):
         for nom in (row["enseigne"], row["raison_sociale"]):
             for cle in cles(nom, row["code_postal"], row["commune"]):
                 index.setdefault(cle, row["siret"])
+    return index
+
+
+def trouver_siret(index: dict[str, str], nom: str | None, code_postal: str | None,
+                  commune: str | None) -> tuple[str | None, str | None]:
+    """(siret, méthode) ou (None, None)."""
+    for cle in cles(nom, code_postal, commune):
+        if cle in index:
+            return index[cle], "nom_cp" if cle.startswith("cp:") else "nom_commune"
+    return None, None
+
+
+def run(conn: sqlite3.Connection) -> int:
+    """Crée les sites candidats et les emails issus d'OSM. Renvoie le nb d'appariements."""
+    index = index_etablissements(conn)
 
     sirets = {r[0] for r in conn.execute("SELECT siret FROM etablissements")}
     sites, emails = [], []

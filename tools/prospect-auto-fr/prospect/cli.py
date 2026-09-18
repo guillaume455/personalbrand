@@ -16,7 +16,8 @@ import argparse
 import sys
 from pathlib import Path
 
-from . import config, crawl, export, match, osm, resolve, sirene, store, validate
+from . import (annuaire, config, crawl, domaines, export, match, osm, resolve,
+               sirene, store, validate)
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -30,6 +31,20 @@ def _parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="commande", required=True)
 
     sub.add_parser("selfcheck", help="teste l'accès aux sources distantes")
+
+    d = sub.add_parser("domaines",
+                       help="construit l'index local des domaines existants (AFNIC/CC)")
+    d.add_argument("--fichier", help="fichier déjà téléchargé (.zip/.csv/.txt/.gz)")
+    d.add_argument("--url", help="URL à télécharger (AFNIC open data ou host graph CC)")
+    d.add_argument("--tlds", default="fr", help="TLD à retenir, séparés par des virgules")
+
+    a = sub.add_parser("annuaire", help="scrape une source décrite par un fichier JSON")
+    a.add_argument("--config", required=True, help="chemin du JSON de la source")
+
+    sub.add_parser("annuaire-match", help="rattache les fiches scrapées aux SIRET")
+
+    g = sub.add_parser("gabarit", help="écrit un JSON de source à remplir")
+    g.add_argument("--vers", default="sources/ma-source.json")
 
     s = sub.add_parser("sirene", help="télécharge et filtre le stock Sirene")
     s.add_argument("--groupes", default=",".join(config.DEFAULT_GROUPS),
@@ -140,7 +155,30 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     conn = store.connect(args.db)
-    if args.commande == "sirene":
+    if args.commande == "domaines":
+        if args.url:
+            from . import net
+            config.CACHE_DIR.mkdir(parents=True, exist_ok=True)
+            nom = args.url.split("/")[-1].split("?")[0] or "domaines.txt"
+            chemin = net.download(args.url, config.CACHE_DIR / nom)
+        elif args.fichier:
+            chemin = Path(args.fichier)
+        else:
+            raise SystemExit(
+                "Donne --fichier ou --url.\n"
+                "  .fr exhaustif (recommandé) : https://opendata.afnic.fr/ "
+                "(ou https://www.data.gouv.fr/datasets/open-data-du-fr-1)\n"
+                "  tous TLD : https://commoncrawl.org/web-graphs (host-vertices)")
+        domaines.construire(conn, chemin, tuple(args.tlds.split(",")))
+    elif args.commande == "annuaire":
+        annuaire.run(conn, Path(args.config))
+    elif args.commande == "annuaire-match":
+        annuaire.apparier(conn)
+    elif args.commande == "gabarit":
+        chemin = annuaire.ecrire_gabarit(Path(args.vers))
+        print(f"Gabarit écrit dans {chemin} — remplis les sélecteurs CSS, "
+              f"puis : python -m prospect annuaire --config {chemin}")
+    elif args.commande == "sirene":
         sirene.run(conn, groupes=tuple(args.groupes.split(",")),
                    date_min=args.date_min, date_max=args.date_max,
                    url_etab=args.url_etab, url_ul=args.url_ul,

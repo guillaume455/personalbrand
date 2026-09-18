@@ -10,8 +10,9 @@ l'exhaustivité ni le filtre sur la date de création. Ce pipeline fait le pont.
 
 ```
 Sirene (liste officielle)  ──┐
-                             ├─► appariement ─► découverte de site ─► crawl ─► validation ─► CSV
-OpenStreetMap (emails/sites)─┘
+OpenStreetMap (emails/sites)─┤
+Annuaires scrapés (au choix)─┼─► appariement ─► découverte de site ─► crawl ─► validation ─► CSV
+Index AFNIC des domaines .fr─┘        (index local, aucune requête réseau)
 ```
 
 ## Démarrage
@@ -23,6 +24,19 @@ python3 -m prospect selfcheck                  # data.gouv + Overpass joignables
 python3 -m prospect run --limite 300           # premier lot de test (~20 min)
 python3 -m prospect stats
 ```
+
+**Fais l'étape 0 avant tout le reste** : elle change l'ordre de grandeur du
+résultat. Télécharge la liste AFNIC des domaines `.fr` (open data, ~4 millions
+de domaines, gratuit) depuis [opendata.afnic.fr](https://opendata.afnic.fr/) ou
+[data.gouv.fr](https://www.data.gouv.fr/datasets/open-data-du-fr-1), puis :
+
+```bash
+python3 -m prospect domaines --fichier ~/Téléchargements/202609_OPENDATA_*.zip
+```
+
+Sans cet index, le pipeline *devine* les domaines et les teste en DNS. Avec, il
+*cherche dans la liste réelle* des domaines déposés — y compris ceux qu'aucune
+déduction ne trouverait (« GARAGE DUPRE » → `dupre-automobiles.fr`).
 
 Puis le run complet, une fois que les chiffres du lot de test te conviennent :
 
@@ -42,13 +56,28 @@ reprise complète d'une étape.
 
 | Commande | Ce qu'elle fait | Source |
 |---|---|---|
+| `domaines` | indexe localement tous les domaines existants (étape 0, à faire en premier) | AFNIC open data / Common Crawl |
 | `sirene` | télécharge le stock mensuel, garde les NAF auto créés dans la période, récupère les raisons sociales | data.gouv.fr (Licence Ouverte) |
 | `osm` | récupère les POI `shop=car`, `car_repair`, `motorcycle`, `truck`… qui ont un email ou un site | Overpass / OSM (ODbL) |
 | `match` | rattache chaque POI à un SIRET (ref:FR:SIRET, puis nom+CP, puis nom+commune) | — |
 | `resolve` | déduit le domaine depuis la raison sociale, vérifie en DNS puis par le contenu de la page | DNS + HTTP |
 | `crawl` | visite l'accueil + les pages contact/mentions légales, extrait les emails | sites des entreprises |
 | `validate` | MX du domaine, classement pro/rôle/perso, liste d'opposition | DNS |
+| `annuaire` | scrape n'importe quel annuaire décrit par un JSON (voir plus bas) | la cible que tu choisis |
+| `annuaire-match` | rattache les fiches scrapées aux SIRET | — |
 | `export` | 3 CSV : contacts pro, contacts perso (prudence), établissements sans email | — |
+
+`run` enchaîne `sirene → osm → match → resolve → crawl → validate → export`.
+`domaines` et `annuaire` s'exécutent séparément (ils demandent un fichier ou une
+config). Séquence complète recommandée :
+
+```bash
+python3 -m prospect domaines --fichier <liste-afnic.zip>   # étape 0
+python3 -m prospect run                                     # le pipeline
+python3 -m prospect annuaire --config sources/ma-source.json
+python3 -m prospect annuaire-match && python3 -m prospect validate
+python3 -m prospect export
+```
 
 ## Périmètre (à ajuster)
 
@@ -94,6 +123,72 @@ Le fichier `sans_email_*.csv` n'est pas un déchet : c'est la liste exacte à
 donner à un enrichisseur payant, avec SIRET et adresse, donc au meilleur taux
 de match possible.
 
+## Scraper une source de ton choix
+
+Aucun site n'est codé en dur : une cible = un fichier JSON. Génère le gabarit,
+remplis les sélecteurs CSS en regardant la page dans l'inspecteur du navigateur,
+lance :
+
+```bash
+python3 -m prospect gabarit --vers sources/mon-annuaire.json
+# ... tu remplis les sélecteurs ...
+python3 -m prospect annuaire --config sources/mon-annuaire.json
+python3 -m prospect annuaire-match
+```
+
+```json
+{
+  "nom": "mon-annuaire",
+  "pages": ["https://exemple.fr/annuaire/garages?page={page}"],
+  "pagination": {"debut": 1, "fin": 50, "pas": 1},
+  "lien_fiche": "a.fiche-link",
+  "cartes": null,
+  "selecteurs": {
+    "nom": "h1.titre",
+    "commune": ".adresse .ville",
+    "code_postal": ".adresse .cp",
+    "telephone": "a[href^='tel:']",
+    "site_web": "a.site-web",
+    "email": "a[href^='mailto:']"
+  },
+  "delai": 3.0,
+  "respecter_robots": true,
+  "max_fiches": 2000
+}
+```
+
+- `lien_fiche` : le scraper suit chaque fiche depuis la page de liste.
+- `cartes` : à utiliser à la place si tout est déjà dans la page de liste (un
+  sélecteur qui désigne chaque bloc-résultat).
+- Sélecteurs absents ou muets → repli automatique sur l'extraction générique
+  (emails et téléphones repérés n'importe où dans la page).
+- `respecter_robots: false` passe outre le robots.txt de la cible : c'est ton
+  choix et ta responsabilité, lis [`LEGAL.md`](LEGAL.md) d'abord.
+- `delai` : ne descends pas sous 2-3 s. Un scraper qui martèle se fait bloquer,
+  et un scraper bloqué ne rapporte rien.
+
+Les fiches scrapées alimentent les mêmes tables que le reste (sites, emails,
+téléphones) avec leur provenance, donc `validate` et `export` les traitent
+comme les autres.
+
+## Téléphones
+
+Le crawl et les annuaires collectent aussi les numéros français (normalisés en
+`+33XXXXXXXXX`), exportés dans la colonne `telephone`. C'est le repli réaliste
+pour la majorité des établissements récents qui n'ont pas d'email publié :
+`sans_email_*.csv` porte aussi cette colonne.
+
+## Recherche web gratuite et illimitée : SearXNG auto-hébergé
+
+```bash
+docker compose up -d
+python3 -m prospect resolve --searx http://localhost:8080 --refaire
+```
+
+Un SearXNG local interroge de vrais moteurs sans clé ni quota, et retrouve les
+sites que ni l'index AFNIC ni la déduction ne donnent. La config fournie active
+l'API JSON (désactivée par défaut) et coupe le limiteur interne.
+
 ## Régler le compromis volume / qualité
 
 Dans `prospect/config.py` :
@@ -118,9 +213,9 @@ la plus fiable est celle que tu héberges toi-même).
 
 Dans l'ordre du rapport résultat/coût, en repartant de `sans_email_*.csv` :
 
-1. **Un moteur de recherche avec API** (Brave Search, Bing, Google CSE) pour
-   remplacer la déduction de domaine : c'est le seul vrai plafond du pipeline
-   gratuit. Quelques euros pour quelques milliers de requêtes.
+1. **Un moteur de recherche avec API** (Brave Search, Bing, Google CSE) si même
+   SearXNG + index AFNIC ne suffisent pas. Quelques euros pour quelques milliers
+   de requêtes.
 2. **Dropcontact** (français, conçu pour le RGPD) : enrichissement à partir du
    nom + SIRET, bon sur les TPE françaises.
 3. **Un vérifieur d'emails** (Bouncer, NeverBounce) avant le premier envoi.

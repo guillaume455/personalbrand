@@ -127,4 +127,12 @@ CONTACT_PATH_HINTS = (
     "apropos", "about", "equipe", "notre-equipe", "cgv", "conditions", "devis",
     "horaires", "acces", "plan-acces", "reprise", "rachat",
 )
+# Mots trop courants pour identifier une entreprise, mais bon signe métier
+# quand ils apparaissent dans un nom de domaine.
+MOTS_GENERIQUES_AUTO = {
+    "auto", "autos", "automobile", "automobiles", "garage", "cars", "car",
+    "motors", "moto", "motos", "vo", "vehicules", "vehicule", "occasion",
+    "occasions", "carrosserie", "mecanique", "pneus", "sport", "prestige",
+}
+
 MIN_SITE_CONFIDENCE = 2  # score minimal pour considérer qu'un domaine est le bon

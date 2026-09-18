@@ -1,0 +1,10 @@
+# Configuration minimale : l'API JSON est désactivée par défaut dans SearXNG,
+# il faut l'autoriser explicitement pour que `--searx` fonctionne.
+use_default_settings: true
+server:
+  secret_key: "change-moi"
+  limiter: false
+search:
+  formats:
+    - html
+    - json

@@ -10,7 +10,7 @@ from . import config, store
 COLONNES = [
     "siret", "siren", "raison_sociale", "enseigne", "naf", "activite",
     "date_creation", "adresse", "code_postal", "commune", "departement",
-    "site_web", "email", "type_email", "score", "mx_ok",
+    "site_web", "email", "type_email", "score", "mx_ok", "telephone",
     "source_email", "url_source", "personne_physique",
 ]
 
@@ -20,6 +20,8 @@ SELECT e.siret, e.siren, e.raison_sociale, e.enseigne, e.naf,
        e.commune, e.departement, e.personne_physique,
        (SELECT url FROM sites s WHERE s.siret = e.siret
           ORDER BY s.confiance DESC LIMIT 1) AS site_web,
+       (SELECT telephone FROM telephones t WHERE t.siret = e.siret
+          LIMIT 1) AS telephone,
        m.email, m.type_email, m.score, m.mx_ok, m.source AS source_email, m.url_source
 FROM etablissements e
 JOIN emails m ON m.siret = e.siret
@@ -61,6 +63,8 @@ def run(conn: sqlite3.Connection, *, prefixe: str | None = None,
     resultats[sans.name] = _ecrire(sans, store.iter_rows(conn, """
         SELECT e.*, (SELECT url FROM sites s WHERE s.siret = e.siret
                        ORDER BY s.confiance DESC LIMIT 1) AS site_web,
+               (SELECT telephone FROM telephones t WHERE t.siret = e.siret
+                  LIMIT 1) AS telephone,
                NULL AS email, NULL AS type_email, NULL AS score, NULL AS mx_ok,
                NULL AS source_email, NULL AS url_source, e.naf_libelle AS activite
         FROM etablissements e
@@ -87,8 +91,13 @@ def stats(conn: sqlite3.Connection) -> None:
           f" ({sites/max(etabs,1)*100:.1f} %)")
     print(f"  dont au moins un email        : {avec_email}"
           f" ({avec_email/max(etabs,1)*100:.1f} %)")
+    avec_tel = conn.execute("SELECT COUNT(DISTINCT siret) FROM telephones").fetchone()[0]
+    print(f"  dont au moins un téléphone    : {avec_tel}"
+          f" ({avec_tel/max(etabs,1)*100:.1f} %)")
     print(f"POI OpenStreetMap appariés      : {store.count(conn, 'osm_pois')}")
+    print(f"Fiches d'annuaires scrapées     : {store.count(conn, 'annuaire_fiches')}")
     print(f"Emails en base                  : {store.count(conn, 'emails')}")
+    print(f"Téléphones en base              : {store.count(conn, 'telephones')}")
     for r in conn.execute("SELECT type_email, COUNT(*) n FROM emails "
                           "GROUP BY type_email ORDER BY n DESC"):
         print(f"  {r['type_email'] or 'non classé':16s}            : {r['n']}")

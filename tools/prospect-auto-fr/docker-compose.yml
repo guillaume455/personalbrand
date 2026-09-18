@@ -1,0 +1,21 @@
+# SearXNG auto-hébergé : moteur de recherche méta, gratuit, sans clé, sans quota.
+# C'est le complément le plus efficace de l'index de domaines pour retrouver
+# les sites des entreprises dont le nom ne se déduit pas.
+#
+#   docker compose up -d
+#   python -m prospect resolve --searx http://localhost:8080
+#
+# Reste poli : le pipeline espace déjà ses requêtes, mais SearXNG interroge de
+# vrais moteurs derrière — inutile de lancer 50 workers.
+services:
+  searxng:
+    image: searxng/searxng:latest
+    container_name: prospect-searxng
+    ports:
+      - "8080:8080"
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8080/
+      - SEARXNG_SECRET=change-moi
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    restart: unless-stopped

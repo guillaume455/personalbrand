@@ -20,6 +20,13 @@ OBFUSC_RE = re.compile(
     r"([A-Za-z0-9\-]{2,}(?:\s*(?:\(|\[)?\s*(?:\.|dot|point)\s*(?:\)|\])?\s*[A-Za-z0-9\-]{2,}){1,3})",
     re.IGNORECASE,
 )
+# Téléphones FR : « 01 23 45 67 89 », « +33 1 23 45 67 89 », « 0123456789 ».
+# Les lookarounds évitent d'attraper un morceau de SIRET (14 chiffres) ou de prix.
+TEL_RE = re.compile(
+    r"(?<![\d])(?:(?:\+|00)\s?33\s?\(?0?\)?[\s.\-]?|0)"
+    r"[1-9](?:[\s.\-]?\d{2}){4}(?![\d])"
+)
+
 EXT_INTERDITES = (
     ".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".css", ".js", ".php",
     ".html", ".htm", ".json", ".xml", ".woff", ".woff2", ".ttf", ".ico", ".pdf",
@@ -130,3 +137,43 @@ def liens_contact(html_source: str, base_url: str, max_liens: int = 6) -> list[s
         if score:
             scores[url] = max(scores.get(url, 0), score)
     return [u for u, _ in sorted(scores.items(), key=lambda kv: -kv[1])[:max_liens]]
+
+
+def normaliser_tel(brut: str) -> str | None:
+    """Ramène un numéro français au format +33XXXXXXXXX."""
+    chiffres = re.sub(r"\D", "", brut)
+    if chiffres.startswith("0033"):
+        chiffres = chiffres[2:]
+    if chiffres.startswith("33"):
+        # « +33 (0)1 64 ... » laisse un 0 parasite entre l'indicatif et le numéro
+        reste = chiffres[2:]
+        if len(reste) == 10 and reste.startswith("0"):
+            reste = reste[1:]
+        if len(reste) != 9:
+            return None
+        chiffres = "0" + reste
+    if len(chiffres) != 10 or not chiffres.startswith("0") or chiffres[1] == "0":
+        return None
+    if len(set(chiffres[1:])) == 1:  # 0111111111 : jamais un vrai numéro
+        return None
+    return "+33" + chiffres[1:]
+
+
+def extraire_telephones(html_source: str) -> dict[str, str]:
+    """Renvoie {téléphone normalisé: méthode}. Utile pour les 70 % sans email."""
+    trouves: dict[str, str] = {}
+
+    def ajouter(brut: str, methode: str) -> None:
+        propre = normaliser_tel(brut)
+        if propre:
+            trouves.setdefault(propre, methode)
+
+    soup = BeautifulSoup(html_source, "html.parser")
+    for a in soup.find_all("a", href=True):
+        href = a["href"].strip().lower()
+        if href.startswith("tel:"):
+            ajouter(unquote(href[4:]), "tel")
+    texte = _html.unescape(soup.get_text(" ", strip=True))
+    for m in TEL_RE.finditer(texte):
+        ajouter(m.group(0), "texte")
+    return trouves

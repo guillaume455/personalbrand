@@ -71,6 +71,45 @@ CREATE TABLE IF NOT EXISTS emails (
 );
 CREATE INDEX IF NOT EXISTS idx_emails_email ON emails(email);
 
+CREATE TABLE IF NOT EXISTS telephones (
+    siret TEXT NOT NULL,
+    telephone TEXT NOT NULL,
+    source TEXT,
+    url_source TEXT,
+    trouve_le TEXT,
+    PRIMARY KEY (siret, telephone)
+);
+
+-- Index local de tous les domaines existants (AFNIC .fr ou Common Crawl).
+-- cle_plate = SLD sans tirets : « garage-dupre » et « garagedupre » partagent
+-- la même clé, donc une seule recherche couvre les deux orthographes.
+CREATE TABLE IF NOT EXISTS domaines (
+    domaine TEXT PRIMARY KEY,
+    sld TEXT,
+    cle_plate TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_domaines_plate ON domaines(cle_plate);
+
+CREATE TABLE IF NOT EXISTS domaine_token (
+    token TEXT NOT NULL,
+    domaine TEXT NOT NULL,
+    PRIMARY KEY (token, domaine)
+);
+CREATE INDEX IF NOT EXISTS idx_token ON domaine_token(token);
+
+CREATE TABLE IF NOT EXISTS annuaire_fiches (
+    cle TEXT PRIMARY KEY,
+    source TEXT,
+    nom TEXT,
+    commune TEXT,
+    code_postal TEXT,
+    telephone TEXT,
+    site_web TEXT,
+    email TEXT,
+    url_source TEXT,
+    vu_le TEXT
+);
+
 CREATE TABLE IF NOT EXISTS pages_vues (
     url TEXT PRIMARY KEY,
     statut TEXT,
@@ -111,6 +150,10 @@ def upsert_many(conn: sqlite3.Connection, table: str, rows: Iterable[dict[str, A
         "osm_pois": ["osm_key"],
         "sites": ["siret", "url"],
         "emails": ["siret", "email"],
+        "telephones": ["siret", "telephone"],
+        "domaines": ["domaine"],
+        "domaine_token": ["token", "domaine"],
+        "annuaire_fiches": ["cle"],
         "pages_vues": ["url"],
         "opposition": ["cle"],
         "meta": ["cle"],

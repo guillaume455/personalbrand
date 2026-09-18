@@ -11,7 +11,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from prospect import config, crawl, export, extract, match, net, osm, resolve, sirene, store, validate  # noqa: E402
+from prospect import (annuaire, config, crawl, domaines, export, extract, match, net,  # noqa: E402
+                      osm, resolve, sirene, store, validate)
 
 ETAB_HEADER = [
     "siren", "nic", "siret", "statutDiffusionEtablissement", "dateCreationEtablissement",
@@ -254,7 +255,7 @@ class TestCrawlEtValidation(unittest.TestCase):
         }
         crawl.net.get = lambda url, sess=None, **kw: (
             FausseReponse(url, pages[url]) if url in pages else None)
-        emails, journal = crawl.crawler_site("https://garage-dupre.fr", None)
+        emails, tels, journal = crawl.crawler_site("https://garage-dupre.fr", None)
         self.assertEqual(set(emails), {"contact@garage-dupre.fr"})
         self.assertEqual(emails["contact@garage-dupre.fr"][1],
                          "https://garage-dupre.fr/contact")
@@ -263,7 +264,7 @@ class TestCrawlEtValidation(unittest.TestCase):
     def test_crawl_respecte_le_plafond_de_pages(self):
         liens = "".join(f'<a href="/contact-{i}">contact {i}</a>' for i in range(20))
         crawl.net.get = lambda url, sess=None, **kw: FausseReponse(url, liens)
-        _, journal = crawl.crawler_site("https://gros-site.fr", None)
+        _, _, journal = crawl.crawler_site("https://gros-site.fr", None)
         self.assertLessEqual(len(journal), config.MAX_PAGES_PER_SITE)
 
     def test_classement_des_emails(self):
@@ -320,3 +321,147 @@ class TestExport(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestTelephones(unittest.TestCase):
+    def test_extraction_et_normalisation(self):
+        html = """<a href="tel:+33 1 23 45 67 89">appeler</a>
+        <p>Tél 06.12.34.56.78 — SIRET 12345678900012 — 12 000 € — fax 04-91-22-33-44
+        — bidon 01 11 11 11 11</p>"""
+        tels = extract.extraire_telephones(html)
+        self.assertEqual(set(tels), {"+33123456789", "+33612345678", "+33491223344"})
+        self.assertEqual(tels["+33123456789"], "tel")
+
+    def test_formats_acceptes_et_rejetes(self):
+        self.assertEqual(extract.normaliser_tel("0033 6 12 34 56 78"), "+33612345678")
+        self.assertEqual(extract.normaliser_tel("+33 (0)1 64 12 34 56"), "+33164123456")
+        for mauvais in ("00 12 34", "0012345678", "12345678900012", "0111111111"):
+            self.assertIsNone(extract.normaliser_tel(mauvais), mauvais)
+
+
+class TestIndexDomaines(unittest.TestCase):
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.conn = store.connect(self.tmp / "db.sqlite")
+
+    def test_normalisation_des_ecritures(self):
+        self.assertEqual(domaines.domaine_enregistrable("fr.exemple.www"), "exemple.fr")
+        self.assertEqual(domaines.domaine_enregistrable("www.Garage-Dupre.FR"),
+                         "garage-dupre.fr")
+        self.assertEqual(domaines.domaine_enregistrable("https://auto.fr/contact"), "auto.fr")
+        self.assertEqual(domaines.domaine_enregistrable("fr.gouv.insee"), "insee.gouv.fr")
+        self.assertIsNone(domaines.domaine_enregistrable("pas un domaine"))
+
+    def test_lecture_format_afnic_csv(self):
+        fichier = self.tmp / "afnic.csv"
+        fichier.write_text(
+            "Nom de domaine;Date de création;Titulaire\n"
+            "garage-dupre.fr;2024-03-01;DUPRE\n"
+            "autoprestige77.fr;2025-01-01;AP77\n"
+            "exemple.com;2020-01-01;HORS TLD\n", encoding="utf-8")
+        self.assertEqual(sorted(domaines.iter_domaines(fichier)),
+                         ["autoprestige77.fr", "garage-dupre.fr"])
+
+    def test_lecture_format_common_crawl(self):
+        fichier = self.tmp / "host-vertices.txt"
+        fichier.write_text("1\tfr.garage-dupre.www\n2\tfr.autoprestige77\n"
+                           "3\tcom.exemple.www\n", encoding="utf-8")
+        self.assertEqual(sorted(domaines.iter_domaines(fichier)),
+                         ["autoprestige77.fr", "garage-dupre.fr"])
+
+    def test_lecture_texte_brut(self):
+        fichier = self.tmp / "liste.txt"
+        fichier.write_text("garage-dupre.fr\nautoprestige77.fr\n", encoding="utf-8")
+        self.assertEqual(sorted(domaines.iter_domaines(fichier)),
+                         ["autoprestige77.fr", "garage-dupre.fr"])
+
+    def _index(self):
+        fichier = self.tmp / "liste.txt"
+        fichier.write_text("\n".join([
+            "garagedupre.fr",            # concaténé : doit matcher « GARAGE DUPRE »
+            "dupre-automobiles.fr",      # token distinctif + mot métier
+            "autoprestige77.fr",
+            "boulangerie-martin.fr",     # bruit
+            "auto.fr",                   # trop générique
+        ]) + "\n", encoding="utf-8")
+        domaines.construire(self.conn, fichier)
+
+    def test_candidats_exacts_et_flous(self):
+        self._index()
+        self.assertTrue(domaines.index_disponible(self.conn))
+        trouves = dict(domaines.candidats(self.conn, ["SARL GARAGE DUPRE"], "Melun"))
+        # correspondance exacte insensible aux tirets, indice maximal
+        self.assertEqual(trouves.get("garagedupre.fr"), 6)
+        # correspondance floue sur le token distinctif « dupre »
+        self.assertIn("dupre-automobiles.fr", trouves)
+        self.assertNotIn("boulangerie-martin.fr", trouves)
+
+    def test_candidats_pour_nom_chiffre(self):
+        self._index()
+        trouves = dict(domaines.candidats(self.conn, ["AUTO PRESTIGE 77"]))
+        self.assertIn("autoprestige77.fr", trouves)
+
+    def test_nom_sans_correspondance_ne_renvoie_rien(self):
+        self._index()
+        self.assertEqual(domaines.candidats(self.conn, ["JEAN DUPONT"]), [])
+
+
+class TestAnnuaireGenerique(unittest.TestCase):
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.conn = store.connect(self.tmp / "db.sqlite")
+        self.cfg = dict(annuaire.GABARIT, nom="test-annuaire",
+                        selecteurs={"nom": "h1", "commune": ".ville",
+                                    "code_postal": ".cp", "telephone": "a[href^='tel:']",
+                                    "site_web": "a.site-web",
+                                    "email": "a[href^='mailto:']"})
+
+    def test_pagination(self):
+        cfg = dict(self.cfg, pages=["https://x.fr/a?p={page}"],
+                   pagination={"debut": 2, "fin": 6, "pas": 2})
+        self.assertEqual(annuaire.urls_de_liste(cfg),
+                         ["https://x.fr/a?p=2", "https://x.fr/a?p=4", "https://x.fr/a?p=6"])
+
+    def test_extraction_par_selecteurs(self):
+        html = """<div><h1>Garage Dupré</h1><span class="ville">Melun</span>
+        <span class="cp">77000</span><a class="site-web" href="https://garage-dupre.fr">s</a>
+        <a href="tel:01 64 12 34 56">t</a><a href="mailto:contact@garage-dupre.fr">m</a></div>"""
+        fiche = annuaire.extraire_fiche(html, "https://annuaire.fr/f/1", self.cfg)
+        self.assertEqual(fiche["nom"], "Garage Dupré")
+        self.assertEqual(fiche["commune"], "Melun")
+        self.assertEqual(fiche["code_postal"], "77000")
+        self.assertEqual(fiche["telephone"], "+33164123456")
+        self.assertEqual(fiche["email"], "contact@garage-dupre.fr")
+        self.assertEqual(fiche["site_web"], "https://garage-dupre.fr")
+
+    def test_secours_extraction_generique_sans_selecteur(self):
+        cfg = dict(self.cfg, selecteurs={"nom": "h1"})
+        html = "<h1>Garage Dupré</h1><p>contact@garage-dupre.fr — 01 64 12 34 56</p>"
+        fiche = annuaire.extraire_fiche(html, "https://annuaire.fr/f/2", cfg)
+        self.assertEqual(fiche["email"], "contact@garage-dupre.fr")
+        self.assertEqual(fiche["telephone"], "+33164123456")
+
+    def test_fiche_sans_contact_ignoree(self):
+        self.assertIsNone(annuaire.extraire_fiche(
+            "<h1>Garage Sans Contact</h1>", "https://annuaire.fr/f/3", self.cfg))
+
+    def test_appariement_alimente_sites_emails_telephones(self):
+        store.upsert_many(self.conn, "etablissements", [
+            {"siret": "1" * 14, "siren": "111111111", "raison_sociale": "GARAGE DUPRE",
+             "code_postal": "77000", "commune": "MELUN"}])
+        store.upsert_many(self.conn, "annuaire_fiches", [{
+            "cle": "test|garage dupre|77000", "source": "test-annuaire",
+            "nom": "Garage Dupré", "commune": "Melun", "code_postal": "77000",
+            "telephone": "+33164123456", "site_web": "https://garage-dupre.fr",
+            "email": "contact@garage-dupre.fr", "url_source": "https://annuaire.fr/f/1"}])
+        self.assertEqual(annuaire.apparier(self.conn), 1)
+        self.assertEqual(store.count(self.conn, "emails"), 1)
+        self.assertEqual(store.count(self.conn, "telephones"), 1)
+        site = self.conn.execute("SELECT * FROM sites").fetchone()
+        self.assertEqual(site["source"], "annuaire:test-annuaire:nom_cp")
+
+    def test_config_incomplete_refusee(self):
+        chemin = self.tmp / "cfg.json"
+        chemin.write_text('{"nom": "x"}', encoding="utf-8")
+        with self.assertRaises(SystemExit):
+            annuaire.charger_config(chemin)

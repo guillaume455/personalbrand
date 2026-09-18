@@ -13,9 +13,11 @@ from datetime import datetime, timezone
 from . import config, extract, net, store
 
 
-def crawler_site(url_racine: str, sess) -> tuple[dict[str, tuple[str, str]], list[dict]]:
-    """Renvoie ({email: (méthode, url)}, journal des pages vues)."""
+def crawler_site(url_racine: str, sess) -> tuple[dict[str, tuple[str, str]],
+                                                 dict[str, tuple[str, str]], list[dict]]:
+    """Renvoie ({email: (méthode, url)}, {téléphone: (méthode, url)}, journal)."""
     vus: dict[str, tuple[str, str]] = {}
+    tels: dict[str, tuple[str, str]] = {}
     journal: list[dict] = []
     maintenant = datetime.now(timezone.utc).isoformat(timespec="seconds")
     a_visiter = [url_racine]
@@ -35,12 +37,14 @@ def crawler_site(url_racine: str, sess) -> tuple[dict[str, tuple[str, str]], lis
         html_source = resp.text
         for email, methode in extract.extraire(html_source, resp.url).items():
             vus.setdefault(email, (methode, resp.url))
+        for tel, methode in extract.extraire_telephones(html_source).items():
+            tels.setdefault(tel, (methode, resp.url))
         if len(visites) == 1:  # on ne suit les liens que depuis la racine
             for lien in extract.liens_contact(html_source, resp.url,
                                               config.MAX_PAGES_PER_SITE - 1):
                 if lien not in visites:
                     a_visiter.append(lien)
-    return vus, journal
+    return vus, tels, journal
 
 
 def run(conn: sqlite3.Connection, *, limite: int | None = None,
@@ -64,6 +68,7 @@ def run(conn: sqlite3.Connection, *, limite: int | None = None,
     sess = net.session()
     maintenant = datetime.now(timezone.utc).isoformat(timespec="seconds")
     emails: list[dict] = []
+    telephones: list[dict] = []
     pages: list[dict] = []
     sites_avec_email = 0
     with futures.ThreadPoolExecutor(max_workers=workers or config.CRAWL_WORKERS) as pool:
@@ -71,13 +76,19 @@ def run(conn: sqlite3.Connection, *, limite: int | None = None,
         for i, tache in enumerate(futures.as_completed(taches), 1):
             cible = taches[tache]
             try:
-                trouves, journal = tache.result()
+                trouves, tels_trouves, journal = tache.result()
             except Exception as exc:
                 print(f"  {cible['domaine']} : {type(exc).__name__}")
                 continue
             pages += journal
             if trouves:
                 sites_avec_email += 1
+            for tel, (methode, url_source) in tels_trouves.items():
+                telephones.append({
+                    "siret": cible["siret"], "telephone": tel,
+                    "source": f"site:{methode}", "url_source": url_source,
+                    "trouve_le": maintenant,
+                })
             for email, (methode, url_source) in trouves.items():
                 emails.append({
                     "siret": cible["siret"], "email": email,
@@ -87,14 +98,17 @@ def run(conn: sqlite3.Connection, *, limite: int | None = None,
                 })
             if len(emails) >= 200 or len(pages) >= 500:
                 store.upsert_many(conn, "emails", emails)
+                store.upsert_many(conn, "telephones", telephones)
                 store.upsert_many(conn, "pages_vues", pages)
-                emails, pages = [], []
+                emails, telephones, pages = [], [], []
             if i % 25 == 0:
                 print(f"  {i}/{len(cibles)} sites, {sites_avec_email} avec email",
                       end="\r", flush=True)
     store.upsert_many(conn, "emails", emails)
+    store.upsert_many(conn, "telephones", telephones)
     store.upsert_many(conn, "pages_vues", pages)
     total = store.count(conn, "emails")
     print(f"Crawl terminé : {sites_avec_email}/{len(cibles)} sites ont livré un email. "
-          f"{total} emails en base." + " " * 10)
+          f"{total} emails et {store.count(conn, 'telephones')} téléphones en base."
+          + " " * 10)
     return sites_avec_email

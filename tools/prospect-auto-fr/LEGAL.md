@@ -56,14 +56,55 @@ sociale *est* leur nom, leur email est souvent personnel. La colonne
 
 **Bloctel** ne concerne que le téléphone, pas l'email.
 
-## 4. Ce que le code ne fait pas, volontairement
+## 4. Scraper : où est réellement le risque
 
-- **Pas de scraping des marketplaces** (LaCentrale, LeBonCoin, AutoScout24…).
-  Leurs CGU l'interdisent et leurs annonces ne sont pas de l'open data. C'est le
-  gisement le plus dense de marchands actifs, mais il se travaille autrement :
-  compte pro, partenariat, ou récupération manuelle.
+Le scraping n'est pas illégal en soi en France, et ce projet en fait — il crawle
+les sites des entreprises. Trois fondements distincts sont à connaître, parce
+qu'ils ne se déclenchent pas dans les mêmes conditions.
+
+**Droit sui generis du producteur de base de données** (art. L341-1 et s. CPI).
+C'est le fondement de l'arrêt le plus cité : *Leboncoin c/ Entreparticuliers*,
+Cour d'appel de Paris, 18 février 2021, 50 000 € de dommages-intérêts. Ce qui a
+été sanctionné : l'extraction **systématique d'une partie substantielle** de la
+base d'annonces, **réutilisée dans un service concurrent** — donc aussi du
+parasitisme économique et de la concurrence déloyale. Le critère est l'ampleur
+et l'usage, pas le fait de scraper. Extraire les coordonnées de quelques
+milliers de professionnels pour ta propre prospection, sans republier la base
+ni concurrencer la source, est très loin de ces faits — ce n'est pas pour
+autant une autorisation, et ça reste une appréciation au cas par cas.
+
+**Conditions d'utilisation.** La plupart des marketplaces interdisent
+contractuellement l'extraction automatisée. Le risque est alors contractuel
+(blocage, mise en demeure), et c'est le plus probable en pratique.
+
+**Accès et maintien dans un système** (art. 323-1 du code pénal). Contourner une
+protection technique — captcha, authentification, blocage d'IP — change la
+nature du problème. L'affaire *Bluetouff* (Cass. crim. 2014) a montré qu'un
+contenu accessible publiquement ne vaut pas autorisation de le collecter quand
+il existait une notion d'accès restreint.
+
+**Et surtout le RGPD**, qui s'applique quelle que soit la licéité de la
+collecte : la CNIL considère que des données publiquement accessibles ne peuvent
+pas être moissonnées et réutilisées en prospection sans information des
+personnes concernées. C'est la section 3 de ce document, et c'est le risque le
+plus concret pour un usage comme le tien.
+
+**Conséquence pratique pour ce projet.** Le scraper d'annuaires
+(`prospect annuaire`) est générique : tu décris la cible, il moissonne. Aucune
+marketplace n'est préconfigurée, pour deux raisons — leurs listings n'exposent
+en général pas les emails (contact par formulaire : tu récupères des téléphones
+et des sites, pas des adresses), et ce sont précisément les bases où le droit
+sui generis a déjà mordu. Si tu choisis d'en cibler une, relis ses CGU, reste
+sur une extraction ciblée, ne republie rien, et garde le délai par défaut.
+
+## 5. Ce que le code ne fait pas
+
+- **Pas de contournement d'anti-bot** : ni résolution de captcha, ni rotation de
+  proxys ou d'empreintes pour échapper à un blocage. Au-delà du terrain
+  juridique (art. 323-1), ça ne tient pas dans le temps : un scraper qui se bat
+  contre une protection casse à chaque mise à jour du site.
 - **Pas de vérification SMTP** (`RCPT TO`). Techniquement gratuit, mais ça brûle
   la réputation de l'IP et fait plus de faux négatifs que de vrais. Un vérifieur
   payant le fait mieux — voir la section « et ensuite » du README.
 - **Pas de contournement d'obfuscation autre que celle de Cloudflare**, qui est
-  un simple XOR public et non une mesure de protection.
+  un simple XOR public documenté, et non une mesure de protection.

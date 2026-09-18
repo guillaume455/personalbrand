@@ -1,0 +1,24 @@
+{
+  "nom": "exemple-annuaire",
+  "pages": [
+    "https://exemple.fr/annuaire/garages?page={page}"
+  ],
+  "pagination": {
+    "debut": 1,
+    "fin": 10,
+    "pas": 1
+  },
+  "cartes": null,
+  "lien_fiche": "a.fiche-link",
+  "selecteurs": {
+    "nom": "h1.titre",
+    "commune": ".adresse .ville",
+    "code_postal": ".adresse .cp",
+    "telephone": "a[href^='tel:']",
+    "site_web": "a.site-web",
+    "email": "a[href^='mailto:']"
+  },
+  "delai": 3.0,
+  "respecter_robots": true,
+  "max_fiches": 2000
+}
