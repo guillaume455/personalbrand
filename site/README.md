@@ -55,20 +55,17 @@ cohérents si l'accent change.
 
 ## Avant la mise en ligne
 
-`mentions-legales.html` et `mentions-legales-en.html` contiennent sept champs
-encadrés en orange (classe `.a-remplir`) :
+Les informations de l'éditeur (RB1 PARTICIPATIONS SAS), du siège, du SIREN /
+SIRET et de l'hébergeur (OVH) sont renseignées. **Deux champs restent encadrés
+en orange** dans `mentions-legales.html` et `mentions-legales-en.html` :
 
-1. forme juridique de l'éditeur
-2. adresse postale du siège
-3. numéro SIREN ou SIRET
-4. nom de l'hébergeur du site
-5. adresse postale de l'hébergeur
-6. transfert des données hors UE, à confirmer auprès de FormSubmit
-7. durée de conservation des messages
+1. le montant du **capital social**
+2. la **ville d'immatriculation au RCS** (probablement Orléans, pour un siège
+   dans le Loiret — à confirmer sur l'extrait Kbis)
 
-Les cinq premiers sont obligatoires au titre de l'article 6 de la LCEN, les deux
-derniers au titre de l'article 13 du RGPD. Une fois renseignés, supprimer aussi
-le paragraphe `.rappel` en haut de chaque page.
+Pour une SAS, l'article R.123-237 du code de commerce les rend obligatoires sur
+tout document destiné aux tiers, site internet compris. Une fois renseignés,
+supprimer le paragraphe `.rappel` en haut de chaque page.
 
 Vérifier également que `contact@guillaumeherbin.fr` est bien confirmée côté
 [FormSubmit](https://formsubmit.co) : sans cette validation, le formulaire
@@ -81,11 +78,15 @@ La navigation ne dépose **aucun cookie**, n'écrit **rien** dans le navigateur
 tiers** — police comprise, puisqu'elle est auto-hébergée. Aucun bandeau de
 consentement n'est donc nécessaire.
 
-Le seul traitement de données est le formulaire de contact. FormSubmit y est un
-sous-traitant au sens de l'article 28 du RGPD : cela suppose un contrat de
-sous-traitance, et la question du transfert hors UE reste à trancher (champ 6
-ci-dessus). Une alternative hébergée dans l'UE, ou l'envoi direct par `mailto:`,
-supprimerait entièrement le sujet.
+Le seul traitement de données est le formulaire de contact. La section
+« Données personnelles » déclare le responsable de traitement, la finalité, la
+base légale, les destinataires, la durée de conservation (trois ans) et les
+droits des personnes, et le formulaire renvoie vers elle au moment de la
+collecte.
+
+FormSubmit y est un sous-traitant au sens de l'article 28 du RGPD. La mention
+d'un éventuel transfert hors UE a été volontairement écartée, sur décision de
+l'éditeur. Basculer vers un prestataire hébergé dans l'UE fermerait ce point.
 
 ## Choix techniques, et pourquoi
 
