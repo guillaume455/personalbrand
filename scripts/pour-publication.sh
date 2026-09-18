@@ -15,6 +15,14 @@ CIBLE_MO=${CIBLE_MO:-28}
 for SRC in "$@"; do
   OUT="${SRC%.*}-web.mp4"
   DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$SRC")
+  # Viser une taille n'a de sens qu'au-dessus de cette taille : sur un clip
+  # court, le calcul demanderait un débit supérieur à celui de la source et
+  # gonflerait le fichier sans rien y ajouter.
+  MO=$(awk -v o="$(stat -c%s "$SRC")" 'BEGIN{printf "%.1f", o/1048576}')
+  if awk -v a="$MO" -v b="$CIBLE_MO" 'BEGIN{exit !(a<=b)}'; then
+    echo "== $(basename "$SRC") — ${MO} Mo, déjà sous la cible : laissé tel quel"
+    continue
+  fi
   VB=$(awk -v m="$CIBLE_MO" -v d="$DUR" 'BEGIN{printf "%d", (m*8192)/d - 192}')
   echo "== $(basename "$SRC") — ${DUR}s -> ${VB} kb/s"
   ffmpeg -y -v error -i "$SRC" -c:v "$V_CODEC" -b:v "${VB}k" -preset "$V_PRESET" \
