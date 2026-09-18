@@ -239,6 +239,23 @@ charge.
 Sources à citer dans tes mentions : Sirene / INSEE (Licence Ouverte v2.0) et
 © les contributeurs OpenStreetMap (ODbL).
 
+## Windows
+
+Pas de `make`, et la commande s'appelle `python` (pas `python3`) :
+
+```powershell
+cd C:\Users\<toi>\prospect-auto-fr
+python -m venv .venv
+.venv\Scripts\Activate.ps1          # si PowerShell refuse :
+                                     # Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+pip install -r requirements.txt
+$env:PROSPECT_CONTACT_EMAIL = "ton@email.fr"
+python -m prospect selfcheck
+```
+
+Les sorties console sont forcées en UTF-8 par le programme lui-même, donc les
+accents s'affichent même dans une console en cp850.
+
 ## Développement
 
 ```bash

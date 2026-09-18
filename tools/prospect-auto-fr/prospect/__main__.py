@@ -1,7 +1,15 @@
 import os
 import sys
 
-from .cli import main
+# La console Windows n'est pas en UTF-8 par défaut : sans ça, un simple tiret
+# long ou un accent dans un message fait planter le programme (UnicodeEncodeError).
+for flux in (sys.stdout, sys.stderr):
+    try:
+        flux.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, OSError, ValueError):
+        pass
+
+from .cli import main  # noqa: E402  (après la reconfiguration des flux)
 
 try:
     sys.exit(main())
