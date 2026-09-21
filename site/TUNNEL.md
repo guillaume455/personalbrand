@@ -206,8 +206,9 @@ témoins (§11), et remplacer les mentions « année à préciser ».
 
 - **Vidéo de 60 s** présentant le diagnostic — obligatoire pour le lancement
 - **Photo d'archive 2010 ou Kbis flouté** — Drive « 02 Origine »
-- **Aperçu du dossier « Plan de lancement »** — remplacer par un vrai dossier
-  anonymisé dès le premier diagnostic test
+- **Aperçu du dossier « Plan de lancement »** — brief complet prêt à
+  transmettre dans [`BRIEF-APERCU-DOSSIER.md`](BRIEF-APERCU-DOSSIER.md).
+  À remplacer par un vrai dossier anonymisé dès le premier diagnostic test
 - **PDF du calcul de marge** — à décliner depuis le carrousel existant
 - **Années d'accompagnement** d'Aurélien, Pierre et Thomas
 - **Accords écrits** des quatre témoins
@@ -218,6 +219,28 @@ témoins (§11), et remplacer les mentions « année à préciser ».
 
 Les emplacements manquants apparaissent en encadré orange sur les pages : ils
 sont impossibles à rater, et ils disparaîtront quand `preprod` passera à `false`.
+
+## Intégrer un visuel reçu
+
+Déposer le fichier dans `assets/img/tunnel/`, puis remplacer le bloc
+`<div class="a-fournir">` correspondant par :
+
+```html
+<div class="media" style="margin-top:26px">
+  <picture>
+    <source srcset="../assets/img/tunnel/NOM.webp" type="image/webp">
+    <img src="../assets/img/tunnel/NOM.jpg" width="1600" height="1067"
+         alt="DESCRIPTION" loading="lazy" decoding="async">
+  </picture>
+</div>
+```
+
+Les attributs `width` et `height` sont obligatoires : sans eux la page saute
+pendant le chargement et le score de stabilité visuelle tombe. Le chemin est
+en `../` depuis `/accompagnement/`, en `../../` depuis une sous-page.
+
+`.media img` impose un rapport 4/5 : pour un visuel paysage, ajouter
+`style="aspect-ratio:3/2"` sur la balise `img`.
 
 ## Recette (annexe B)
 
