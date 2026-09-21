@@ -1,15 +1,21 @@
 User-agent: *
 Allow: /
 
-# Étapes internes du parcours : sans intérêt pour un moteur, et elles ne veulent
-# pas être trouvées hors parcours. Elles portent aussi une balise noindex.
-Disallow: /accompagnement/candidature/
-Disallow: /accompagnement/merci/
-Disallow: /accompagnement/reservation/
-Disallow: /accompagnement/confirmation/
-Disallow: /calcul-marge/merci/
-
-# Page hébergée mais volontairement non reliée et non indexée.
-Disallow: /temoignages/
-
 Sitemap: https://guillaumeherbin.fr/sitemap.xml
+
+# Pourquoi aucune ligne « Disallow » ici, alors que le parcours
+# /accompagnement ne doit pas être référencé :
+#
+# 1. Bloquer le crawl empêche Google de LIRE la balise noindex de la page.
+#    Si quelqu'un poste l'adresse quelque part, Google indexe alors l'URL
+#    seule, sans titre ni description — exactement l'inverse du but. Pour
+#    qu'une page soit réellement exclue, le robot doit pouvoir la charger et
+#    y voir le noindex. C'est la recommandation de Google elle-même.
+#
+# 2. Le robot de Meta respecte robots.txt. Un Disallow supprimerait l'aperçu
+#    des liens partagés en story, en DM ou sur WhatsApp — or c'est par là que
+#    tout le trafic doit arriver.
+#
+# L'exclusion repose donc sur la balise noindex de chaque page, doublée par
+# un en-tête X-Robots-Tag posé par les fichiers .htaccess des dossiers
+# concernés. Voir site/TUNNEL.md, section « Référencement ».

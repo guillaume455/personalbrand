@@ -130,6 +130,64 @@ accepte, jetés s'il refuse.
 Les UTM de la première page vue sont conservés pour la session et joints à la
 candidature.
 
+## Référencement : le tunnel est hors des moteurs
+
+Jusqu'au lancement, **aucune page du tunnel n'est référençable** :
+`/accompagnement` et ses étapes, `/calcul-marge` et sa page de remerciement,
+`/cgv` et `/temoignages`. Seule `/confidentialite` reste indexable : elle
+couvre aussi le formulaire de contact du site vitrine et son pied de page y
+renvoie.
+
+Trois couches, plus une absence volontaire :
+
+1. **`<meta name="robots" content="noindex, nofollow">`** sur chaque page.
+2. **En-tête `X-Robots-Tag: noindex, nofollow`**, posé par un `.htaccess` dans
+   `accompagnement/`, `calcul-marge/`, `cgv/` et `temoignages/`. Les en-têtes
+   sont hérités par les sous-dossiers.
+3. **Sitemap** : aucune de ces pages n'y figure, et aucune page indexée ne
+   renvoie vers `/accompagnement` (le lien qui existait dans les mentions
+   légales a été retiré, le texte est resté).
+4. **Aucun `Disallow` dans `robots.txt`**, et c'est délibéré.
+
+### Pourquoi surtout pas de `Disallow`
+
+C'est contre-intuitif, donc autant l'écrire noir sur blanc.
+
+Un `Disallow` empêche le robot de **charger** la page. Il ne peut donc pas y
+lire la balise `noindex`. Si quelqu'un poste l'adresse quelque part, Google
+indexe alors l'URL seule, sans titre ni description, avec la mention « aucune
+information disponible » — exactement l'inverse du but recherché. Pour qu'une
+page soit réellement exclue, le robot doit pouvoir la charger et y voir le
+`noindex`. C'est la recommandation de Google elle-même.
+
+Seconde raison, plus concrète : **le robot de Meta respecte `robots.txt`**. Un
+`Disallow` supprimerait l'aperçu des liens partagés en story, en DM ou sur
+WhatsApp. Or c'est précisément par là que doit arriver tout le trafic.
+
+### Vérifier une fois en ligne
+
+```
+curl -sI  https://guillaumeherbin.fr/accompagnement/ | grep -i x-robots-tag
+curl -s   https://guillaumeherbin.fr/accompagnement/ | grep -i 'name="robots"'
+```
+
+La première commande doit renvoyer `X-Robots-Tag: noindex, nofollow`. Si elle
+ne renvoie rien, c'est que `mod_headers` n'est pas actif sur l'hébergement :
+la balise HTML suffit alors, mais on perd la seconde couche.
+
+Dans la Search Console, ne **pas** soumettre ces URL à l'indexation, et ne pas
+s'inquiéter de les voir signalées « Exclue par la balise noindex » : c'est le
+résultat attendu.
+
+### Activer le référencement au lancement
+
+1. retirer `noindex=True` des pages concernées et régénérer, ou remplacer la
+   balise par `index, follow` à la main
+2. supprimer les fichiers `.htaccess` des dossiers concernés
+3. ajouter les URL au `sitemap.xml`
+4. rétablir les liens internes voulus
+5. demander l'indexation dans la Search Console
+
 ## Activer `/temoignages`
 
 La page est en ligne mais volontairement invisible : `noindex, nofollow`,
