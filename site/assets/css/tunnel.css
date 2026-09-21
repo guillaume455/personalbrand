@@ -176,7 +176,7 @@ body[data-barre-basse="actif"]{padding-bottom:78px}
 /* ---------- Accroche ---------- */
 .accroche{padding-block:clamp(30px,6vw,52px) clamp(34px,6vw,56px)}
 .accroche h1{margin-bottom:18px}
-.accroche-sous{font-size:1.08rem;color:var(--ink-2);max-width:34ch}
+.accroche-sous{font-size:1.08rem;color:var(--ink-2);max-width:46ch;line-height:1.65}
 .accroche-prix{
   display:inline-flex;align-items:baseline;gap:8px;margin-top:18px;
   font-size:1.9rem;font-weight:800;letter-spacing:-.03em;
@@ -499,11 +499,14 @@ html:not(.js-anim) [data-reveal]{opacity:1;transform:none}
 .cartes{display:grid;gap:clamp(14px,2vw,20px);align-items:stretch}
 .cartes-3{grid-template-columns:repeat(3,1fr)}
 .cartes-2{grid-template-columns:repeat(2,1fr)}
-/* Cinq cartes : trois en haut, deux plus larges centrées en dessous. */
+/* Cinq cartes : trois en haut, deux plus larges en dessous.
+   Les deux cartes du bas prennent trois colonnes chacune et couvrent donc
+   toute la largeur. Leur donner deux colonnes les collait à droite au lieu
+   de les centrer, et elles n'étaient pas plus larges que celles du haut. */
 .cartes-5{grid-template-columns:repeat(6,1fr)}
 .cartes-5 > *{grid-column:span 2}
-.cartes-5 > *:nth-child(4){grid-column:3 / span 2}
-.cartes-5 > *:nth-child(5){grid-column:5 / span 2}
+.cartes-5 > *:nth-child(4){grid-column:1 / span 3}
+.cartes-5 > *:nth-child(5){grid-column:4 / span 3}
 @media (max-width:900px){
   .cartes-3,.cartes-5{grid-template-columns:1fr 1fr}
   .cartes-5 > *,.cartes-5 > *:nth-child(4),.cartes-5 > *:nth-child(5){grid-column:auto}
@@ -557,7 +560,7 @@ html:not(.js-anim) [data-reveal]{opacity:1;transform:none}
 /* Chapeau centré au-dessus d'une grille de cartes. */
 .chapo-centre{
   max-width:56ch;margin:0 auto clamp(26px,4vw,36px);
-  text-align:center;font-size:1.06rem;color:var(--ink-2);line-height:1.6;
+  text-align:center;font-size:1.06rem;color:var(--ink-2);line-height:1.75;
 }
 .titre-centre{text-align:center}
 
@@ -565,7 +568,7 @@ html:not(.js-anim) [data-reveal]{opacity:1;transform:none}
 .conclusion{
   max-width:60ch;margin:clamp(28px,4vw,40px) auto 0;text-align:center;
 }
-.conclusion p{color:var(--ink-2)}
+.conclusion p{color:var(--ink-2);line-height:1.75}
 .conclusion .pointe{
   margin-top:.8em;font-size:clamp(1.12rem,2.6vw,1.32rem);
   font-weight:800;letter-spacing:-.018em;color:var(--ink);
