@@ -63,16 +63,26 @@ Table `candidatures`, une colonne par champ :
 
 ```
 horodatage · tunnel · avancement · capital · temps · delai · question
-prenom · nom · email · telephone · zone · consentement
-statut · statut_reservation
+prenom · nom · email · telephone · zone · consentement · marketing
+statut_lead · statut_suggere
 utm_source · utm_medium · utm_campaign · utm_content · page
 ```
 
 `tunnel` vaut `lancement` et existe dès la première candidature : le second
-tunnel « marchands » (§13) n'imposera pas de migration.
+tunnel « marchands » n'imposera pas de migration.
 
-`statut` vaut `qualifie` ou `a_revoir`, jamais autre chose. **« Non qualifié »
-n'est jamais calculé** : il résulte de ta seule lecture de la question libre.
+`statut_lead` suit le cycle de vie imposé par le §33 du cahier V2 :
+`started`, `completed`, `approved`, `rejected`, `checkout_started`, `paid`,
+`booked`, `diagnostic_completed`, plus éventuellement `no_show`, `refunded`
+et `nurture`. La page n'écrit que `completed` ; tous les autres sont posés
+par le backend.
+
+`statut_suggere` vaut `qualifie` ou `a_revoir`. C'est une **aide au tri**,
+pas une décision. « Non qualifié » n'est jamais calculé.
+
+`marketing` est le consentement facultatif du §50, distinct de celui qui
+autorise le traitement de la candidature. Ne jamais confondre les deux :
+remplir le questionnaire n'autorise pas la prospection.
 
 Table `inscriptions` pour le calcul de marge : `horodatage · email ·
 consentement · source · tunnel · page · utm`.
@@ -105,6 +115,21 @@ Cal.com de préférence, Calendly en repli. Réglages imposés par le §6 :
 - rappels automatiques à 24 h et 1 h
 - redirection après paiement vers `/accompagnement/confirmation/`
 
+### Ordre imposé : validation, puis paiement, puis agenda
+
+Le §34 du cahier V2 impose cet ordre, et le §37 interdit d'exposer l'agenda
+depuis la landing. Trois pages, trois rôles :
+
+- `/accompagnement/merci/` annonce la réception de la candidature ;
+- `/accompagnement/reservation/` porte la case de renoncement et le
+  **paiement Stripe**, rien d'autre ;
+- `/accompagnement/confirmation/` porte le **calendrier**, et n'est atteinte
+  que par la redirection de succès de Stripe.
+
+D'où deux champs distincts dans `config.js` : `reservation.checkoutStripe`
+pour le lien de paiement, `reservation.url` pour le calendrier. Ne jamais
+mettre le calendrier ailleurs que sur la page de confirmation.
+
 ### La case de renoncement
 
 Le §6 demandait de vérifier en semaine 1 si Cal.com peut rendre obligatoire la
@@ -123,9 +148,14 @@ cookie, aucun appel réseau — c'est vérifié par les tests. Les événements
 déclenchés avant la décision sont mis en attente et rejoués si le visiteur
 accepte, jetés s'il refuse.
 
-Événements émis : `page_view`, `cta_click` (avec la position du bouton),
-`form_start`, `form_submit` (avec le statut), `booking_page_view`,
-`purchase` (490 EUR), `lead_magnet_submit`.
+Événements émis, conformes au §40 : `landing_view`, `page_view`,
+`cta_click` (avec la position du bouton), `application_start`,
+`contact_submitted`, `question_1_completed` à `question_5_completed`,
+`application_complete`, `checkout_start`, `purchase` (490 EUR),
+`booking_page_view`, `lead_magnet_signup`.
+
+`lead_approved` et `lead_rejected` relèvent de ta décision manuelle : ils
+sont posés par le backend, pas par la page.
 
 Les UTM de la première page vue sont conservés pour la session et joints à la
 candidature.

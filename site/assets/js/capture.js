@@ -70,7 +70,7 @@
       }
 
       envoi.then(function () {
-        mesure.envoyer('lead_magnet_submit', { tunnel: donnees.tunnel });
+        mesure.envoyer('lead_magnet_signup', { tunnel: donnees.tunnel });
         if (form.dataset.merci) { location.href = form.dataset.merci; return; }
         form.reset();
         bouton.disabled = false;

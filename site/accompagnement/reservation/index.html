@@ -45,16 +45,16 @@
 
 <section class="bloc" data-reservation>
   <div class="lire">
-    <h1 style="font-size:clamp(1.5rem,5.2vw,2.1rem);margin-bottom:10px">Ton créneau</h1>
-    <p class="chapo">1h30 en visio, 490&nbsp;€ TTC réglés à la réservation. Le créneau n'est
-       bloqué qu'une fois le paiement passé.</p>
+    <h1 style="font-size:clamp(1.5rem,5.2vw,2.1rem);margin-bottom:10px">Ton diagnostic</h1>
+    <p class="chapo">490&nbsp;€ TTC. Une fois le paiement abouti, tu choisis ton créneau
+       directement sur le calendrier.</p>
 
     <div class="encart encart-info" style="margin-top:26px" data-avant-accord>
-      <h2 style="font-size:1.1rem">Avant de choisir ton créneau</h2>
+      <h2 style="font-size:1.1rem">Avant de régler</h2>
       <p>La prestation est une séance individuelle programmée à une date convenue. La loi te
          donne 14 jours de rétractation&nbsp;; si ta séance a lieu avant la fin de ce délai,
          il faut que tu renonces expressément à ce droit pour que je puisse la tenir. C'est le
-         sens de la case ci-dessous, et tu peux la retrouver en détail dans les
+         sens de la case ci-dessous, détaillée dans les
          <a href="../../cgv/">conditions générales de vente</a>.</p>
       <div class="consent" style="margin-top:18px">
         <input type="checkbox" id="renoncement" data-renoncement required>
@@ -62,26 +62,27 @@
           délai de 14 jours et je renonce expressément à mon droit de rétractation</strong>
           pour cette prestation, une fois qu'elle aura été pleinement exécutée.</label>
       </div>
-      <p class="capture-note" style="margin-top:14px">Le module de réservation s'affiche dès
-         que cette case est cochée.</p>
+      <p class="capture-note" style="margin-top:14px">Le bouton de paiement apparaît dès que
+         cette case est cochée.</p>
     </div>
 
     <div data-module hidden style="margin-top:26px">
+      <a class="cta" data-vers-paiement hidden href="#">Régler 490&nbsp;€ TTC</a>
+      <p class="micro" style="text-align:center">Paiement par carte via Stripe. Tes
+         coordonnées bancaires ne transitent jamais par ce site.</p>
       <div class="a-fournir" data-demo hidden>
-        <b>Module de réservation non branché</b>
-        Renseigner <code>reservation.fournisseur</code> et <code>reservation.url</code> dans
-        <code>/assets/js/config.js</code>. L'événement Cal.com doit être réglé sur&nbsp;:
-        90 minutes, Google Meet, Europe/Paris, 8 réservations par semaine au maximum,
-        48 heures de préavis, tampons de 30 minutes avant et après, paiement Stripe de
-        490&nbsp;€ TTC obligatoire, redirection vers
-        <code>/accompagnement/confirmation/</code> après paiement.
-        <div class="media-slot">Emplacement du module de réservation</div>
+        <b>Paiement non branché</b>
+        Renseigner <code>reservation.checkoutStripe</code> dans
+        <code>/assets/js/config.js</code>&nbsp;: lien de paiement Stripe de 490&nbsp;€ TTC,
+        dont l'adresse de succès doit pointer vers
+        <code>/accompagnement/confirmation/</code>. Le calendrier, lui, se règle dans
+        <code>reservation.url</code> et n'est affiché que sur cette page de confirmation.
       </div>
     </div>
 
     <p class="capture-note" style="margin-top:24px">
       Report possible jusqu'à 24 heures avant la séance. Si dans les 15 premières minutes je
-      vois que je ne peux rien t'apporter, on arrête et je te rembourse.</p>
+      considère que je ne peux pas réellement t'aider, j'arrête et je te rembourse.</p>
   </div>
 </section>
 

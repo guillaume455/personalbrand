@@ -55,18 +55,25 @@
         sessionStorage.setItem('gh-renoncement', new Date().toISOString());
       } catch (e) {}
 
+      // §34 : l'ordre est validation, puis paiement, puis agenda. Cette page
+      // n'expose donc que le paiement ; l'agenda vit sur la page d'après, que
+      // Stripe n'atteint qu'après un règlement abouti.
       var r = cfg.reservation || {};
-      if (!r.url) {
+      if (!r.checkoutStripe) {
         zone.querySelector('[data-demo]').hidden = false;
         return;
       }
-      var f = document.createElement('iframe');
-      f.src = r.url;
-      f.title = 'Choix du créneau et paiement';
-      f.loading = 'lazy';
-      f.style.cssText = 'width:100%;min-height:760px;border:0;border-radius:16px';
-      zone.insertBefore(f, zone.firstChild);
-      mesure.envoyer('booking_page_view', {});
+      var lien = zone.querySelector('[data-vers-paiement]');
+      if (lien) {
+        lien.href = r.checkoutStripe;
+        lien.hidden = false;
+        lien.addEventListener('click', function () {
+          mesure.envoyer('checkout_start', {
+            value: (cfg.offre || {}).prix || 490,
+            currency: (cfg.offre || {}).devise || 'EUR',
+          });
+        });
+      }
     };
 
     if (accord) {
@@ -78,9 +85,26 @@
   }
 
   /* ---------- /accompagnement/confirmation ------------------------------- */
+  // §37 : l'agenda n'est atteignable qu'ici, c'est-à-dire après paiement.
   var conf = document.querySelector('[data-confirmation]');
   if (conf) {
     var offre = cfg.offre || {};
+    var zoneAgenda = conf.querySelector('[data-agenda]');
+    if (zoneAgenda) {
+      var ra = cfg.reservation || {};
+      if (ra.url) {
+        var cal = document.createElement('iframe');
+        cal.src = ra.url;
+        cal.title = 'Choix de ton créneau';
+        cal.loading = 'lazy';
+        cal.style.cssText = 'width:100%;min-height:760px;border:0;border-radius:16px';
+        zoneAgenda.insertBefore(cal, zoneAgenda.firstChild);
+        mesure.envoyer('booking_page_view', {});
+      } else {
+        var d = zoneAgenda.querySelector('[data-demo]');
+        if (d) d.hidden = false;
+      }
+    }
     mesure.envoyer('purchase', {
       value: offre.prix || 490,
       currency: offre.devise || 'EUR',

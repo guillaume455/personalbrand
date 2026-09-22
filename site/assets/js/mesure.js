@@ -64,7 +64,12 @@
   /* ---------- Envoi d'un événement --------------------------------------
      Correspondance GA4 -> Meta pour les deux événements qui comptent
      vraiment côté publicité : le formulaire et l'achat.               */
-  var VERS_META = { form_submit: 'Lead', purchase: 'Purchase', lead_magnet_submit: 'Lead' };
+  var VERS_META = {
+    application_complete: 'Lead',
+    lead_magnet_signup: 'Lead',
+    checkout_start: 'InitiateCheckout',
+    purchase: 'Purchase',
+  };
 
   function envoyer(nom, params) {
     params = params || {};
@@ -113,7 +118,9 @@
 
   /* ---------- Événements automatiques ------------------------------------ */
   function auto() {
-    envoyer('page_view', { page_path: location.pathname });
+    // §40 : la vue de la landing porte son propre nom, distinct des autres pages.
+    envoyer(document.querySelector('[data-accroche]') ? 'landing_view' : 'page_view',
+            { page_path: location.pathname });
 
     // Chaque CTA porte sa position, pour savoir lequel convertit (§10).
     document.querySelectorAll('[data-cta]').forEach(function (b) {

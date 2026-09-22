@@ -593,3 +593,122 @@ html:not(.js-anim) [data-reveal]{opacity:1;transform:none}
 .relance .note{
   margin-top:14px;font-size:14px;color:var(--ink-3);line-height:1.5;
 }
+
+/* =========================================================================
+   V2 — composants ajoutés par le cahier des charges de septembre 2026.
+   Toujours aucun jeton nouveau : tout vient du bloc :root.
+   ========================================================================= */
+
+/* ---------- Microcopie sous un bouton (§13, §22, §26) ---------- */
+.micro{
+  margin-top:13px;font-size:14px;color:var(--ink-3);line-height:1.5;
+}
+.micro b{color:var(--ink-2);font-weight:650}
+/* La microcopie apparaît aussi sur le bloc sombre du dernier appel : sans ces
+   deux lignes elle y tombe à 1,87:1, donc illisible. Déclarées après les
+   génériques, à spécificité supérieure. */
+.bloc-sombre .micro{color:var(--inverse-ink-3)}
+.bloc-sombre .micro b{color:var(--inverse-ink)}
+
+/* ---------- Hero : le bouton revient (§13) ---------- */
+.accroche-preuve{
+  margin-top:22px;font-size:15px;color:var(--ink-2);font-weight:650;
+  padding-left:14px;border-left:3px solid var(--accent);
+}
+.accroche .cta-bloc{margin-top:clamp(22px,3vw,28px)}
+
+/* ---------- Questions empilées de la section identification (§14) ---------- */
+.interro{
+  margin:1.2em 0;padding-left:20px;border-left:2px solid var(--accent-line);
+  display:grid;gap:9px;
+}
+.interro p{margin:0;color:var(--ink);font-weight:650}
+
+/* ---------- Comparaison de deux profils (§15) ---------- */
+.profils{display:grid;gap:var(--gap);margin-top:clamp(24px,3.4vw,32px)}
+@media (min-width:640px){ .profils{grid-template-columns:1fr 1fr} }
+.profil{
+  border:1px solid var(--line);border-radius:var(--r-m);
+  padding:clamp(20px,3vw,26px);background:var(--bg);
+}
+.profil h3{font-size:1.02rem;margin-bottom:14px;color:var(--accent-ink)}
+.profil ul{list-style:none;display:grid;gap:10px}
+.profil li{
+  padding-left:20px;position:relative;color:var(--ink-2);font-size:15.5px;line-height:1.5;
+}
+.profil li::before{
+  content:"";position:absolute;left:0;top:.6em;
+  width:9px;height:2px;border-radius:2px;background:var(--accent);
+}
+
+/* ---------- Ce que couvrent les 1h30 (§17) ---------- */
+.couvre{
+  display:grid;gap:10px;margin-top:clamp(22px,3vw,28px);list-style:none;
+}
+@media (min-width:600px){ .couvre{grid-template-columns:1fr 1fr} }
+.couvre li{
+  padding:13px 16px 13px 38px;position:relative;
+  background:var(--bg-2);border-radius:var(--r-s);
+  font-size:15.5px;color:var(--ink-2);line-height:1.45;
+}
+.couvre li::before{
+  content:"";position:absolute;left:15px;top:1.15em;
+  width:9px;height:9px;border-radius:2px;background:var(--accent);
+}
+
+/* ---------- Section prix (§22) ---------- */
+.prix-bloc{
+  border:1px solid var(--line);border-radius:var(--r-l);
+  padding:clamp(24px,4vw,34px);background:var(--bg);text-align:center;
+}
+.prix-chiffre{
+  font-size:clamp(2.4rem,7vw,3.4rem);font-weight:800;
+  letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;
+}
+.prix-chiffre small{
+  display:block;font-size:.26em;font-weight:650;color:var(--ink-3);
+  letter-spacing:.06em;text-transform:uppercase;margin-top:10px;
+}
+.prix-liste{
+  list-style:none;display:grid;gap:11px;margin:clamp(24px,3.4vw,30px) 0 0;
+  text-align:left;max-width:30ch;margin-inline:auto;
+}
+.prix-liste li{
+  padding-left:30px;position:relative;color:var(--ink-2);font-size:15.5px;line-height:1.45;
+}
+.prix-liste li::before{
+  content:"";position:absolute;left:4px;top:.28em;width:16px;height:9px;
+  border-left:2.5px solid var(--accent);border-bottom:2.5px solid var(--accent);
+  transform:rotate(-45deg);
+}
+
+/* ---------- Garantie (§23) ---------- */
+.garantie{
+  border-left:4px solid var(--accent);background:var(--accent-soft);
+  border-radius:0 var(--r-l) var(--r-l) 0;
+  padding:clamp(22px,3.6vw,30px);
+}
+.garantie h2{font-size:clamp(1.3rem,3.6vw,1.6rem);margin-bottom:.5em}
+.garantie p{color:var(--ink-2)}
+.garantie strong{color:var(--ink)}
+
+/* ---------- Disponibilité (§24) ---------- */
+.dispo{
+  text-align:center;max-width:56ch;margin-inline:auto;
+  color:var(--ink-2);font-size:1.02rem;line-height:1.7;text-wrap:balance;
+}
+
+/* ---------- Porte d'entrée gratuite, volontairement secondaire (§27) ---------- */
+.secondaire{background:var(--bg-2);border-top:1px solid var(--line)}
+.secondaire .capture{
+  background:transparent;border:1px solid var(--line);
+}
+.secondaire h2{font-size:clamp(1.12rem,2.8vw,1.32rem)}
+.secondaire .cta{
+  background:transparent;color:var(--ink);border:1.5px solid var(--line);font-weight:700;
+}
+.secondaire .cta:hover{border-color:var(--accent);background:var(--accent-soft);filter:none}
+
+/* ---------- Écran de coordonnées du questionnaire (§29) ---------- */
+.pas-zero h2{margin-bottom:10px}
+.pas-zero .chapo{font-size:1rem;margin-bottom:24px}

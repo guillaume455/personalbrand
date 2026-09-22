@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Candidature au diagnostic individuel | Guillaume Herbin</title>
-<meta name="description" content="5 questions, deux minutes. Elles permettent à Guillaume Herbin de préparer ton diagnostic individuel.">
+<title>Candidature au diagnostic automobile | Guillaume Herbin</title>
+<meta name="description" content="5 questions, deux minutes. Elles permettent à Guillaume Herbin de déterminer si le diagnostic peut réellement t'être utile.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#ffffff">
 
 <meta property="og:site_name" content="Guillaume Herbin">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Candidature au diagnostic individuel | Guillaume Herbin">
-<meta property="og:description" content="5 questions, deux minutes. Elles permettent à Guillaume Herbin de préparer ton diagnostic individuel.">
+<meta property="og:title" content="Candidature au diagnostic automobile | Guillaume Herbin">
+<meta property="og:description" content="5 questions, deux minutes. Elles permettent à Guillaume Herbin de déterminer si le diagnostic peut réellement t'être utile.">
 <meta property="og:url" content="https://guillaumeherbin.fr/accompagnement/candidature/">
 <meta property="og:image" content="https://guillaumeherbin.fr/assets/img/tunnel/og-accompagnement.jpg">
 <meta property="og:image:width" content="1200">
@@ -48,24 +48,67 @@
   <div class="lire">
     <h1 style="font-size:clamp(1.5rem,5.2vw,2.1rem);margin-bottom:10px">
       5 questions, deux minutes.</h1>
-    <p class="chapo" style="margin-bottom:26px">C'est ce qui me permet de préparer la séance.
-       Si ton profil colle, tu reçois le lien de réservation dans la foulée.</p>
+    <p class="chapo" style="margin-bottom:26px">Je lis personnellement chaque candidature.
+       Aucun paiement ne t'est demandé à ce stade.</p>
 
     <div class="encart encart-info" data-reprise hidden>
       <p>J'ai retrouvé tes réponses précédentes, tu reprends où tu t'étais arrêté.
          <button type="button" class="retour" data-reprise-effacer>Tout effacer et recommencer</button></p>
     </div>
 
-    <div class="jauge"><i data-jauge style="width:17%"></i></div>
-    <p class="jauge-txt" data-jauge-txt aria-live="polite">Étape 1 sur 6</p>
+    <div class="jauge"><i data-jauge style="width:0%"></i></div>
+    <p class="jauge-txt" data-jauge-txt aria-live="polite">Tes coordonnées</p>
 
     <form data-candidature data-merci="../merci/" novalidate>
-      <!-- Piège à robots : un humain ne voit ni ne remplit ce champ. -->
       <input type="text" name="_piege" tabindex="-1" autocomplete="off" aria-hidden="true"
              style="position:absolute;left:-9999px">
 
-      <fieldset class="pas" data-pas>
-        <legend class="sr-only">Question 1 sur 6</legend>
+      <fieldset class="pas pas-zero" data-pas data-etape="0">
+        <legend class="sr-only">Tes coordonnées</legend>
+        <h2>On commence par te connaître</h2>
+        <p class="chapo">Tes réponses me permettent de déterminer si le diagnostic peut
+           réellement t'être utile.</p>
+        <div class="champ">
+          <label for="prenom">Prénom</label>
+          <input type="text" id="prenom" name="prenom" autocomplete="given-name" required>
+        </div>
+        <div class="champ">
+          <label for="nom">Nom</label>
+          <input type="text" id="nom" name="nom" autocomplete="family-name" required>
+        </div>
+        <div class="champ">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" autocomplete="email" inputmode="email" required>
+        </div>
+        <div class="champ">
+          <label for="telephone">Téléphone
+            <span class="aide">C'est par là que je reviens vers toi le plus vite.</span></label>
+          <input type="tel" id="telephone" name="telephone" autocomplete="tel" inputmode="tel"
+                 pattern="[0-9 +().\-]{8,20}" required>
+        </div>
+        <div class="champ">
+          <label for="zone">Département ou pays
+            <span class="aide">Ça change les réponses : le cadre dont on parle est français.</span></label>
+          <input type="text" id="zone" name="zone" autocomplete="address-level1"
+                 placeholder="45, Loiret, Belgique…" required>
+        </div>
+
+        <!-- §50 : le traitement de la candidature d'un côté, le consentement
+             marketing de l'autre. Deux cases distinctes, aucune pré-cochée. -->
+        <div class="consent">
+          <input type="checkbox" id="consentement" name="consentement" required>
+          <label for="consentement">J'accepte que mes réponses soient utilisées pour étudier ma
+            candidature et me répondre, comme décrit dans la
+            <a href="../../confidentialite/">politique de confidentialité</a>.</label>
+        </div>
+        <div class="consent" style="margin-top:14px">
+          <input type="checkbox" id="marketing" name="marketing">
+          <label for="marketing">J'accepte en plus de recevoir les e-mails de Guillaume Herbin
+            sur le commerce automobile. Facultatif, et je peux me désinscrire en un clic.</label>
+        </div>
+      </fieldset>
+      <fieldset class="pas" data-pas data-etape="1" hidden>
+        <legend class="sr-only">Question 1 sur 5</legend>
         <h2>Où en es-tu aujourd'hui&nbsp;?</h2>
         <div class="choix" role="radiogroup">
           <label><input type="radio" name="avancement" value="reflexion" required> <span>Je réfléchis, je me renseigne</span></label>
@@ -74,8 +117,8 @@
           <label><input type="radio" name="avancement" value="installe"> <span>Je suis déjà installé et je veux structurer</span></label>
         </div>
       </fieldset>
-      <fieldset class="pas" data-pas hidden>
-        <legend class="sr-only">Question 2 sur 6</legend>
+      <fieldset class="pas" data-pas data-etape="2" hidden>
+        <legend class="sr-only">Question 2 sur 5</legend>
         <h2>Quel capital peux-tu engager sans te mettre en difficulté&nbsp;?</h2>
         <p class="aide" style="margin-bottom:16px">Cette réponse ne sert qu'à préparer la séance. Aucun montant ne t'engage.</p>
         <div class="choix" role="radiogroup">
@@ -86,8 +129,8 @@
           <label><input type="radio" name="capital" value="a_discuter"> <span>Je veux justement en parler</span></label>
         </div>
       </fieldset>
-      <fieldset class="pas" data-pas hidden>
-        <legend class="sr-only">Question 3 sur 6</legend>
+      <fieldset class="pas" data-pas data-etape="3" hidden>
+        <legend class="sr-only">Question 3 sur 5</legend>
         <h2>Combien de temps par semaine peux-tu y consacrer&nbsp;?</h2>
         <div class="choix" role="radiogroup">
           <label><input type="radio" name="temps" value="moins_5h" required> <span>Moins de 5 heures</span></label>
@@ -96,8 +139,8 @@
           <label><input type="radio" name="temps" value="plein"> <span>Temps plein</span></label>
         </div>
       </fieldset>
-      <fieldset class="pas" data-pas hidden>
-        <legend class="sr-only">Question 4 sur 6</legend>
+      <fieldset class="pas" data-pas data-etape="4" hidden>
+        <legend class="sr-only">Question 4 sur 5</legend>
         <h2>Dans quel délai veux-tu démarrer&nbsp;?</h2>
         <div class="choix" role="radiogroup">
           <label><input type="radio" name="delai" value="ce_mois" required> <span>Ce mois-ci</span></label>
@@ -106,8 +149,8 @@
           <label><input type="radio" name="delai" value="ne_sais_pas"> <span>Je ne sais pas encore</span></label>
         </div>
       </fieldset>
-      <fieldset class="pas" data-pas hidden>
-        <legend class="sr-only">Question 5 sur 6</legend>
+      <fieldset class="pas" data-pas data-etape="5" hidden>
+        <legend class="sr-only">Question 5 sur 5</legend>
         <h2>Quelle est la question à laquelle tu veux absolument une réponse pendant la séance&nbsp;?</h2>
         <div class="champ">
           <label for="question" class="sr-only">Ta question principale</label>
@@ -118,46 +161,11 @@
         </div>
       </fieldset>
 
-      <fieldset class="pas" data-pas hidden>
-        <legend class="sr-only">Dernière étape sur 6</legend>
-        <h2>Pour te recontacter</h2>
-        <div class="champ">
-          <label for="prenom">Prénom</label>
-          <input type="text" id="prenom" name="prenom" autocomplete="given-name" required>
-        </div>
-        <div class="champ">
-          <label for="nom">Nom</label>
-          <input type="text" id="nom" name="nom" autocomplete="family-name" required>
-        </div>
-        <div class="champ">
-          <label for="email">E-mail
-            <span class="aide">C'est là que part le lien de réservation.</span></label>
-          <input type="email" id="email" name="email" autocomplete="email" inputmode="email" required>
-        </div>
-        <div class="champ">
-          <label for="telephone">Téléphone</label>
-          <input type="tel" id="telephone" name="telephone" autocomplete="tel" inputmode="tel"
-                 pattern="[0-9 +().\-]{8,20}" required>
-        </div>
-        <div class="champ">
-          <label for="zone">Département ou pays
-            <span class="aide">Ça change les réponses : le cadre dont on parle est français.</span></label>
-          <input type="text" id="zone" name="zone" autocomplete="address-level1"
-                 placeholder="45, Loiret, Belgique…" required>
-        </div>
-        <div class="consent">
-          <input type="checkbox" id="consentement" name="consentement" required>
-          <label for="consentement">J'accepte que mes réponses soient utilisées pour préparer
-            la séance et me répondre, comme décrit dans la
-            <a href="../../confidentialite/">politique de confidentialité</a>.</label>
-        </div>
-      </fieldset>
-
       <p class="erreur" data-erreur-globale hidden tabindex="-1"></p>
 
       <div class="nav-pas">
         <button type="button" class="retour" data-precedent hidden>Retour</button>
-        <button type="submit" class="cta" data-suivant>Continuer</button>
+        <button type="submit" class="cta" data-suivant>Commencer</button>
       </div>
     </form>
 

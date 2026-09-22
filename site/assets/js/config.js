@@ -43,12 +43,16 @@ window.GH.config = {
   --------------------------------------------------------------------- */
   reservation: {
     fournisseur: '',            // 'cal' | 'calendly' | ''
-    url: '',                    // ex. https://cal.com/guillaume-herbin/diagnostic
-    // Repli documenté au §6 : si la case de renoncement au droit de
-    // rétractation ne peut pas être rendue obligatoire dans Cal.com, on
-    // bascule sur un paiement Stripe portant la case, et le lien de
-    // réservation part dans l'e-mail de confirmation de paiement.
+
+    // Lien de paiement Stripe, 490 € TTC. Son adresse de succès doit pointer
+    // vers /accompagnement/confirmation/ : c'est cette redirection qui donne
+    // accès au calendrier, et rien d'autre.
     checkoutStripe: '',
+
+    // Calendrier. Affiché UNIQUEMENT sur la page de confirmation, donc après
+    // un paiement abouti (§34 et §37 : validation, puis Stripe, puis agenda).
+    // Ne jamais l'exposer depuis la landing ni depuis la page de paiement.
+    url: '',
   },
 
   /* --- Mesure -----------------------------------------------------------

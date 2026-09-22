@@ -154,13 +154,21 @@
   }
 
   /* ---------------- Navigation ---------------- */
+  // L'écran 0 porte les coordonnées. La landing annonce cinq questions : c'est
+  // donc « Question N sur 5 » qui s'affiche, et l'écran 0 reste hors comptage.
+  var NB_QUESTIONS = pas.length - 1;
+
   function majCompteur() {
-    var n = courant + 1;
-    if (jauge) jauge.style.width = Math.round(n / pas.length * 100) + '%';
-    if (jaugeTxt) jaugeTxt.textContent = 'Étape ' + n + ' sur ' + pas.length;
+    if (jauge) jauge.style.width = Math.round(courant / NB_QUESTIONS * 100) + '%';
+    if (jaugeTxt) {
+      jaugeTxt.textContent = courant === 0
+        ? 'Tes coordonnées'
+        : 'Question ' + courant + ' sur ' + NB_QUESTIONS;
+    }
     if (precedent) precedent.hidden = courant === 0;
     if (suivant) {
-      suivant.textContent = courant === pas.length - 1 ? 'Envoyer ma candidature' : 'Continuer';
+      suivant.textContent = courant === 0 ? 'Commencer'
+        : (courant === pas.length - 1 ? 'Envoyer ma candidature' : 'Continuer');
     }
   }
 
@@ -222,8 +230,14 @@
       telephone: (d.telephone || '').trim(),
       zone: (d.zone || '').trim(),
       consentement: d.consentement === 'on',
-      statut: qualif ? qualif.qualifier(d.capital, d.delai) : 'a_revoir',
-      statut_reservation: 'aucune',
+      // §33 : cycle de vie du lead. À l'envoi, la candidature est « completed ».
+      // Les statuts suivants (approved, rejected, checkout_started, paid,
+      // booked, diagnostic_completed) sont posés par le backend, jamais ici.
+      statut_lead: 'completed',
+      // Suggestion calculée, conservée comme aide au tri. Elle ne décide de
+      // rien côté backend : c'est la lecture humaine qui tranche.
+      statut_suggere: qualif ? qualif.qualifier(d.capital, d.delai) : 'a_revoir',
+      marketing: d.marketing === 'on',
       utm_source: u.utm_source || '',
       utm_medium: u.utm_medium || '',
       utm_campaign: u.utm_campaign || '',
@@ -287,10 +301,11 @@
         // dans les URL.
         try {
           sessionStorage.setItem('gh-issue', JSON.stringify({
-            statut: donnees.statut, prenom: donnees.prenom,
+            statut: donnees.statut_suggere, prenom: donnees.prenom,
           }));
         } catch (err) {}
-        mesure.envoyer('form_submit', { statut: donnees.statut, tunnel: donnees.tunnel });
+        mesure.envoyer('question_' + NB_QUESTIONS + '_completed', {});
+        mesure.envoyer('application_complete', { tunnel: donnees.tunnel });
         location.href = form.dataset.merci;
       })
       .catch(function (err) {
@@ -310,7 +325,10 @@
     suivant.addEventListener('click', function (e) {
       if (courant === pas.length - 1) return;   // le submit prend le relais
       e.preventDefault();
-      if (validerPas(courant)) afficher(courant + 1);
+      if (!validerPas(courant)) return;
+      // §40 : un événement par franchissement d'écran.
+      mesure.envoyer(courant === 0 ? 'contact_submitted' : 'question_' + courant + '_completed', {});
+      afficher(courant + 1);
     });
   }
   if (precedent) {
@@ -324,7 +342,7 @@
   form.addEventListener('input', function (e) {
     if (!commence) {
       commence = true;
-      mesure.envoyer('form_start', { tunnel: cfg.tunnel || 'lancement' });
+      mesure.envoyer('application_start', { tunnel: cfg.tunnel || 'lancement' });
     }
     if (e.target.getAttribute('aria-invalid')) nettoyerErreur(e.target);
     sauver();
@@ -336,7 +354,11 @@
     r.addEventListener('change', function () {
       nettoyerErreur(r);
       if (courant >= pas.length - 1) return;
-      setTimeout(function () { if (r.checked) afficher(courant + 1); }, 260);
+      setTimeout(function () {
+        if (!r.checked) return;
+        mesure.envoyer('question_' + courant + '_completed', {});
+        afficher(courant + 1);
+      }, 260);
     });
   });
 

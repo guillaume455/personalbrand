@@ -46,36 +46,35 @@
 
 <section class="bloc" data-merci>
   <div class="lire">
+    <h1 style="font-size:clamp(1.45rem,4.8vw,1.95rem);margin-bottom:22px">
+      Merci<span data-prenom></span>. J'ai bien reçu ta candidature.</h1>
 
-    <!-- Variante affichée quand la table du §3 a renvoyé « qualifié ».
-         Le statut lui-même n'est jamais écrit à l'écran. -->
+    <!-- Profil retenu par la table du V1, conservée sur décision de l'éditeur. -->
     <div data-variante="qualifie" hidden>
       <div class="encart encart-ok">
-        <h1>C'est noté<span data-prenom></span>.</h1>
-        <p>Ton profil colle. Tu peux réserver ton créneau dès maintenant.</p>
+        <p>Ton profil correspond au diagnostic.</p>
       </div>
-      <p>La séance dure 1h30, en visio. Le règlement des 490&nbsp;€ se fait au moment de la
-         réservation&nbsp;: c'est ce qui bloque le créneau.</p>
-      <p>Tu recevras aussi ce lien par e-mail, au cas où tu préfères réserver plus tard.</p>
+      <p>Prochaine étape&nbsp;: le règlement des 490&nbsp;€ TTC. Une fois le paiement abouti,
+         tu accèdes au calendrier et tu choisis ton créneau.</p>
       <div class="cta-bloc">
-        <a class="cta" href="../reservation/" data-cta="merci-qualifie">
-          Choisir mon créneau<span class="cta-prix">490&nbsp;€</span></a>
+        <a class="cta" href="../reservation/" data-cta="merci-vers-paiement">
+          Régler et choisir mon créneau</a>
       </div>
-      <p class="capture-note" style="margin-top:20px;text-align:center">
-        Premier créneau disponible sous 48 heures, le temps que je prépare ton dossier.</p>
+      <p class="micro" style="text-align:center">490&nbsp;€ TTC &bull; paiement sécurisé
+         &bull; 1h30 en visio</p>
     </div>
 
-    <!-- Variante « à revoir » : jamais un refus, une mise en attente honnête. -->
+    <!-- Profil à relire. Jamais un refus : une mise en attente. -->
     <div data-variante="a_revoir" hidden>
       <div class="encart encart-attente">
-        <h1>Bien reçu<span data-prenom></span>.</h1>
-        <p>Je regarde ta candidature et je reviens vers toi sous 48 heures.</p>
+        <p>Je regarde tes réponses afin de vérifier si le diagnostic est réellement pertinent
+           pour ta situation.</p>
       </div>
-      <p>Je lis chaque candidature moi-même. Sur la tienne, je veux vérifier deux ou trois
-         choses avant de te proposer un créneau&nbsp;: c'est plus honnête que de te prendre
-         490&nbsp;€ et de te dire au bout de 15 minutes que ce n'était pas le moment.</p>
-      <p>En attendant, prends le calcul de marge réel sur une voiture, ligne par ligne.
-         C'est le document que j'aurais aimé avoir avant mon premier achat.</p>
+      <p>Si c'est le cas, tu recevras le lien permettant de régler les 490&nbsp;€ et de choisir
+         ton créneau. Dans le cas contraire, je te le dirai aussi, et aucun paiement ne te sera
+         demandé.</p>
+      <p>En attendant, prends le calcul de marge réel sur une voiture, ligne par ligne&nbsp;:
+         achat, frais, marge, résultat.</p>
 
       <div class="capture" style="margin-top:26px">
         <form data-capture data-merci="../../calcul-marge/merci/" novalidate>
