@@ -250,6 +250,47 @@ témoins (§11), et remplacer les mentions « année à préciser ».
 Les emplacements manquants apparaissent en encadré orange sur les pages : ils
 sont impossibles à rater, et ils disparaîtront quand `preprod` passera à `false`.
 
+## Habillage
+
+Refonte visuelle du 30 septembre 2026 : en-tête et hero sur fond bleu-nuit,
+titre en capitales serrées avec le trait orange dessiné des visuels Instagram,
+portrait détouré au halo, angles nets.
+
+**`tunnel.css` habille dix pages, pas une seule.** C'est la seule feuille de
+style de la page d'accompagnement, du questionnaire, des trois pages d'issue,
+du calculateur de marge, des témoignages et des deux pages juridiques : aucune
+d'elles ne charge `style.css`. Une règle retirée d'ici casse donc des pages
+qu'on ne regardait pas. Avant de publier une refonte de ce fichier, comparer
+les classes employées dans les dix pages à celles qu'il définit.
+
+Toutes les couleurs vivent dans le bloc `:root` en haut du fichier, et nulle
+part ailleurs. Trois d'entre elles sont contraintes par le contraste :
+
+| jeton | valeur | pourquoi |
+|---|---|---|
+| `--or` | `#FB8000` | décoratif seulement : 2,56:1 sur fond clair, il ne porte jamais de texte. Sur aplat orange, l'encre `#14100B` donne 7,39:1, d'où le bouton plein. |
+| `--or-fonce` | `#AB5600` | la version qui porte du texte : 4,96:1 sur `--papier`, 4,55:1 sur `--papier-doux`. |
+| `--encre-clair` | `#726B63` | mentions et légendes : 5,03:1. Plus clair, la microcopie passe sous le seuil AA. |
+
+Sur fond sombre, les tons clairs doivent être redéclarés **après** les tons
+clairs génériques : à spécificité égale c'est l'ordre qui tranche. C'est ce
+qui fait exister `.bloc-sombre .micro` et `.bloc-sombre .chapo`.
+
+### Le portrait du hero
+
+`assets/img/tunnel/portrait-hero.webp` est propre au tunnel. Il ne faut pas le
+confondre avec `assets/img/portrait-hero.webp`, que servent les deux pages
+d'accueil du site vitrine : ce sont deux photos différentes, et écraser la
+seconde casse la page d'accueil.
+
+Il est servi en deux définitions, 700 px et 1000 px, via `srcset` : le
+téléphone télécharge 63 Ko au lieu de 105 Ko, ce qui tient le LCP sous la barre
+des 2,5 s. Le repli PNG est en demi-définition — seuls les navigateurs sans
+webp le chargent, et il reste au-dessus de la taille d'affichage réelle.
+
+Les deux visuels du tunnel sont détourés : leur repli est en `.png`, pas en
+`.jpg`, le JPEG ne gérant pas la transparence.
+
 ## Intégrer un visuel reçu
 
 Déposer le fichier dans `assets/img/tunnel/`, puis remplacer le bloc
