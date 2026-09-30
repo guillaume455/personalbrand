@@ -25,9 +25,22 @@ window.GH.config = {
   /* --- Backend du formulaire -------------------------------------------
      L'hébergement OVH est statique : aucun code ne s'exécute côté serveur.
      Les candidatures partent donc vers un service externe.
-       type : 'supabase' | 'webhook' | ''      ('' = mode démo)
-       url  : point d'entrée REST complet
+       type : 'formsubmit' | 'supabase' | 'webhook' | ''   ('' = mode démo)
+       url  : selon le type —
+              formsubmit : simplement l'adresse e-mail de réception
+              supabase   : l'adresse du projet (https://xxx.supabase.co)
+              webhook    : le point d'entrée complet
        cle  : clé publique anonyme (Supabase) — jamais la service_role
+
+     TANT QUE `type` EST VIDE, RIEN N'EST TRANSMIS. Le tunnel reste
+     parcourable et la candidature est seulement écrite dans la console du
+     navigateur : c'est pour cela qu'aucun e-mail n'arrive.
+
+     Avec 'formsubmit', la toute première candidature envoyée déclenche un
+     e-mail de confirmation de FormSubmit. Tant que son lien n'est pas
+     cliqué, rien n'est délivré. FormSubmit devient alors sous-traitant au
+     sens de l'article 28 du RGPD : il doit être cité dans la politique de
+     confidentialité.
   --------------------------------------------------------------------- */
   backend: {
     type: '',

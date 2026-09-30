@@ -55,9 +55,29 @@ orange « à fournir » et les avertissements de console.
 
 ## Backend du formulaire
 
+**Tant que `backend.type` est vide dans `assets/js/config.js`, aucune
+candidature n'est transmise.** Le tunnel reste parcourable de bout en bout,
+mais la candidature est seulement écrite dans la console du navigateur. C'est
+le réglage de départ, et c'est la raison pour laquelle aucun e-mail n'arrive.
+
 L'hébergement OVH est statique : rien ne s'exécute côté serveur. Les
-candidatures partent en `fetch` vers un service externe, au choix Supabase ou
-un webhook (Airtable + Make, n8n…).
+candidatures partent donc en `fetch` vers un service externe. Trois modes :
+
+| `type` | `url` | ce que tu obtiens |
+|---|---|---|
+| `formsubmit` | ton adresse e-mail | chaque candidature arrive dans ta boîte, en tableau. Aucun compte à créer. Pas d'historique consultable ailleurs que dans tes e-mails. |
+| `supabase` | `https://xxx.supabase.co` | une vraie table, consultable et exportable. Demande un compte, une table et une règle d'insertion pour la clé anonyme. Ne notifie pas par e-mail tout seul. |
+| `webhook` | le point d'entrée complet | pour Make, n8n, Airtable : à toi de décider ce qui se passe ensuite. |
+
+Le plus court pour commencer à recevoir : `formsubmit` avec ton adresse. La
+**toute première candidature** déclenche un e-mail de confirmation de
+FormSubmit ; tant que son lien n'est pas cliqué, rien n'est délivré. Le sujet
+de l'e-mail porte `[à traiter]` ou `[à relire]` selon le statut suggéré, pour
+trier depuis la boîte de réception.
+
+Quel que soit le service retenu, il devient sous-traitant au sens de
+l'article 28 du RGPD et doit être nommé dans la politique de confidentialité,
+à la place de la ligne « Le service hébergeant la base des candidatures ».
 
 Table `candidatures`, une colonne par champ :
 

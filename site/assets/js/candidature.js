@@ -255,6 +255,20 @@
     }
     var entetes = { 'Content-Type': 'application/json' };
     var url = b.url;
+    var corps = donnees;
+    if (b.type === 'formsubmit') {
+      // FormSubmit relaie la candidature par e-mail : aucun compte, aucun
+      // serveur. Le point d'entrée AJAX accepte du JSON et renvoie du JSON.
+      // La charge utile est plate, elle s'affiche donc en tableau lisible.
+      url = 'https://formsubmit.co/ajax/' + encodeURIComponent(b.url);
+      corps = {};
+      for (var k in donnees) if (donnees.hasOwnProperty(k)) corps[k] = donnees[k];
+      // Le statut suggéré est dans l'objet : le tri se fait depuis la boîte mail.
+      corps._subject = 'Candidature ' + (donnees.statut_suggere === 'qualifie'
+        ? '[à traiter]' : '[à relire]') + ' — ' + donnees.prenom + ' ' + donnees.nom;
+      corps._template = 'table';
+      corps._captcha = 'false';
+    }
     if (b.type === 'supabase') {
       url = b.url.replace(/\/$/, '') + '/rest/v1/' + (b.table || 'candidatures');
       entetes.apikey = b.cle;
@@ -262,7 +276,7 @@
       entetes.Prefer = 'return=minimal';
     }
     return fetch(url, {
-      method: 'POST', headers: entetes, body: JSON.stringify(donnees),
+      method: 'POST', headers: entetes, body: JSON.stringify(corps),
     }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
     });
