@@ -88,7 +88,7 @@ window.GH.config = {
      Le PDF du calcul de marge, à décliner depuis le carrousel existant.
   --------------------------------------------------------------------- */
   aimant: {
-    pdf: '',                    // ex. /assets/doc/calcul-marge.pdf
+    pdf: '/assets/docs/calcul-marge-guillaume-herbin.pdf',
     listeBrevo: '',             // identifiant de liste Brevo
   },
 
