@@ -278,11 +278,6 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
   font-size:clamp(17.5px,.6vw + 16px,20.5px);
   color:var(--encre-doux);max-width:58ch;
 }
-.accroche-preuve{
-  margin-top:clamp(28px,3vw,40px);padding-top:18px;
-  border-top:1px solid var(--filet);
-  font-size:15.5px;color:var(--encre-clair);letter-spacing:.005em;
-}
 
 .accroche .media{margin-top:clamp(32px,4vw,52px)}
 .accroche .media img{
@@ -301,7 +296,7 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
     column-gap:clamp(36px,4vw,72px);row-gap:0;
     align-items:center;
   }
-  .accroche h1,.accroche-sous,.accroche .cta-bloc,.accroche-preuve{grid-column:1}
+  .accroche h1,.accroche-sous,.accroche .cta-bloc{grid-column:1}
   .accroche .media{grid-column:2;grid-row:1 / span 5;margin-top:0;align-self:center}
   .accroche .media img{max-width:none}
 }
@@ -348,7 +343,15 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
   display:grid;gap:18px;
   grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));
 }
-.cartes-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+/* La section du déroulé tient quatre cartes. En `auto-fit`, il n'en entrait
+   que trois sur la largeur disponible et la quatrième restait seule sur une
+   deuxième ligne, calée à gauche. On fixe donc le nombre de colonnes à chaque
+   palier : la grille est toujours pleine, jamais d'orpheline. */
+.cartes-4{grid-template-columns:repeat(4,1fr)}
+/* En dessous de 1100 px, quatre colonnes tomberaient à 230 px de large :
+   le texte y passerait à huit lignes. On repasse à deux avant d'en arriver là. */
+@media (max-width:1100px){.cartes-4{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.cartes-4{grid-template-columns:1fr}}
 .carte-i{
   background:var(--carte);border:1px solid var(--filet);border-radius:var(--rayon);
   padding:28px 26px;min-width:0;box-shadow:var(--ombre-1);
@@ -635,7 +638,6 @@ h2{font-weight:700}
 }
 .accroche h1{color:#FFFFFF}
 .accroche-sous{color:#C3CAD4}
-.accroche-preuve{color:#8E96A2;border-top-color:rgba(255,255,255,.14)}
 .accroche .micro{color:#8E96A2}
 .accroche .micro b{color:#D7DCE3}
 .accroche .cta{background:var(--or);border-color:var(--or);color:#14100B}
