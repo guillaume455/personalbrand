@@ -150,16 +150,26 @@ D'où deux champs distincts dans `config.js` : `reservation.checkoutStripe`
 pour le lien de paiement, `reservation.url` pour le calendrier. Ne jamais
 mettre le calendrier ailleurs que sur la page de confirmation.
 
-### La case de renoncement
+### La case de renoncement : à poser dans Cal
 
-Le §6 demandait de vérifier en semaine 1 si Cal.com peut rendre obligatoire la
-case de renoncement au droit de rétractation. **Le repli est déjà en place** :
-la case est posée sur `/accompagnement/reservation/` et le module de réservation
-ne s'affiche pas tant qu'elle n'est pas cochée. Si Cal.com sait porter la case
-nativement, tant mieux, ce sera une ceinture de plus. Sinon, la page suffit.
+Elle vit dans **Cal, en question de réservation obligatoire**, et nulle part
+ailleurs. C'est là que le contrat se conclut et que les 490 € sont encaissés :
+une case cochée ailleurs, avant que la séance soit choisie, ne porterait sur
+aucune prestation précise. Cal enregistre la réponse avec chaque réservation,
+donc la preuve est attachée au dossier sans rien à tenir à jour.
 
-Sans cette case, **toute séance tenue dans les 14 jours suivant la réservation
-reste intégralement remboursable**, même après avoir eu lieu.
+Type : case à cocher unique, **obligatoire**. Texte à coller tel quel :
+
+> Je demande que la séance ait lieu avant la fin du délai de 14 jours et je
+> renonce expressément à mon droit de rétractation pour cette prestation, une
+> fois qu'elle aura été pleinement exécutée.
+
+Sans elle, un client peut payer, faire sa séance, puis demander le
+remboursement intégral dans les quatorze jours — et l'obtenir. Les articles
+L.221-25 et L.221-28 1° du code de la consommation subordonnent la perte du
+droit de rétractation à cette demande expresse. L'article 5 des CGV la décrit
+déjà et renvoie à « la case prévue à cet effet au moment de la réservation » :
+le texte du site est donc cohérent dès que la case existe dans Cal.
 
 ## Mesure
 
