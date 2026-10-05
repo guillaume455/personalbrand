@@ -34,9 +34,9 @@
     #f07-routeg { stroke: #ff9a45; stroke-width: 26; opacity: .55; }
     #f07-tip { opacity: 0; }
     .f07-wp { opacity: 0; }
-    #f07-banner { position: absolute; left: 220px; top: 130px; height: 58px; padding: 0 28px; border-radius: 29px; background: rgba(20,21,25,.94);
-      border: 1px solid #2a2d35; font: 700 22px/58px "Space Mono", monospace; letter-spacing: 0.3em; text-transform: uppercase; color: #ffffff; white-space: nowrap;
-      box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+    #f07-banner { position: absolute; left: 220px; top: 130px; padding: 16px 28px; border-radius: 18px; background: #16191f;
+      border: 2px solid #2a2d35; font: 600 30px/36px "Instrument Sans", sans-serif; color: #ffffff; white-space: nowrap; }
+    #f07-banner .f07-acc { color: #FC7E15; }
     /* glass reflection on the screen (foreground of scene 1) */
     .f07-glass { position: absolute; left: 170px; top: 90px; width: 1580px; height: 760px; border-radius: 44px; overflow: hidden; pointer-events: none; }
     #f07-sheen { position: absolute; left: -400px; top: 0; width: 2400px; height: 760px; opacity: 0;
@@ -127,7 +127,7 @@
               <circle id="f07-end" class="f07-wp" cx="1590" cy="200" r="22" fill="#FC7E15" style="transform-origin: 1590px 200px;"/>
               <circle cx="330" cy="700" r="26" fill="#2f7bff" stroke="#ffffff" stroke-width="6"/>
             </svg>
-            <div id="f07-banner">Itinéraire calculé · ton plan</div>
+            <div id="f07-banner">Itinéraire calculé · <span class="f07-acc">ton plan</span></div>
             <div class="f07-glass"><div id="f07-sheen"></div></div>
           </div>
         </div>
@@ -276,7 +276,7 @@
       ft($("pk1"), { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power2.out" }, 1.94);
       // chunks leave before the next one ; the last leaves before the seam
       ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 1.10);
-      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.42);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.30);
       ft($("s3"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 3.86);
       // bottom shade : in with the first word, out with the last chunk (gone before the seam)
       ft($("shade"), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.out" }, 0.10);

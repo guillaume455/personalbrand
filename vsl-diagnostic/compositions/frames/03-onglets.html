@@ -20,7 +20,7 @@
       border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
     /* soft orange halo behind the folded sheet (scene 2 end) */
     #f03-halo-s { position: absolute; left: 410px; top: 140px; width: 1100px; height: 820px; border-radius: 50%; opacity: 0;
-      background: radial-gradient(closest-side, rgba(252,126,21,.22), rgba(252,126,21,.08) 60%, rgba(252,126,21,0)); }
+      background: radial-gradient(closest-side, rgba(252,126,21,.30), rgba(252,126,21,.10) 60%, rgba(252,126,21,0)); }
 
     /* ---------- the world : lens (blur) > nud (step toward the balance) > dx (x drift) > dz (z drift) > cam ---------- */
     .f03-wrap { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
@@ -29,15 +29,15 @@
     /* browser window (world units) : left 340, top 18, 1240 x 878 */
     #f03-bar { position: absolute; left: 340px; top: 18px; width: 1240px; height: 56px; border-radius: 18px 18px 0 0; background: #141519;
       box-shadow: 0 -1px 0 rgba(255,255,255,.06) inset; }
-    .f03-tab { position: absolute; top: 8px; width: 300px; height: 48px; border-radius: 12px 12px 0 0; background: #1b1d22; overflow: hidden; }
-    .f03-tab .f03-on { position: absolute; left: 0; top: 0; width: 300px; height: 48px; background: #30333c; opacity: 0; }
-    .f03-tab .f03-tt { position: absolute; left: 18px; top: 0; width: 236px; height: 48px; font: 500 22px/48px "Instrument Sans", sans-serif;
+    .f03-tab { position: absolute; top: 8px; width: 330px; height: 48px; border-radius: 12px 12px 0 0; background: #1b1d22; overflow: hidden; }
+    .f03-tab .f03-on { position: absolute; left: 0; top: 0; width: 330px; height: 48px; background: #30333c; opacity: 0; }
+    .f03-tab .f03-tt { position: absolute; left: 18px; top: 0; width: 266px; height: 48px; font: 500 22px/48px "Instrument Sans", sans-serif;
       color: #e9ebef; white-space: nowrap; overflow: hidden; letter-spacing: -0.005em; }
-    .f03-tab svg { position: absolute; left: 262px; top: 14px; width: 20px; height: 20px; display: block; }
-    #f03-t1 { left: 12px; } #f03-t2 { left: 318px; opacity: 0; } #f03-t3 { left: 624px; opacity: 0; }
+    .f03-tab svg { position: absolute; left: 292px; top: 14px; width: 20px; height: 20px; display: block; }
+    #f03-t1 { left: 12px; } #f03-t2 { left: 348px; opacity: 0; } #f03-t3 { left: 684px; opacity: 0; }
     #f03-t1 .f03-on { opacity: 1; }
 
-    #f03-pagebox { position: absolute; left: 340px; top: 74px; width: 1240px; height: 822px; border-radius: 0 0 24.8px 24.8px; background: #ffffff; overflow: hidden;
+    #f03-pagebox { position: absolute; left: 340px; top: 74px; width: 1240px; height: 822px; border-radius: 0 0 24.8px 24.8px; background: #ffffff; overflow: hidden; isolation: isolate;
       box-shadow: 0 37px 99px rgba(0,0,0,.6), 0 9px 25px rgba(0,0,0,.35), 0 0 56px rgba(252,126,21,.10); }
     .f03-page { position: absolute; left: 0; top: 0; width: 1240px; height: 822px; background: #ffffff; overflow: hidden; }
     .f03-nat { position: absolute; left: 0; top: 0; width: 2000px; transform: scale(0.62); transform-origin: 0 0; }
@@ -83,7 +83,7 @@
     #f03-glow { position: absolute; left: -2px; top: -2px; width: 382px; height: 198px; border-radius: 27px; border: 2px solid #FC7E15; opacity: 0;
       box-shadow: 0 0 40px rgba(252,126,21,.55), inset 0 0 30px rgba(252,126,21,.18); }
     .f03-lab { position: absolute; left: 32px; top: 28px; font: 700 20px/24px "Space Mono", monospace; letter-spacing: 0.3em; color: #8a8f98; white-space: nowrap; }
-    #f03-numw { position: absolute; left: 30px; top: 62px; width: 330px; height: 116px; }
+    #f03-numw { position: absolute; left: 30px; top: 62px; width: 330px; height: 116px; opacity: 0; }
     #f03-num { display: inline-block; font: 900 112px/116px "Big Shoulders", sans-serif; font-variant-numeric: tabular-nums; color: #ffffff;
       white-space: nowrap; transform-origin: 0 60%; letter-spacing: 0.005em; }
     /* the price label from frame 02 (same structure : position > rotated blur frame > counter-rotation > text) */
@@ -239,7 +239,7 @@
       var WIN_C = { x: 960, y: 457 };           // browser window centre
       var SELLER = W(1649, 275);                // Ford seller card centre
       var BTN = W(1649, 335);                   // « Envoyer un message » centre
-      var XBTN = { x: 340 + 318 + 300 - 28, y: 18 + 8 + 24 }; // × of the Ford tab
+      var XBTN = { x: 340 + 348 + 330 - 28, y: 18 + 8 + 24 }; // × of the Ford tab
 
       // handoff_in = frame 02 at 5.05 : screen = A + 1.9 * P (P in listing px)
       var S02 = 0.95 * 2, Q02 = { x: 960, y: 440 };
@@ -308,7 +308,7 @@
       var mb = $("mbb"), mbp = { v: 10 };
       function wmb() { mb.setAttribute("stdDeviation", mbp.v.toFixed(2) + " 0"); }
       ft(mbp, { v: 10 }, { v: 0, duration: 0.3, ease: "power2.out", onUpdate: wmb }, 0);
-      ft(tag, { opacity: 1 }, { opacity: 0, duration: 0.16, ease: "power2.in" }, 0.46);
+      ft(tag, { opacity: 1 }, { opacity: 0, duration: 0.14, ease: "power2.in" }, 0.46);
       // the orange reflection of frame 02 dims away
       ft($("fgo"), { opacity: 0.5 }, { opacity: 0, duration: 0.4, ease: "power1.out" }, 0.25);
       // the card arrives just before (dark glass, top right)
@@ -317,8 +317,8 @@
       // it absorbs the tag : accent flash
       ft($("glow"), { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "power2.out" }, 0.54);
       ft($("glow"), { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power2.out" }, 0.64);
-      ft($("numw"), { scale: 1 }, { scale: 1.06, duration: 0.08, ease: "power2.out", transformOrigin: "0% 60%" }, 0.56);
-      ft($("numw"), { scale: 1.06 }, { scale: 1, duration: 0.3, ease: "power3.out" }, 0.64);
+      // the tag becomes the balance : the numeral condenses out of it (x1.15 blur 6 → sharp)
+      ft($("numw"), { opacity: 0, scale: 1.15, filter: "blur(6px)", transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" }, 0.48);
 
       // 1.35 → 1.82 the balance rolls 12 400 € → 4 150 € (tabular, slight shrink)
       var num = $("num"), bal = { v: 12400 };
