@@ -280,9 +280,15 @@
       gsap.set(lens, { filter: "blur(6px)" });
 
       /* ---- camera track ---- */
-      // 0.00 -> 0.30 landing expo.out, the blur clears with it
-      ft(cam, { scale: S0, y: Y0 }, { scale: 1, y: 0, duration: 0.3, ease: "expo.out" }, 0);
-      ft(lens, { filter: "blur(6px)" }, { filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, 0);
+      // 0.00 -> 0.40 landing, continuous with frame 11's push : interpolated in log-scale on sine.inOut (image 1 differs from image 0 by ~4 %)
+      var LAND = { p: 0 }, LNS0 = Math.log(S0), gcamRef = null;
+      function applyLanding() {
+        var p = LAND.p, sc = Math.exp(LNS0 * (1 - p)), yy = Y0 * (1 - p);
+        gsap.set(cam, { scale: sc, y: yy });
+        if (gcamRef) gsap.set(gcamRef, { scale: sc, x: 960 - sc * 1590, y: 470 + yy - sc * 200 });
+      }
+      ft(LAND, { p: 0 }, { p: 1, duration: 0.4, ease: "sine.inOut", onUpdate: applyLanding }, 0);
+      ft(lens, { filter: "blur(6px)" }, { filter: "blur(0px)", duration: 0.4, ease: "sine.inOut" }, 0);
       // 2.20 -> 2.60 slight recoil expo.out to make room for the lines
       ft(cam, { scale: 1, y: 0 }, { scale: 0.92, y: -28, duration: 0.4, ease: "expo.out" }, 2.20);
       // continuous z drift : +1.5 %/s (0.30-2.20), +1 %/s (2.20-4.20), +0.8 %/s (4.20-7.95)
@@ -299,23 +305,23 @@
       function camAt(S, px, py, ax, ay) { return { scale: S, x: ax - S * px, y: ay - S * py }; }
       gsap.set(gcam, camAt(S0, PA.x, PA.y, 960, 540));
       gsap.set(glens, { filter: "blur(6px)" });
-      ft(gcam, camAt(S0, PA.x, PA.y, 960, 540), Object.assign(camAt(1, PA.x, PA.y, 960, 470), { duration: 0.3, ease: "expo.out" }), 0);
-      ft(glens, { filter: "blur(6px)" }, { filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, 0);
-      ft(glens, { opacity: 1 }, { opacity: 0, duration: 0.14, ease: "power1.out" }, 2 * FR + 0.001);
+      gcamRef = gcam;
+      ft(glens, { filter: "blur(6px)" }, { filter: "blur(0px)", duration: 0.4, ease: "sine.inOut" }, 0);
+      ft(glens, { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power1.out" }, 0.10);
       // living background : the plan drifts, the arcs glide (whole frame, slow, linear)
       ft($("plan"), { x: 0, y: 0 }, { x: 46, y: -14, duration: DUR, ease: "none" }, 0);
       ft($("arcs"), { x: 0 }, { x: -70, duration: DUR, ease: "none" }, 0);
 
       /* ---- scene 1 : the disc stretches into a pill and becomes the search bar of the hook ---- */
       var G = 120 / 44, H = (1460 / G - 44) / 2;          // group scale, half length between cap centres
-      ft($("mo"), { scale: 1 }, { scale: G, duration: 0.35, ease: "power3.out" }, FR);
-      ft($("mL"), { x: 0 }, { x: -H, duration: 0.35, ease: "power3.out" }, FR);
-      ft($("mR"), { x: 0 }, { x: H, duration: 0.35, ease: "power3.out" }, FR);
-      ft($("mM"), { scaleX: 0 }, { scaleX: (2 * H) / 44, duration: 0.35, ease: "power3.out" }, FR);
-      ft([$("mL"), $("mR"), $("mM")], { backgroundColor: "#FC7E15" }, { backgroundColor: "#ffffff", duration: 0.18, ease: "power1.inOut" }, 0.14);
-      ft($("mL"), { boxShadow: "0 0 26px rgba(252,126,21,0.7)" }, { boxShadow: "0 0 26px rgba(252,126,21,0)", duration: 0.18, ease: "power1.inOut" }, 0.14);
-      ft($("barwrap"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, 0.24);
-      ft($("mo"), { opacity: 1 }, { opacity: 0, duration: 0.08, ease: "power1.in" }, 0.34);
+      ft($("mo"), { scale: 1 }, { scale: G, duration: 0.35, ease: "power3.out" }, 0.15);
+      ft($("mL"), { x: 0 }, { x: -H, duration: 0.35, ease: "power3.out" }, 0.15);
+      ft($("mR"), { x: 0 }, { x: H, duration: 0.35, ease: "power3.out" }, 0.15);
+      ft($("mM"), { scaleX: 0 }, { scaleX: (2 * H) / 44, duration: 0.35, ease: "power3.out" }, 0.15);
+      ft([$("mL"), $("mR"), $("mM")], { backgroundColor: "#FC7E15" }, { backgroundColor: "#ffffff", duration: 0.18, ease: "power1.inOut" }, 0.26);
+      ft($("mL"), { boxShadow: "0 0 26px rgba(252,126,21,0.7)" }, { boxShadow: "0 0 26px rgba(252,126,21,0)", duration: 0.18, ease: "power1.inOut" }, 0.26);
+      ft($("barwrap"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, 0.38);
+      ft($("mo"), { opacity: 1 }, { opacity: 0, duration: 0.08, ease: "power1.in" }, 0.48);
 
       // 0.85 -> 1.45 the query erases char by char (0.04 s per char), accent caret riding back
       for (var k = chars.length - 1, e = 0; k >= 0; k--, e++) {
