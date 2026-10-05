@@ -66,6 +66,40 @@
     });
   }
 
+  /* ---------- VSL --------------------------------------------------------
+     Les navigateurs n'autorisent la lecture automatique que sans le son.
+     La vidéo démarre donc muette dès qu'elle est à l'écran, se met en pause
+     quand on la quitte, et le bouton relance depuis le début avec le son. */
+  document.querySelectorAll('[data-vsl]').forEach(function (fig) {
+    var v = fig.querySelector('video');
+    var btn = fig.querySelector('[data-vsl-son]');
+    if (!v) return;
+    // fichier absent ou illisible : on retire la section plutôt qu'un cadre noir
+    var masquer = function () { (fig.closest('section') || fig).hidden = true; };
+    v.addEventListener('error', masquer);
+    if (v.error || v.networkState === 3) masquer();
+    v.muted = true;
+    var lancer = function () { var p = v.play(); if (p && p.catch) p.catch(function () {}); };
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entrees) {
+        entrees.forEach(function (e) {
+          if (e.isIntersecting) { if (v.paused && !v.ended) lancer(); }
+          else if (!v.paused) v.pause();
+        });
+      }, { threshold: 0.5 }).observe(v);
+    } else {
+      lancer();
+    }
+    if (btn) btn.addEventListener('click', function () {
+      v.currentTime = 0;
+      v.muted = false;
+      v.controls = true;
+      btn.hidden = true;
+      lancer();
+      if (window.GH && window.GH.mesure) window.GH.mesure.envoyer('vsl_son');
+    });
+  });
+
   /* ---------- Année du pied de page -------------------------------------- */
   document.querySelectorAll('[data-annee]').forEach(function (el) {
     el.textContent = new Date().getFullYear();
