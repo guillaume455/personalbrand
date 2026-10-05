@@ -71,7 +71,20 @@ sous le bouton de fin.
 
 ## Choix
 
-Direction retenue : (à choisir par Guillaume).
-Proposition : **A** pour tout le film, avec deux emprunts à C qui tiennent dans le monde « papier » d'après la
-bascule : C2 pour « Je m'appelle Guillaume Herbin… » (la preuve) et C3 pour l'écran de fin.
-Images de style : `styleframes/png/`, planche : `styleframes/png/planche-directions.jpg`.
+Direction retenue : **mélange A + B + C** (Guillaume, 2026-10-05). Le Kbis n'est pas obligatoire (il est déjà sur la
+page de vente) : il sort du film.
+
+Un monde par acte, et un objet-pont à chaque changement de monde :
+
+| # | Temps | Monde | Voix | Ce qu'on voit | Pont vers la suite |
+|---|---|---|---|---|---|
+| 1 | 0,00 → 3,80 | A annonce | Tu veux vivre de l'automobile. Alors tu te dis : j'essaie. | La recherche leboncoin se tape, les résultats tombent, la caméra plonge dans une annonce. | — |
+| 2 | 3,80 → 9,00 | A annonce | Essayer un modèle… des mois. Essayer une voiture… ta marge. | « avant-hier » roule jusqu'à « il y a 3 mois » ; le prix est barré, le nouveau arrive trop grand et flou (A1). | l'étiquette de prix |
+| 3 | 9,00 → 14,15 | A annonce | Essayer encore… ton épargne. *(gag muet)* | Les annonces s'empilent en onglets, un solde descend dans le coin ; gag : le curseur hésite sur « Envoyer un message », puis ferme l'annonce (A2). | la page se ferme en une feuille |
+| 4 | 14,15 → 22,23 | C brouillon | Le problème… sans plan. Quel modèle, combien il te faut, combien vendre. | Le brouillon de calculs (C1), puis les trois questions écrites à la main, raturées. | la feuille s'éteint |
+| 5 | 22,23 → 27,57 | B (noir) | Et si tu essayais… avec un plan ? | Noir, la phrase seule ; dans le silence, l'écran du GPS s'allume : « Itinéraire calculé ». | la lumière du GPS |
+| 6 | 27,57 → 39,40 | C preuve | Un plan fait par quelqu'un… J'ai appris en me trompant, pendant seize ans. | Ton portrait et son halo, « 21 ans · 3 000 € » (C2, sans Kbis) ; « pas de formation, pas d'expérience » ; les années 2010 → 2026 défilent, des erreurs raturées au passage. | la ligne des années devient la route |
+| 7 | 39,40 → 48,83 | B GPS + A plan | Toi, tu peux commencer avec un plan… Moins de casse. Moins de temps perdu. | L'itinéraire orange (B3) : ta situation, ton modèle, tes chiffres ; sur « chiffres », la ligne « Ventes nécessaires » du plan (A3) ; « moins de casse » : la jauge épargne remonte, le compteur de mois s'arrête (B1, B2 à l'envers). | le dernier point de la route |
+| 8 | 48,83 → 56,80 | C fin + rime A | Tu n'as pas besoin de tout savoir. Juste ta prochaine étape. | Le champ de recherche de l'accroche devient le bouton « Voir si mon profil correspond » (C3), le curseur clique, 3 s de tenue. | — |
+
+Images de style de référence : A1, A2, A3, B1, B2, B3, C1, C2 (sans Kbis), C3 (`styleframes/png/`).
