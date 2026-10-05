@@ -1,0 +1,326 @@
+<template>
+  <!--
+    05-questions : sheet geometry (draft component, shared with 04-brouillon)
+    - sheet #f05-sheet : 760 x 980, layer box left 580 top 50 (centre 960,540), rotate(-4deg) around its centre,
+      cream #f6efe3, radius 6, blue rules rgba(47,123,255,.18) every 70 px at sheet-local y = 35 + 70k.
+    - camera at handoff_in : scale 0.85 around (960,540), x 0, y 0 (whole sheet centred).
+    - Caveat 600, sheet-local baselines (x 70) : "Essai n°2 — la voiture" 105 ; Achat 245 ; Contrôle + pneus 315 ;
+      Carte grise, annonce 385 ; Baisse de prix 455 ; total rule y 482 (x 70 to 640) ; "Marge :" 595 ;
+      "− 650 €" pen-red 88 px x 330 baseline 600, red ellipse centre (468,570) rx 178 ry 64 rot -6.
+    - bottom of the sheet (below y 650) empty at handoff_in ; frame 05 writes : "Quel modèle ?" 735,
+      "Combien il me faut ?" 875, "Combien je dois vendre ?" 945.
+  -->
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Caveat"; src: url("assets/fonts/Caveat-600.woff2") format("woff2"); font-weight: 600; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
+
+    /* ---------- ground-dark : canvas, orange halo behind the sheet, rim-blue arc at the top ---------- */
+    .f05-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f05-ground { background: #0b0b0d; overflow: hidden; }
+    .f05-halo { position: absolute; left: 360px; top: 170px; width: 1200px; height: 600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.20), rgba(252,126,21,.08) 55%, rgba(252,126,21,0)); }
+    .f05-halo-b { position: absolute; left: -200px; top: -420px; width: 2320px; height: 700px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(47,123,255,.12), rgba(47,123,255,0)); }
+    .f05-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
+      border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
+
+    /* ---------- the world (camera) : drift (z) > cam (notches) ---------- */
+    #f05-lens { overflow: visible; }
+    #f05-drift { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 470px; }
+    #f05-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
+
+    /* draft : lined cream sheet, -4deg, two soft creases, deep shadow */
+    #f05-sheet { position: absolute; left: 580px; top: 50px; width: 760px; height: 980px; border-radius: 6px; background-color: #f6efe3;
+      background-image: repeating-linear-gradient(180deg, rgba(47,123,255,0) 0px, rgba(47,123,255,0) 69px, rgba(47,123,255,.18) 69px, rgba(47,123,255,.18) 71px);
+      background-position: 0 -35px; transform: rotate(-4deg); transform-origin: 380px 490px;
+      box-shadow: 0 50px 120px rgba(0,0,0,.7), 0 12px 30px rgba(0,0,0,.4); }
+    .f05-crease { position: absolute; left: 0; top: 0; width: 760px; height: 980px; border-radius: 6px;
+      background: linear-gradient(118deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.07) 41%, rgba(0,0,0,0) 47%), linear-gradient(32deg, rgba(0,0,0,0) 60%, rgba(0,0,0,.06) 61%, rgba(0,0,0,0) 66%); }
+    .f05-group { position: absolute; left: 0; top: 0; width: 760px; height: 980px; --dof: 0px; filter: blur(var(--dof)); will-change: filter; }
+    .f05-h { position: absolute; left: 70px; height: 80px; font: 600 64px/80px "Caveat", cursive; color: #1a1b1f; white-space: nowrap; }
+    .f05-h small { font-size: 46px; color: #555a63; }
+    .f05-res { position: absolute; left: 330px; height: 110px; font: 600 88px/110px "Caveat", cursive; color: #d33a2c; white-space: nowrap; }
+    .f05-rule { position: absolute; left: 70px; top: 480px; width: 570px; height: 4px; border-radius: 4px; background: #1a1b1f; transform: rotate(-1deg); }
+    .f05-ink { position: absolute; left: 0; top: 0; width: 760px; height: 980px; overflow: visible; }
+    .f05-ink path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* the three questions, the red "?" and the four model words */
+    .f05-q { opacity: 0; }
+    .f05-qt { display: inline-block; clip-path: inset(-30px 100% -30px -20px); }
+    .f05-qm { display: inline-block; color: #d33a2c; margin-left: 12px; clip-path: inset(-30px 100% -30px -20px); transform-origin: 50% 70%; }
+    .f05-mw { position: absolute; height: 44px; font: 600 36px/44px "Caveat", cursive; color: #555a63; white-space: nowrap; opacity: 0; }
+    .f05-mw span { display: inline-block; clip-path: inset(-20px 100% -20px -10px); }
+    #f05-strikes path { opacity: 0; }
+
+    /* pen : black ballpoint, blurred, foreground ; the wrapper sits on the tip */
+    #f05-pen { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; }
+    .f05-penbar { position: absolute; left: -10px; top: -30px; width: 900px; height: 60px; border-radius: 30px 40px 40px 30px;
+      background: linear-gradient(180deg, #2a2b30, #09090b); transform-origin: 10px 30px; transform: rotate(-38deg);
+      filter: blur(14px); box-shadow: 0 0 0 5px rgba(252,126,21,.45); }
+
+    /* shade + vignette */
+    #f05-shade { opacity: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); }
+    .f05-vig { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 1300px 820px at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+
+    /* subtitle : bottom center, band y 890 to 980 */
+    .f05-sub { position: absolute; left: 0; top: 898px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+    .f05-w { display: inline-block; opacity: 0; color: rgba(255,255,255,.35); }
+    .f05-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
+    .f05-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f05-kw .f05-w { position: relative; text-shadow: none; }
+    /* a key-word box over several words : one segment per word, traced as each word is spoken */
+    .f05-kws { display: inline-block; margin: 0 6px; }
+    .f05-seg { position: relative; display: inline-block; padding: 0 0 4px; }
+    .f05-seg:first-child { padding-left: 14px; }
+    .f05-seg:last-child { padding-right: 14px; }
+    .f05-seg .f05-kwbg { border-radius: 0; }
+    .f05-seg:first-child .f05-kwbg { border-radius: 10px 0 0 10px; }
+    .f05-seg:last-child .f05-kwbg { border-radius: 0 10px 10px 0; }
+    .f05-seg .f05-w { position: relative; text-shadow: none; }
+
+    /* the light goes out : closing vignette (iris) + pure black */
+    #f05-iris { position: absolute; left: -1920px; top: -1220px; width: 5760px; height: 3240px; opacity: 0; transform-origin: 2880px 1620px;
+      background: radial-gradient(closest-side, rgba(0,0,0,0) 10%, rgba(0,0,0,.6) 22%, #000 32%); }
+    #f05-black { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #000; opacity: 0; }
+
+    /* film grain 5 % */
+    #f05-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+  </style>
+
+  <div id="root" data-composition-id="05-questions" data-width="1920" data-height="1080" data-duration="4.9">
+
+    <!-- ground-dark -->
+    <div id="f05-ground" class="clip f05-layer" data-start="0" data-duration="4.9" data-track-index="0">
+      <div class="f05-halo-b"></div>
+      <div class="f05-arc"></div>
+      <div id="f05-halo" class="f05-halo"></div>
+    </div>
+
+    <!-- the world : drift (z) > cam (three notches down) > the draft sheet -->
+    <div id="f05-lens" class="clip f05-layer" data-start="0" data-duration="4.9" data-track-index="1" data-layout-allow-overflow>
+      <div id="f05-drift">
+        <div id="f05-cam">
+          <div id="f05-sheet">
+            <div class="f05-crease"></div>
+
+            <!-- the calculations (frame 04), defocused as the camera goes down -->
+            <div id="f05-calc" class="f05-group">
+              <div class="f05-h" style="top:43px">Essai n°2 — la voiture</div>
+              <div class="f05-h" style="top:183px">Achat <small>………</small> 11 800</div>
+              <div class="f05-h" style="top:253px">Contrôle + pneus <small>…</small> 640</div>
+              <div class="f05-h" style="top:323px">Carte grise, annonce <small>…</small> 310</div>
+              <div class="f05-h" style="top:393px">Baisse de prix <small>……</small> 900</div>
+              <div class="f05-rule"></div>
+              <div class="f05-h" style="top:533px">Marge :</div>
+              <div class="f05-res" style="top:515px">− 650 €</div>
+              <svg class="f05-ink" viewBox="0 0 760 980">
+                <path d="M 292 568 C 288 520, 380 496, 470 500 C 572 504, 650 528, 646 568 C 642 612, 560 640, 466 638 C 372 636, 296 614, 292 568" stroke="#d33a2c" stroke-width="6" transform="rotate(-6 468 570)"/>
+              </svg>
+            </div>
+
+            <!-- question 1 and its four model words -->
+            <div id="f05-g1" class="f05-group">
+              <div id="f05-q1" class="f05-h f05-q" style="top:673px"><span id="f05-q1t" class="f05-qt">Quel modèle</span><span id="f05-q1m" class="f05-qm">?</span></div>
+              <div id="f05-mw1" class="f05-mw" style="left:440px;top:655px;transform:rotate(-5deg)"><span>achat-revente ?</span></div>
+              <div id="f05-mw2" class="f05-mw" style="left:478px;top:712px;transform:rotate(3deg)"><span>dépôt-vente ?</span></div>
+              <div id="f05-mw3" class="f05-mw" style="left:96px;top:768px;transform:rotate(-3deg)"><span>courtage ?</span></div>
+              <div id="f05-mw4" class="f05-mw" style="left:300px;top:772px;transform:rotate(2deg)"><span>intermédiation ?</span></div>
+              <svg id="f05-strikes" class="f05-ink" viewBox="0 0 760 980">
+                <path id="f05-k1" d="M 436 690 L 676 664" stroke="#d33a2c" stroke-width="4"/>
+                <path id="f05-k2" d="M 474 740 L 680 748" stroke="#d33a2c" stroke-width="4"/>
+                <path id="f05-k3" d="M 92 796 L 246 786" stroke="#d33a2c" stroke-width="4"/>
+                <path id="f05-k4" d="M 296 796 L 540 806" stroke="#d33a2c" stroke-width="4"/>
+              </svg>
+            </div>
+
+            <!-- questions 2 and 3 -->
+            <div id="f05-g2" class="f05-group">
+              <div id="f05-q2" class="f05-h f05-q" style="top:813px"><span id="f05-q2t" class="f05-qt">Combien il me faut</span><span id="f05-q2m" class="f05-qm">?</span></div>
+            </div>
+            <div id="f05-g3" class="f05-group">
+              <div id="f05-q3" class="f05-h f05-q" style="top:883px"><span id="f05-q3t" class="f05-qt">Combien je dois vendre</span><span id="f05-q3m" class="f05-qm">?</span></div>
+            </div>
+
+            <!-- pen (foreground, blurred), tip on the writing -->
+            <div id="f05-pen"><div class="f05-penbar"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom shade + vignette -->
+    <div id="f05-veil" class="clip f05-layer" data-start="0" data-duration="4.9" data-track-index="2"><div id="f05-shade" class="f05-layer"></div><div class="f05-vig"></div></div>
+
+    <!-- the sentence of the voice, bottom center, word by word (frame-local cues) -->
+    <div id="f05-subs" class="clip f05-layer" data-start="0" data-duration="4.9" data-track-index="3" data-layout-allow-overflow>
+      <div id="f05-s1" class="f05-sub"><span class="f05-w" data-cue="0.10">Sans</span> <span class="f05-w" data-cue="0.28">savoir</span> <span class="f05-w" data-cue="0.63">quel</span><span class="f05-kw"><i id="f05-kb1" class="f05-kwbg"></i><span class="f05-w f05-kt" data-cue="0.80">modèle</span></span><span class="f05-w" data-cue="1.16">te</span> <span class="f05-w" data-cue="1.33">correspond.</span></div>
+      <div id="f05-s2" class="f05-sub"><span class="f05-w" data-cue="2.29">Combien</span><span class="f05-kws"><span class="f05-seg"><i id="f05-kb2a" class="f05-kwbg"></i><span class="f05-w f05-kt" data-cue="2.59">il</span>&nbsp;</span><span class="f05-seg"><i id="f05-kb2b" class="f05-kwbg"></i><span class="f05-w f05-kt" data-cue="2.73">te</span>&nbsp;</span><span class="f05-seg"><i id="f05-kb2c" class="f05-kwbg"></i><span class="f05-w f05-kt" data-cue="2.88">faut.</span></span></span></div>
+      <div id="f05-s3" class="f05-sub"><span class="f05-w" data-cue="3.38">Combien</span> <span class="f05-w" data-cue="3.66">tu</span> <span class="f05-w" data-cue="3.80">dois</span><span class="f05-kw"><i id="f05-kb3" class="f05-kwbg"></i><span class="f05-w f05-kt" data-cue="3.95">vendre.</span></span></div>
+    </div>
+
+    <!-- the light goes out -->
+    <div id="f05-night" class="clip f05-layer" data-start="0" data-duration="4.9" data-track-index="4" data-layout-allow-overflow>
+      <div id="f05-iris"></div>
+      <div id="f05-black"></div>
+    </div>
+
+    <!-- film grain 5 % -->
+    <div id="f05-grain" class="clip f05-layer" data-start="0" data-duration="4.9" data-track-index="5"></div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "05-questions", DUR = 4.9, FR = 1 / 30;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#f05-" + id); }
+
+      var tl = gsap.timeline({ paused: true });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+
+      /* ---- sheet geometry (sheet-local px) ---- */
+      var SH = { cx: 960, cy: 540, w: 760, h: 980, rot: -4 * Math.PI / 180 };
+      // measured ink widths (Caveat 600 64 px) of the three questions, "?" included
+      var Q = [
+        { id: "q1", x: 70, base: 735, ink: 300, full: 338 },
+        { id: "q2", x: 70, base: 875, ink: 470, full: 508 },
+        { id: "q3", x: 70, base: 945, ink: 560, full: 598 }
+      ];
+      // sheet-local point -> layer point (sheet rotated around its centre)
+      function P(lx, ly) {
+        var dx = lx - SH.w / 2, dy = ly - SH.h / 2, c = Math.cos(SH.rot), s = Math.sin(SH.rot);
+        return { x: SH.cx + dx * c - dy * s, y: SH.cy + dx * s + dy * c };
+      }
+      // camera (origin 960,540) that puts sheet point (lx,ly) on screen (960,470) at scale s
+      function aim(lx, ly, s) { var p = P(lx, ly); return { x: -s * (p.x - 960), y: -70 - s * (p.y - 540), scale: s }; }
+
+      var cam = $("cam"), drift = $("drift"), pen = $("pen");
+      var S0 = 0.85, S1 = 1.15;
+
+      // first image = handoff_in : whole sheet, scale 0.85, centred
+      gsap.set(cam, { x: 0, y: 0, scale: S0, transformOrigin: "960px 540px" });
+      gsap.set(drift, { scale: 1, transformOrigin: "960px 470px" });
+
+      /* ---- camera track ---- */
+      // residual drift z -1 %/s until the first notch, then +1 %/s, then +2 %/s from 4.25 to black
+      var Z1 = 1 - 0.01 * 0.20, Z2 = Z1 + 0.01 * (4.25 - 0.20), Z3 = Z2 + 0.02 * (DUR - 4.25);
+      ft(drift, { scale: 1 }, { scale: Z1, duration: 0.20, ease: "none" }, 0);
+      ft(drift, { scale: Z1 }, { scale: Z2, duration: 4.25 - 0.20, ease: "none" }, 0.20);
+      ft(drift, { scale: Z2 }, { scale: Z3, duration: DUR - 4.25, ease: "none" }, 4.25);
+      // three notches down (0.35 s expo.inOut), the current question on the centre line
+      var A = Q.map(function (q) { return aim(q.x + q.full / 2, q.base - 20, S1); });
+      ft(cam, { x: 0, y: 0, scale: S0 }, { x: A[0].x, y: A[0].y, scale: S1, duration: 0.35, ease: "expo.inOut" }, 0.20);
+      ft(cam, { x: A[0].x, y: A[0].y, scale: S1 }, { x: A[1].x, y: A[1].y, scale: S1, duration: 0.35, ease: "expo.inOut" }, 2.15);
+      ft(cam, { x: A[1].x, y: A[1].y, scale: S1 }, { x: A[2].x, y: A[2].y, scale: S1, duration: 0.35, ease: "expo.inOut" }, 3.25);
+
+      /* ---- depth of field : the calculations go soft above, earlier questions recede a little ---- */
+      ft($("calc"), { "--dof": "0px", opacity: 1 }, { "--dof": "5px", opacity: 0.6, duration: 0.35, ease: "power2.inOut" }, 0.20);
+      ft($("calc"), { "--dof": "5px", opacity: 0.6 }, { "--dof": "7px", opacity: 0.5, duration: 0.35, ease: "power2.inOut" }, 2.15);
+      ft($("g1"), { "--dof": "0px", opacity: 1 }, { "--dof": "1.5px", opacity: 0.8, duration: 0.35, ease: "power2.inOut" }, 2.15);
+      ft($("g2"), { "--dof": "0px", opacity: 1 }, { "--dof": "1.5px", opacity: 0.8, duration: 0.35, ease: "power2.inOut" }, 3.25);
+
+      /* ---- the pen writes (tip in sheet-local px) ---- */
+      var CLIP0 = "inset(-30px 100% -30px -20px)", CLIP1 = "inset(-30px 0% -30px -20px)";
+      var penAt = { x: 1100, y: 640 };
+      gsap.set(pen, { x: penAt.x, y: penAt.y });
+      function penTo(x, y, dur, ease, pos) {
+        ft(pen, { x: penAt.x, y: penAt.y }, { x: x, y: y, duration: dur, ease: ease }, pos);
+        penAt = { x: x, y: y };
+      }
+      function write(q, tStart, tInk, tMark) {
+        var el = $(q.id), t = $(q.id + "t"), m = $(q.id + "m"), y = q.base - 12;
+        tl.set(el, { opacity: 1 }, tStart);
+        ft(t, { clipPath: CLIP0 }, { clipPath: CLIP1, duration: tInk, ease: "none" }, tStart);
+        penTo(q.x + q.ink, y, tInk, "none", tStart);
+        // the red "?" lands on its word (2 frames early), the pen dots it
+        penTo(q.x + q.full - 8, y - 6, tMark - (tStart + tInk), "power2.inOut", tStart + tInk);
+        ft(m, { clipPath: CLIP0 }, { clipPath: CLIP1, duration: 0.08, ease: "none" }, tMark);
+      }
+      // 0.12 the blurred pen comes back in from the right, onto the start of question 1
+      tl.set(pen, { opacity: 1 }, 0.12);
+      penTo(Q[0].x, Q[0].base - 12, 0.18, "power3.out", 0.12);
+      // 0.30 "Quel modèle" (0.4 s), "?" at 0.80 - 2 frames
+      write(Q[0], 0.30, 0.40, 0.80 - 2 * FR);
+
+      // 1.40 four model words scribbled around, then struck through in red at 1.90
+      var MW = [
+        { id: "mw1", t: 1.40, x0: 440, x1: 670, y: 690 },
+        { id: "mw2", t: 1.52, x0: 478, x1: 676, y: 746 },
+        { id: "mw3", t: 1.64, x0: 96, x1: 240, y: 802 },
+        { id: "mw4", t: 1.76, x0: 300, x1: 536, y: 806 }
+      ];
+      MW.forEach(function (w, i) {
+        var el = $(w.id);
+        tl.set(el, { opacity: 1 }, w.t);
+        ft(el.firstElementChild, { clipPath: "inset(-20px 100% -20px -10px)" }, { clipPath: "inset(-20px 0% -20px -10px)", duration: 0.1, ease: "none" }, w.t);
+        penTo(w.x0, w.y, i === 0 ? 0.1 : 0.02, "power2.out", w.t - (i === 0 ? 0.1 : 0.02));
+        penTo(w.x1, w.y, 0.1, "none", w.t);
+      });
+      // strikes : svg-path-draw (measured straight lengths), one red stroke through each word
+      ["k1", "k2", "k3", "k4"].forEach(function (k, i) {
+        var p = $(k), d = p.getAttribute("d").match(/-?\d+(\.\d+)?/g).map(Number);
+        var len = Math.hypot(d[2] - d[0], d[3] - d[1]) * 1.05, t = 1.90 + i * 0.06;
+        p.style.strokeDasharray = len + "";
+        p.style.strokeDashoffset = len + "";
+        tl.set(p, { opacity: 1 }, t);
+        ft(p, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: 0.1, ease: "power2.out" }, t);
+      });
+      penTo(MW[3].x1 - 40, 800, 0.24, "power2.inOut", 1.86);
+
+      // 2.29 "Combien il me faut", "?" at 2.88 ; 3.38 "Combien je dois vendre", "?" at 3.95
+      penTo(Q[1].x, Q[1].base - 12, 0.22, "power3.out", 2.07);
+      write(Q[1], 2.29, 0.50, 2.88 - 2 * FR);
+      penTo(Q[2].x, Q[2].base - 12, 0.22, "power3.out", 3.13);
+      write(Q[2], 3.38, 0.48, 3.95 - 2 * FR);
+      // the pen leaves by the right before the light goes out
+      ft(pen, { x: penAt.x, y: penAt.y }, { x: penAt.x + 760, y: penAt.y - 260, duration: 0.2, ease: "power3.in" }, 4.03);
+      tl.set(pen, { opacity: 0 }, 4.24);
+
+      // 4.10 the three red "?" pulse once (x1.1, 0.12 s)
+      ["q1m", "q2m", "q3m"].forEach(function (id) {
+        ft($(id), { scale: 1 }, { scale: 1.1, duration: 0.05, ease: "power3.out" }, 4.10);
+        ft($(id), { scale: 1.1 }, { scale: 1, duration: 0.07, ease: "power2.in" }, 4.15);
+      });
+
+      /* ---- scene 2 : the light goes out ---- */
+      ft($("halo"), { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power2.out" }, 4.25);
+      // the shadow closes in from the edges (power2.in) to pure black, complete on the last rendered image
+      ft($("iris"), { opacity: 0, scale: 2.0 }, { opacity: 1, scale: 2.0, duration: 0.12, ease: "power1.in" }, 4.30);
+      ft($("iris"), { scale: 2.0 }, { scale: 0.02, duration: 4.83 - 4.30, ease: "power2.in" }, 4.30);
+      ft($("black"), { opacity: 0 }, { opacity: 1, duration: 4.83 - 4.50, ease: "power2.in" }, 4.50);
+
+      /* ---- the voice line : word by word, 35 % white then white ; one key-word box per sentence ---- */
+      Array.prototype.forEach.call(root.querySelectorAll(".f05-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f05-kt");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb1"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 0.78 - FR);
+      ft($("kb2a"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 2.57 - FR);
+      ft($("kb2b"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 2.71 - FR);
+      ft($("kb2c"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 2.86 - FR);
+      ft($("kb3"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 3.93 - FR);
+      // each sentence leaves before the next one ; the last leaves at 4.25
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.08);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 3.18);
+      ft($("s3"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 4.25);
+      // the bottom shade comes with the first word and leaves with the last
+      ft($("shade"), { opacity: 0 }, { opacity: 1, duration: 0.24, ease: "power1.out" }, 0.08);
+      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power1.out" }, 4.25);
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

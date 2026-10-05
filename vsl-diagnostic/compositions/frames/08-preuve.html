@@ -1,0 +1,266 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Montserrat"; src: url("assets/fonts/Montserrat-800.woff2") format("woff2"); font-weight: 800; }
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); font-weight: 800; }
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
+
+    /* ---------- ground-dark : canvas, halos behind the portrait, rim-blue arc at the top ---------- */
+    .f08-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f08-ground { background: #0b0b0d; overflow: hidden; }
+    .f08-halo { position: absolute; left: 360px; top: 170px; width: 1200px; height: 600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.20), rgba(252,126,21,.08) 55%, rgba(252,126,21,0)); }
+    .f08-halo-b { position: absolute; left: -200px; top: -420px; width: 2320px; height: 700px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(47,123,255,.12), rgba(47,123,255,0)); }
+    .f08-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
+      border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
+
+    /* ---------- the 2010 watermark (its own depth layer : slower drift, then the bridge to frame 9) ---------- */
+    #f08-wm { position: absolute; left: 460px; top: 360px; width: 1000px; height: 220px; filter: url(#f08-streak); opacity: 0; }
+    .f08-yr { position: absolute; left: 0; top: 0; width: 1000px; height: 220px; text-align: center; font-size: 220px; line-height: 220px;
+      font-family: "Big Shoulders", sans-serif; font-variant-numeric: tabular-nums; color: #ffffff; white-space: nowrap; }
+    #f08-yr-w { font-weight: 900; opacity: .06; }
+    #f08-yr-l { font-weight: 800; opacity: 0; text-shadow: 0 0 40px rgba(255,255,255,.18); }
+
+    /* ---------- the world (camera drift) > whip (exit to the left) ---------- */
+    #f08-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
+    #f08-whip { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+
+    /* portrait : real round cut-out, masked to a circle, soft accent + rim-blue radial behind */
+    #f08-pt { position: absolute; left: 170px; top: 110px; width: 660px; height: 660px; filter: url(#f08-streak); }
+    .f08-pt-glow { position: absolute; left: -110px; top: -110px; width: 880px; height: 880px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.16), rgba(47,123,255,.08) 60%, rgba(47,123,255,0)); }
+    .f08-pt-mask { position: absolute; left: 0; top: 0; width: 660px; height: 660px; border-radius: 50%; overflow: hidden; }
+    .f08-pt-mask img { display: block; width: 660px; height: 660px; }
+
+    /* name */
+    #f08-name { position: absolute; left: 880px; top: 600px; height: 66px; font: 800 54px/66px "Montserrat", sans-serif; white-space: nowrap; color: #ffffff; filter: url(#f08-streak); }
+    #f08-name b { font-weight: 800; color: #FC7E15; }
+
+    /* numbers : numeral-jumbo, 170 px, stacked at x 880 */
+    #f08-nums { position: absolute; left: 880px; top: 262px; width: 700px; height: 330px; filter: url(#f08-streak); }
+    .f08-num { position: absolute; left: 0; height: 153px; font: 900 170px/153px "Big Shoulders", sans-serif; font-variant-numeric: tabular-nums;
+      white-space: pre; opacity: 0; transform-origin: 0 50%; }
+    #f08-n1 { top: 0; color: #ffffff; }
+    #f08-n2 { top: 165px; color: #FC7E15; text-shadow: 0 0 60px rgba(252,126,21,.25); }
+    .f08-slot { position: relative; display: inline-block; }
+    .f08-ghost { visibility: hidden; }
+    .f08-val { position: absolute; right: 0; top: 0; }
+
+    /* typed lines : Space Mono 28 */
+    .f08-line { position: absolute; left: 884px; height: 40px; font: 700 28px/40px "Space Mono", monospace; letter-spacing: .12em; white-space: pre; color: #ffffff; filter: url(#f08-streak); }
+    #f08-l1 { top: 728px; } #f08-l2 { top: 776px; }
+    .f08-lab { color: #8a8f98; }
+    .f08-ch { opacity: 0; }
+
+    /* foreground : blurred orange particles */
+    .f08-pa { position: absolute; border-radius: 50%; background: #FC7E15; opacity: 0; }
+
+    /* shade + vignette */
+    #f08-shade { background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); opacity: 0; }
+    .f08-vig { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 1300px 820px at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+
+    /* subtitle : bottom center, band y 890 to 980 */
+    .f08-sub { position: absolute; left: 0; top: 898px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+    .f08-w { display: inline-block; opacity: 0; color: rgba(255,255,255,.35); }
+    .f08-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
+    .f08-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f08-kw .f08-w { position: relative; text-shadow: none; }
+
+    /* film grain 5 % */
+    #f08-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+  </style>
+
+  <div id="root" data-composition-id="08-preuve" data-width="1920" data-height="1080" data-duration="5.6">
+
+    <!-- directional streak for the whip (one envelope for every moving object) -->
+    <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+      <filter id="f08-streak" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+        <feGaussianBlur id="f08-streak-blur" in="SourceGraphic" stdDeviation="0 0" />
+      </filter>
+    </svg>
+
+    <!-- ground-dark -->
+    <div id="f08-ground" class="clip f08-layer" data-start="0" data-duration="5.6" data-track-index="0">
+      <div class="f08-halo-b"></div>
+      <div class="f08-arc"></div>
+      <div class="f08-halo"></div>
+    </div>
+
+    <!-- 2010 watermark (far plane) -->
+    <div id="f08-back" class="clip f08-layer" data-start="0" data-duration="5.6" data-track-index="1" data-layout-allow-overflow>
+      <div id="f08-wm"><div id="f08-yr-w" class="f08-yr">2010</div><div id="f08-yr-l" class="f08-yr">2010</div></div>
+    </div>
+
+    <!-- the world -->
+    <div id="f08-lens" class="clip f08-layer" data-start="0" data-duration="5.6" data-track-index="2" data-layout-allow-overflow>
+      <div id="f08-cam">
+        <div id="f08-whip">
+          <div id="f08-pt">
+            <div class="f08-pt-glow"></div>
+            <div class="f08-pt-mask"><img src="assets/img/portrait.png" alt=""></div>
+          </div>
+
+          <div id="f08-nums">
+            <div id="f08-n1" class="f08-num"><span class="f08-slot"><span class="f08-ghost">21</span><span id="f08-v1" class="f08-val">00</span></span> ANS</div>
+            <div id="f08-n2" class="f08-num"><span class="f08-slot"><span class="f08-ghost">3 000</span><span id="f08-v2" class="f08-val">0</span></span> €</div>
+          </div>
+
+          <div id="f08-name">Guillaume <b>Herbin</b></div>
+
+          <div id="f08-l1" class="f08-line"></div>
+          <div id="f08-l2" class="f08-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- foreground particles (near plane, faster parallax) -->
+    <div id="f08-fg" class="clip f08-layer" data-start="0" data-duration="5.6" data-track-index="3" data-layout-allow-overflow>
+      <div id="f08-fgw" class="f08-layer">
+        <!-- carried over from frame 07's last image (cut by the left edge) -->
+        <div class="f08-pa f08-pa-in" style="left:-120px;top:236px;width:230px;height:230px;filter:blur(34px);opacity:.40;"></div>
+        <div class="f08-pa f08-pa-in" style="left:-60px;top:746px;width:140px;height:140px;filter:blur(24px);opacity:.34;"></div>
+        <div class="f08-pa f08-pa-in" style="left:-30px;top:76px;width:80px;height:80px;filter:blur(16px);opacity:.28;"></div>
+        <!-- new ones on the right -->
+        <div id="f08-p2" class="f08-pa" style="left:1700px;top:150px;width:22px;height:22px;filter:blur(8px);"></div>
+        <div id="f08-p3" class="f08-pa" style="left:1820px;top:760px;width:60px;height:60px;filter:blur(18px);"></div>
+      </div>
+    </div>
+
+    <!-- bottom shade + vignette -->
+    <div id="f08-veil" class="clip f08-layer" data-start="0" data-duration="5.6" data-track-index="4"><div id="f08-shade" class="f08-layer"></div><div class="f08-vig"></div></div>
+
+    <!-- the sentence of the voice, bottom center, word by word (frame-local cues) -->
+    <div id="f08-subs" class="clip f08-layer" data-start="0" data-duration="5.6" data-track-index="5" data-layout-allow-overflow>
+      <div id="f08-s1" class="f08-sub"><span class="f08-w" data-cue="0.33">Je</span> <span class="f08-w" data-cue="0.46">me</span> <span class="f08-w" data-cue="0.59">suis</span> <span class="f08-w" data-cue="0.73">lancé</span> <span class="f08-w" data-cue="0.99">à</span> <span class="f08-w" data-cue="1.12">21</span> <span class="f08-w" data-cue="1.52">ans,</span></div>
+      <div id="f08-s2" class="f08-sub"><span class="f08-w" data-cue="1.84">avec</span><span class="f08-kw"><i id="f08-kb2" class="f08-kwbg"></i><span class="f08-w f08-kt" data-cue="2.12">3&nbsp;000&nbsp;€</span></span><span class="f08-w" data-cue="2.69">en</span> <span class="f08-w" data-cue="2.83">poche.</span></div>
+      <div id="f08-s3" class="f08-sub"><span class="f08-w" data-cue="3.52">Pas</span> <span class="f08-w" data-cue="3.67">de</span><span class="f08-kw"><i id="f08-kb3" class="f08-kwbg"></i><span class="f08-w f08-kt" data-cue="3.81">formation.</span></span></div>
+      <div id="f08-s4" class="f08-sub"><span class="f08-w" data-cue="4.58">Pas</span><span class="f08-kw"><i id="f08-kb4" class="f08-kwbg"></i><span class="f08-w f08-kt" data-cue="4.73">d’expérience.</span></span></div>
+    </div>
+
+    <!-- film grain 5 % -->
+    <div id="f08-grain" class="clip f08-layer" data-start="0" data-duration="5.6" data-track-index="6"></div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "08-preuve", DUR = 5.6, FR = 1 / 30;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#f08-" + id); }
+
+      var tl = gsap.timeline({ paused: true });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+
+      /* ---- typed lines : one span per char ---- */
+      function buildLine(el, lab, val) {
+        var spans = [];
+        [[lab, "f08-lab"], [val, ""]].forEach(function (part) {
+          for (var i = 0; i < part[0].length; i++) {
+            var s = document.createElement("span");
+            s.className = "f08-ch" + (part[1] ? " " + part[1] : "");
+            s.textContent = part[0].charAt(i);
+            el.appendChild(s); spans.push(s);
+          }
+        });
+        return spans;
+      }
+      var L1 = buildLine($("l1"), "FORMATION : ", "AUCUNE");
+      var L2 = buildLine($("l2"), "EXPÉRIENCE : ", "AUCUNE");
+
+      /* ---- seek-safe derived values (counters + streak), computed from the timeline time ---- */
+      var E3 = gsap.parseEase("power3.out"), EX = gsap.parseEase("expo.in");
+      var v1 = $("v1"), v2 = $("v2"), blurNode = $("streak-blur");
+      var WHIP_AT = 5.30, WHIP_END = DUR - FR, WHIP_D = WHIP_END - WHIP_AT;   // the last image already holds handoff_out
+      function clamp(p) { return p < 0 ? 0 : (p > 1 ? 1 : p); }
+      function fmt(n) { var s = String(n); return s.length > 3 ? s.slice(0, s.length - 3) + " " + s.slice(-3) : s; }
+      var last1 = "", last2 = "", lastB = "";
+      function derive() {
+        var t = tl.time();
+        var a = Math.round(21 * E3(clamp((t - 1.00) / 0.25)));
+        var t1 = (a < 10 ? "0" : "") + a;
+        var b = Math.round(3000 * E3(clamp((t - 2.05) / 0.35)));
+        var t2 = fmt(b);
+        var bl = (14 * EX(clamp((t - WHIP_AT) / WHIP_D))).toFixed(2) + " 0";
+        if (t1 !== last1) { v1.textContent = t1; last1 = t1; }
+        if (t2 !== last2) { v2.textContent = t2; last2 = t2; }
+        if (bl !== lastB) { blurNode.setAttribute("stdDeviation", bl); lastB = bl; }
+      }
+      tl.eventCallback("onUpdate", derive);
+
+      /* ---- camera track : drift x +20 px/s (world slides left), z +1 %/s ; whip at 5.30 ---- */
+      ft($("cam"), { x: 0, scale: 1 }, { x: -20 * DUR, scale: 1 + 0.01 * DUR, duration: DUR, ease: "none" }, 0);
+      // whip : portrait, numbers, name, lines leave by the left (expo.in, streak 0 -> 14 px)
+      ft($("whip"), { x: 0 }, { x: -1900, duration: WHIP_D, ease: "expo.in" }, WHIP_AT);
+      // foreground particles : faster parallax, fade in after the seam, whip harder
+      ft($("fgw"), { x: 0 }, { x: -45 * WHIP_AT, duration: WHIP_AT, ease: "none" }, 0);
+      ft($("fgw"), { x: -45 * WHIP_AT }, { x: -45 * WHIP_AT - 2600, duration: WHIP_D, ease: "expo.in" }, WHIP_AT);
+      [["p2", .45], ["p3", .30]].forEach(function (p, i) {
+        ft($(p[0]), { opacity: 0 }, { opacity: p[1], duration: 0.6, ease: "power2.out" }, 0.30 + 0.1 * i);
+      });
+
+      /* ---- scene 1 : the numbers of the start ---- */
+      // 0.15 the bottom shade comes in (the subtitle band)
+      ft($("shade"), { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power1.out" }, 0.15);
+      // 0.30 the name slides down 600 -> 640 to make room
+      ft($("name"), { y: 0 }, { y: 40, duration: 0.3, ease: "power3.out" }, 0.30);
+      // 0.40 the 2010 watermark appears behind (6 %), far plane drifts slower (8 px/s)
+      var WM = { x0: 130, y0: -110, s0: 1.25 };
+      ft($("wm"), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.40);
+      ft($("wm"), { x: WM.x0, y: WM.y0, scale: WM.s0 * 1.04 }, { x: WM.x0 - 8 * (WHIP_AT - 0.4), y: WM.y0, scale: WM.s0, duration: WHIP_AT - 0.4, ease: "none" }, 0.40);
+      gsap.set($("wm"), { x: WM.x0, y: WM.y0, scale: WM.s0 * 1.04, transformOrigin: "500px 110px" });
+      // 1.00 « 21 ANS » rolls 00 -> 21, arrives too big x1.3, blur 6 -> sharp (0.25 s)
+      tl.set($("n1"), { opacity: 1 }, 1.00);
+      ft($("n1"), { scale: 1.3, filter: "blur(6px)" }, { scale: 1, filter: "blur(0px)", duration: 0.25, ease: "power3.out" }, 1.00);
+      // 2.05 « 3 000 € » rolls 0 -> 3 000 (0.35 s), rises from below out of soft focus
+      tl.set($("n2"), { opacity: 1 }, 2.05);
+      ft($("n2"), { y: 46, scale: 1.12, filter: "blur(6px)" }, { y: 0, scale: 1, filter: "blur(0px)", duration: 0.35, ease: "expo.out" }, 2.05);
+
+      /* ---- scene 2 : no training, no experience ---- */
+      function typeLine(spans, at) {
+        var step = 0.25 / spans.length;
+        spans.forEach(function (s, k) { tl.set(s, { opacity: 1 }, at + step * k); });
+      }
+      ft($("l1"), { x: -14 }, { x: 0, duration: 0.3, ease: "power3.out" }, 3.52 - FR);
+      typeLine(L1, 3.52 - FR);
+      ft($("l2"), { x: -14 }, { x: 0, duration: 0.3, ease: "power3.out" }, 4.58 - FR);
+      typeLine(L2, 4.58 - FR);
+      // 5.30 -> end : the watermark catches the light (white 100 %) and runs to the centre (960, 470)
+      var wx = WM.x0 - 8 * (WHIP_AT - 0.4);
+      ft($("wm"), { x: wx, y: WM.y0, scale: WM.s0 }, { x: 0, y: 0, scale: 1, duration: WHIP_D, ease: "expo.in" }, WHIP_AT);
+      ft($("yr-l"), { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.in" }, WHIP_AT);
+      ft($("yr-w"), { opacity: 0.06 }, { opacity: 0, duration: 0.18, ease: "power2.in" }, WHIP_AT);
+
+      /* ---- the voice line : word by word, 35 % white then white ; one key-word box per sentence ---- */
+      Array.prototype.forEach.call(root.querySelectorAll(".f08-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f08-kt");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb2"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 2.10 - FR);
+      ft($("kb3"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 3.79 - FR);
+      ft($("kb4"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 4.71 - FR);
+      // each sentence leaves before the next one (and before the seam : no subtitle at 5.60)
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 1.66);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 3.32);
+      ft($("s3"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 4.40);
+      ft($("s4"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 5.30);
+      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power1.out" }, 5.30);
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+      derive();
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

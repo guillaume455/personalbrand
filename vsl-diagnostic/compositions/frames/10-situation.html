@@ -1,0 +1,272 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
+
+    /* ---------- ground-dark : canvas, halos, rim-blue arc at the top (pilot 01) ---------- */
+    .f10-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f10-ground { background: #0b0b0d; overflow: hidden; }
+    .f10-halo { position: absolute; left: 360px; top: 170px; width: 1200px; height: 600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.20), rgba(252,126,21,.08) 55%, rgba(252,126,21,0)); }
+    .f10-halo-b { position: absolute; left: -200px; top: -420px; width: 2320px; height: 700px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(47,123,255,.12), rgba(47,123,255,0)); }
+    .f10-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
+      border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
+
+    /* ---------- the world (camera) : cam (scale + translate, origin 0 0) > gps (the screen, motion-blur target) ---------- */
+    #f10-lens { overflow: hidden; }
+    #f10-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0px 0px; }
+    #f10-gps { position: absolute; left: 170px; top: 90px; width: 1580px; height: 760px; }
+    .f10-bezel { position: absolute; left: 0; top: 0; width: 1580px; height: 760px; box-sizing: border-box; border-radius: 44px;
+      background: #0c0e12; border: 4px solid #2a2d35; overflow: hidden;
+      box-shadow: 0 50px 140px rgba(0,0,0,.6), 0 12px 36px rgba(0,0,0,.4); }
+    .f10-roads { position: absolute; left: -4px; top: -4px; width: 1580px; height: 760px; display: block; }
+    .f10-sheen { position: absolute; left: 0; top: 0; width: 1580px; height: 760px;
+      background: linear-gradient(118deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.035) 42%, rgba(255,255,255,0) 56%); }
+    /* world-coordinate container : children are placed in GPS-layer coordinates */
+    .f10-wc { position: absolute; left: -170px; top: -90px; width: 1920px; height: 1080px; }
+    .f10-route { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block; overflow: visible; }
+
+    /* banner (micro) */
+    .f10-banner { position: absolute; left: 220px; top: 130px; padding: 18px 28px; border-radius: 18px; background: #16191f;
+      border: 2px solid #2a2d35; font: 700 22px/28px "Space Mono", monospace; letter-spacing: 0.3em; text-transform: uppercase;
+      color: #c9ccd3; white-space: nowrap; }
+
+    /* points */
+    .f10-dot { position: absolute; border-radius: 50%; box-sizing: border-box; }
+    #f10-start { left: 298px; top: 668px; width: 64px; height: 64px; background: #2f7bff; border: 6px solid #ffffff;
+      box-shadow: 0 0 28px rgba(47,123,255,.65), 0 6px 18px rgba(0,0,0,.5); }
+    .f10-way { width: 48px; height: 48px; background: #0c0e12; border: 6px solid #FC7E15; box-shadow: 0 0 20px rgba(252,126,21,.55); }
+    #f10-w2 { left: 736px; top: 476px; }
+    #f10-w3 { left: 1206px; top: 306px; }
+    #f10-end { left: 1568px; top: 178px; width: 44px; height: 44px; background: #FC7E15; box-shadow: 0 0 26px rgba(252,126,21,.7); }
+    #f10-spin { position: absolute; left: 280px; top: 650px; width: 100px; height: 100px; border-radius: 50%; opacity: 0;
+      background: conic-gradient(from 0deg, rgba(47,123,255,0) 0deg, rgba(120,170,255,.95) 70deg, rgba(47,123,255,.5) 120deg, rgba(47,123,255,0) 200deg, rgba(47,123,255,0) 360deg);
+      -webkit-mask: radial-gradient(circle, transparent 0 36px, #000 37px 46px, transparent 47px);
+      mask: radial-gradient(circle, transparent 0 36px, #000 37px 46px, transparent 47px); filter: blur(2px); }
+
+    /* pins and model labels : dark pills ; the lit layer fills accent */
+    .f10-pin, .f10-lab { position: absolute; width: 0; height: 0; opacity: 0; white-space: nowrap; }
+    .f10-in { position: absolute; left: 0; top: 0; display: block; transform: translate(-50%, -50%); }
+    .f10-pill { position: relative; display: block; box-sizing: border-box; padding: 10px 22px; border-radius: 30px; background: #16191f;
+      border: 2px solid #2a2d35; font: 500 30px/39px "Instrument Sans", sans-serif; color: #c9ccd3; letter-spacing: -0.005em; }
+    .f10-lit { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: #FC7E15; border-color: #FC7E15; color: #1a1b1f; font-weight: 600;
+      box-shadow: 0 0 44px rgba(252,126,21,.55), 0 10px 30px rgba(0,0,0,.45); opacity: 0; }
+    #f10-pin1 { left: 377px; top: 769px; }
+    #f10-pin2 { left: 797px; top: 561px; }
+    #f10-pin2 .f10-lit { opacity: 1; }
+    .f10-cut { position: absolute; left: -10px; right: -10px; top: 29px; height: 6px; border-radius: 3px; background: #FC7E15;
+      box-shadow: 0 0 14px rgba(252,126,21,.7); transform-origin: 0 50%; transform: scaleX(0) rotate(-4deg); display: block; }
+
+    /* shade + vignette */
+    #f10-shade { opacity: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); }
+    .f10-vig { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 1300px 820px at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+
+    /* subtitle : bottom center, band y 890 to 980 */
+    .f10-sub { position: absolute; left: 0; top: 898px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+    .f10-w { display: inline-block; opacity: 0; color: rgba(255,255,255,.35); }
+    .f10-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
+    .f10-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f10-kw .f10-w { position: relative; text-shadow: none; }
+
+    /* film grain 5 % */
+    #f10-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+  </style>
+
+  <div id="root" data-composition-id="10-situation" data-width="1920" data-height="1080" data-duration="3.05">
+
+    <!-- ground-dark -->
+    <div id="f10-ground" class="clip f10-layer" data-start="0" data-duration="3.05" data-track-index="0">
+      <div class="f10-halo-b"></div>
+      <div class="f10-arc"></div>
+      <div class="f10-halo"></div>
+    </div>
+
+    <!-- the world : cam (camera) > gps (the shared GPS screen) -->
+    <div id="f10-lens" class="clip f10-layer" data-start="0" data-duration="3.05" data-track-index="1" data-layout-allow-overflow>
+      <div id="f10-cam">
+        <div id="f10-gps">
+          <div class="f10-bezel">
+            <svg class="f10-roads" viewBox="170 90 1580 760" fill="none" stroke="#1f232b" stroke-linecap="round">
+              <path d="M300,-50 C420,400 220,700 360,1150" stroke-width="18"/>
+              <path d="M700,-50 C820,400 620,700 760,1150" stroke-width="10"/>
+              <path d="M1150,-50 C1270,400 1070,700 1210,1150" stroke-width="22"/>
+              <path d="M1500,-50 C1620,400 1420,700 1560,1150" stroke-width="12"/>
+              <path d="M-50,180 C500,270 1300,100 2000,220" stroke-width="12"/>
+              <path d="M-50,420 C500,510 1300,340 2000,460" stroke-width="20"/>
+              <path d="M-50,700 C500,790 1300,620 2000,740" stroke-width="14"/>
+              <path d="M-50,860 C500,950 1300,780 2000,900" stroke-width="10"/>
+            </svg>
+            <div class="f10-sheen"></div>
+          </div>
+          <div class="f10-wc">
+            <svg class="f10-route" viewBox="0 0 1920 1080" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <defs>
+                <filter id="f10-glowf" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="12"/></filter>
+              </defs>
+              <path d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" stroke="rgba(252,126,21,.55)" stroke-width="34" filter="url(#f10-glowf)"/>
+              <path d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" stroke="#FC7E15" stroke-width="16"/>
+            </svg>
+            <div class="f10-banner">Itinéraire calculé · ton plan</div>
+            <div id="f10-spin"></div>
+            <div id="f10-start" class="f10-dot"></div>
+            <div id="f10-w2" class="f10-dot f10-way"></div>
+            <div id="f10-w3" class="f10-dot f10-way"></div>
+            <div id="f10-end" class="f10-dot"></div>
+
+            <!-- the four models around the 2nd point -->
+            <div id="f10-l1" class="f10-lab" data-cx="585" data-cy="385" style="left:585px;top:385px;"><span class="f10-in"><span class="f10-pill">Achat-revente<i class="f10-cut"></i></span></span></div>
+            <div id="f10-l2" class="f10-lab" data-cx="960" data-cy="380" style="left:960px;top:380px;"><span class="f10-in"><span class="f10-pill">Courtage<i class="f10-cut"></i></span></span></div>
+            <div id="f10-l3" class="f10-lab" data-cx="560" data-cy="610" style="left:560px;top:610px;"><span class="f10-in"><span class="f10-pill">Intermédiation<i class="f10-cut"></i></span></span></div>
+            <div id="f10-l4" class="f10-lab" data-cx="975" data-cy="600" style="left:975px;top:600px;"><span class="f10-in"><span class="f10-pill">Dépôt-vente</span></span></div>
+
+            <!-- pins -->
+            <div id="f10-pin1" class="f10-pin"><span class="f10-in"><span class="f10-pill">Ta situation</span><span class="f10-pill f10-lit">Ta situation</span></span></div>
+            <div id="f10-pin2" class="f10-pin"><span class="f10-in"><span class="f10-pill">Ton modèle</span><span class="f10-pill f10-lit">Ton modèle</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom shade + vignette -->
+    <div id="f10-veil" class="clip f10-layer" data-start="0" data-duration="3.05" data-track-index="2"><div id="f10-shade" class="f10-layer"></div><div class="f10-vig"></div></div>
+
+    <!-- the sentence of the voice, bottom center, word by word (frame-local cues) -->
+    <div id="f10-subs" class="clip f10-layer" data-start="0" data-duration="3.05" data-track-index="3" data-layout-allow-overflow>
+      <div id="f10-s1" class="f10-sub"><span class="f10-w" data-cue="0.31">On</span> <span class="f10-w" data-cue="0.49">part</span> <span class="f10-w" data-cue="0.66">de</span> <span class="f10-w" data-cue="0.84">ta</span><span class="f10-kw"><i id="f10-kb1" class="f10-kwbg"></i><span class="f10-w f10-kt" data-cue="1.01">situation.</span></span></div>
+      <div id="f10-s2" class="f10-sub"><span class="f10-w" data-cue="1.93">On</span> <span class="f10-w" data-cue="2.08">tranche</span> <span class="f10-w" data-cue="2.23">le</span><span class="f10-kw"><i id="f10-kb2" class="f10-kwbg"></i><span class="f10-w f10-kt" data-cue="2.38">modèle.</span></span></div>
+    </div>
+
+    <!-- film grain 5 % -->
+    <div id="f10-grain" class="clip f10-layer" data-start="0" data-duration="3.05" data-track-index="4"></div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "10-situation", DUR = 3.05, FR = 1 / 30;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#f10-" + id); }
+
+      /* ---- the route, sampled by arc length (same path as the SVG, S commands expanded) ---- */
+      var SEGS = [
+        [[330, 700], [520, 690], [560, 520], [760, 500]],
+        [[760, 500], [960, 480], [1060, 330], [1230, 330]],
+        [[1230, 330], [1400, 330], [1500, 230], [1590, 200]]
+      ];
+      function bz(s, t) {
+        var m = 1 - t, a = m * m * m, b = 3 * m * m * t, c = 3 * m * t * t, d = t * t * t;
+        return { x: a * s[0][0] + b * s[1][0] + c * s[2][0] + d * s[3][0], y: a * s[0][1] + b * s[1][1] + c * s[2][1] + d * s[3][1] };
+      }
+      var PTS = [], LEN = [], acc = 0, ENDS = [];
+      SEGS.forEach(function (s, si) {
+        for (var i = (si ? 1 : 0); i <= 300; i++) {
+          var p = bz(s, i / 300);
+          if (PTS.length) { var q = PTS[PTS.length - 1]; acc += Math.sqrt((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y)); }
+          PTS.push(p); LEN.push(acc);
+        }
+        ENDS.push(acc);
+      });
+      function at(L) {
+        if (L <= 0) return PTS[0];
+        for (var i = 1; i < LEN.length; i++) {
+          if (LEN[i] >= L) { var f = (L - LEN[i - 1]) / ((LEN[i] - LEN[i - 1]) || 1), a = PTS[i - 1], b = PTS[i]; return { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f }; }
+        }
+        return PTS[PTS.length - 1];
+      }
+      var L2 = ENDS[0], L3 = ENDS[1], LMID = (L2 + L3) / 2;
+
+      /* ---- camera : world point at arc length u lands at screen (ax, ay), scale s ---- */
+      var camEl = $("cam"), gps = $("gps");
+      var cam = { s: 1, u: 0, ax: 330, ay: 700 };
+      function apply() {
+        var c = at(cam.u);
+        gsap.set(camEl, { x: cam.ax - c.x * cam.s, y: cam.ay - c.y * cam.s, scale: cam.s });
+      }
+      apply();   // handoff_in : GPS framed at scale 1
+
+      var tl = gsap.timeline({ paused: true });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+      function camT(from, to, pos) { to.onUpdate = apply; ft(cam, from, to, pos); }
+
+      // 0.00 → 0.35 end of the push : 1 → 1.6 on the start point (expo.out)
+      camT({ s: 1, ax: 330, ay: 700 }, { s: 1.6, ax: 520, ay: 600, duration: 0.35, ease: "expo.out" }, 0);
+      // 0.35 → 1.75 drift x +15 px/s
+      camT({ ax: 520 }, { ax: 499, duration: 1.40, ease: "none" }, 0.35);
+      // 1.75 → 2.05 travelling along the route to the 2nd point (expo.inOut)
+      camT({ u: 0, ax: 499, ay: 600 }, { u: L2, ax: 930, ay: 300, duration: 0.30, ease: "expo.inOut" }, 1.75);
+      // 2.05 → 2.60 slow drift on the 2nd point
+      camT({ ax: 930 }, { ax: 922, duration: 0.55, ease: "none" }, 2.05);
+      // 2.60 → 3.05 the camera leaves along the route toward the 3rd point (expo.in), motion blur 0 → 8 px (5 px local x 1.6)
+      camT({ u: L2 }, { u: LMID, duration: 0.45, ease: "expo.in" }, 2.60);
+      ft(gps, { filter: "blur(0px)" }, { filter: "blur(5px)", duration: 0.45, ease: "expo.in" }, 2.60);
+
+      /* ---- scene 1 : ta situation ---- */
+      var pin1 = $("pin1"), lit1 = pin1.querySelector(".f10-lit");
+      // 0.60 the pin arrives (x1.3, blur 4 → sharp, 0.14 s)
+      ft(pin1, { opacity: 0, scale: 1.3, filter: "blur(4px)", transformOrigin: "0px 0px" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.14, ease: "expo.out" }, 0.60);
+      // 1.01 it fills with accent (glow)
+      ft(lit1, { opacity: 0 }, { opacity: 1, duration: 0.16, ease: "power3.out" }, 1.01);
+      ft(pin1, { scale: 1 }, { scale: 1.06, duration: 0.08, ease: "power3.out" }, 1.01);
+      ft(pin1, { scale: 1.06 }, { scale: 1, duration: 0.2, ease: "power3.out" }, 1.09);
+      // 1.20 → 1.75 the glow of the blue point turns once
+      ft($("spin"), { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power3.out" }, 1.20);
+      ft($("spin"), { rotation: 0 }, { rotation: 360, duration: 0.55, ease: "power3.out" }, 1.20);
+      // scene 2 : pin 1 goes soft in the background as the camera leaves
+      ft(pin1, { filter: "blur(0px)" }, { filter: "blur(3px)", duration: 0.30, ease: "power3.out" }, 1.75);
+
+      /* ---- scene 2 : on tranche le modèle ---- */
+      var P2 = { x: 760, y: 500 };
+      var labs = ["l1", "l2", "l3", "l4"].map(function (id) { return $(id); });
+      // 1.95 the four labels fan out from the point (0.05 s apart, x1.2 blur → sharp)
+      labs.forEach(function (el, i) {
+        var dx = P2.x - parseFloat(el.getAttribute("data-cx")), dy = P2.y - parseFloat(el.getAttribute("data-cy"));
+        ft(el, { opacity: 0, x: dx * 0.7, y: dy * 0.7, scale: 1.2, filter: "blur(6px)" },
+          { opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 1.95 + 0.05 * i);
+      });
+      // 2.08 on « tranche » : three are cut by an accent stroke and go out (0.05 s apart)
+      [0, 1, 2].forEach(function (i) {
+        var t = 2.08 + 0.05 * i, cut = labs[i].querySelector(".f10-cut");
+        ft(cut, { scaleX: 0, rotation: -4 }, { scaleX: 1, rotation: -4, duration: 0.12, ease: "power3.out" }, t);
+        ft(labs[i], { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power3.out" }, t + 0.12);
+      });
+      // the one that remains loses its readable name
+      ft(labs[3], { filter: "blur(0px)" }, { filter: "blur(7px)", duration: 0.2, ease: "power3.out" }, 2.08);
+      // 2.38 it becomes the lit pin « Ton modèle » under the 2nd point
+      var pin2 = $("pin2");
+      var l4cx = parseFloat(labs[3].getAttribute("data-cx")), l4cy = parseFloat(labs[3].getAttribute("data-cy"));
+      var p2cx = 797, p2cy = 561;
+      ft(labs[3], { x: 0, y: 0 }, { x: p2cx - l4cx, y: p2cy - l4cy, duration: 0.16, ease: "expo.out" }, 2.36);
+      ft(labs[3], { opacity: 1 }, { opacity: 0, duration: 0.12, ease: "power3.out" }, 2.40);
+      ft(pin2, { opacity: 0, scale: 1.2, filter: "blur(5px)", transformOrigin: "0px 0px" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.16, ease: "expo.out" }, 2.37);
+
+      /* ---- the voice line : word by word, 35 % white then white ; one key-word box per sentence ---- */
+      ft($("shade"), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.out" }, 0.12);
+      Array.prototype.forEach.call(root.querySelectorAll(".f10-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f10-kt");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb1"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 0.99 - FR);
+      ft($("kb2"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 2.36 - FR);
+      // each sentence leaves before the next one (and before the seam : no subtitle at 3.05)
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 1.70);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.78);
+      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.18, ease: "power1.out" }, 2.78);
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,355 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Montserrat"; src: url("assets/fonts/Montserrat-800.woff2") format("woff2"); font-weight: 800; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
+
+    /* ---------- ground-dark : canvas, orange halo behind the bar, rim-blue arc at the top ---------- */
+    .f12-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f12-ground { background: #0b0b0d; overflow: hidden; }
+    #f12-lights { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; }
+    .f12-halo { position: absolute; left: 360px; top: 170px; width: 1200px; height: 600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.20), rgba(252,126,21,.08) 55%, rgba(252,126,21,0)); }
+    .f12-halo-b { position: absolute; left: -200px; top: -420px; width: 2320px; height: 700px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(47,123,255,.12), rgba(47,123,255,0)); }
+    .f12-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
+      border-bottom: 3px solid rgba(47,123,255,.32); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
+
+    /* ---------- background : the launch plan, very blurred and dark, plus the banner arcs ---------- */
+    #f12-back { opacity: 0; overflow: hidden; }
+    #f12-plan { position: absolute; left: -170px; top: 120px; width: 1400px; height: 933px; }
+    #f12-plan img { display: block; width: 1400px; height: 933px; filter: blur(22px) brightness(.5) saturate(.85); opacity: .62; }
+    #f12-arcs { position: absolute; left: -140px; top: 0; width: 2200px; height: 1080px; }
+    #f12-arcs svg { display: block; width: 2200px; height: 1080px; }
+    #f12-glowb { position: absolute; left: 980px; top: 250px; width: 1100px; height: 560px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.16), rgba(252,126,21,0)); }
+
+    /* ---------- the world (camera) ---------- */
+    #f12-lens { overflow: visible; }
+    #f12-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 470px; }
+    #f12-drift { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 470px; }
+
+    /* the arrival point of the route (handoff_in) and its route */
+    #f12-route { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+    #f12-route svg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+    #f12-mo { position: absolute; left: 938px; top: 448px; width: 44px; height: 44px; transform-origin: 22px 22px; }
+    .f12-mp { position: absolute; left: 0; top: 0; width: 44px; height: 44px; background: #FC7E15; }
+    #f12-mL, #f12-mR { border-radius: 50%; }
+    #f12-mM { transform-origin: 22px 22px; transform: scaleX(0); }
+
+    /* search component (verbatim from the hook) : white plate, leboncoin wordmark, grey pill, orange button */
+    #f12-barwrap { position: absolute; left: 230px; top: 410px; width: 1460px; height: 120px; transform-origin: 730px 60px; opacity: 0; }
+    #f12-bar { position: absolute; left: 0; top: 0; width: 1460px; height: 120px; }
+    .f12-plate { position: absolute; left: 0; top: 0; width: 1460px; height: 120px; border-radius: 30px; background: #ffffff;
+      box-shadow: 0 40px 120px rgba(0,0,0,.55), 0 10px 30px rgba(0,0,0,.35), 0 0 60px rgba(252,126,21,.10); }
+    #f12-logo { position: absolute; left: 34px; top: 31px; width: 230px; height: 58px; }
+    #f12-logo img { display: block; width: 230px; height: 58px; }
+    .f12-pill { position: absolute; left: 300px; top: 17px; width: 1130px; height: 86px; border-radius: 43px; background: #f2f2f4; }
+    #f12-q { position: absolute; left: 40px; top: 0; height: 86px; white-space: pre; font: 500 36px/86px "Instrument Sans", sans-serif; color: #1a1b1f; letter-spacing: -0.005em; }
+    .f12-ch { opacity: 1; }
+    .f12-ct { display: inline-block; width: 0; height: 44px; position: relative; vertical-align: -9px; opacity: 0; }
+    .f12-ct i { position: absolute; left: 1px; top: 0; width: 3px; height: 44px; border-radius: 2px; background: #FC7E15; display: block; }
+    #f12-btn { position: absolute; left: 1055px; top: 11px; width: 64px; height: 64px; border-radius: 50%; background: #ec5a13;
+      box-shadow: 0 6px 16px rgba(236,90,19,.35); }
+    #f12-btn svg { position: absolute; left: 17px; top: 17px; width: 30px; height: 30px; display: block; }
+    .f12-rip { position: absolute; left: 1342px; top: 15px; width: 90px; height: 90px; border-radius: 50%; border: 3px solid #FC7E15;
+      opacity: 0; pointer-events: none; box-shadow: 0 0 18px rgba(252,126,21,.45); }
+    #f12-fill { position: absolute; left: 0; top: 0; width: 1460px; height: 120px; border-radius: 30px; background: #FC7E15; opacity: 0; }
+
+    /* end-card */
+    #f12-micro { position: absolute; left: 0; top: 318px; width: 1920px; text-align: center; white-space: pre;
+      font: 700 22px/32px "Space Mono", monospace; letter-spacing: 0.3em; color: #c9ccd3; text-transform: uppercase; }
+    .f12-mc { opacity: 0; }
+    #f12-cta { position: absolute; left: 400px; top: 390px; width: 1120px; height: 160px; border-radius: 80px; background: #FC7E15; overflow: hidden;
+      opacity: 0; transform-origin: 560px 80px; box-shadow: 0 30px 90px rgba(252,126,21,.45); }
+    #f12-sheen { position: absolute; left: 0; top: 0; width: 360px; height: 160px; opacity: 0;
+      background: linear-gradient(90deg, rgba(255,176,112,0) 0%, rgba(255,176,112,.75) 50%, rgba(255,176,112,0) 100%); }
+    #f12-lbl { position: absolute; left: 0; top: 0; width: 1120px; height: 160px; text-align: center; white-space: nowrap;
+      font: 800 52px/160px "Montserrat", sans-serif; color: #1a1b1f; letter-spacing: -0.01em; opacity: 0; transform-origin: 560px 80px; }
+    #f12-line { position: absolute; left: 0; top: 584px; width: 1920px; text-align: center; white-space: nowrap;
+      font: 500 30px/42px "Instrument Sans", sans-serif; color: #c9ccd3; opacity: 0; }
+    #f12-line b { font-weight: 600; color: #ffffff; }
+    #f12-url { position: absolute; left: 0; top: 648px; width: 1920px; text-align: center; white-space: pre;
+      font: 400 26px/36px "Space Mono", monospace; color: #8a8f98; }
+    .f12-uc { opacity: 0; }
+    .f12-ring { position: absolute; left: 1145px; top: 447px; width: 90px; height: 90px; border-radius: 50%; border: 3px solid #FC7E15;
+      opacity: 0; pointer-events: none; box-shadow: 0 0 18px rgba(252,126,21,.45); }
+
+    /* cursor */
+    #f12-cur { position: absolute; left: 0; top: 0; width: 76px; height: 76px; opacity: 0; filter: drop-shadow(0 8px 12px rgba(0,0,0,.5)); }
+    #f12-cur svg { display: block; width: 76px; height: 76px; }
+
+    /* shade + vignette */
+    #f12-veil { opacity: 0; }
+    #f12-shade { background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); }
+    .f12-vig { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 1300px 820px at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+
+    /* subtitle : bottom center, band y 890 to 980 */
+    .f12-sub { position: absolute; left: 0; top: 898px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+    .f12-w { display: inline-block; opacity: 0; color: rgba(255,255,255,.35); }
+    .f12-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
+    .f12-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f12-kw .f12-w { position: relative; text-shadow: none; }
+
+    /* film grain 5 % */
+    #f12-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+
+    /* the wanted fade to black */
+    #f12-black { background: #000000; opacity: 0; }
+  </style>
+
+  <div id="root" data-composition-id="12-fin" data-width="1920" data-height="1080" data-duration="7.95">
+
+    <!-- ground-dark -->
+    <div id="f12-ground" class="clip f12-layer" data-start="0" data-duration="7.95" data-track-index="0">
+      <div id="f12-lights">
+        <div class="f12-halo-b"></div>
+        <div class="f12-arc"></div>
+        <div class="f12-halo"></div>
+      </div>
+    </div>
+
+    <!-- background : blurred launch plan + the orange and blue arcs of the banner -->
+    <div id="f12-back" class="clip f12-layer" data-start="0" data-duration="7.95" data-track-index="1">
+      <div id="f12-plan"><img src="assets/img/plan-lancement.png" alt=""></div>
+      <div id="f12-glowb"></div>
+      <div id="f12-arcs">
+        <svg viewBox="0 0 2200 1080" fill="none">
+          <defs>
+            <linearGradient id="f12-ga" x1="0" y1="0" x2="2200" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#FC7E15" stop-opacity="0"/>
+              <stop offset=".35" stop-color="#FC7E15" stop-opacity=".55"/>
+              <stop offset=".75" stop-color="#ff9a45" stop-opacity=".95"/>
+              <stop offset="1" stop-color="#FC7E15" stop-opacity=".25"/>
+            </linearGradient>
+            <linearGradient id="f12-gb" x1="0" y1="0" x2="2200" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#2f7bff" stop-opacity=".2"/>
+              <stop offset=".3" stop-color="#2f7bff" stop-opacity=".8"/>
+              <stop offset=".7" stop-color="#2f7bff" stop-opacity=".55"/>
+              <stop offset="1" stop-color="#2f7bff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M 0 960 Q 1100 540 2200 900" stroke="url(#f12-ga)" stroke-width="16" stroke-opacity=".12"/>
+          <path d="M 0 960 Q 1100 540 2200 900" stroke="url(#f12-ga)" stroke-width="3"/>
+          <path d="M 0 1020 Q 1120 600 2200 990" stroke="url(#f12-gb)" stroke-width="14" stroke-opacity=".1"/>
+          <path d="M 0 1020 Q 1120 600 2200 990" stroke="url(#f12-gb)" stroke-width="2.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- the world : lens (blur, unscaled) > cam (landing + recoil) > drift (slow z) -->
+    <div id="f12-lens" class="clip f12-layer" data-start="0" data-duration="7.95" data-track-index="2" data-layout-allow-overflow>
+      <div id="f12-cam">
+        <div id="f12-drift">
+          <div id="f12-route">
+            <svg viewBox="0 0 1920 1080" fill="none">
+              <path d="M 960 470 C 920 500, 905 545, 860 590 S 760 650, 700 720" stroke="#FC7E15" stroke-opacity=".25" stroke-width="30" stroke-linecap="round"/>
+              <path d="M 960 470 C 920 500, 905 545, 860 590 S 760 650, 700 720" stroke="#FC7E15" stroke-width="16" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <div id="f12-mo">
+            <div id="f12-mM" class="f12-mp"></div>
+            <div id="f12-mL" class="f12-mp"></div>
+            <div id="f12-mR" class="f12-mp"></div>
+          </div>
+
+          <div id="f12-barwrap">
+            <div id="f12-bar">
+              <div class="f12-plate"></div>
+              <div id="f12-logo"><img src="assets/img/lbc-logo.png" alt=""></div>
+              <div class="f12-pill">
+                <div id="f12-q"></div>
+                <div id="f12-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4L21 21"/></svg>
+                </div>
+              </div>
+              <div id="f12-rip1" class="f12-rip"></div>
+              <div id="f12-rip2" class="f12-rip"></div>
+            </div>
+            <div id="f12-fill"></div>
+          </div>
+
+          <div id="f12-micro"></div>
+          <div id="f12-cta">
+            <div id="f12-sheen"></div>
+            <div id="f12-lbl">Voir si mon profil correspond</div>
+          </div>
+          <div id="f12-line">5 questions · 2 minutes · <b>aucun paiement à ce stade</b></div>
+          <div id="f12-url"></div>
+          <div id="f12-ring1" class="f12-ring"></div>
+          <div id="f12-ring2" class="f12-ring"></div>
+
+          <div id="f12-cur"><svg viewBox="0 0 24 24"><path d="M3 2l7 19 2.6-7.6L20 11z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom shade + vignette -->
+    <div id="f12-veil" class="clip f12-layer" data-start="0" data-duration="7.95" data-track-index="3"><div id="f12-shade" class="f12-layer"></div><div class="f12-vig"></div></div>
+
+    <!-- the sentence of the voice, bottom center, word by word (frame-local cues) -->
+    <div id="f12-subs" class="clip f12-layer" data-start="0" data-duration="7.95" data-track-index="4" data-layout-allow-overflow>
+      <div id="f12-s1" class="f12-sub"><span class="f12-w" data-cue="0.41">Tu</span> <span class="f12-w" data-cue="0.58">n’as</span> <span class="f12-w" data-cue="0.74">pas</span> <span class="f12-w" data-cue="0.91">besoin</span> <span class="f12-w" data-cue="1.24">de</span><span class="f12-kw"><i id="f12-kb1" class="f12-kwbg"></i><span class="f12-w f12-kt" data-cue="1.40">tout</span> <span class="f12-w f12-kt" data-cue="1.57">savoir.</span></span></div>
+      <div id="f12-s2" class="f12-sub"><span class="f12-w" data-cue="2.26">Juste</span> <span class="f12-w" data-cue="2.93">ta</span> <span class="f12-w" data-cue="3.06">prochaine</span><span class="f12-kw"><i id="f12-kb2" class="f12-kwbg"></i><span class="f12-w f12-kt" data-cue="3.33">étape.</span></span></div>
+    </div>
+
+    <!-- film grain 5 % -->
+    <div id="f12-grain" class="clip f12-layer" data-start="0" data-duration="7.95" data-track-index="5"></div>
+
+    <!-- fade to black (wanted effect transition 2 of 2) -->
+    <div id="f12-black" class="clip f12-layer" data-start="0" data-duration="7.95" data-track-index="6"></div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "12-fin", DUR = 7.95, FR = 1 / 30;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#f12-" + id); }
+
+      /* ---- the query of the hook : one span per char, a zero-width caret after each position ---- */
+      var QUERY = "voiture occasion";
+      var q = $("q"), chars = [], carets = [];
+      function mkCaret() { var c = document.createElement("span"); c.className = "f12-ct"; c.appendChild(document.createElement("i")); q.appendChild(c); carets.push(c); }
+      mkCaret();
+      for (var i = 0; i < QUERY.length; i++) {
+        var s = document.createElement("span"); s.className = "f12-ch"; s.textContent = QUERY.charAt(i); q.appendChild(s); chars.push(s);
+        mkCaret();
+      }
+      carets[carets.length - 1].style.opacity = "1";   // the bar comes back typed, caret after the query
+
+      /* ---- typed texts of the end card ---- */
+      function typed(el, text, cls) {
+        var out = [];
+        for (var k = 0; k < text.length; k++) { var sp = document.createElement("span"); sp.className = cls; sp.textContent = text.charAt(k); el.appendChild(sp); out.push(sp); }
+        return out;
+      }
+      var micro = typed($("micro"), "TA PROCHAINE ÉTAPE", "f12-mc");
+      var url = typed($("url"), "guillaumeherbin.fr/accompagnement", "f12-uc");
+
+      /* ---- the one paused timeline ---- */
+      var tl = gsap.timeline({ paused: true });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+
+      var cam = $("cam"), drift = $("drift"), lens = $("lens");
+
+      /* ---- first image = handoff_in : the 44 px arrival disc at the frame centre, covering 30 % of the frame, blur 6 px ---- */
+      var S0 = (0.30 * 1920) / 44;          // 44 px disc -> 576 px apparent
+      var Y0 = 540 - 470;                   // disc (world 960,470) sits at the frame centre (960,540)
+      gsap.set(cam, { scale: S0, y: Y0, transformOrigin: "960px 470px" });
+      gsap.set(lens, { filter: "blur(6px)" });
+
+      /* ---- camera track ---- */
+      // 0.00 -> 0.30 landing expo.out, the blur clears with it
+      ft(cam, { scale: S0, y: Y0 }, { scale: 1, y: 0, duration: 0.3, ease: "expo.out" }, 0);
+      ft(lens, { filter: "blur(6px)" }, { filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, 0);
+      // 2.20 -> 2.60 slight recoil expo.out to make room for the lines
+      ft(cam, { scale: 1, y: 0 }, { scale: 0.92, y: -28, duration: 0.4, ease: "expo.out" }, 2.20);
+      // continuous z drift : +1.5 %/s (0.30-2.20), +1 %/s (2.20-4.20), +0.8 %/s (4.20-7.95)
+      var d1 = 1 + 0.015 * 1.9, d2 = d1 + 0.010 * 2.0, d3 = d2 + 0.008 * 3.75;
+      ft(drift, { scale: 1 }, { scale: d1, duration: 1.9, ease: "none" }, 0.30);
+      ft(drift, { scale: d1 }, { scale: d2, duration: 2.0, ease: "none" }, 2.20);
+      ft(drift, { scale: d2 }, { scale: d3, duration: 3.75, ease: "none" }, 4.20);
+
+      /* ---- the decor arrives after the seam (nothing born in the 2 images around it) ---- */
+      ft($("lights"), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.out" }, 2 * FR + 0.001);
+      ft($("back"), { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power1.out" }, 2 * FR + 0.001);
+      ft($("veil"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 2 * FR + 0.001);
+      // the route leaves behind the stretching disc
+      ft($("route"), { opacity: 1 }, { opacity: 0, duration: 0.18, ease: "power1.out" }, 2 * FR + 0.001);
+      // living background : the plan drifts, the arcs glide (whole frame, slow, linear)
+      ft($("plan"), { x: 0, y: 0 }, { x: 46, y: -14, duration: DUR, ease: "none" }, 0);
+      ft($("arcs"), { x: 0 }, { x: -70, duration: DUR, ease: "none" }, 0);
+
+      /* ---- scene 1 : the disc stretches into a pill and becomes the search bar of the hook ---- */
+      var G = 120 / 44, H = (1460 / G - 44) / 2;          // group scale, half length between cap centres
+      ft($("mo"), { scale: 1 }, { scale: G, duration: 0.3, ease: "expo.out" }, 0);
+      ft($("mL"), { x: 0 }, { x: -H, duration: 0.3, ease: "expo.out" }, 0);
+      ft($("mR"), { x: 0 }, { x: H, duration: 0.3, ease: "expo.out" }, 0);
+      ft($("mM"), { scaleX: 0 }, { scaleX: (2 * H) / 44, duration: 0.3, ease: "expo.out" }, 0);
+      ft([$("mL"), $("mR"), $("mM")], { backgroundColor: "#FC7E15" }, { backgroundColor: "#ffffff", duration: 0.16, ease: "power1.inOut" }, 0.10);
+      ft($("barwrap"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, 0.18);
+      ft($("mo"), { opacity: 1 }, { opacity: 0, duration: 0.08, ease: "power1.in" }, 0.28);
+
+      // 0.85 -> 1.45 the query erases char by char (0.04 s per char), accent caret riding back
+      for (var k = chars.length - 1, e = 0; k >= 0; k--, e++) {
+        var te = 0.85 + 0.04 * e;
+        tl.set(chars[k], { opacity: 0 }, te);
+        tl.set(carets[k + 1], { opacity: 0 }, te);
+        tl.set(carets[k], { opacity: 1 }, te);
+      }
+      // 1.60 -> 2.10 empty field, the caret blinks (2 steps)
+      tl.set(carets[0], { opacity: 0 }, 1.68);
+      tl.set(carets[0], { opacity: 1 }, 1.92);
+
+      /* ---- scene 2 : the bar fills with accent and becomes the button ---- */
+      var MS = 2.26, BX = 1120 / 1460, BY = 160 / 120;
+      ft($("fill"), { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, MS);
+      ft($("barwrap"), { scaleX: 1, scaleY: 1 }, { scaleX: BX, scaleY: BY, duration: 0.3, ease: "expo.out" }, MS);
+      ft($("cta"), { scaleX: 1 / BX, scaleY: 1 / BY }, { scaleX: 1, scaleY: 1, duration: 0.3, ease: "expo.out" }, MS);
+      ft($("cta"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, MS + 0.08);
+      ft($("barwrap"), { opacity: 1 }, { opacity: 0, duration: 0.1, ease: "power1.in" }, MS + 0.2);
+      // 2.60 the label arrives (x1.1, blur 4 -> sharp)
+      ft($("lbl"), { opacity: 0, scale: 1.1, filter: "blur(4px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, 2.60);
+      // 3.06 the micro types above
+      micro.forEach(function (c, j) { tl.set(c, { opacity: 1 }, 3.06 + 0.025 * j); });
+      // 3.40 the line arrives
+      ft($("line"), { opacity: 0, y: 14, filter: "blur(4px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, 3.40);
+      // 3.70 the URL types
+      url.forEach(function (c, j) { tl.set(c, { opacity: 1 }, 3.70 + 0.02 * j); });
+
+      /* ---- scene 3 : the cursor of the hook comes back and clicks directly ---- */
+      var CLICK = { x: 960 + 230, y: 470 + 22 };          // a little right of and below the button centre (human aim)
+      var TIP = { x: 9.5, y: 6.3 };
+      var cur = $("cur");
+      gsap.set(cur, { x: 2150, y: 1250, transformOrigin: TIP.x + "px " + TIP.y + "px" });
+      tl.set(cur, { opacity: 1 }, 4.40);
+      ft(cur, { x: 2150 }, { x: CLICK.x - TIP.x, duration: 0.45, ease: "power3.out" }, 4.40);
+      ft(cur, { y: 1250 }, { y: CLICK.y - TIP.y, duration: 0.45, ease: "power2.out" }, 4.40);
+      // 4.85 click : press x0.85 (0.06 s), button dip, pressed state accent -> accent-deep -> accent, accent ripple
+      ft(cur, { scale: 1 }, { scale: 0.85, duration: 0.06, ease: "power2.in" }, 4.85);
+      ft(cur, { scale: 0.85 }, { scale: 1, duration: 0.06, ease: "power2.out" }, 4.91);
+      ft($("cta"), { scale: 1 }, { scale: 0.95, duration: 0.06, ease: "power1.in" }, 4.85);
+      ft($("cta"), { scale: 0.95 }, { scale: 1, duration: 0.3, ease: "power3.out" }, 4.91);
+      ft($("cta"), { backgroundColor: "#FC7E15" }, { backgroundColor: "#e0620a", duration: 0.06, ease: "power1.in" }, 4.85);
+      ft($("cta"), { backgroundColor: "#e0620a" }, { backgroundColor: "#FC7E15", duration: 0.35, ease: "power2.out" }, 4.91);
+      tl.set([$("ring1"), $("ring2")], { opacity: 1 }, 4.85);
+      ft($("ring1"), { scale: 0.3, opacity: 1 }, { scale: 4.2, opacity: 0, duration: 0.7, ease: "power2.out" }, 4.85);
+      ft($("ring2"), { scale: 0.3, opacity: 1 }, { scale: 4.2, opacity: 0, duration: 0.7, ease: "power2.out" }, 4.93);
+      // 5.00 -> 7.40 living hold : the glow of the button crosses it once, edge to edge
+      ft($("sheen"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 5.10);
+      ft($("sheen"), { x: -380 }, { x: 1140, duration: 2.1, ease: "power1.inOut" }, 5.10);
+
+      /* ---- the voice line : word by word, 35 % white then white ; one key-word box per sentence ---- */
+      Array.prototype.forEach.call(root.querySelectorAll(".f12-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f12-kt");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb1"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 1.38 - FR);
+      ft($("kb2"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 3.31 - FR);
+      // each sentence leaves before the next one ; the second leaves at 4.20
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.06);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 4.20);
+
+      /* ---- 7.40 -> 7.95 wanted fade to black ---- */
+      ft($("black"), { opacity: 0 }, { opacity: 1, duration: 0.55, ease: "power1.inOut" }, 7.40);
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

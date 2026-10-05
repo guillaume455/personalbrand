@@ -1,0 +1,260 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Caveat"; src: url("assets/fonts/Caveat-600.woff2") format("woff2"); font-weight: 600; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
+
+    /* ---------- ground-dark (copied from the pilot) ---------- */
+    .f04-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f04-ground { background: #0b0b0d; overflow: hidden; }
+    .f04-halo { position: absolute; left: 360px; top: 170px; width: 1200px; height: 600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.20), rgba(252,126,21,.08) 55%, rgba(252,126,21,0)); }
+    .f04-halo-b { position: absolute; left: -200px; top: -420px; width: 2320px; height: 700px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(47,123,255,.12), rgba(47,123,255,0)); }
+    .f04-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
+      border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
+
+    /* ---------- the world (camera) ---------- */
+    #f04-lens { overflow: visible; }
+    #f04-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
+    #f04-drift { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+
+    /* draft component : lined cream sheet 760 x 980, rotation -4deg (set by GSAP), two creases, deep shadow */
+    #f04-sheet { position: absolute; left: 580px; top: 50px; width: 760px; height: 980px; transform-origin: 380px 490px; }
+    .f04-paper { position: absolute; left: 0; top: 0; width: 760px; height: 980px; border-radius: 6px; background-color: #f6efe3;
+      background-image: repeating-linear-gradient(180deg, rgba(47,123,255,0) 0px, rgba(47,123,255,0) 68px, rgba(47,123,255,.18) 68px, rgba(47,123,255,.18) 70px);
+      box-shadow: 0 60px 140px rgba(0,0,0,.65), 0 16px 40px rgba(0,0,0,.45); overflow: hidden; }
+    .f04-crease1 { position: absolute; left: 0; top: 0; width: 760px; height: 980px;
+      background: linear-gradient(118deg, rgba(0,0,0,0) 47%, rgba(120,100,70,.10) 49.6%, rgba(255,255,255,.55) 50.2%, rgba(255,255,255,0) 53%); }
+    .f04-crease2 { position: absolute; left: 0; top: 0; width: 760px; height: 980px;
+      background: linear-gradient(62deg, rgba(0,0,0,0) 44%, rgba(120,100,70,.08) 46.4%, rgba(255,255,255,.45) 47%, rgba(255,255,255,0) 50%); }
+    .f04-tone { position: absolute; left: 0; top: 0; width: 760px; height: 980px;
+      background: radial-gradient(ellipse 700px 900px at 40% 35%, rgba(255,255,255,.18), rgba(0,0,0,0) 60%), linear-gradient(180deg, rgba(0,0,0,0) 70%, rgba(60,45,25,.10) 100%); }
+
+    .f04-hand { position: absolute; height: 84px; white-space: nowrap; font: 600 64px/84px "Caveat", cursive; color: #1a1b1f;
+      opacity: 0; clip-path: inset(0% 100% -10% 0%); }
+    .f04-red { color: #d33a2c; }
+    #f04-ink { position: absolute; left: 0; top: 0; width: 760px; height: 980px; overflow: visible; }
+    #f04-ink path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    #f04-rule { stroke: #1a1b1f; stroke-width: 4; opacity: 0; }
+    #f04-ring { stroke: #d33a2c; stroke-width: 5; opacity: 0; }
+
+    /* pen component : black ballpoint, blurred foreground, tip at (0,0) of its wrapper */
+    #f04-pen { position: absolute; left: 0; top: 0; width: 1px; height: 1px; filter: blur(9px); }
+    #f04-pen svg { position: absolute; left: -40px; top: -1240px; width: 1300px; height: 1300px; overflow: visible; }
+
+    /* shade + vignette */
+    #f04-shade { opacity: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); }
+    .f04-vig { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 1300px 820px at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+
+    /* subtitle : bottom center, band y 890 to 980 (copied from the pilot) */
+    .f04-sub { position: absolute; left: 0; top: 898px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+    .f04-w { display: inline-block; opacity: 0; color: rgba(255,255,255,.35); }
+    .f04-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
+    .f04-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f04-kw .f04-w { position: relative; text-shadow: none; }
+
+    /* typographic moment : 84 px, centered in the lower third of the sheet, on a dark band */
+    #f04-ph { position: absolute; left: 0; top: 742px; width: 1920px; text-align: center; opacity: 0; }
+    #f04-band { display: inline-block; position: relative; padding: 18px 50px 24px; border-radius: 22px; background: rgba(11,11,13,.88);
+      box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06); white-space: nowrap;
+      font: 600 84px/94px "Instrument Sans", sans-serif; letter-spacing: -0.025em; color: #ffffff; }
+    .f04-pw { display: inline-block; color: rgba(255,255,255,.35); }
+    .f04-pl { display: inline-block; opacity: 0; }
+    .f04-pkw { position: relative; display: inline-block; padding: 0 14px 4px; margin-left: 6px; }
+    .f04-pkw .f04-pw { position: relative; }
+    .f04-pkwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f04-peak { position: absolute; left: 4px; right: 4px; top: 100%; margin-top: 10px; height: 16px; transform: rotate(-1.2deg); display: block; }
+    #f04-stroke { display: block; width: 100%; height: 16px; transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* film grain 5 % (copied from the pilot) */
+    #f04-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+  </style>
+
+  <div id="root" data-composition-id="04-brouillon" data-width="1920" data-height="1080" data-duration="4">
+
+    <div id="f04-ground" class="clip f04-layer" data-start="0" data-duration="4" data-track-index="0">
+      <div class="f04-halo-b"></div>
+      <div class="f04-arc"></div>
+      <div class="f04-halo"></div>
+    </div>
+
+    <div id="f04-lens" class="clip f04-layer" data-start="0" data-duration="4" data-track-index="1" data-layout-allow-overflow>
+      <div id="f04-cam">
+        <div id="f04-drift">
+          <div id="f04-sheet">
+            <div class="f04-paper"><div class="f04-tone"></div><div class="f04-crease1"></div><div class="f04-crease2"></div></div>
+            <div id="f04-l0" class="f04-hand" style="left:86px;top:72px;">Essai n°2 — la voiture</div>
+            <div id="f04-l1" class="f04-hand" style="left:86px;top:200px;">Achat ……… 11 800</div>
+            <div id="f04-l2" class="f04-hand" style="left:86px;top:275px;">Contrôle + pneus … 640</div>
+            <div id="f04-l3" class="f04-hand" style="left:86px;top:350px;">Carte grise, annonce … 310</div>
+            <div id="f04-l4" class="f04-hand" style="left:86px;top:425px;">Baisse de prix …… 900</div>
+            <div id="f04-l5" class="f04-hand" style="left:96px;top:540px;">Marge :</div>
+            <div id="f04-l6" class="f04-hand f04-red" style="left:392px;top:534px;">− 650 €</div>
+            <svg id="f04-ink" viewBox="0 0 760 980">
+              <path id="f04-rule" d="M 82 520 C 260 516, 470 513, 668 508"/>
+              <path id="f04-ring" d=""/>
+            </svg>
+            <div id="f04-pen">
+              <svg viewBox="0 0 1300 1300">
+                <g transform="translate(40 1240) rotate(-50)">
+                  <path d="M 0 0 L 70 -12 L 70 12 Z" fill="#2a2a2e"/>
+                  <rect x="66" y="-17" width="60" height="34" rx="6" fill="#8e9097"/>
+                  <rect x="122" y="-30" width="1200" height="60" rx="26" fill="#121214"/>
+                  <rect x="140" y="-22" width="1150" height="10" rx="5" fill="#4a4b52"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="f04-veil" class="clip f04-layer" data-start="0" data-duration="4" data-track-index="2"><div id="f04-shade" class="f04-layer"></div><div class="f04-vig"></div></div>
+
+    <div id="f04-subs" class="clip f04-layer" data-start="0" data-duration="4" data-track-index="3" data-layout-allow-overflow>
+      <div id="f04-s1" class="f04-sub"><span class="f04-w" data-cue="0.15">Le</span> <span class="f04-w" data-cue="0.31">problème,</span> <span class="f04-w" data-cue="0.80">ce</span> <span class="f04-w" data-cue="0.96">n’est</span> <span class="f04-w" data-cue="1.12">pas</span> <span class="f04-w" data-cue="1.28">de</span> <span class="f04-w" data-cue="1.44">te</span><span class="f04-kw"><i id="f04-kb1" class="f04-kwbg"></i><span class="f04-w f04-kt" data-cue="1.61">lancer.</span></span></div>
+    </div>
+
+    <div id="f04-phl" class="clip f04-layer" data-start="0" data-duration="4" data-track-index="4" data-layout-allow-overflow>
+      <div id="f04-ph"><div id="f04-band"><span class="f04-pw" data-cue="2.35">C’est</span> <span class="f04-pw" data-cue="2.54">de</span> <span class="f04-pw" data-cue="2.74">te</span> <span class="f04-pw" data-cue="2.93">lancer</span><span class="f04-pkw"><i id="f04-kb2" class="f04-pkwbg"></i><span class="f04-pw f04-pkt" data-cue="3.32">sans</span> <span class="f04-pw f04-pkt" data-cue="3.52">plan.</span><span class="f04-peak"><svg id="f04-stroke" viewBox="0 0 400 16" preserveAspectRatio="none"><path d="M 2 8 C 2 3, 6 2, 12 2.5 L 396 7 L 396 8.6 L 12 14 C 6 14.5, 2 13, 2 8 Z" fill="#FC7E15"/></svg></span></span></div></div>
+    </div>
+
+    <div id="f04-grain" class="clip f04-layer" data-start="0" data-duration="4" data-track-index="5"></div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "04-brouillon", DUR = 4, FR = 1 / 30;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#f04-" + id); }
+
+      var tl = gsap.timeline({ paused: true });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+
+      var cam = $("cam"), drift = $("drift"), lens = $("lens"), sheet = $("sheet"), pen = $("pen");
+
+      /* ---- the ring around "- 650 EUR" : one hand loop with an overshoot (sheet coordinates) ---- */
+      var RC = { x: 512, y: 574, rx: 150, ry: 64, tilt: -5 * Math.PI / 180 };
+      function ringPt(u) {   // u : 0 -> 1 along the loop
+        var a = Math.PI * 1.08 + u * Math.PI * 2.18, r = 1 + 0.06 * u;
+        var ex = Math.cos(a) * RC.rx * r, ey = Math.sin(a) * RC.ry * r;
+        return { x: RC.x + ex * Math.cos(RC.tilt) - ey * Math.sin(RC.tilt), y: RC.y + ex * Math.sin(RC.tilt) + ey * Math.cos(RC.tilt) };
+      }
+      var d = "", N = 72;
+      for (var k = 0; k <= N; k++) { var p = ringPt(k / N); d += (k ? " L " : "M ") + p.x.toFixed(1) + " " + p.y.toFixed(1); }
+      var ring = $("ring"), rule = $("rule");
+      ring.setAttribute("d", d);
+      [ring, rule].forEach(function (pth) { var L = pth.getTotalLength() * 1.02; pth.style.strokeDasharray = L; pth.style.strokeDashoffset = L; pth._len = L; });
+
+      /* ---- handoff_in : sheet 760 x 980 at the centre, rotation -4, blur 6, descending at 300 px/s ---- */
+      gsap.set(sheet, { rotation: -4 });
+      gsap.set(cam, { scale: 1, x: 0, y: 0 });
+
+      // 0.00 -> 0.20 the sheet lands (30 px, power2.out = 300 px/s at the start), blur 6 -> 0
+      ft(sheet, { y: -30, filter: "blur(6px)" }, { y: 0, filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, 0);
+
+      /* ---- camera track ---- */
+      // 0.00 -> 0.45 push to 1.3 on the head of the draft ; then drift y -40 px/s until 2.00
+      var Y_PUSH = 85, Y_S1 = Y_PUSH - 40 * (2.0 - 0.45);
+      ft(cam, { scale: 1, y: 0 }, { scale: 1.3, y: Y_PUSH, duration: 0.45, ease: "power3.out" }, 0);
+      ft(cam, { y: Y_PUSH }, { y: Y_S1, duration: 2.0 - 0.45, ease: "none" }, 0.45);
+      // 2.00 -> 3.40 drift z +1 %/s on the margin ; 3.40 -> 4.00 residual drift -1 %/s
+      var DZ1 = 1 + 0.01 * 1.4, DZ2 = DZ1 - 0.01 * 0.6;
+      gsap.set(drift, { transformOrigin: "1050px 610px" });
+      ft(drift, { scale: 1 }, { scale: DZ1, duration: 1.4, ease: "none" }, 2.0);
+      ft(drift, { scale: DZ1 }, { scale: DZ2, duration: 0.6, ease: "none" }, 3.4);
+      // 3.40 -> 4.00 pull back power3.out : the whole sheet at 0.85
+      ft(cam, { scale: 1.3, y: Y_S1 }, { scale: 0.85 / DZ2, y: 0, duration: 0.6, ease: "power3.out" }, 3.4);
+
+      /* ---- the writing : each line clips in from the left, the pen tip follows ---- */
+      // [id, start, duration, x0, x1, tip y] (sheet coordinates)
+      var W = [
+        ["l0", 0.20, 0.25, 90, 640, 128],
+        ["l1", 0.55, 0.25, 90, 560, 256],
+        ["l2", 0.85, 0.25, 90, 600, 331],
+        ["l3", 1.15, 0.25, 90, 690, 406],
+        ["l4", 1.45, 0.25, 90, 590, 481],
+        ["l5", 2.00, 0.25, 100, 300, 596],
+        ["l6", 2.30, 0.30, 396, 610, 590]
+      ];
+      var PEN_OFF = { x: 1500, y: 1300 }, last = { x: PEN_OFF.x, y: PEN_OFF.y }, lastT = 0.07;
+      gsap.set(pen, { x: PEN_OFF.x, y: PEN_OFF.y });
+      function penTo(x, y, t0, t1, ease) {
+        ft(pen, { x: last.x, y: last.y }, { x: x, y: y, duration: t1 - t0, ease: ease || "power2.inOut" }, t0);
+        last = { x: x, y: y }; lastT = t1;
+      }
+      penTo(W[0][3], W[0][5], 0.07, 0.20, "power3.out");
+      W.forEach(function (w) {
+        var el = $(w[0]);
+        if (w[1] > lastT + 0.01) penTo(w[3], w[5], lastT, w[1]);
+        tl.set(el, { opacity: 1 }, w[1]);
+        ft(el, { clipPath: "inset(0% 100% -10% 0%)" }, { clipPath: "inset(0% 0% -10% 0%)", duration: w[2], ease: "none" }, w[1]);
+        penTo(w[4], w[5] + 6, w[1], w[1] + w[2], "none");
+        if (w[0] === "l4") {
+          // 1.75 the total rule pulls (0.2 s)
+          penTo(84, 520, 1.70, 1.75);
+          tl.set(rule, { opacity: 1 }, 1.75);
+          ft(rule, { strokeDashoffset: rule._len }, { strokeDashoffset: 0, duration: 0.2, ease: "power2.out" }, 1.75);
+          penTo(668, 508, 1.75, 1.95, "power2.out");
+        }
+      });
+      // 2.65 the red ring (svg-path-draw, 0.3 s), the pen tip rides the stroke
+      var r0 = ringPt(0);
+      penTo(r0.x, r0.y, 2.60, 2.65);
+      tl.set(ring, { opacity: 1 }, 2.65);
+      ft(ring, { strokeDashoffset: ring._len }, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, 2.65);
+      var ride = { u: 0 };
+      ft(ride, { u: 0 }, { u: 1, duration: 0.3, ease: "power2.out", onUpdate: function () { var q = ringPt(ride.u); gsap.set(pen, { x: q.x, y: q.y }); } }, 2.65);
+      last = ringPt(1);
+      // 3.00 -> 3.28 the pen leaves by the right (out of frame for good)
+      penTo(1900, 260, 3.00, 3.28, "power3.in");
+
+      // depth of field : the calculation lines step back while the margin is the subject, sharp again for the handoff
+      var calc = [$("l0"), $("l1"), $("l2"), $("l3"), $("l4"), rule];
+      ft(calc, { filter: "blur(0px)", opacity: 1 }, { filter: "blur(2.5px)", opacity: 0.55, duration: 0.5, ease: "power2.inOut" }, 2.05);
+      ft(calc, { filter: "blur(2.5px)", opacity: 0.55 }, { filter: "blur(0px)", opacity: 1, duration: 0.45, ease: "power3.out" }, 3.40);
+
+      /* ---- subtitle : word by word, 35 % white then white ; one key-word box ---- */
+      Array.prototype.forEach.call(root.querySelectorAll(".f04-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f04-kt");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb1"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 1.59 - FR);
+      ft($("shade"), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.out" }, 0.08);
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.02);
+      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power1.out" }, 2.02);
+
+      /* ---- typographic moment : letters converge word by word, box + peak stroke on "sans plan." ---- */
+      var ph = $("ph"), band = $("band");
+      ft(ph, { opacity: 0, y: 12, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.22, ease: "power3.out" }, 2.22);
+      Array.prototype.forEach.call(root.querySelectorAll(".f04-pw"), function (w) {
+        var txt = w.textContent, n = txt.length; w.textContent = "";
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f04-pkt");
+        for (var i = 0; i < n; i++) {
+          var s = document.createElement("span"); s.className = "f04-pl"; s.textContent = txt.charAt(i); w.appendChild(s);
+          var off = (i - (n - 1) / 2) * 22;
+          ft(s, { opacity: 0, x: off, filter: "blur(6px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, cue);
+        }
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb2"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 3.30 - FR);
+      ft($("stroke"), { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power2.out" }, 3.32);
+      // the phrase leaves before the seam : the bottom of the sheet is empty at 4.00
+      ft(ph, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 3.76);
+
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

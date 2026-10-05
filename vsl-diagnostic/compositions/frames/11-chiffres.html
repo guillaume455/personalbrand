@@ -1,0 +1,370 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
+    @font-face { font-family: "Montserrat"; src: url("assets/fonts/Montserrat-800.woff2") format("woff2"); font-weight: 800; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
+    #root * { box-sizing: border-box; }
+
+    /* ---------- ground-dark : canvas, orange halo behind the focal, rim-blue arc at the top ---------- */
+    .f11-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f11-ground { background: #0b0b0d; overflow: hidden; }
+    .f11-halo { position: absolute; left: 360px; top: 170px; width: 1200px; height: 600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.20), rgba(252,126,21,.08) 55%, rgba(252,126,21,0)); }
+    .f11-halo-b { position: absolute; left: -200px; top: -420px; width: 2320px; height: 700px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(47,123,255,.12), rgba(47,123,255,0)); }
+    .f11-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
+      border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
+
+    /* ---------- GPS screen (shared geometry, GPS layer = canvas coordinates) ---------- */
+    #f11-glens { overflow: visible; }
+    #f11-gcam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+    #f11-screen { position: absolute; left: 170px; top: 90px; width: 1580px; height: 760px; border-radius: 44px;
+      background: #0c0e12; border: 4px solid #2a2d35; box-shadow: 0 40px 120px rgba(0,0,0,.6); }
+    #f11-gsvg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+    .f11-road { fill: none; stroke: #1f232b; stroke-linecap: round; }
+    .f11-route { fill: none; stroke: #FC7E15; stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
+    .f11-route-glow { fill: none; stroke: #FC7E15; stroke-width: 34; stroke-linecap: round; opacity: .35; filter: blur(10px); }
+    .f11-pin { position: absolute; height: 56px; padding: 0 24px; border-radius: 28px; white-space: nowrap;
+      font: 500 30px/52px "Instrument Sans", sans-serif; letter-spacing: -0.005em; }
+    .f11-pin.f11-lit { background: #FC7E15; border: 2px solid #FC7E15; color: #1a1b1f; box-shadow: 0 0 28px rgba(252,126,21,.55); }
+
+    /* ---------- the plan (real launch plan) ---------- */
+    #f11-plens { opacity: 0; overflow: visible; }
+    #f11-pcam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 500px; }
+    #f11-plan { position: absolute; left: 0; top: 0; width: 1536px; height: 1024px; transform-origin: 0 0;
+      transform: translate(-858px, -790px) scale(2); }
+    .f11-pimg { position: absolute; left: 0; top: 0; width: 1536px; height: 1024px; display: block; }
+    #f11-pimg-soft { filter: blur(2.4px); }
+    #f11-pimg-sharp { -webkit-mask-image: radial-gradient(ellipse 330px 260px at 905px 610px, #000 55%, rgba(0,0,0,0) 100%);
+      mask-image: radial-gradient(ellipse 330px 260px at 905px 610px, #000 55%, rgba(0,0,0,0) 100%); }
+    #f11-ringsvg { position: absolute; left: 0; top: 0; width: 1536px; height: 1024px; overflow: visible;
+      filter: drop-shadow(0 0 4px rgba(252,126,21,.75)); }
+    #f11-ring { fill: none; stroke: #FC7E15; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* foreground : the green « 84 400 € » tag of act 1, blurred, crossing */
+    #f11-tag { position: absolute; left: 0; top: 600px; height: 150px; padding: 0 56px; border-radius: 34px; background: #1d6b43;
+      font: 800 92px/150px "Montserrat", sans-serif; color: #ffffff; white-space: nowrap; filter: blur(13px); opacity: 0; }
+
+    /* ---------- the dashboard (night instrument cluster) ---------- */
+    #f11-dash { opacity: 0; overflow: visible; }
+    #f11-dcam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 470px; }
+    #f11-dsvg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+    .f11-tick { stroke: #c9ccd3; stroke-linecap: round; }
+    #f11-fgdial { position: absolute; left: -520px; top: 160px; width: 760px; height: 760px; filter: blur(9px); opacity: .55; }
+    #f11-label { position: absolute; left: 440px; top: 548px; width: 400px; text-align: center;
+      font: 700 22px/30px "Space Mono", monospace; letter-spacing: 0.3em; text-transform: uppercase; color: #c9ccd3; padding-left: 0.3em; }
+    #f11-eur { position: absolute; left: 600px; top: 590px; width: 80px; height: 90px; text-align: center;
+      font: 900 76px/90px "Big Shoulders", sans-serif; color: #FC7E15; text-shadow: 0 0 18px rgba(252,126,21,.9), 0 0 42px rgba(252,126,21,.6); }
+    #f11-eurglow { position: absolute; left: 540px; top: 555px; width: 200px; height: 160px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.35), rgba(252,126,21,0)); }
+    #f11-panel { position: absolute; left: 1010px; top: 190px; width: 600px; height: 520px; border-radius: 40px;
+      background: linear-gradient(180deg, #17191e, #111317); border: 2px solid #2a2d35; box-shadow: 0 40px 100px rgba(0,0,0,.55); }
+    #f11-drums { position: absolute; left: 95px; top: 70px; width: 410px; height: 290px; transform-origin: 205px 145px; }
+    .f11-drum { position: absolute; top: 0; width: 196px; height: 290px; border-radius: 26px; overflow: hidden;
+      background: linear-gradient(180deg, #08090b 0%, #15171c 50%, #08090b 100%); border: 2px solid #23262d; }
+    #f11-d1 { left: 0; } #f11-d2 { left: 214px; }
+    .f11-strip { position: absolute; left: 0; top: 0; width: 192px; }
+    .f11-dg { display: block; width: 192px; height: 286px; text-align: center; font: 900 260px/286px "Big Shoulders", sans-serif;
+      font-variant-numeric: tabular-nums; color: #FC7E15; text-shadow: 0 0 22px rgba(252,126,21,.55); }
+    .f11-drum-sh { position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+      background: linear-gradient(180deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,0) 26%, rgba(0,0,0,0) 74%, rgba(0,0,0,.6) 100%); }
+    #f11-cap { position: absolute; left: 0; top: 400px; width: 600px; text-align: center; font: 600 40px/50px "Instrument Sans", sans-serif;
+      letter-spacing: -0.01em; color: #c9ccd3; }
+
+    /* shade + vignette */
+    #f11-shade { opacity: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); }
+    .f11-vig { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 1300px 820px at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+
+    /* subtitle : bottom center, band y 890 to 980 */
+    .f11-sub { position: absolute; left: 0; top: 898px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+    .f11-w { display: inline-block; opacity: 0; color: rgba(255,255,255,.35); }
+    .f11-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
+    .f11-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f11-kw .f11-w { position: relative; text-shadow: none; }
+    /* peak stroke : tapered accent brush, 9 px, under the key words only */
+    .f11-peak { position: absolute; left: 4px; right: 10px; top: 100%; margin-top: 8px; height: 10px; display: block;
+      transform-origin: 0 50%; transform: rotate(-1.2deg) scaleX(0); }
+    .f11-peak svg { display: block; width: 100%; height: 10px; overflow: visible; }
+
+    /* film grain 5 % */
+    #f11-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+  </style>
+
+  <div id="root" data-composition-id="11-chiffres" data-width="1920" data-height="1080" data-duration="4.05">
+
+    <!-- ground-dark -->
+    <div id="f11-ground" class="clip f11-layer" data-start="0" data-duration="4.05" data-track-index="0">
+      <div class="f11-halo-b"></div>
+      <div class="f11-arc"></div>
+      <div class="f11-halo"></div>
+    </div>
+
+    <!-- GPS screen : first and last images -->
+    <div id="f11-glens" class="clip f11-layer" data-start="0" data-duration="4.05" data-track-index="1" data-layout-allow-overflow>
+      <div id="f11-gcam">
+        <div id="f11-screen"></div>
+        <svg id="f11-gsvg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="f11-gclip"><rect x="170" y="90" width="1580" height="760" rx="44" ry="44"/></clipPath>
+          </defs>
+          <g clip-path="url(#f11-gclip)">
+            <path class="f11-road" stroke-width="18" d="M300,-50 C420,400 220,700 360,1150"/>
+            <path class="f11-road" stroke-width="10" d="M700,-50 C820,400 620,700 760,1150"/>
+            <path class="f11-road" stroke-width="22" d="M1150,-50 C1270,400 1070,700 1210,1150"/>
+            <path class="f11-road" stroke-width="12" d="M1500,-50 C1620,400 1420,700 1560,1150"/>
+            <path class="f11-road" stroke-width="12" d="M-50,180 C500,270 1300,100 2000,220"/>
+            <path class="f11-road" stroke-width="20" d="M-50,420 C500,510 1300,340 2000,460"/>
+            <path class="f11-road" stroke-width="14" d="M-50,700 C500,790 1300,620 2000,740"/>
+            <path class="f11-road" stroke-width="10" d="M-50,860 C500,950 1300,780 2000,900"/>
+          </g>
+          <path class="f11-route-glow" d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200"/>
+          <path class="f11-route" d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200"/>
+          <circle cx="330" cy="700" r="26" fill="#2f7bff" stroke="#ffffff" stroke-width="6"/>
+          <circle cx="760" cy="500" r="18" fill="#0c0e12" stroke="#FC7E15" stroke-width="6"/>
+          <circle cx="1230" cy="330" r="18" fill="#0c0e12" stroke="#FC7E15" stroke-width="6"/>
+          <circle cx="1590" cy="200" r="22" fill="#FC7E15" style="filter: drop-shadow(0 0 8px rgba(252,126,21,.8));"/>
+        </svg>
+        <div id="f11-pin1" class="f11-pin f11-lit">Ta situation</div>
+        <div id="f11-pin2" class="f11-pin f11-lit">Ton modèle</div>
+      </div>
+    </div>
+
+    <!-- the real launch plan, page « Ton point d'équilibre » -->
+    <div id="f11-plens" class="clip f11-layer" data-start="0" data-duration="4.05" data-track-index="2" data-layout-allow-overflow>
+      <div id="f11-pcam">
+        <div id="f11-plan">
+          <img id="f11-pimg-soft" class="f11-pimg" src="assets/img/plan-lancement.png" alt="">
+          <img id="f11-pimg-sharp" class="f11-pimg" src="assets/img/plan-lancement.png" alt="">
+          <svg id="f11-ringsvg" viewBox="0 0 1536 1024" xmlns="http://www.w3.org/2000/svg"><path id="f11-ring" d=""/></svg>
+        </div>
+      </div>
+      <div id="f11-tag">84 400 €</div>
+    </div>
+
+    <!-- the dashboard : « ÉPARGNE » gauge + months counter -->
+    <div id="f11-dash" class="clip f11-layer" data-start="0" data-duration="4.05" data-track-index="3" data-layout-allow-overflow>
+      <div id="f11-dcam">
+        <svg id="f11-dsvg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="f11-dialg" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#1b1e24"/><stop offset="80%" stop-color="#121418"/><stop offset="100%" stop-color="#0e1013"/>
+            </radialGradient>
+          </defs>
+          <circle cx="640" cy="440" r="310" fill="url(#f11-dialg)" stroke="#2a2d35" stroke-width="4"/>
+          <g id="f11-ticks"></g>
+          <path id="f11-reserve" d="" fill="none" stroke="#ff3b2f" stroke-width="12" stroke-linecap="round" style="filter: drop-shadow(0 0 8px rgba(255,59,47,.7));"/>
+          <path id="f11-level" d="" fill="none" stroke="#FC7E15" stroke-width="10" stroke-linecap="round" style="filter: drop-shadow(0 0 9px rgba(252,126,21,.8));"/>
+          <g id="f11-needle">
+            <line id="f11-nl" x1="640" y1="440" x2="640" y2="190" stroke="#ff3b2f" stroke-width="10" stroke-linecap="round" style="filter: drop-shadow(0 0 8px rgba(255,59,47,.6));"/>
+          </g>
+          <circle cx="640" cy="440" r="26" fill="#0e1013" stroke="#3a3e47" stroke-width="4"/>
+        </svg>
+        <div id="f11-label">Épargne</div>
+        <div id="f11-eurglow"></div>
+        <div id="f11-eur">€</div>
+        <div id="f11-panel">
+          <div id="f11-drums">
+            <div id="f11-d1" class="f11-drum"><div class="f11-strip"><span class="f11-dg">0</span></div><div class="f11-drum-sh"></div></div>
+            <div id="f11-d2" class="f11-drum"><div id="f11-strip2" class="f11-strip"><span class="f11-dg">0</span><span class="f11-dg">1</span><span class="f11-dg">2</span><span class="f11-dg">3</span></div><div class="f11-drum-sh"></div></div>
+          </div>
+          <div id="f11-cap">mois perdus</div>
+        </div>
+      </div>
+      <svg id="f11-fgdial" viewBox="0 0 760 760" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="380" cy="380" r="360" fill="#121418" stroke="#2a2d35" stroke-width="6"/>
+        <g id="f11-fgticks"></g>
+        <path d="M380,380 L640,250" stroke="#FC7E15" stroke-width="12" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <!-- bottom shade + vignette -->
+    <div id="f11-veil" class="clip f11-layer" data-start="0" data-duration="4.05" data-track-index="4"><div id="f11-shade" class="f11-layer"></div><div class="f11-vig"></div></div>
+
+    <!-- the sentence of the voice, bottom center, word by word (frame-local cues) -->
+    <div id="f11-subs" class="clip f11-layer" data-start="0" data-duration="4.05" data-track-index="5" data-layout-allow-overflow>
+      <div id="f11-s1" class="f11-sub"><span class="f11-w" data-cue="0.11">On</span> <span class="f11-w" data-cue="0.31">pose</span> <span class="f11-w" data-cue="0.51">les</span> <span class="f11-w" data-cue="0.72">vrais</span><span class="f11-kw"><i id="f11-kb1" class="f11-kwbg"></i><span class="f11-w f11-kt" data-cue="0.92">chiffres.</span></span></div>
+      <div id="f11-s2" class="f11-sub"><span class="f11-kw"><i id="f11-kb2" class="f11-kwbg"></i><span class="f11-w f11-kt" data-cue="1.88">Moins</span> <span class="f11-w f11-kt" data-cue="2.05">de</span> <span class="f11-w f11-kt" data-cue="2.22">casse.</span><i id="f11-peak" class="f11-peak"><svg viewBox="0 0 400 10" preserveAspectRatio="none"><path d="M5,0.4 C1.5,0.6 0,2.8 0,5 C0,7.4 1.8,9.6 5.5,9.6 C120,8.6 300,6.6 400,5.4 L400,4.6 C300,3.6 120,1.4 5,0.4 Z" fill="#FC7E15"/></svg></i></span></div>
+      <div id="f11-s3" class="f11-sub"><span class="f11-w" data-cue="2.81">Moins</span> <span class="f11-w" data-cue="2.97">de</span><span class="f11-kw"><i id="f11-kb3" class="f11-kwbg"></i><span class="f11-w f11-kt" data-cue="3.12">temps</span> <span class="f11-w f11-kt" data-cue="3.28">perdu.</span></span></div>
+    </div>
+
+    <!-- film grain 5 % -->
+    <div id="f11-grain" class="clip f11-layer" data-start="0" data-duration="4.05" data-track-index="6"></div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "11-chiffres", DUR = 4.05, FR = 1 / 30;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#f11-" + id); }
+      var SVGNS = "http://www.w3.org/2000/svg";
+
+      /* ---------------- static geometry built at setup ---------------- */
+      // GPS pins : pill centred above its point (pin bottom 40 px above the point)
+      function placePin(el, px, py, w) { el.style.width = w + "px"; el.style.left = (px - w / 2) + "px"; el.style.top = (py - 40 - 56) + "px"; }
+      placePin($("pin1"), 330, 700, 214);
+      placePin($("pin2"), 760, 500, 204);
+
+      // plan ring : rounded polygon around « Ventes nécessaires par mois … 2 » (image coordinates, padded)
+      function roundedPoly(pts, r) {
+        var n = pts.length, d = "";
+        function lerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; }
+        function dist(a, b) { return Math.sqrt((b[0] - a[0]) * (b[0] - a[0]) + (b[1] - a[1]) * (b[1] - a[1])); }
+        for (var i = 0; i < n; i++) {
+          var p0 = pts[(i + n - 1) % n], p1 = pts[i], p2 = pts[(i + 1) % n];
+          var a = lerp(p1, p0, r / dist(p1, p0)), b = lerp(p1, p2, r / dist(p1, p2));
+          d += (i === 0 ? "M" : "L") + a[0].toFixed(1) + "," + a[1].toFixed(1) + " Q" + p1[0] + "," + p1[1] + " " + b[0].toFixed(1) + "," + b[1].toFixed(1) + " ";
+        }
+        // close by returning to the first corner's entry point
+        var f0 = lerp(pts[0], pts[n - 1], r / dist(pts[0], pts[n - 1]));
+        return d + "L" + f0[0].toFixed(1) + "," + f0[1].toFixed(1);
+      }
+      var ring = $("ring");
+      ring.setAttribute("d", roundedPoly([[737, 578], [1084, 623], [1081, 711], [734, 668]], 10));
+
+      // gauge : ticks, reserve arc, level arc (0° = up, clockwise ; sweep -120° → +120°)
+      var GX = 640, GY = 440;
+      function pt(r, deg) { var a = deg * Math.PI / 180; return [GX + r * Math.sin(a), GY - r * Math.cos(a)]; }
+      function arcD(r, a0, a1) { var p0 = pt(r, a0), p1 = pt(r, a1); return "M" + p0[0].toFixed(1) + "," + p0[1].toFixed(1) + " A" + r + "," + r + " 0 " + (Math.abs(a1 - a0) > 180 ? 1 : 0) + " 1 " + p1[0].toFixed(1) + "," + p1[1].toFixed(1); }
+      var ticks = $("ticks");
+      for (var k = 0; k <= 24; k++) {
+        var ang = -120 + k * 10, major = (k % 4 === 0), p0 = pt(major ? 250 : 262, ang), p1 = pt(286, ang);
+        var ln = document.createElementNS(SVGNS, "line");
+        ln.setAttribute("x1", p0[0]); ln.setAttribute("y1", p0[1]); ln.setAttribute("x2", p1[0]); ln.setAttribute("y2", p1[1]);
+        ln.setAttribute("class", "f11-tick"); ln.setAttribute("stroke-width", major ? 6 : 3); ln.setAttribute("opacity", major ? .9 : .55);
+        ticks.appendChild(ln);
+      }
+      $("reserve").setAttribute("d", arcD(296, -120, -88));
+      var level = $("level");
+      level.setAttribute("d", arcD(228, -120, 0));
+      var LV = level.getTotalLength();
+      var RES = -105;                                       // needle in the reserve
+      var LV_RES = LV * (1 - (RES + 120) / 120);            // dash offset that shows -120 → -105 only
+      level.style.strokeDasharray = LV + " " + LV;
+      level.style.strokeDashoffset = LV_RES;
+      // foreground blurred dial ticks
+      var fgt = $("fgticks");
+      for (var j = 0; j < 24; j++) {
+        var a2 = j * 15 * Math.PI / 180, ra = (j % 3 === 0) ? 300 : 320;
+        var l2 = document.createElementNS(SVGNS, "line");
+        l2.setAttribute("x1", 380 + ra * Math.sin(a2)); l2.setAttribute("y1", 380 - ra * Math.cos(a2));
+        l2.setAttribute("x2", 380 + 344 * Math.sin(a2)); l2.setAttribute("y2", 380 - 344 * Math.cos(a2));
+        l2.setAttribute("stroke", "#c9ccd3"); l2.setAttribute("stroke-width", (j % 3 === 0) ? 8 : 4);
+        fgt.appendChild(l2);
+      }
+
+      // plan ring : measured dash
+      var RL = ring.getTotalLength() * 1.02;
+      ring.style.strokeDasharray = RL + " " + RL;
+      ring.style.strokeDashoffset = RL;
+
+      /* ---------------- the one paused timeline ---------------- */
+      var tl = gsap.timeline({ paused: true });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+
+      var gcam = $("gcam"), glens = $("glens"), plens = $("plens"), pcam = $("pcam"), dash = $("dash"), dcam = $("dcam");
+
+      // GPS camera : origin 0 0, centre point P at scale S → x = 960 - S·Px, y = 540 - S·Py
+      function camAt(S, px, py) { return { scale: S, x: 960 - S * px, y: 540 - S * py }; }
+      var S0 = 1.6;
+      var MID = { x: (760 + 1230) / 2, y: (500 + 330) / 2 };         // mid-course between waypoint 2 and 3
+      var P3 = { x: 1230, y: 330 }, PA = { x: 1590, y: 200 };
+
+      /* ---- first image = handoff_in : travelling mid-course, motion blur 8 px ---- */
+      gsap.set(gcam, camAt(S0, MID.x, MID.y));
+      gsap.set(glens, { filter: "blur(8px)" });
+
+      /* ---- Scene 1 : the dive into the 3rd point, the real page ---- */
+      // 0.00 → 0.25 arrival on the 3rd point (expo.out), the blur clears
+      ft(gcam, camAt(S0, MID.x, MID.y), Object.assign(camAt(S0, P3.x, P3.y), { duration: 0.25, ease: "expo.out" }), 0);
+      ft(glens, { filter: "blur(8px)" }, { filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, 0);
+      // 0.25 → 0.47 plunge through the ring (power3.in), the ring grows to frame the page
+      ft(gcam, camAt(S0, P3.x, P3.y), Object.assign(camAt(30, P3.x, P3.y), { duration: 0.22, ease: "power3.in" }), 0.25);
+      ft(glens, { filter: "blur(0px)" }, { filter: "blur(10px)", duration: 0.22, ease: "power3.in" }, 0.25);
+      ft(glens, { opacity: 1 }, { opacity: 0, duration: 0.08, ease: "power1.in" }, 0.41);
+      // 0.38 → 0.70 landing on the page « Ton point d'équilibre » (×3 blur 10 → sharp, expo.out)
+      ft(plens, { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "power1.out" }, 0.38);
+      ft(pcam, { scale: 3, x: 0 }, { scale: 1, duration: 0.32, ease: "expo.out" }, 0.38);
+      ft(plens, { filter: "blur(10px)" }, { filter: "blur(0px)", duration: 0.24, ease: "expo.out" }, 0.38);
+      // drift z +1 %/s on the line, then the slower drift 1.20 → 1.75
+      ft(pcam, { scale: 1 }, { scale: 1.0065, duration: 0.65, ease: "none" }, 0.70);
+      ft(pcam, { scale: 1.0065, x: 0 }, { scale: 1.012, x: -10, duration: 0.40, ease: "power1.inOut" }, 1.35);
+      // 0.92 the accent ring traces around « Ventes nécessaires … 2 » (0.3 s)
+      ft(ring, { strokeDashoffset: RL }, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, 0.92);
+      // foreground : the blurred green « 84 400 € » tag crosses the bottom left
+      ft($("tag"), { x: -760, opacity: 0 }, { x: -470, opacity: 0.8, duration: 0.3, ease: "power2.out" }, 0.62);
+      ft($("tag"), { x: -470 }, { x: -60, duration: 1.13, ease: "none" }, 0.92);
+
+      /* ---- Scene 2 : less breakage, less lost time ---- */
+      // 1.75 → 2.00 the page goes away (camera pulls back, expo.out), the dials enter from the bottom
+      ft(pcam, { scale: 1.012, x: -10, y: 0 }, { scale: 0.62, x: -10, y: -120, duration: 0.3, ease: "expo.out" }, 1.75);
+      ft(plens, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.22, ease: "power2.out" }, 1.75);
+      ft($("tag"), { opacity: 0.8 }, { opacity: 0, duration: 0.16, ease: "power1.out" }, 1.75);
+      ft(dash, { opacity: 0 }, { opacity: 1, duration: 0.16, ease: "power1.out" }, 1.76);
+      ft(dcam, { y: 420, scale: 0.92 }, { y: 0, scale: 1, duration: 0.3, ease: "expo.out" }, 1.76);
+      // camera drift x +15 px/s on the dials
+      ft(dcam, { x: 0 }, { x: -27, duration: 1.84, ease: "none" }, 1.76);
+      // foreground dial slides in quicker (parallax)
+      ft($("fgdial"), { y: 560 }, { y: 0, duration: 0.34, ease: "expo.out" }, 1.76);
+      // 2.05 the needle leaves the reserve and rises to the middle (0.4 s power3.out), the level arc follows
+      var needle = $("needle");
+      gsap.set(needle, { rotation: RES, svgOrigin: GX + " " + GY });
+      ft(needle, { rotation: RES }, { rotation: 0, svgOrigin: GX + " " + GY, duration: 0.4, ease: "power3.out" }, 2.05);
+      ft($("nl"), { stroke: "#ff3b2f" }, { stroke: "#ffffff", duration: 0.25, ease: "power1.out" }, 2.08);
+      ft(level, { strokeDashoffset: LV_RES }, { strokeDashoffset: 0, duration: 0.4, ease: "power3.out" }, 2.05);
+      // the € warning light goes out
+      ft($("eur"), { opacity: 1 }, { opacity: 0.16, duration: 0.2, ease: "power2.out" }, 2.22);
+      ft($("eurglow"), { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power2.out" }, 2.22);
+      // 2.81 the « 03 » drum rolls backwards to « 00 » (0.3 s) with a counting scale settle
+      var DG = 286;
+      gsap.set($("strip2"), { y: -3 * DG });
+      ft($("strip2"), { y: -3 * DG }, { y: 0, duration: 0.3, ease: "power3.out" }, 2.81);
+      ft($("strip2"), { filter: "blur(0px)" }, { filter: "blur(3px)", duration: 0.08, ease: "power1.in" }, 2.81);
+      ft($("strip2"), { filter: "blur(3px)" }, { filter: "blur(0px)", duration: 0.18, ease: "power2.out" }, 2.93);
+      ft($("drums"), { scale: 1.07 }, { scale: 1, duration: 0.3, ease: "power3.out" }, 2.81);
+      // 3.40 → 3.60 hold (drift continues)
+      // 3.60 → 4.05 the camera pulls back : the GPS screen takes the frame again, then the push to the arrival point
+      ft(dcam, { scale: 1 }, { scale: 0.7, duration: 0.2, ease: "expo.out" }, 3.60);
+      ft(dash, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.16, ease: "power2.out" }, 3.60);
+      ft(glens, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, 3.62);
+      ft(gcam, camAt(1.14, 960, 540), Object.assign(camAt(1, 960, 540), { duration: 0.12, ease: "expo.out" }), 3.62);
+      // 3.74 → 4.05 push power3.in toward the arrival point : at 4.05 the 44 px disc is centred, ~30 % of the frame width, blur 6 px
+      var SE = (0.3 * 1920) / 44;
+      ft(gcam, camAt(1, 960, 540), Object.assign(camAt(SE, PA.x, PA.y), { duration: 0.31, ease: "power3.in" }), 3.74);
+      ft(glens, { filter: "blur(0px)" }, { filter: "blur(6px)", duration: 0.31, ease: "power3.in" }, 3.74);
+
+      /* ---- the voice line : word by word, 35 % white then white ; one key-word box per sentence ---- */
+      Array.prototype.forEach.call(root.querySelectorAll(".f11-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f11-kt");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb1"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 0.90 - FR);
+      ft($("kb2"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 1.86 - FR);
+      ft($("kb3"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 3.10 - FR);
+      // peak stroke [trait : moins de casse] 1.88 → 2.23
+      ft($("peak"), { scaleX: 0, rotation: -1.2 }, { scaleX: 1, rotation: -1.2, duration: 0.35, ease: "power2.out" }, 1.88);
+      // the bottom shade comes with the first word, each sentence leaves before the next one (and before the seam)
+      ft($("shade"), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.out" }, 0.08);
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 1.66);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.60);
+      ft($("s3"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 3.56);
+      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power1.out" }, 3.56);
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
