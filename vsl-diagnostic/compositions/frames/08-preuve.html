@@ -176,9 +176,12 @@
       var L2 = buildLine($("l2"), "EXPÉRIENCE : ", "AUCUNE");
 
       /* ---- seek-safe derived values (counters + streak), computed from the timeline time ---- */
-      var E3 = gsap.parseEase("power3.out"), EX = gsap.parseEase("expo.in");
+      var E3 = gsap.parseEase("power3.out"), EX = gsap.parseEase("power1.in");
       var v1 = $("v1"), v2 = $("v2"), blurNode = $("streak-blur");
-      var WHIP_AT = 5.30, WHIP_END = DUR - FR, WHIP_D = WHIP_END - WHIP_AT;   // the last image already holds handoff_out
+      var WHIP_END = DUR - FR;                       // the last image already holds handoff_out
+      var EXIT_AT = 5.05, EXIT_D = 0.45;              // portrait, numbers, name, lines slide out (power2.in), gone by 5.50
+      var WM_AT = WHIP_END - 0.5, WM_D = 0.5;         // 2010 travels to the centre from the right (power1.in, ~2400 px/s at the end)
+      var BL_D = WHIP_END - EXIT_AT;                  // shared streak 0 -> 14 px, reaches 14 on the last image
       function clamp(p) { return p < 0 ? 0 : (p > 1 ? 1 : p); }
       function fmt(n) { var s = String(n); return s.length > 3 ? s.slice(0, s.length - 3) + " " + s.slice(-3) : s; }
       var last1 = "", last2 = "", lastB = "";
@@ -188,7 +191,7 @@
         var t1 = (a < 10 ? "0" : "") + a;
         var b = Math.round(3000 * E3(clamp((t - 2.05) / 0.35)));
         var t2 = fmt(b);
-        var bl = (14 * EX(clamp((t - WHIP_AT) / WHIP_D))).toFixed(2) + " 0";
+        var bl = (14 * EX(clamp((t - EXIT_AT) / BL_D))).toFixed(2) + " 0";
         if (t1 !== last1) { v1.textContent = t1; last1 = t1; }
         if (t2 !== last2) { v2.textContent = t2; last2 = t2; }
         if (bl !== lastB) { blurNode.setAttribute("stdDeviation", bl); lastB = bl; }
@@ -198,10 +201,10 @@
       /* ---- camera track : drift x +20 px/s (world slides left), z +1 %/s ; whip at 5.30 ---- */
       ft($("cam"), { x: 0, scale: 1 }, { x: -20 * DUR, scale: 1 + 0.01 * DUR, duration: DUR, ease: "none" }, 0);
       // whip : portrait, numbers, name, lines leave by the left (expo.in, streak 0 -> 14 px)
-      ft($("whip"), { x: 0 }, { x: -1900, duration: WHIP_D, ease: "expo.in" }, WHIP_AT);
+      ft($("whip"), { x: 0 }, { x: -1900, duration: EXIT_D, ease: "power2.in" }, EXIT_AT);
       // foreground particles : faster parallax, fade in after the seam, whip harder
-      ft($("fgw"), { x: 0 }, { x: -45 * WHIP_AT, duration: WHIP_AT, ease: "none" }, 0);
-      ft($("fgw"), { x: -45 * WHIP_AT }, { x: -45 * WHIP_AT - 2600, duration: WHIP_D, ease: "expo.in" }, WHIP_AT);
+      ft($("fgw"), { x: 0 }, { x: -45 * EXIT_AT, duration: EXIT_AT, ease: "none" }, 0);
+      ft($("fgw"), { x: -45 * EXIT_AT }, { x: -45 * EXIT_AT - 2600, duration: EXIT_D, ease: "power2.in" }, EXIT_AT);
       [["p2", .45], ["p3", .30]].forEach(function (p, i) {
         ft($(p[0]), { opacity: 0 }, { opacity: p[1], duration: 0.6, ease: "power2.out" }, 0.30 + 0.1 * i);
       });
@@ -212,9 +215,9 @@
       // 0.30 the name slides down 600 -> 640 to make room
       ft($("name"), { y: 0 }, { y: 40, duration: 0.3, ease: "power3.out" }, 0.30);
       // 0.40 the 2010 watermark appears behind (6 %), far plane drifts slower (8 px/s)
-      var WM = { x0: 130, y0: -110, s0: 1.25 };
+      var WM = { x0: 680, x1: 600, y0: -170, s0: 1.25 };   // upper right, clear of the numbers
       ft($("wm"), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.40);
-      ft($("wm"), { x: WM.x0, y: WM.y0, scale: WM.s0 * 1.04 }, { x: WM.x0 - 8 * (WHIP_AT - 0.4), y: WM.y0, scale: WM.s0, duration: WHIP_AT - 0.4, ease: "none" }, 0.40);
+      ft($("wm"), { x: WM.x0, y: WM.y0, scale: WM.s0 * 1.04 }, { x: WM.x1, y: WM.y0, scale: WM.s0, duration: WM_AT - 0.4, ease: "none" }, 0.40);
       gsap.set($("wm"), { x: WM.x0, y: WM.y0, scale: WM.s0 * 1.04, transformOrigin: "500px 110px" });
       // 1.00 « 21 ANS » rolls 00 -> 21, arrives too big x1.3, blur 6 -> sharp (0.25 s)
       tl.set($("n1"), { opacity: 1 }, 1.00);
@@ -233,10 +236,10 @@
       ft($("l2"), { x: -14 }, { x: 0, duration: 0.3, ease: "power3.out" }, 4.58 - FR);
       typeLine(L2, 4.58 - FR);
       // 5.30 -> end : the watermark catches the light (white 100 %) and runs to the centre (960, 470)
-      var wx = WM.x0 - 8 * (WHIP_AT - 0.4);
-      ft($("wm"), { x: wx, y: WM.y0, scale: WM.s0 }, { x: 0, y: 0, scale: 1, duration: WHIP_D, ease: "expo.in" }, WHIP_AT);
-      ft($("yr-l"), { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.in" }, WHIP_AT);
-      ft($("yr-w"), { opacity: 0.06 }, { opacity: 0, duration: 0.18, ease: "power2.in" }, WHIP_AT);
+      ft($("wm"), { x: WM.x1, y: WM.y0, scale: WM.s0 }, { x: 0, y: 0, scale: 1, duration: WM_D, ease: "power1.in" }, WM_AT);
+      // it stays at 6 % until the numbers are clear, then takes the light in the last ~0.15 s
+      ft($("yr-l"), { opacity: 0 }, { opacity: 1, duration: WHIP_END - 5.42, ease: "power1.in" }, 5.42);
+      ft($("yr-w"), { opacity: 0.06 }, { opacity: 0, duration: WHIP_END - 5.42, ease: "power1.in" }, 5.42);
 
       /* ---- the voice line : word by word, 35 % white then white ; one key-word box per sentence ---- */
       Array.prototype.forEach.call(root.querySelectorAll(".f08-w"), function (w) {
@@ -252,8 +255,8 @@
       ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 1.66);
       ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 3.32);
       ft($("s3"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 4.40);
-      ft($("s4"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 5.30);
-      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power1.out" }, 5.30);
+      ft($("s4"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 5.05);
+      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power1.out" }, 5.05);
 
       // exact frame length
       tl.set({}, {}, DUR);
