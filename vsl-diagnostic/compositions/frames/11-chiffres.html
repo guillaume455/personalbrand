@@ -19,18 +19,36 @@
     .f11-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
       border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
 
-    /* ---------- GPS screen (shared geometry, GPS layer = canvas coordinates) ---------- */
-    #f11-glens { overflow: visible; }
-    #f11-gcam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
-    #f11-screen { position: absolute; left: 170px; top: 90px; width: 1580px; height: 760px; border-radius: 44px;
-      background: #0c0e12; border: 4px solid #2a2d35; box-shadow: 0 40px 120px rgba(0,0,0,.6); }
-    #f11-gsvg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
-    .f11-road { fill: none; stroke: #1f232b; stroke-linecap: round; }
-    .f11-route { fill: none; stroke: #FC7E15; stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
-    .f11-route-glow { fill: none; stroke: #FC7E15; stroke-width: 34; stroke-linecap: round; opacity: .35; filter: blur(10px); }
-    .f11-pin { position: absolute; height: 56px; padding: 0 24px; border-radius: 28px; white-space: nowrap;
-      font: 500 30px/52px "Instrument Sans", sans-serif; letter-spacing: -0.005em; }
-    .f11-pin.f11-lit { background: #FC7E15; border: 2px solid #FC7E15; color: #1a1b1f; box-shadow: 0 0 28px rgba(252,126,21,.55); }
+    /* ---------- GPS screen (shared with frame 10) : cam (scale + translate, origin 0 0) > gps (the screen, motion-blur target) ---------- */
+    #f11-glens { overflow: hidden; }
+    #f11-gcam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0px 0px; }
+    #f11-gps { position: absolute; left: 170px; top: 90px; width: 1580px; height: 760px; }
+    .f11-bezel { position: absolute; left: 0; top: 0; width: 1580px; height: 760px; box-sizing: border-box; border-radius: 44px;
+      background: #0c0e12; border: 4px solid #2a2d35; overflow: hidden;
+      box-shadow: 0 50px 140px rgba(0,0,0,.6), 0 12px 36px rgba(0,0,0,.4); }
+    .f11-roads { position: absolute; left: -4px; top: -4px; width: 1580px; height: 760px; display: block; }
+    .f11-sheen { position: absolute; left: 0; top: 0; width: 1580px; height: 760px;
+      background: linear-gradient(118deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.035) 42%, rgba(255,255,255,0) 56%); }
+    .f11-wc { position: absolute; left: -170px; top: -90px; width: 1920px; height: 1080px; }
+    .f11-route { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block; overflow: visible; }
+    .f11-banner { position: absolute; left: 220px; top: 130px; padding: 16px 28px; border-radius: 18px; background: #16191f;
+      border: 2px solid #2a2d35; font: 600 30px/38px "Instrument Sans", sans-serif; color: #ffffff; white-space: nowrap; }
+    .f11-banner b { font-weight: 600; color: #FC7E15; }
+    .f11-dot { position: absolute; border-radius: 50%; box-sizing: border-box; }
+    #f11-start { left: 298px; top: 668px; width: 64px; height: 64px; background: #2f7bff; border: 6px solid #ffffff;
+      box-shadow: 0 0 28px rgba(47,123,255,.65), 0 6px 18px rgba(0,0,0,.5); }
+    .f11-way { width: 48px; height: 48px; background: #0c0e12; border: 6px solid #FC7E15; box-shadow: 0 0 20px rgba(252,126,21,.55); }
+    #f11-w2 { left: 736px; top: 476px; }
+    #f11-w3 { left: 1206px; top: 306px; }
+    #f11-end { left: 1568px; top: 178px; width: 44px; height: 44px; background: #FC7E15; box-shadow: 0 0 26px rgba(252,126,21,.7); }
+    .f11-pin { position: absolute; width: 0; height: 0; white-space: nowrap; }
+    .f11-in { position: absolute; left: 0; top: 0; display: block; transform: translate(-50%, -50%); }
+    .f11-pill { position: relative; display: block; box-sizing: border-box; padding: 10px 22px; border-radius: 30px; background: #16191f;
+      border: 2px solid #2a2d35; font: 500 30px/39px "Instrument Sans", sans-serif; color: #c9ccd3; letter-spacing: -0.005em; }
+    .f11-lit { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: #FC7E15; border-color: #FC7E15; color: #1a1b1f; font-weight: 600;
+      box-shadow: 0 0 44px rgba(252,126,21,.55), 0 10px 30px rgba(0,0,0,.45); }
+    #f11-pin1 { left: 377px; top: 769px; }
+    #f11-pin2 { left: 797px; top: 561px; }
 
     /* ---------- the plan (real launch plan) ---------- */
     #f11-plens { opacity: 0; overflow: visible; }
@@ -87,7 +105,7 @@
     .f11-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
     .f11-kw .f11-w { position: relative; text-shadow: none; }
     /* peak stroke : tapered accent brush, 9 px, under the key words only */
-    .f11-peak { position: absolute; left: 4px; right: 10px; top: 100%; margin-top: -3px; height: 10px; display: block;
+    .f11-peak { position: absolute; left: 4px; right: 10px; top: 100%; margin-top: 0px; height: 10px; display: block;
       transform-origin: 0 50%; transform: rotate(-1.2deg) scaleX(0); }
     .f11-peak svg { display: block; width: 100%; height: 10px; overflow: visible; }
 
@@ -109,30 +127,37 @@
     <!-- GPS screen : first and last images -->
     <div id="f11-glens" class="clip f11-layer" data-start="0" data-duration="4.05" data-track-index="1" data-layout-allow-overflow>
       <div id="f11-gcam">
-        <div id="f11-screen"></div>
-        <svg id="f11-gsvg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <clipPath id="f11-gclip"><rect x="170" y="90" width="1580" height="760" rx="44" ry="44"/></clipPath>
-          </defs>
-          <g clip-path="url(#f11-gclip)">
-            <path class="f11-road" stroke-width="18" d="M300,-50 C420,400 220,700 360,1150"/>
-            <path class="f11-road" stroke-width="10" d="M700,-50 C820,400 620,700 760,1150"/>
-            <path class="f11-road" stroke-width="22" d="M1150,-50 C1270,400 1070,700 1210,1150"/>
-            <path class="f11-road" stroke-width="12" d="M1500,-50 C1620,400 1420,700 1560,1150"/>
-            <path class="f11-road" stroke-width="12" d="M-50,180 C500,270 1300,100 2000,220"/>
-            <path class="f11-road" stroke-width="20" d="M-50,420 C500,510 1300,340 2000,460"/>
-            <path class="f11-road" stroke-width="14" d="M-50,700 C500,790 1300,620 2000,740"/>
-            <path class="f11-road" stroke-width="10" d="M-50,860 C500,950 1300,780 2000,900"/>
-          </g>
-          <path class="f11-route-glow" d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200"/>
-          <path class="f11-route" d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200"/>
-          <circle cx="330" cy="700" r="26" fill="#2f7bff" stroke="#ffffff" stroke-width="6"/>
-          <circle cx="760" cy="500" r="18" fill="#0c0e12" stroke="#FC7E15" stroke-width="6"/>
-          <circle cx="1230" cy="330" r="18" fill="#0c0e12" stroke="#FC7E15" stroke-width="6"/>
-          <circle cx="1590" cy="200" r="22" fill="#FC7E15" style="filter: drop-shadow(0 0 8px rgba(252,126,21,.8));"/>
-        </svg>
-        <div id="f11-pin1" class="f11-pin f11-lit">Ta situation</div>
-        <div id="f11-pin2" class="f11-pin f11-lit">Ton modèle</div>
+        <div id="f11-gps">
+          <div class="f11-bezel">
+            <svg class="f11-roads" viewBox="170 90 1580 760" fill="none" stroke="#1f232b" stroke-linecap="round">
+              <path d="M300,-50 C420,400 220,700 360,1150" stroke-width="18"/>
+              <path d="M700,-50 C820,400 620,700 760,1150" stroke-width="10"/>
+              <path d="M1150,-50 C1270,400 1070,700 1210,1150" stroke-width="22"/>
+              <path d="M1500,-50 C1620,400 1420,700 1560,1150" stroke-width="12"/>
+              <path d="M-50,180 C500,270 1300,100 2000,220" stroke-width="12"/>
+              <path d="M-50,420 C500,510 1300,340 2000,460" stroke-width="20"/>
+              <path d="M-50,700 C500,790 1300,620 2000,740" stroke-width="14"/>
+              <path d="M-50,860 C500,950 1300,780 2000,900" stroke-width="10"/>
+            </svg>
+            <div class="f11-sheen"></div>
+          </div>
+          <div class="f11-wc">
+            <svg class="f11-route" viewBox="0 0 1920 1080" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <defs>
+                <filter id="f11-glowf" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="12"/></filter>
+              </defs>
+              <path d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" stroke="rgba(252,126,21,.55)" stroke-width="34" filter="url(#f11-glowf)"/>
+              <path d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" stroke="#FC7E15" stroke-width="16"/>
+            </svg>
+            <div class="f11-banner">Itinéraire calculé · <b>ton plan</b></div>
+            <div id="f11-start" class="f11-dot"></div>
+            <div id="f11-w2" class="f11-dot f11-way"></div>
+            <div id="f11-w3" class="f11-dot f11-way"></div>
+            <div id="f11-end" class="f11-dot"></div>
+            <div id="f11-pin1" class="f11-pin"><span class="f11-in"><span class="f11-pill">Ta situation</span><span class="f11-pill f11-lit">Ta situation</span></span></div>
+            <div id="f11-pin2" class="f11-pin"><span class="f11-in"><span class="f11-pill">Ton modèle</span><span class="f11-pill f11-lit">Ton modèle</span></span></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -208,10 +233,6 @@
       var SVGNS = "http://www.w3.org/2000/svg";
 
       /* ---------------- static geometry built at setup ---------------- */
-      // GPS pins : pill centred above its point (pin bottom 40 px above the point)
-      function placePin(el, px, py, w) { el.style.width = w + "px"; el.style.left = (px - w / 2) + "px"; el.style.top = (py - 40 - 56) + "px"; }
-      placePin($("pin1"), 330, 700, 214);
-      placePin($("pin2"), 760, 500, 204);
 
       // plan ring : rounded polygon around « Ventes nécessaires par mois … 2 » (image coordinates, padded)
       function roundedPoly(pts, r) {
@@ -270,24 +291,25 @@
       var tl = gsap.timeline({ paused: true });
       function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
 
-      var gcam = $("gcam"), glens = $("glens"), plens = $("plens"), pcam = $("pcam"), dash = $("dash"), dcam = $("dcam");
+      var gcam = $("gcam"), glens = $("glens"), gps = $("gps"), plens = $("plens"), pcam = $("pcam"), dash = $("dash"), dcam = $("dcam");
 
       // GPS camera : origin 0 0, centre point P at scale S → x = 960 - S·Px, y = 540 - S·Py
-      function camAt(S, px, py) { return { scale: S, x: 960 - S * px, y: 540 - S * py }; }
+      function camAt(S, px, py, ax, ay) { ax = (ax == null) ? 960 : ax; ay = (ay == null) ? 540 : ay; return { scale: S, x: ax - S * px, y: ay - S * py }; }
       var S0 = 1.6;
-      var MID = { x: (760 + 1230) / 2, y: (500 + 330) / 2 };         // mid-course between waypoint 2 and 3
+      var CAM0 = { scale: 1.6, x: -670.2, y: -362.0 };                // = last image of frame 10 (route midpoint 2→3 at screen 922,300)
+      var AX = 960, AY = 420;                                          // where the 3rd point lands
       var P3 = { x: 1230, y: 330 }, PA = { x: 1590, y: 200 };
 
       /* ---- first image = handoff_in : travelling mid-course, motion blur 8 px ---- */
-      gsap.set(gcam, camAt(S0, MID.x, MID.y));
-      gsap.set(glens, { filter: "blur(8px)" });
+      gsap.set(gcam, CAM0);
+      gsap.set(gps, { filter: "blur(5px)" });   // 8 px on screen at x1.6
 
       /* ---- Scene 1 : the dive into the 3rd point, the real page ---- */
       // 0.00 → 0.25 arrival on the 3rd point (expo.out), the blur clears
-      ft(gcam, camAt(S0, MID.x, MID.y), Object.assign(camAt(S0, P3.x, P3.y), { duration: 0.25, ease: "expo.out" }), 0);
-      ft(glens, { filter: "blur(8px)" }, { filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, 0);
+      ft(gcam, CAM0, Object.assign(camAt(S0, P3.x, P3.y, AX, AY), { duration: 0.25, ease: "expo.out" }), 0);
+      ft(gps, { filter: "blur(5px)" }, { filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, 0);
       // 0.25 → 0.47 plunge through the ring (power3.in), the ring grows to frame the page
-      ft(gcam, camAt(S0, P3.x, P3.y), Object.assign(camAt(30, P3.x, P3.y), { duration: 0.22, ease: "power3.in" }), 0.25);
+      ft(gcam, camAt(S0, P3.x, P3.y, AX, AY), Object.assign(camAt(30, P3.x, P3.y, AX, AY), { duration: 0.22, ease: "power3.in" }), 0.25);
       ft(glens, { filter: "blur(0px)" }, { filter: "blur(10px)", duration: 0.22, ease: "power3.in" }, 0.25);
       ft(glens, { opacity: 1 }, { opacity: 0, duration: 0.08, ease: "power1.in" }, 0.41);
       // 0.38 → 0.70 landing on the page « Ton point d'équilibre » (×3 blur 10 → sharp, expo.out)

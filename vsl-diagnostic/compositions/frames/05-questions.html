@@ -49,17 +49,17 @@
 
     /* the three questions, the red "?" and the four model words */
     .f05-q { opacity: 0; }
-    .f05-qt { display: inline-block; clip-path: inset(-30px 100% -30px -20px); }
-    .f05-qm { display: inline-block; color: #d33a2c; margin-left: 12px; clip-path: inset(-30px 100% -30px -20px); transform-origin: 50% 70%; }
+    .f05-qt { display: inline-block; padding: 24px 10px; margin: -24px -10px; clip-path: inset(0px 100% 0px 0px); }
+    .f05-qm { display: inline-block; color: #d33a2c; padding: 24px 10px; margin: -24px -10px -24px 2px; clip-path: inset(0px 100% 0px 0px); transform-origin: 50% 60%; }
     .f05-mw { position: absolute; height: 44px; font: 600 36px/44px "Caveat", cursive; color: #555a63; white-space: nowrap; opacity: 0; }
-    .f05-mw span { display: inline-block; clip-path: inset(-20px 100% -20px -10px); }
+    .f05-mw span { display: inline-block; padding: 16px 8px; margin: -16px -8px; clip-path: inset(0px 100% 0px 0px); }
     #f05-strikes path { opacity: 0; }
 
     /* pen : black ballpoint, blurred, foreground ; the wrapper sits on the tip */
     #f05-pen { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; }
-    .f05-penbar { position: absolute; left: -10px; top: -30px; width: 900px; height: 60px; border-radius: 30px 40px 40px 30px;
-      background: linear-gradient(180deg, #2a2b30, #09090b); transform-origin: 10px 30px; transform: rotate(-38deg);
-      filter: blur(14px); box-shadow: 0 0 0 5px rgba(252,126,21,.45); }
+    .f05-penbar { position: absolute; left: -10px; top: -24px; width: 560px; height: 48px; border-radius: 24px 30px 30px 24px; opacity: .88;
+      background: linear-gradient(180deg, #2a2b30, #09090b); transform-origin: 10px 24px; transform: rotate(-34deg);
+      filter: blur(15px); box-shadow: 0 0 0 5px rgba(252,126,21,.45); }
 
     /* shade + vignette */
     #f05-shade { opacity: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); }
@@ -84,7 +84,7 @@
 
     /* the light goes out : closing vignette (iris) + pure black */
     #f05-iris { position: absolute; left: -1920px; top: -1220px; width: 5760px; height: 3240px; opacity: 0; transform-origin: 2880px 1620px;
-      background: radial-gradient(closest-side, rgba(0,0,0,0) 10%, rgba(0,0,0,.6) 22%, #000 32%); }
+      background: radial-gradient(closest-side, rgba(0,0,0,0) 8%, rgba(0,0,0,.6) 18%, #000 28%); }
     #f05-black { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #000; opacity: 0; }
 
     /* film grain 5 % */
@@ -202,7 +202,7 @@
       function aim(lx, ly, s) { var p = P(lx, ly); return { x: -s * (p.x - 960), y: -70 - s * (p.y - 540), scale: s }; }
 
       var cam = $("cam"), drift = $("drift"), pen = $("pen");
-      var S0 = 0.85, S1 = 1.15;
+      var S0 = 0.85, S1 = 1.15, AIM_X = 330;   // camera goes straight down the text column
 
       // first image = handoff_in : whole sheet, scale 0.85, centred
       gsap.set(cam, { x: 0, y: 0, scale: S0, transformOrigin: "960px 540px" });
@@ -215,7 +215,7 @@
       ft(drift, { scale: Z1 }, { scale: Z2, duration: 4.25 - 0.20, ease: "none" }, 0.20);
       ft(drift, { scale: Z2 }, { scale: Z3, duration: DUR - 4.25, ease: "none" }, 4.25);
       // three notches down (0.35 s expo.inOut), the current question on the centre line
-      var A = Q.map(function (q) { return aim(q.x + q.full / 2, q.base - 20, S1); });
+      var A = Q.map(function (q) { return aim(AIM_X, q.base - 20, S1); });
       ft(cam, { x: 0, y: 0, scale: S0 }, { x: A[0].x, y: A[0].y, scale: S1, duration: 0.35, ease: "expo.inOut" }, 0.20);
       ft(cam, { x: A[0].x, y: A[0].y, scale: S1 }, { x: A[1].x, y: A[1].y, scale: S1, duration: 0.35, ease: "expo.inOut" }, 2.15);
       ft(cam, { x: A[1].x, y: A[1].y, scale: S1 }, { x: A[2].x, y: A[2].y, scale: S1, duration: 0.35, ease: "expo.inOut" }, 3.25);
@@ -227,7 +227,7 @@
       ft($("g2"), { "--dof": "0px", opacity: 1 }, { "--dof": "1.5px", opacity: 0.8, duration: 0.35, ease: "power2.inOut" }, 3.25);
 
       /* ---- the pen writes (tip in sheet-local px) ---- */
-      var CLIP0 = "inset(-30px 100% -30px -20px)", CLIP1 = "inset(-30px 0% -30px -20px)";
+      var CLIP0 = "inset(0px 100% 0px 0px)", CLIP1 = "inset(0px 0% 0px 0px)";
       var penAt = { x: 1100, y: 640 };
       gsap.set(pen, { x: penAt.x, y: penAt.y });
       function penTo(x, y, dur, ease, pos) {
@@ -259,7 +259,7 @@
       MW.forEach(function (w, i) {
         var el = $(w.id);
         tl.set(el, { opacity: 1 }, w.t);
-        ft(el.firstElementChild, { clipPath: "inset(-20px 100% -20px -10px)" }, { clipPath: "inset(-20px 0% -20px -10px)", duration: 0.1, ease: "none" }, w.t);
+        ft(el.firstElementChild, { clipPath: CLIP0 }, { clipPath: CLIP1, duration: 0.1, ease: "none" }, w.t);
         penTo(w.x0, w.y, i === 0 ? 0.1 : 0.02, "power2.out", w.t - (i === 0 ? 0.1 : 0.02));
         penTo(w.x1, w.y, 0.1, "none", w.t);
       });
@@ -292,8 +292,8 @@
       /* ---- scene 2 : the light goes out ---- */
       ft($("halo"), { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power2.out" }, 4.25);
       // the shadow closes in from the edges (power2.in) to pure black, complete on the last rendered image
-      ft($("iris"), { opacity: 0, scale: 2.0 }, { opacity: 1, scale: 2.0, duration: 0.12, ease: "power1.in" }, 4.30);
-      ft($("iris"), { scale: 2.0 }, { scale: 0.02, duration: 4.83 - 4.30, ease: "power2.in" }, 4.30);
+      ft($("iris"), { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1.25, duration: 0.2, ease: "power1.in" }, 4.30);
+      ft($("iris"), { scale: 1.25 }, { scale: 0.02, duration: 4.83 - 4.30, ease: "power2.in" }, 4.30);
       ft($("black"), { opacity: 0 }, { opacity: 1, duration: 4.83 - 4.50, ease: "power2.in" }, 4.50);
 
       /* ---- the voice line : word by word, 35 % white then white ; one key-word box per sentence ---- */
