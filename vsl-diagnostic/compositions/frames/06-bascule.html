@@ -1,6 +1,7 @@
 <template>
   <style>
     @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Caveat"; src: url("assets/fonts/Caveat-600.woff2") format("woff2"); font-weight: 600; }
 
     #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
 
@@ -51,6 +52,15 @@
     .f06-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
     .f06-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
     .f06-kw .f06-w { position: relative; text-shadow: none; }
+
+    /* the three red question marks inherited from frame 05 (handoff_in) */
+    .f06-qm { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+    .f06-qi { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+    .f06-qg { position: absolute; left: -70.5px; top: -56px; width: 120px; height: 120px; text-align: center; transform-origin: 70.5px 56px;
+      font: 600 72px/120px "Caveat", cursive; color: #d33a2c; text-shadow: 0 0 18px rgba(211,58,44,.6); }
+    .f06-qg span { display: inline-block; }
+    #f06-qdot { position: absolute; left: 954px; top: 514px; width: 12px; height: 12px; border-radius: 50%; background: #d33a2c; opacity: 0;
+      box-shadow: 0 0 18px rgba(211,58,44,.6); }
 
     /* film grain 5 % */
     #f06-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
@@ -135,8 +145,16 @@
       <div id="f06-l2" class="f06-line"><span class="f06-w" data-cue="2.36">avec</span> <span class="f06-w" data-cue="2.65">un</span> <span id="f06-kw" class="f06-kw"><i id="f06-kb" class="f06-kwbg"></i><span class="f06-w f06-kt" data-cue="2.80">plan</span></span> <span class="f06-w" data-cue="2.94">?</span></div>
     </div>
 
+    <!-- three red « ? » converging into one point (0.00 → 0.60) -->
+    <div id="f06-qs" class="clip f06-layer" data-start="0" data-duration="4.4" data-track-index="4" data-layout-allow-overflow>
+      <div id="f06-qa" class="f06-qm" style="left:880px;top:520px;"><div id="f06-qai" class="f06-qi"><div id="f06-qag" class="f06-qg"><span>?</span></div></div></div>
+      <div id="f06-qb" class="f06-qm" style="left:960px;top:500px;"><div id="f06-qbi" class="f06-qi"><div id="f06-qbg" class="f06-qg"><span>?</span></div></div></div>
+      <div id="f06-qc" class="f06-qm" style="left:1040px;top:520px;"><div id="f06-qci" class="f06-qi"><div id="f06-qcg" class="f06-qg"><span>?</span></div></div></div>
+      <div id="f06-qdot"></div>
+    </div>
+
     <!-- film grain 5 % -->
-    <div id="f06-grain" class="clip f06-layer" data-start="0" data-duration="4.4" data-track-index="4"></div>
+    <div id="f06-grain" class="clip f06-layer" data-start="0" data-duration="4.4" data-track-index="5"></div>
 
   </div>
 
@@ -187,6 +205,19 @@
         p.style.strokeDasharray = len + " " + len; p.style.strokeDashoffset = String(len);
         return { el: p, len: len };
       });
+
+      /* ===== 0.00 → 0.60 : the three red « ? » of frame 05 keep converging and merge into one point ===== */
+      // outer = the inherited 60 px/s drift (linear), inner = the power2.in acceleration ; sum lands on (960, 520) at 0.50
+      ft($("qa"), { x: 0 }, { x: 30, duration: 0.5, ease: "none" }, 0);
+      ft($("qai"), { x: 0 }, { x: 50, duration: 0.5, ease: "power2.in" }, 0);
+      ft($("qc"), { x: 0 }, { x: -30, duration: 0.5, ease: "none" }, 0);
+      ft($("qci"), { x: 0 }, { x: -50, duration: 0.5, ease: "power2.in" }, 0);
+      ft($("qb"), { y: 0 }, { y: 20, duration: 1 / 3, ease: "none" }, 0);
+      // they shrink as they merge, then hand over to a single small red point
+      ft([$("qag"), $("qbg"), $("qcg")], { scale: 1 }, { scale: 0.12, duration: 0.3, ease: "power2.in" }, 0.20);
+      ft([$("qag"), $("qbg"), $("qcg")], { opacity: 1 }, { opacity: 0, duration: 0.06, ease: "none" }, 0.44);
+      ft($("qdot"), { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.06, ease: "power2.out" }, 0.44);
+      ft($("qdot"), { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.4, duration: 0.1, ease: "power2.in" }, 0.50);
 
       /* ===== SCENE 1 (0.00 → 3.10) : the question on black ===== */
       // 0.00 → 3.10 drift z +1 %/s on the sentence

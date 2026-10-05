@@ -85,10 +85,12 @@
     .f05-seg:last-child .f05-kwbg { border-radius: 0 10px 10px 0; }
     .f05-seg .f05-w { position: relative; text-shadow: none; }
 
-    /* the light goes out : closing vignette (iris) + pure black */
-    #f05-iris { position: absolute; left: -1920px; top: -1220px; width: 5760px; height: 3240px; opacity: 0; transform-origin: 2880px 1620px;
-      background: radial-gradient(closest-side, rgba(0,0,0,0) 8%, rgba(0,0,0,.6) 18%, #000 28%); }
+    /* the light switches off : pure black over the whole stage ; the three red "?" stay lit above it */
     #f05-black { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #000; opacity: 0; }
+    .f05-cm { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; transform-origin: 0px 0px; }
+    .f05-cmd { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+    .f05-cmg { position: absolute; left: var(--gx); top: var(--gy); width: 100px; height: 100px; text-align: center; white-space: nowrap;
+      font: 600 72px/100px "Caveat", cursive; color: #d33a2c; text-shadow: 0 0 18px rgba(211,58,44,.6); }
 
     /* film grain 5 % */
     #f05-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
@@ -178,12 +180,18 @@
 
     <!-- the light goes out -->
     <div id="f05-night" class="clip f05-layer" data-start="0" data-duration="4.9" data-track-index="4" data-layout-allow-overflow>
-      <div id="f05-iris"></div>
       <div id="f05-black"></div>
     </div>
 
+    <!-- the three red "?" : screen-space copies, swapped in at 4.30 exactly over the sheet's own (glyph centre at the wrapper origin) -->
+    <div id="f05-marks" class="clip f05-layer" data-start="0" data-duration="4.9" data-track-index="5" data-layout-allow-overflow>
+      <div id="f05-c1" class="f05-cm"><div class="f05-cmd"><div class="f05-cmg">?</div></div></div>
+      <div id="f05-c2" class="f05-cm"><div class="f05-cmd"><div class="f05-cmg">?</div></div></div>
+      <div id="f05-c3" class="f05-cm"><div class="f05-cmd"><div class="f05-cmg">?</div></div></div>
+    </div>
+
     <!-- film grain 5 % -->
-    <div id="f05-grain" class="clip f05-layer" data-start="0" data-duration="4.9" data-track-index="5"></div>
+    <div id="f05-grain" class="clip f05-layer" data-start="0" data-duration="4.9" data-track-index="6"></div>
 
   </div>
 
@@ -312,13 +320,33 @@
         ft($(id), { scale: 1.1 }, { scale: 1, duration: 0.07, ease: "power2.in" }, 4.15);
       });
 
-      /* ---- scene 2 : the light goes out ---- */
-      ft($("halo"), { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power2.out" }, 4.25);
-      // the shadow closes in from the edges (power2.in) to pure black, complete on the last rendered image
-      gsap.set($("iris"), { scale: 1.25 });
-      ft($("iris"), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.in" }, 4.30);
-      ft($("iris"), { scale: 1.25 }, { scale: 0.02, duration: 4.83 - 4.30, ease: "power2.in" }, 4.30);
-      ft($("black"), { opacity: 0 }, { opacity: 1, duration: 4.83 - 4.50, ease: "power2.in" }, 4.50);
+      /* ---- scene 2 : the light switches off ---- */
+      // measured on screen at 4.30 : glyph (ink box) centres of the three red "?" of the sheet, and their rendered font size
+      var MK_FONT0 = 76.5, GX = 0, GY = 0;
+      var MK = [
+        { start: { x: 0, y: 0 }, end: { x: 880, y: 520 } },
+        { start: { x: 0, y: 0 }, end: { x: 960, y: 500 } },
+        { start: { x: 0, y: 0 }, end: { x: 1040, y: 520 } }
+      ];
+      // ink centre of the 72 px Caveat "?" inside its 100 x 100 box (measured), so the wrapper origin is the glyph centre
+      Array.prototype.forEach.call(root.querySelectorAll(".f05-cmg"), function (g) { g.style.setProperty("--gx", (-50 + GX) + "px"); g.style.setProperty("--gy", (-50 + GY) + "px"); });
+      // 4.30 the lamp switches off : sheet, writing, calculations and halo to black in 0.12 s (power2.in)
+      ft($("black"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.in" }, 4.30);
+      // the three red "?" stay lit : screen copies swapped in at 4.30 exactly over the sheet's own (measured glyph centres,
+      // on-screen size 64 x 1.15 x drift = MK_S0 x 72 px, sheet rotation -4), glowing red
+      // 4.42 -> 4.90 they detach and travel to the handoff (power2.inOut), size to 72 px, rotation to 0 ;
+      // an inner linear drift toward (960,520) at 60 px/s keeps them moving through the seam
+      var MK_S0 = MK_FONT0 / 72, V = 60, TD = DUR - 4.42;
+      MK.forEach(function (m, i) {
+        var el = $("c" + (i + 1)), inner = el.firstElementChild;
+        var dx = 960 - m.end.x, dy = 520 - m.end.y, dl = Math.hypot(dx, dy), ux = dx / dl, uy = dy / dl;
+        var D = V * TD;   // drift distance covered by 4.90
+        gsap.set(el, { x: m.start.x, y: m.start.y, rotation: -4, scale: MK_S0 });
+        tl.set(el, { opacity: 1 }, 4.30);
+        ft(el, { x: m.start.x, y: m.start.y, rotation: -4, scale: MK_S0 },
+          { x: m.end.x - ux * D, y: m.end.y - uy * D, rotation: 0, scale: 1, duration: TD, ease: "power2.inOut" }, 4.42);
+        ft(inner, { x: 0, y: 0 }, { x: ux * D, y: uy * D, duration: TD, ease: "none" }, 4.42);
+      });
 
       /* ---- the voice line : word by word, 35 % white then white ; one key-word box per sentence ---- */
       Array.prototype.forEach.call(root.querySelectorAll(".f05-w"), function (w) {
