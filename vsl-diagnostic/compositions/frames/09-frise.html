@@ -201,9 +201,9 @@
 
       /* ---------- camera : one pure function of time ---------- */
       // scene 1 (world px/s) : the whip of frame 08 lands (2400 px/s on screen → 560 px/s by 0.25, slight pull back
-      // x2.44 → x2), a calm travelling over the errors, then from 1.75 the sixteen years rush by (peak ~2.10)
+      // x2.44 → x2), a calm travelling over the errors, then from 1.88 the sixteen years rush by (peak ~2.2)
       // and the camera slows down to a stop on 2026 at 2.70, pulling back to x1.4.
-      var S0 = 2.44, S1 = 2.0, S2 = 1.4, CXE = 230, W = CXE - Y0;
+      var S0 = 2.44, S1 = 2.0, S2 = 1.4, CXE = X2026, W = CXE - Y0;
       var V0 = 2400 / S0, VB = 290, T1 = 1.88, L = 2.70 - T1;
       var DA = VB * 0.25 + (V0 - VB) * 0.25 / 4, DB = VB * (T1 - 0.25), KR = 60 * ((W - DA - DB) / L - VB * 0.5);
       function travel(t) {
