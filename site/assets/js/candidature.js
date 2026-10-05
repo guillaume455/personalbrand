@@ -27,8 +27,8 @@
   var courant = 0;
   var commence = false;
 
-  var jauge = form.querySelector('[data-jauge]');
-  var jaugeTxt = form.querySelector('[data-jauge-txt]');
+  var jauge = document.querySelector('[data-jauge]');
+  var jaugeTxt = document.querySelector('[data-jauge-txt]');
   var suivant = form.querySelector('[data-suivant]');
   var precedent = form.querySelector('[data-precedent]');
   var boiteErreur = form.querySelector('[data-erreur-globale]');

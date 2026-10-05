@@ -15,6 +15,14 @@
    Si tes codes couleur actuels diffèrent, ils se changent ici et nulle part
    ailleurs : tout le fichier est construit sur ces variables. */
 :root{
+  /* jetons des formulaires et pages d'issue, rétablis */
+  --vert:#1B6B3A;
+  --vert-voile:#E8F5ED;
+  --rouge:#A3231A;
+  --or-pale:#FDF1E4;         /* aplat orange très pâle, fond d'encadré */
+  --or-ligne:#F6D7B4;
+  --ease:cubic-bezier(.2,.7,.3,1);
+  --t:.22s var(--ease);
   /* fonds */
   --papier:#FBFAF8;          /* fond principal, blanc légèrement chaud */
   --papier-doux:#F3F0EA;     /* sections .bloc-doux */
@@ -728,3 +736,208 @@ h2{font-weight:700}
 .vsl-son[hidden]{display:none}
 @keyframes vsl-pouls{50%{transform:translateX(-50%) scale(1.05)}}
 @media (prefers-reduced-motion:reduce){.vsl-son{animation:none}}
+
+/* =========================================================================
+   11. LES AUTRES PAGES DU TUNNEL (rétabli : perdu lors de la refonte du 30/09)
+   tunnel.css est la seule feuille de style de dix pages, pas seulement de
+   la page d'accompagnement : le questionnaire, les trois pages d'issue, le
+   calculateur de marge, les témoignages et les deux pages juridiques n'en
+   chargent aucune autre. Les règles ci-dessous sont celles de ces pages,
+   transposées dans les jetons du haut de ce fichier.
+   ========================================================================= */
+
+/* --- utilitaires --- */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+.chapo{font-size:1.1em;color:var(--encre-doux)}
+mark{
+  background:linear-gradient(transparent 58%,var(--or-pale) 58%);
+  box-shadow:inset 0 -2px 0 var(--or-ligne);
+  color:inherit;font-weight:600;padding:0 2px;
+}
+/* Après .chapo, et pas avant : à spécificité égale c'est l'ordre qui tranche,
+   et sur fond sombre la version claire doit gagner. */
+.bloc-sombre .chapo{color:var(--doux-sur-sombre)}
+/* La microcopie apparaît aussi sous le bouton du dernier appel, qui est sur
+   fond sombre : sans ces deux lignes elle y retombe à 2,21:1, illisible. */
+.bloc-sombre .micro{color:var(--doux-sur-sombre)}
+.bloc-sombre .micro b{color:var(--papier-sur-sombre)}
+
+/* --- bouton secondaire (calculateur de marge) --- */
+.cta-2{
+  background:transparent;color:var(--encre);
+  border:1.5px solid var(--filet-fort);font-weight:600;
+}
+.cta-2:hover{
+  background:var(--or-pale);border-color:var(--or);
+  color:var(--encre);box-shadow:none;
+}
+.cta-2::after{display:none}
+/* Le prix accolé au libellé du bouton, sur la page de remerciement. */
+.cta-prix{font-weight:600;opacity:.78;font-size:.94em}
+
+/* --- listes de questions (calculateur) --- */
+.questions{margin-top:1.1em;display:grid;gap:12px;list-style:none;padding:0}
+.questions li{padding-left:22px;position:relative;color:var(--encre-doux);line-height:1.5}
+.questions li::before{
+  content:"";position:absolute;left:0;top:.62em;
+  width:8px;height:2px;background:var(--or);
+}
+
+/* --- déroulé numéroté (page de confirmation) --- */
+.etapes{
+  display:grid;gap:clamp(20px,3vw,26px);margin-top:6px;
+  list-style:none;padding:0;counter-reset:e;
+}
+.etape{border-left:2px solid var(--filet);padding-left:20px;position:relative}
+.etape::before{
+  content:"";position:absolute;left:-5px;top:7px;
+  width:8px;height:8px;border-radius:99px;background:var(--or);
+}
+.etape h3{margin-bottom:5px}
+.etape p{color:var(--encre-doux);font-size:.97em}
+.etapes-num .etape h3::before{
+  counter-increment:e;content:counter(e) ". ";color:var(--or-fonce);
+}
+
+/* --- formulaires : questionnaire et calculateur --- */
+fieldset{border:0;margin:0;padding:0;min-width:0}
+label{display:block;font-weight:600;font-size:15px;margin-bottom:8px}
+/* Le questionnaire empile plusieurs .champ : sans cet écart, l'intitulé d'un
+   champ venait se coller au champ précédent. Le bloc de capture n'en a qu'un,
+   il n'est donc pas touché. */
+.champ + .champ{margin-top:20px}
+.aide{
+  font-weight:400;color:var(--encre-clair);font-size:13.5px;
+  display:block;margin-top:3px;
+}
+input[type=text],input[type=email],input[type=tel],input[type=number],textarea,select{
+  width:100%;padding:14px 15px;font:inherit;
+  font-size:16px;                    /* 16 px : en dessous, iOS zoome au focus */
+  border:1.5px solid var(--filet-fort);border-radius:var(--rayon);
+  background:var(--carte);color:var(--encre);
+  transition:border-color var(--t),box-shadow var(--t);
+}
+input:hover,textarea:hover,select:hover{border-color:var(--encre-clair)}
+input:focus,textarea:focus,select:focus{
+  border-color:var(--or-fonce);box-shadow:0 0 0 3px var(--or-voile);outline:none;
+}
+textarea{min-height:130px;resize:vertical}
+.compteur{
+  font-size:13px;color:var(--encre-clair);text-align:right;margin-top:6px;
+  font-variant-numeric:tabular-nums;
+}
+.compteur[data-limite="true"]{color:var(--or-fonce);font-weight:600}
+
+/* Choix uniques : la cible tactile est l'étiquette entière, pas le petit rond. */
+.choix{display:grid;gap:10px}
+.choix label{
+  display:flex;align-items:center;gap:13px;margin:0;
+  font-weight:600;font-size:16px;
+  border:1.5px solid var(--filet-fort);border-radius:var(--rayon);
+  padding:15px 17px;cursor:pointer;min-height:56px;
+  transition:border-color var(--t),background-color var(--t);
+}
+.choix label:hover{border-color:var(--encre-clair);background:var(--papier-doux)}
+.choix input{
+  appearance:none;-webkit-appearance:none;flex:none;
+  width:21px;height:21px;border:2px solid var(--filet-fort);border-radius:99px;
+  padding:0;transition:border-color var(--t);
+}
+.choix input:checked{border-color:var(--or);border-width:6.5px}
+.choix label:has(input:checked){border-color:var(--or);background:var(--or-pale)}
+.choix input:focus-visible{outline:2px solid var(--or-fonce);outline-offset:2px}
+.choix[aria-invalid="true"] label{border-color:var(--rouge)}
+
+.erreur{
+  color:var(--rouge);font-size:14px;font-weight:600;margin-top:8px;
+  display:flex;gap:7px;align-items:flex-start;
+}
+.erreur::before{
+  content:"!";flex:none;width:17px;height:17px;border-radius:99px;
+  background:var(--rouge);color:#fff;font-size:12px;font-weight:700;
+  display:grid;place-items:center;margin-top:1px;
+}
+
+/* --- progression du questionnaire --- */
+.jauge{
+  height:4px;background:var(--filet);border-radius:99px;
+  overflow:hidden;margin-bottom:8px;
+}
+.jauge i{
+  display:block;height:100%;background:var(--or);border-radius:99px;
+  transition:width .3s var(--ease);
+}
+.jauge-txt{
+  font-size:13px;color:var(--encre-clair);margin-bottom:26px;
+  font-variant-numeric:tabular-nums;
+}
+.pas{animation:entre .28s var(--ease) both}
+@keyframes entre{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pas{animation:none}}
+.pas h2{font-size:clamp(1.25rem,4.4vw,1.55rem);margin-bottom:20px}
+.pas-zero h2{margin-bottom:10px}
+.pas-zero .chapo{font-size:1rem;margin-bottom:24px}
+.nav-pas{display:flex;gap:12px;margin-top:26px;align-items:center}
+.nav-pas .cta{flex:1;min-width:0;margin:0}
+.retour{
+  background:none;border:none;cursor:pointer;font:inherit;font-size:15px;
+  color:var(--encre-clair);font-weight:600;padding:14px 4px;
+  text-decoration:underline;text-underline-offset:3px;
+}
+.retour:hover{color:var(--encre)}
+
+/* --- encadrés d'état (pages d'issue) --- */
+.encart{
+  border-radius:var(--rayon);padding:clamp(20px,3.6vw,28px);margin-bottom:26px;
+}
+.encart h1,.encart h2{margin-bottom:.45em}
+.encart h1{font-size:clamp(1.35rem,4.6vw,1.75rem)}
+.encart-ok{background:var(--vert-voile);border-left:4px solid var(--vert)}
+.encart-ok h1,.encart-ok h2{color:var(--vert)}
+.encart-attente{background:var(--or-pale);border-left:4px solid var(--or)}
+.encart-info{background:var(--papier-doux);border:1px solid var(--filet)}
+
+/* Réservé à ce qui reste à brancher : visible pour moi, jamais pour un visiteur. */
+.a-fournir{
+  border:2px dashed var(--or);background:var(--or-pale);
+  border-radius:var(--rayon);padding:20px;color:var(--or-fonce);
+  font-size:14.5px;line-height:1.55;
+}
+.a-fournir b{
+  display:block;font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;margin-bottom:7px;
+}
+.a-fournir .media-slot{
+  margin-top:12px;aspect-ratio:16/9;border-radius:var(--rayon);
+  background:rgba(251,128,0,.1);display:grid;place-items:center;
+  /* Sur ce fond ambré, --or-fonce ne tient plus que 4,17:1. On repasse à l'encre. */
+  color:var(--encre);font-weight:600;text-align:center;padding:12px;
+}
+
+/* --- pages juridiques : CGV et confidentialité --- */
+.juridique h2{
+  font-size:clamp(1.15rem,3.6vw,1.4rem);margin-top:36px;margin-bottom:12px;
+}
+.juridique h2:first-of-type{margin-top:0}
+.juridique h3{margin-top:22px;margin-bottom:8px}
+.juridique p,.juridique li{color:var(--encre-doux)}
+.juridique ul,.juridique ol{margin:0 0 0 20px;padding:0;display:grid;gap:8px}
+.juridique p + p,.juridique ul + p,.juridique p + ul{margin-top:.9em}
+.maj{font-size:13.5px;color:var(--encre-clair);margin-bottom:30px}
+
+/* --- témoignages longs --- */
+.temoignage-long{padding-block:clamp(34px,6vw,52px)}
+.temoignage-long + .temoignage-long{border-top:1px solid var(--filet)}
+.temoignage-tete{margin-bottom:22px}
+.temoignage-tete h2{margin-bottom:6px}
+.temoignage-meta{font-size:14px;color:var(--encre-clair)}
+.temoignage-corps p{color:var(--encre-doux)}
+.temoignage-corps p + p{margin-top:1.05em}
+
+/* le message d'erreur global reste masqué tant qu'il est vide ([hidden] l'emporte sur display:flex) */
+.erreur[hidden]{display:none}
+/* dans un .champ, l'écart entre l'intitulé et la case vient déjà de la grille */
+.champ label{margin-bottom:0}
