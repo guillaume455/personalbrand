@@ -347,29 +347,60 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
 }
 .preuve-etroite{max-width:520px;margin-inline:auto}
 
-/* pour qui / pas pour qui : deux cartes côte à côte, pastilles rondes */
+/* pour qui / pas pour qui : un « oui » sombre et orange qui attire l'œil,
+   un « non » clair en retrait, chacun annoncé par une grosse pastille */
 .duo{
-  display:grid;gap:clamp(16px,2vw,24px);max-width:1000px;margin-inline:auto;
+  display:grid;gap:clamp(16px,2vw,24px);max-width:1040px;
+  margin:clamp(28px,3.4vw,44px) auto 0;
   grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));
+  align-items:start;
 }
-.duo-col{
-  min-width:0;padding:clamp(24px,2.6vw,32px);border-radius:var(--rayon);
-  border:1px solid var(--filet);
+.duo-col{min-width:0;border-radius:calc(var(--rayon) + 5px);overflow:hidden;border:1px solid var(--filet)}
+.duo-tete{
+  display:flex;gap:16px;align-items:center;
+  padding:clamp(20px,2.4vw,28px) clamp(22px,2.6vw,32px);
 }
-.duo-col h2{font-size:clamp(19px,1.1vw + 15px,22px);margin-bottom:18px}
-.duo-col ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
-.duo-col li{font-size:16px;line-height:1.45;padding-left:34px;position:relative;color:var(--encre)}
-.duo-col li::before{
-  position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;
+.duo-icone{
+  flex:none;width:52px;height:52px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:12px;line-height:1;
 }
-.duo-pour{background:var(--carte);box-shadow:var(--ombre-2);border-top:3px solid var(--or)}
+.duo-icone svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.duo-etiquette{
+  margin:0 0 4px;font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+}
+.duo-tete h3{margin:0;font-size:clamp(17px,.7vw + 14.5px,20px);line-height:1.25}
+.duo-col ul{
+  margin:0;padding:clamp(8px,1vw,12px) clamp(22px,2.6vw,32px) clamp(18px,2vw,24px);
+  list-style:none;
+}
+.duo-col li{
+  font-size:16px;line-height:1.45;padding:11px 0 11px 32px;position:relative;
+  border-bottom:1px solid var(--filet);
+}
+.duo-col li:last-child{border-bottom:0}
+.duo-col li::before{
+  position:absolute;left:0;top:12px;width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:11px;line-height:1;
+}
+.duo-col li b{font-weight:700}
+
+.duo-pour{background:var(--carte);border-color:rgba(251,128,0,.45);box-shadow:var(--ombre-2)}
+.duo-pour .duo-tete{background:var(--sombre);color:#fff}
+.duo-pour .duo-icone{background:var(--or);color:#14100B;box-shadow:0 0 0 6px rgba(251,128,0,.18)}
+.duo-pour .duo-etiquette{color:var(--or)}
+.duo-pour li{color:var(--encre)}
+.duo-pour li b{color:var(--or-fonce)}
 .duo-pour li::before{content:"✓";background:var(--or);color:#fff}
-.duo-pas{background:var(--papier-doux);border-top:3px solid var(--filet-fort)}
-.duo-pas h2{color:var(--encre-doux)}
-.duo-pas li{color:var(--encre-doux)}
-.duo-pas li::before{content:"✕";background:#fff;color:var(--encre-clair);border:1px solid var(--filet-fort)}
+
+.duo-pas{background:var(--papier-doux)}
+.duo-pas .duo-tete{background:#E9E5DD}
+.duo-pas .duo-icone{background:#fff;color:#B4322A;border:2px solid #E3B4AE}
+.duo-pas .duo-etiquette{color:#B4322A}
+.duo-pas h3{color:var(--encre-doux)}
+.duo-pas li{color:var(--encre-doux);border-bottom-color:rgba(0,0,0,.07)}
+.duo-pas li b{color:var(--encre)}
+.duo-pas li::before{content:"✕";background:#fff;color:#B4322A;border:1px solid #E3B4AE}
 
 /* ============ 06. TÉMOIGNAGES ========================================== */
 .temoins{
