@@ -11,7 +11,7 @@ MUSIC="${MUSIC:-assets/music/fresh.mp3}"
 SFX=../.claude/skills/media-use/audio/assets/sfx
 TMP=$(mktemp -d)
 # film times after the speed-up (voice silences of the montage / SPEED)
-PIVOT=$(python3 -c "print(round(22.83/$SPEED,3))")     # the draft sheet is black: music cut
+PIVOT=$(python3 -c "print(round(22.30/$SPEED,3))")     # the light goes off on the draft sheet: music cut
 DROP=$(python3 -c "print(round(27.57/$SPEED,3))")      # « Un plan fait par quelqu'un… »: the drop
 DUR=$(python3 -c "print(round(56.8/$SPEED,3))")
 A_START=51.49      # track: a section that starts on a drop, energetic from the first image

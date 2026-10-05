@@ -53,7 +53,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - scene: Sur la scène sombre, la barre de recherche leboncoin arrive trop grande et floue et se pose ; la requête « voiture occasion » se tape ; le curseur arrive et clique Rechercher sur « j'essaie » ; trois résultats tombent ; la caméra plonge dans le premier
 - duration: 3.80s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/01-recherche.html
 - voiceover: "Tu veux vivre de l’automobile. Alors tu te dis : j’essaie."
 - type: hook
@@ -91,7 +91,7 @@ Scene 2 (1.70 à 3.80 s) : P2, le clic et la plongée
 - scene: La vraie annonce Audi : une étiquette « Modèle : achat-revente » se tamponne ; la date « avant-hier » roule jusqu'à « il y a 3 mois » ; la caméra monte au prix : il est barré, le nouveau prix arrive trop grand et flou, « Baisse de prix » ; l'étiquette du prix se détache
 - duration: 5.05s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/02-annonce.html
 - voiceover: "Essayer un modèle… ça coûte des mois. Essayer une voiture… ça coûte ta marge."
 - type: pain_point
@@ -129,7 +129,7 @@ Scene 2 (2.55 à 5.05 s) : P4, la voiture et la marge
 - scene: Les annonces s'empilent en onglets (Ford Ranger, La Centrale) ; l'étiquette du prix tombe dans une carte « SOLDE ÉPARGNE » qui roule de 12 400 € à 4 150 € ; puis, en silence, le curseur hésite trois fois sur « Envoyer un message » de la Ford et ferme l'onglet ; la page se replie en une feuille
 - duration: 5.15s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/03-onglets.html
 - voiceover: "Essayer encore… ça coûte ton épargne."
 - type: pain_point
@@ -167,7 +167,7 @@ Scene 2 (2.30 à 5.15 s) : P6, le gag muet, puis la page se referme
 - scene: La feuille se pose : le brouillon de celui qui se lance seul s'écrit à la main (achat, contrôle, carte grise, baisse de prix), le total tombe, « Marge : − 650 € » en rouge, entouré ; « C'est de te lancer sans plan. » s'inscrit au centre
 - duration: 4.00s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/04-brouillon.html
 - voiceover: "Le problème, ce n’est pas de te lancer. C’est de te lancer sans plan."
 - type: pain_point
@@ -205,7 +205,7 @@ Scene 2 (2.00 à 4.00 s) : P8, la marge négative, et la phrase
 - scene: Au bas du brouillon, le stylo écrit trois questions sans réponse, chacune sur son mot : « Quel modèle ? », « Combien il me faut ? », « Combien je dois vendre ? » ; chaque point d'interrogation est repris en rouge ; puis la lumière s'éteint sur la feuille jusqu'au noir
 - duration: 4.90s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/05-questions.html
 - voiceover: "Sans savoir quel modèle te correspond. Combien il te faut. Combien tu dois vendre."
 - type: pain_point
@@ -214,7 +214,7 @@ Scene 2 (2.00 à 4.00 s) : P8, la marge négative, et la phrase
 - rules: svg-path-draw, depth-of-field-blur
 - world: dark
 - handoff_in: à 0.00 : le brouillon entier au centre (échelle 0,85, rotation -4°), lignes de calcul et « − 650 € » entouré en rouge, bas de la feuille encore vide, recul caméra power3.out qui s'achève (dérive résiduelle z −1 %/s) ; stylo flou sorti par la droite ; aucun sous-titre ; halo orange derrière ; grain 5 %
-- handoff_out: à 4.90 : noir total #000 ; rien à l'écran ; aucun sous-titre ; grain 5 % seul
+- handoff_out: à 4.90 : noir total #000 et grain 5 % ; seuls les trois « ? » rouges (Caveat 600, 72 px, #d33a2c, halo rouge) aux points (880, 520), (960, 500), (1040, 520), qui convergent vers (960, 520) à 60 px/s ; aucun sous-titre
 
 Word cues: Sans@0.10 savoir@0.28 quel@0.63 modèle@0.80 te@1.16 correspond@1.33 Combien@2.29 il@2.59 te@2.73 faut@2.88 Combien@3.38 tu@3.66 dois@3.80 vendre@3.95
 
@@ -231,10 +231,10 @@ Scene 1 (0.00 à 4.25 s) : P9 à P11, trois questions, trois crans
 Scene 2 (4.25 à 4.90 s) : P12, la lumière s'éteint
   TEXTE ÉCRAN : le sous-titre sort à 4.25 ; rien d'autre.
   IMAGE DE DÉPART : la feuille et ses questions.
-  ÉTAPES : 4.25 le halo orange s'éteint ; 4.30 à 4.90 l'ombre gagne la feuille depuis les bords (vignette qui se referme, power2.in) jusqu'au noir total.
+  ÉTAPES : 4.30 la lumière s'éteint d'un coup (0,12 s) : la feuille, le stylo et le halo passent au noir, SAUF les trois « ? » rouges qui restent allumés avec un halo ; 4.42 à 4.90 ils se détachent de la feuille et glissent vers le centre (72 px, droits).
   PISTE CAMÉRA : dérive z +2 %/s jusqu'au noir.
   COUCHES ET PROFONDEUR : la feuille seule, puis rien.
-  OBJET-PONT ET VECTEUR : le noir (fondu voulu 1 sur 2) prépare la bascule.
+  OBJET-PONT ET VECTEUR : les trois « ? » rouges, qui fusionnent au centre au début de la frame 6.
   SON : whoosh 4.30 (extinction, volume bas).
   IMAGE CLÉ : 4.60 : la feuille à moitié avalée par l'ombre, les trois « ? » encore visibles.
 
@@ -243,7 +243,7 @@ Scene 2 (4.25 à 4.90 s) : P12, la lumière s'éteint
 - scene: Noir. « Et si tu essayais… avec un plan ? » s'écrit seul au centre. Dans le silence, un point bleu s'allume, l'écran du GPS se dessine autour, « Itinéraire calculé · ton plan »
 - duration: 4.40s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/06-bascule.html
 - voiceover: "Et si tu essayais… avec un plan ?"
 - type: pivot
@@ -251,7 +251,7 @@ Scene 2 (4.25 à 4.90 s) : P12, la lumière s'éteint
 - focal: la question, puis le point bleu du GPS
 - rules: kinetic-beat-slam, svg-path-draw
 - world: dark
-- handoff_in: à 0.00 : noir total #000 ; rien à l'écran ; aucun sous-titre ; grain 5 % seul
+- handoff_in: à 0.00 : noir total #000 et grain 5 % ; seuls les trois « ? » rouges (Caveat 600, 72 px, #d33a2c, halo rouge) aux points (880, 520), (960, 500), (1040, 520), qui convergent vers (960, 520) à 60 px/s ; aucun sous-titre
 - handoff_out: à 4.40 : écran GPS (composant gps) à l'échelle 0,92, centré, cartes et routes visibles, bandeau « Itinéraire calculé · ton plan » écrit, point de départ bleu à (330, 700) net, aucun itinéraire tracé, poussée caméra lente (+2 %/s) ; aucun sous-titre ; arc bleu en haut du cadre ; grain 5 %
 
 Word cues: Et@0.62 si@0.76 tu@1.04 essayais@1.34 avec@2.36 un@2.65 plan@2.80 (silence de 2.94 à 4.40 : le GPS s'allume)
@@ -259,7 +259,7 @@ Word cues: Et@0.62 si@0.76 tu@1.04 essayais@1.34 avec@2.36 un@2.65 plan@2.80 (si
 Scene 1 (0.00 à 3.10 s) : P13, la question sur noir
   TEXTE ÉCRAN : moment typographique (84 px, centré, y 500) : « Et si tu essayais… avec un [boîte : plan] ? » mot par mot (Et 0.62, si 0.76, tu 1.04, essayais… 1.34, avec 2.36, un 2.65, boîte 2.78, plan 2.80, ? 2.94) ; aucun sous-titre en bas.
   IMAGE DE DÉPART : handoff_in.
-  ÉTAPES : 0.00 à 0.60 noir et grain seuls (la respiration) ; chaque mot arrive par convergence de ses lettres (0,3 s expo.out) ; 1.80 à 2.30 « Et si tu essayais… » glisse de 40 px vers le haut pour faire place à la suite (0,4 s) ; 2.36 à 2.94 « avec un plan ? » ; la boîte de « plan » est la seule couleur de l'écran.
+  ÉTAPES : 0.00 à 0.50 les trois « ? » rouges convergent et fusionnent en un point rouge qui s'éteint à 0.60 ; chaque mot arrive par convergence de ses lettres (0,3 s expo.out) ; 1.80 à 2.30 « Et si tu essayais… » glisse de 40 px vers le haut pour faire place à la suite (0,4 s) ; 2.36 à 2.94 « avec un plan ? » ; la boîte de « plan » est la seule couleur de l'écran.
   PISTE CAMÉRA : dérive z +1 %/s (texture du grain qui bouge).
   COUCHES ET PROFONDEUR : la phrase seule sur noir.
   OBJET-PONT ET VECTEUR : la boîte orange de « plan » rétrécit en un point (0,2 s) qui tourne au bleu : le point de départ du GPS.
@@ -281,7 +281,7 @@ Scene 2 (3.10 à 4.40 s) : P14, le GPS s'allume
 - scene: L'itinéraire orange se trace sur le GPS, d'un seul geste sûr ; la caméra plonge dans le point bleu, qui devient le halo du vrai portrait de Guillaume ; « Guillaume Herbin » se pose à côté
 - duration: 4.10s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/07-metier.html
 - voiceover: "Un plan fait par quelqu’un qui connaît le métier. Je m’appelle Guillaume Herbin."
 - type: solution
@@ -319,7 +319,7 @@ Scene 2 (2.00 à 4.10 s) : P16, Guillaume
 - scene: À côté du portrait, « 21 ANS » roule, puis « 3 000 € » ; « 2010 » en filigrane ; « Pas de formation. Pas d'expérience. » se posent en deux lignes ; whip vers la droite sur 2010
 - duration: 5.60s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/08-preuve.html
 - voiceover: "Je me suis lancé à vingt et un ans, avec trois mille euros en poche. Pas de formation. Pas d’expérience."
 - type: proof
@@ -357,7 +357,7 @@ Scene 2 (3.40 à 5.60 s) : P18, ni formation, ni expérience
 - scene: La frise 2010 → 2026 défile ; entre les années, des erreurs écrites à la main sont raturées d'un trait orange ; arrivée sur 2026 : la ligne continue, tourne à l'orange et devient l'itinéraire du GPS, pour « toi »
 - duration: 4.75s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/09-frise.html
 - voiceover: "J’ai appris en me trompant, pendant seize ans. Toi, tu peux commencer avec un plan."
 - type: proof
@@ -395,7 +395,7 @@ Scene 2 (2.70 à 4.75 s) : P20, toi, avec un plan
 - scene: Sur le GPS, l'épingle « Ta situation » s'allume au départ ; travelling le long de la route jusqu'au 2e point : quatre modèles se déploient, trois sont tranchés d'un trait, « Ton modèle » s'allume
 - duration: 3.05s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/10-situation.html
 - voiceover: "On part de ta situation. On tranche le modèle."
 - type: demo
@@ -433,7 +433,7 @@ Scene 2 (1.75 à 3.05 s) : P22, on tranche le modèle
 - scene: Au 3e point, la caméra plonge dans l'anneau et arrive sur la vraie page « Ton point d'équilibre » du plan : la ligne « Ventes nécessaires » est cerclée d'orange ; puis les cadrans du tableau de bord : la jauge épargne remonte de la réserve, le compteur de mois perdus revient à 00
 - duration: 4.05s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/11-chiffres.html
 - voiceover: "On pose les vrais chiffres. Moins de casse. Moins de temps perdu."
 - type: demo
@@ -471,7 +471,7 @@ Scene 2 (1.75 à 4.05 s) : P24, moins de casse, moins de temps perdu
 - scene: Le point d'arrivée s'étire et redevient la barre de recherche du début ; la requête « voiture occasion » s'efface ; la barre se change en bouton « Voir si mon profil correspond » ; un curseur arrive et clique directement ; tenue vivante ; noir
 - duration: 7.95s
 - transition_in: cut
-- status: animated
+- status: outline
 - src: compositions/frames/12-fin.html
 - voiceover: "Tu n’as pas besoin de tout savoir. Juste ta prochaine étape."
 - type: cta

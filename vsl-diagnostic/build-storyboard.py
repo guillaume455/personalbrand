@@ -10,7 +10,7 @@ H[1]="à 3.80 : poussée power3.in en cours vers la 1re carte de résultat (vign
 H[2]="à 5.05 : cadrage A1 sur l'annonce Audi (listing à l'échelle 2, le prix barré « 86 900 € » au centre-gauche), l'étiquette verte « 84 400 € » détachée de la page file vers le haut à droite (1800 px/s, flou de mouvement 10 px), panoramique caméra vers le haut-droite en cours (expo.in), aucun sous-titre ; grain 5 %"
 H[3]="à 5.15 : au centre, une feuille crème 760 × 980 (la page refermée), rotation -4°, flou 6 px, qui se pose en descendant (300 px/s, décélère) ; scène sombre, halo orange doux derrière ; aucun sous-titre ; grain 5 %"
 H[4]="à 4.00 : le brouillon entier au centre (échelle 0,85, rotation -4°), lignes de calcul et « − 650 € » entouré en rouge, bas de la feuille encore vide, recul caméra power3.out qui s'achève (dérive résiduelle z −1 %/s) ; stylo flou sorti par la droite ; aucun sous-titre ; halo orange derrière ; grain 5 %"
-H[5]="à 4.90 : noir total #000 ; rien à l'écran ; aucun sous-titre ; grain 5 % seul"
+H[5]="à 4.90 : noir total #000 et grain 5 % ; seuls les trois « ? » rouges (Caveat 600, 72 px, #d33a2c, halo rouge) aux points (880, 520), (960, 500), (1040, 520), qui convergent vers (960, 520) à 60 px/s ; aucun sous-titre"
 H[6]="à 4.40 : écran GPS (composant gps) à l'échelle 0,92, centré, cartes et routes visibles, bandeau « Itinéraire calculé · ton plan » écrit, point de départ bleu à (330, 700) net, aucun itinéraire tracé, poussée caméra lente (+2 %/s) ; aucun sous-titre ; arc bleu en haut du cadre ; grain 5 %"
 H[7]="à 4.10 : portrait réel à gauche (centre x 500, y 440, 660 px) avec son halo orange et bleu, nom « Guillaume Herbin » à droite (x 880, y 600, Montserrat 800 54 px), dérive caméra lente vers la droite (+20 px/s) ; sous-titre sorti ; fond sombre, arc bleu en haut ; grain 5 %"
 H[8]="à 5.60 : whip caméra vers la droite (3000 px/s, flou de mouvement horizontal 14 px), « 2010 » en Big Shoulders 800 blanc à x 960 y 470 qui entre dans le cadre ; portrait et chiffres sortis par la gauche ; aucun sous-titre ; grain 5 %"
@@ -164,10 +164,10 @@ F.append(dict(n=5,title="Les trois questions",slug="questions",scene="Au bas du 
 Scene 2 (4.25 à 4.90 s) : P12, la lumière s'éteint
   TEXTE ÉCRAN : le sous-titre sort à 4.25 ; rien d'autre.
   IMAGE DE DÉPART : la feuille et ses questions.
-  ÉTAPES : 4.25 le halo orange s'éteint ; 4.30 à 4.90 l'ombre gagne la feuille depuis les bords (vignette qui se referme, power2.in) jusqu'au noir total.
+  ÉTAPES : 4.30 la lumière s'éteint d'un coup (0,12 s) : la feuille, le stylo et le halo passent au noir, SAUF les trois « ? » rouges qui restent allumés avec un halo ; 4.42 à 4.90 ils se détachent de la feuille et glissent vers le centre (72 px, droits).
   PISTE CAMÉRA : dérive z +2 %/s jusqu'au noir.
   COUCHES ET PROFONDEUR : la feuille seule, puis rien.
-  OBJET-PONT ET VECTEUR : le noir (fondu voulu 1 sur 2) prépare la bascule.
+  OBJET-PONT ET VECTEUR : les trois « ? » rouges, qui fusionnent au centre au début de la frame 6.
   SON : whoosh 4.30 (extinction, volume bas).
   IMAGE CLÉ : 4.60 : la feuille à moitié avalée par l'ombre, les trois « ? » encore visibles.'''))
 F.append(dict(n=6,title="La bascule",slug="bascule",scene="Noir. « Et si tu essayais… avec un plan ? » s'écrit seul au centre. Dans le silence, un point bleu s'allume, l'écran du GPS se dessine autour, « Itinéraire calculé · ton plan »",
@@ -176,7 +176,7 @@ F.append(dict(n=6,title="La bascule",slug="bascule",scene="Noir. « Et si tu ess
  scenes=r'''Scene 1 (0.00 à 3.10 s) : P13, la question sur noir
   TEXTE ÉCRAN : moment typographique (84 px, centré, y 500) : « Et si tu essayais… avec un [boîte : plan] ? » mot par mot (Et 0.62, si 0.76, tu 1.04, essayais… 1.34, avec 2.36, un 2.65, boîte 2.78, plan 2.80, ? 2.94) ; aucun sous-titre en bas.
   IMAGE DE DÉPART : handoff_in.
-  ÉTAPES : 0.00 à 0.60 noir et grain seuls (la respiration) ; chaque mot arrive par convergence de ses lettres (0,3 s expo.out) ; 1.80 à 2.30 « Et si tu essayais… » glisse de 40 px vers le haut pour faire place à la suite (0,4 s) ; 2.36 à 2.94 « avec un plan ? » ; la boîte de « plan » est la seule couleur de l'écran.
+  ÉTAPES : 0.00 à 0.50 les trois « ? » rouges convergent et fusionnent en un point rouge qui s'éteint à 0.60 ; chaque mot arrive par convergence de ses lettres (0,3 s expo.out) ; 1.80 à 2.30 « Et si tu essayais… » glisse de 40 px vers le haut pour faire place à la suite (0,4 s) ; 2.36 à 2.94 « avec un plan ? » ; la boîte de « plan » est la seule couleur de l'écran.
   PISTE CAMÉRA : dérive z +1 %/s (texture du grain qui bouge).
   COUCHES ET PROFONDEUR : la phrase seule sur noir.
   OBJET-PONT ET VECTEUR : la boîte orange de « plan » rétrécit en un point (0,2 s) qui tourne au bleu : le point de départ du GPS.
