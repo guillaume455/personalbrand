@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>v7a · Devis-décor, référence exécutable</title>
+<!--
+  Référence exécutable du composant central de la v7a (voir frame.md, sections LE DEVIS-DÉCOR et CAMÉRA).
+  Ouvrir ce fichier dans Chromium et appeler demo({...}) dans la console pour poser un état.
+  Dans une composition, les chemins sont relatifs à la racine du projet : « assets/... » (ici « ../assets/... »).
+  Le CSS, le gabarit et le kit caméra ci-dessous sont copiés MOT POUR MOT dans chaque séquence qui montre le devis.
+-->
+<style>
+  @font-face { font-family: "Instrument Sans"; src: url("../assets/fonts/InstrumentSans-400.woff2") format("woff2"); font-weight: 400; }
+  @font-face { font-family: "Instrument Sans"; src: url("../assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
+  @font-face { font-family: "Instrument Sans"; src: url("../assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+  @font-face { font-family: "Instrument Sans"; src: url("../assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+  @font-face { font-family: "Space Mono"; src: url("../assets/fonts/SpaceMono-400.woff2") format("woff2"); font-weight: 400; }
+  @font-face { font-family: "Space Mono"; src: url("../assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+  @font-face { font-family: "Big Shoulders"; src: url("../assets/fonts/BigShoulders-800.woff2") format("woff2"); font-weight: 800; }
+  html, body { margin: 0; background: #0d0b0a; }
+  #frame { position: relative; width: 1920px; height: 1080px; overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+  /* ===================== DEVIS-DÉCOR v7a : début du bloc à copier ===================== */
+  .dv-ground-dark { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #0d0b0a; }
+  .dv-ground-dark::after { content: ""; position: absolute; left: 900px; top: -420px; width: 1500px; height: 1100px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(194,91,40,.30), rgba(194,91,40,.10) 50%, rgba(194,91,40,0)); }
+  .dv-ground-day { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #efe7dc; }
+  .dv-blur { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+  .dv-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; perspective: 2300px; perspective-origin: 960px 540px; }
+  .dv-flight { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; transform-style: preserve-3d; }
+  .dv-rig { position: absolute; left: 0; top: 0; width: 1500px; height: 2120px; }
+  .dv-layer { position: absolute; left: 0; top: 0; width: 1500px; height: 2120px; }
+  .dv { position: absolute; left: 0; top: 0; width: 1500px; height: 2120px; color: #1a1612; font-family: "Instrument Sans", sans-serif; }
+  .dv * { box-sizing: border-box; }
+  .dv-paper { position: absolute; left: 0; top: 0; width: 1500px; height: 2120px; border-radius: 3px; background: #f6f1e8;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.25), 0 80px 160px rgba(0,0,0,.6); }
+  .dv.day .dv-paper { background: #fffdf9; box-shadow: 0 0 0 1px rgba(90,70,50,.10), 0 60px 140px rgba(60,40,20,.16), 0 4px 10px rgba(60,40,20,.06); }
+  .dv-paper::after { content: ""; position: absolute; left: 0; top: 0; width: 1500px; height: 2120px; opacity: .5; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.93  0 0 0 0 0.9  0 0 0 0 0.86  0 0 0 -1.1 1.05'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>");
+    background-size: 300px 300px; }
+  .dv.day .dv-paper::after { opacity: .28; }
+  .dv-brand { position: absolute; left: 120px; top: 136px; display: flex; align-items: center; gap: 22px; }
+  .dv-mark { width: 70px; height: 70px; display: block; }
+  .dv-bname { font: 700 40px/1 "Instrument Sans"; letter-spacing: -0.02em; }
+  .dv-bsub { margin-top: 8px; font: 400 19px/1 "Space Mono"; letter-spacing: .14em; text-transform: uppercase; color: #6f665a; }
+  .dv-title { position: absolute; right: 120px; top: 104px; text-align: right; }
+  .dv-devis { font: 700 150px/.9 "Instrument Sans"; letter-spacing: -0.045em; }
+  .dv-num { margin-top: 14px; font: 700 30px/1 "Space Mono"; letter-spacing: .06em; color: #3a332b; }
+  .dv-meta { position: absolute; left: 120px; top: 372px; width: 1260px; display: grid; grid-template-columns: 1fr 1fr 1fr; }
+  .dv-k { display: block; font: 400 19px/1 "Space Mono"; letter-spacing: .16em; text-transform: uppercase; color: #7a7064; }
+  .dv-v { display: block; margin-top: 14px; font: 500 32px/1.1 "Instrument Sans"; }
+  .dv-th, .dv-row { position: absolute; left: 120px; width: 1260px; display: grid; grid-template-columns: 110px 680px 190px 280px; }
+  .dv-th { top: 540px; height: 70px; align-items: center; border-bottom: 3px solid #1a1612; font: 400 19px/1 "Space Mono"; letter-spacing: .16em; text-transform: uppercase; color: #5a5348; }
+  .dv-th span:nth-child(3), .dv-th span:nth-child(4) { text-align: right; }
+  .dv-row { height: 190px; border-bottom: 1.5px solid #d9cfc1; }
+  .dv-r1 { top: 610px; } .dv-r2 { top: 800px; } .dv-r3 { top: 990px; } .dv-r4 { top: 1180px; } .dv-r5 { top: 1370px; border-bottom: 0; }
+  .dv-n { font: 400 24px/1 "Space Mono"; color: #8a8074; letter-spacing: .06em; padding-top: 58px; }
+  .dv-lab { position: relative; padding-top: 44px; white-space: nowrap; }
+  .dv-lab b { position: relative; display: inline-block; font: 600 52px/1.15 "Instrument Sans"; letter-spacing: -0.02em; }
+  .dv-sub { display: block; margin-top: 12px; font: 400 25px/1.2 "Instrument Sans"; color: #7a7064; }
+  .dv-q { justify-self: end; align-self: center; font: 400 30px/1 "Space Mono"; color: #3a332b; white-space: nowrap; }
+  .dv-p { position: relative; align-self: center; width: 280px; height: 80px; }
+  .dv-price { position: absolute; right: 0; top: 50%; transform: translateY(-50%); font: 700 46px/1 "Space Mono"; white-space: nowrap; }
+  .dv-late { font-size: 34px; }
+  .dv-strike { position: absolute; left: -8px; right: -8px; top: 56%; height: 5px; margin-top: -2.5px; border-radius: 3px; background: #c25b28; transform-origin: 0 50%; transform: scaleX(0); }
+  .dv-toi { position: absolute; right: 0; top: 50%; transform: translateY(-50%); padding: 6px 20px 9px; border-radius: 12px; background: #c25b28; color: #fff; font: 600 50px/1 "Instrument Sans"; letter-spacing: -0.02em; }
+  .dv-stamp { position: absolute; left: 960px; top: 1085px; transform: translate(-50%, -50%) rotate(-8deg); padding: 10px 28px 3px; border: 6px solid #c25b28; border-radius: 14px;
+    font: 800 84px/1 "Big Shoulders"; letter-spacing: .02em; text-transform: uppercase; color: #c25b28; white-space: nowrap; mix-blend-mode: multiply;
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='160'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' seed='7'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -2.6 0 0 0 2.35'/></filter><rect width='100%25' height='100%25' filter='url(%23s)'/></svg>");
+    -webkit-mask-size: 260px 160px; }
+  .dv-r5-frame { position: absolute; left: 106px; top: 1384px; width: 1288px; height: 162px; border: 3px solid #c25b28; border-radius: 14px; }
+  .dv-pin { position: relative; display: inline-block; padding: 0 .22em; margin-left: .06em; }
+  .dv-pin-bg { position: absolute; left: 0; top: .04em; right: 0; bottom: -.02em; border-radius: 12px; background: #c25b28; transform-origin: 0 50%; }
+  .dv-pin-tx { position: relative; color: #fff; }
+  .dv-portal { position: absolute; left: 700px; top: 618px; width: 212px; height: 132px; border-radius: 8px; overflow: hidden; background: #1f1d1b;
+    box-shadow: 0 0 0 1.5px rgba(255,255,255,.08), 0 18px 40px rgba(20,10,4,.45), 0 0 70px 6px rgba(194,91,40,.35); }
+  .dv-portal .bar { position: absolute; left: 0; top: 0; width: 212px; height: 16px; background: #242220; }
+  .dv-portal .bar i { position: absolute; top: 5.5px; width: 5px; height: 5px; border-radius: 50%; }
+  .dv-portal .bar b { position: absolute; left: 56px; top: 3px; width: 100px; height: 10px; border-radius: 3px; background: #2e2b28; font: 400 5.5px/10px "Space Mono"; color: #cfc7bf; text-align: center; }
+  .dv-portal img { position: absolute; left: -34px; top: 8px; width: 280px; height: auto; display: block; }
+  .dv-tot { position: absolute; left: 740px; top: 1600px; width: 640px; }
+  .dv-tot div { display: flex; justify-content: space-between; align-items: center; height: 58px; font: 400 26px/1 "Space Mono"; color: #3a332b; }
+  .dv-case { position: absolute; left: 740px; top: 1740px; width: 640px; height: 140px; border: 3px solid #1a1612; border-radius: 10px; }
+  .dv-case-k { position: absolute; left: 32px; top: 50%; transform: translateY(-50%); font: 400 22px/1 "Space Mono"; letter-spacing: .16em; text-transform: uppercase; color: #3a332b; }
+  .dv-case-v { position: absolute; right: 32px; top: 50%; transform: translateY(-50%); font: 700 72px/1 "Space Mono"; white-space: nowrap; }
+  .dv-zero { position: absolute; left: 0; top: 0; width: 1500px; height: 2120px; overflow: visible; pointer-events: none; }
+  .dv-sign { position: absolute; left: 120px; top: 1600px; width: 520px; height: 240px; border: 1.5px solid #cfc4b5; border-radius: 6px; padding: 26px 28px; font: 400 19px/1.5 "Space Mono"; letter-spacing: .14em; text-transform: uppercase; color: #7a7064; }
+  .dv-foot { position: absolute; left: 120px; top: 1990px; width: 1260px; display: flex; justify-content: space-between; border-top: 1.5px solid #d9cfc1; padding-top: 24px; font: 400 18px/1 "Space Mono"; letter-spacing: .08em; color: #8a8074; }
+
+  /* éclairage (calques écran, au-dessus de la scène, sous la phrase) */
+  .lt { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+  .lt-pool { background: radial-gradient(ellipse 1250px 620px at 960px 640px, rgba(24,12,6,0) 0%, rgba(24,12,6,0) 50%, rgba(24,12,6,.6) 84%, rgba(14,8,5,.93) 100%); }
+  .lt-corner { background: radial-gradient(ellipse 900px 330px at 330px 110px, rgba(14,8,5,.78) 0%, rgba(14,8,5,.55) 45%, rgba(14,8,5,0) 100%); }
+  .lt-warm { mix-blend-mode: soft-light; background: radial-gradient(ellipse 900px 520px at 1100px 380px, rgba(224,138,92,.5), rgba(224,138,92,0) 70%); }
+  .lt-day { background: radial-gradient(ellipse 1300px 760px at 1000px 560px, rgba(226,214,198,0) 0%, rgba(226,214,198,0) 55%, rgba(214,200,182,.45) 88%, rgba(205,190,170,.7) 100%),
+    radial-gradient(ellipse 820px 520px at 1450px 600px, rgba(194,91,40,.10), rgba(194,91,40,0) 70%); }
+  .lt-fgsheet { position: absolute; left: -360px; top: 820px; width: 1180px; height: 600px; border-radius: 6px; background: #fffdf9; transform: rotate(9deg); filter: blur(22px); box-shadow: 8px -14px 44px rgba(60,40,20,.22); }
+  .grain { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; opacity: .06;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+    background-size: 240px 240px; }
+  .grain.day { opacity: .03; }
+  /* ===================== DEVIS-DÉCOR v7a : fin du bloc CSS ===================== */
+</style>
+</head>
+<body>
+<div id="frame">
+  <div class="dv-ground-dark" id="gd"></div>
+  <div class="dv-ground-day" id="gl" style="display:none"></div>
+  <div class="dv-blur" id="blur">
+    <div class="dv-stage"><div class="dv-flight" id="flight"><div class="dv-rig" id="rig"></div></div></div>
+  </div>
+  <div class="lt lt-pool" id="l1"></div><div class="lt lt-corner" id="l2"></div><div class="lt lt-warm" id="l3"></div><div class="lt lt-day" id="l4" style="display:none"></div>
+  <div class="grain" id="gr"></div>
+</div>
+
+<!-- ===================== gabarit de la feuille (à copier) ===================== -->
+<template id="dv-sheet">
+  <div class="dv">
+    <div class="dv-paper"></div>
+    <div class="dv-brand"><svg class="dv-mark" viewBox="0 0 70 70"><rect width="70" height="70" rx="8" fill="#1a1612"/><path d="M35 14 A21 21 0 1 1 14 35 L35 35 Z" fill="#f6f1e8"/></svg>
+      <div><div class="dv-bname">Studio Cadran</div><div class="dv-bsub">Agence web · Nantes</div></div></div>
+    <div class="dv-title"><div class="dv-devis">Devis</div><div class="dv-num">N°&nbsp;0147</div></div>
+    <div class="dv-meta">
+      <div><span class="dv-k">Émis le</span><span class="dv-v">12 juin 2023</span></div>
+      <div><span class="dv-k">Valable jusqu’au</span><span class="dv-v">12 juillet 2023</span></div>
+      <div><span class="dv-k">Client</span><span class="dv-v">Ton entreprise</span></div>
+    </div>
+    <div class="dv-th"><span>N°</span><span>Désignation</span><span>Qté</span><span>Prix HT</span></div>
+    <div class="dv-row dv-r1"><span class="dv-n">01</span><span class="dv-lab"><b><span class="dv-t">Modification sur ton <span class="dv-site">site</span></span><span class="dv-strike"></span></b><span class="dv-sub">Changer un texte et une photo sur la page d’accueil</span></span><span class="dv-q">1&nbsp;jour</span><span class="dv-p"><span class="dv-price dv-price1">1&nbsp;000&nbsp;€</span><span class="dv-toi dv-toi1">toi</span></span></div>
+    <div class="dv-row dv-r2"><span class="dv-n">02</span><span class="dv-lab"><b><span class="dv-t">Nouvelle page</span><span class="dv-strike"></span></b><span class="dv-sub">Création et mise en ligne d’une page</span></span><span class="dv-q">1</span><span class="dv-p"><span class="dv-price dv-price2">600&nbsp;€</span><span class="dv-toi dv-toi2">toi</span></span></div>
+    <div class="dv-row dv-r3"><span class="dv-n">03</span><span class="dv-lab"><b><span class="dv-t">Réparer l’automatisation</span><span class="dv-strike"></span></b><span class="dv-sub">Formulaire, e-mail et facture&nbsp;: diagnostic</span></span><span class="dv-q"></span><span class="dv-p"><span class="dv-toi dv-toi3">toi</span></span></div>
+    <div class="dv-row dv-r4"><span class="dv-n">04</span><span class="dv-lab"><b><span class="dv-t">Délai de livraison</span></b><span class="dv-sub">À confirmer par le prestataire</span></span><span class="dv-q"></span><span class="dv-p"><span class="dv-price dv-late dv-price4">quand il aura le temps</span><span class="dv-price dv-late dv-now4">maintenant</span></span></div>
+    <div class="dv-r5-frame"></div>
+    <div class="dv-row dv-r5"><span class="dv-n">05</span><span class="dv-lab"><b><span class="dv-w5 dv-w5a">Apprendre</span> <span class="dv-w5 dv-w5b">à</span> <span class="dv-pin"><span class="dv-pin-bg"></span><span class="dv-pin-tx">t’en servir</span></span></b><span class="dv-sub dv-sub5">La seule ligne qui reste</span></span><span class="dv-q"></span><span class="dv-p"></span></div>
+    <div class="dv-stamp">Sur devis</div>
+    <div class="dv-portal"><span class="bar"><i style="left:9px;background:#ff5f57"></i><i style="left:19px;background:#febc2e"></i><i style="left:29px;background:#28c840"></i><b>entrepreneurs2-0.com</b></span><img src="../assets/img/site-hero.png" alt=""></div>
+    <div class="dv-sign">Bon pour accord<br>Date et signature</div>
+    <div class="dv-tot"><div><span>Total HT</span><span class="dv-ht">1&nbsp;600&nbsp;€</span></div><div><span>TVA 20&nbsp;%</span><span class="dv-tva">320&nbsp;€</span></div></div>
+    <div class="dv-case"><span class="dv-case-k">Total TTC</span><span class="dv-case-v">1&nbsp;920&nbsp;€</span></div>
+    <svg class="dv-zero" viewBox="0 0 1500 2120"><path class="dv-zero-ring" fill="#1a1612" fill-rule="evenodd" d="M1216.4 1812a18.6 26.2 0 1 0 37.2 0a18.6 26.2 0 1 0 -37.2 0Z M1225 1812a10 17.5 0 1 0 20 0a10 17.5 0 1 0 -20 0Z"/></svg>
+    <div class="dv-foot"><span>Studio Cadran · 4 quai de la Fosse, 44000 Nantes</span><span>Page 1/1</span></div>
+  </div>
+</template>
+
+<script>
+/* ===================== kit caméra v7a (à copier) ===================== */
+var DV_P = 2300;                               // perspective de .dv-stage, origine au centre du cadre
+function dvMatrix(c) {                         // c = { x, y, s, rx, rz } : le point (x, y) de la feuille est au centre du cadre
+  return new DOMMatrix().translate(960, 540).rotateAxisAngle(0, 0, 1, c.rz).rotateAxisAngle(1, 0, 0, c.rx).scale(c.s, c.s, 1).translate(-c.x, -c.y);
+}
+function dvProject(c, u, v) {                  // point de la feuille (u, v) vers l'écran ; k = échelle apparente en ce point
+  var p = dvMatrix(c).transformPoint(new DOMPoint(u, v, 0, 1));
+  var k = DV_P / (DV_P - p.z);
+  return { x: 960 + (p.x - 960) * k, y: 540 + (p.y - 540) * k, k: k * c.s };
+}
+function dvApplyCam(rig, blurEl, c) {          // unique écrivain de la caméra (appelé par onUpdate)
+  rig.style.transformOrigin = c.x + "px " + c.y + "px";
+  rig.style.transform = "translate(" + (960 - c.x) + "px," + (540 - c.y) + "px) rotateZ(" + c.rz + "deg) rotateX(" + c.rx + "deg) scale(" + c.s + ")";
+  blurEl.style.filter = c.blur > 0.05 ? "blur(" + c.blur.toFixed(2) + "px)" : "none";
+}
+function dvApplyDof(layers, d) {               // d = { f, b1, b2 } : ligne nette f (u), flou des couches moyenne et lointaine (px)
+  var mid = "linear-gradient(to bottom, transparent " + (d.f - 420) + "px, #000 " + (d.f - 250) + "px, #000 " + (d.f + 250) + "px, transparent " + (d.f + 420) + "px)";
+  var sh = "linear-gradient(to bottom, transparent " + (d.f - 160) + "px, #000 " + (d.f - 85) + "px, #000 " + (d.f + 85) + "px, transparent " + (d.f + 160) + "px)";
+  layers[0].style.filter = d.b2 > 0.05 ? "blur(" + d.b2.toFixed(2) + "px)" : "none";
+  layers[1].style.filter = d.b1 > 0.05 ? "blur(" + d.b1.toFixed(2) + "px)" : "none";
+  layers[1].style.webkitMaskImage = mid; layers[1].style.maskImage = mid;
+  layers[2].style.webkitMaskImage = sh; layers[2].style.maskImage = sh;
+}
+function dvBillboard(el, c, u, v, base, ax, ay) {   // objet debout ancré au point (u, v) ; (ax, ay) = point d'ancrage dans l'objet (px)
+  var p = dvProject(c, u, v), sc = base * p.k;
+  el.style.transformOrigin = "0 0";
+  el.style.transform = "translate(" + (p.x - ax * sc).toFixed(2) + "px," + (p.y - ay * sc).toFixed(2) + "px) scale(" + sc.toFixed(4) + ")";
+}
+function dvBuild(rig, day) {                   // trois copies identiques de la feuille : lointaine, moyenne, nette
+  var tpl = document.getElementById("dv-sheet"), layers = [];
+  for (var i = 0; i < 3; i++) {
+    var L = document.createElement("div"); L.className = "dv-layer";
+    L.appendChild(tpl.content.cloneNode(true));
+    if (day) L.querySelector(".dv").classList.add("day");
+    rig.appendChild(L); layers.push(L);
+  }
+  return layers;
+}
+/* ===================== fin du kit caméra ===================== */
+
+// démo : poser un état du devis et une caméra
+var LAYERS = dvBuild(document.getElementById("rig"), false);
+function setAll(sel, prop, val) { document.querySelectorAll(sel).forEach(function (e) { e.style[prop] = val; }); }
+window.demo = function (o) {
+  var day = !!o.day;
+  document.querySelectorAll(".dv").forEach(function (d) { d.classList.toggle("day", day); });
+  document.getElementById("gd").style.display = day ? "none" : "block";
+  document.getElementById("gl").style.display = day ? "block" : "none";
+  ["l1", "l2", "l3"].forEach(function (i) { document.getElementById(i).style.display = day ? "none" : "block"; });
+  document.getElementById("l4").style.display = day ? "block" : "none";
+  document.getElementById("gr").className = day ? "grain day" : "grain";
+  var st = o.state || {};
+  setAll(".dv-price1", "opacity", st.p1 ? 1 : 0); setAll(".dv-price2", "opacity", st.p2 ? 1 : 0);
+  setAll(".dv-stamp", "opacity", st.stamp ? .94 : 0); setAll(".dv-price4", "opacity", st.late ? 1 : 0); setAll(".dv-now4", "opacity", st.now ? 1 : 0);
+  setAll(".dv-portal", "opacity", st.portal ? 1 : 0); setAll(".dv-site", "opacity", st.portal ? 0 : 1);
+  [1, 2, 3].forEach(function (n) {
+    var on = (st.struck || 0) >= n;
+    setAll(".dv-r" + n + " .dv-strike", "transform", on ? "scaleX(1)" : "scaleX(0)");
+    setAll(".dv-r" + n + " .dv-t, .dv-r" + n + " .dv-sub, .dv-r" + n + " .dv-q", "opacity", on ? .42 : 1);
+    setAll(".dv-toi" + n, "opacity", on ? 1 : 0);
+  });
+  setAll(".dv-r5-frame, .dv-r5 .dv-n", "opacity", st.r5 ? 1 : 0);
+  setAll(".dv-w5, .dv-pin, .dv-sub5", "opacity", st.r5full ? 1 : 0);
+  setAll(".dv-zero", "opacity", st.zero ? 1 : 0);
+  if (st.zero) { setAll(".dv-case-v", "color", "transparent"); } else { setAll(".dv-case-v", "color", "#1a1612"); }
+  var c = o.cam; c.blur = c.blur || 0;
+  dvApplyCam(document.getElementById("rig"), document.getElementById("blur"), c);
+  dvApplyDof(LAYERS, o.dof || { f: c.y, b1: 5.5, b2: 15 });
+};
+demo({ cam: { x: 800, y: 590, s: 1.48, rx: 30, rz: -4 }, dof: { f: 705, b1: 5.5, b2: 15 }, state: { p1: 1 } });
+</script>
+</body>
+</html>

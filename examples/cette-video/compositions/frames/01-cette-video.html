@@ -1,0 +1,405 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #f5efe7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground look (ground-dark): shared by the static clip ground and every nested level ---------- */
+    .f01-groundlook {
+      background:
+        radial-gradient(ellipse 1050px 720px at 960px 420px, rgba(194, 91, 40, 0.26) 0%, rgba(194, 91, 40, 0.1) 45%, rgba(194, 91, 40, 0.03) 75%, rgba(194, 91, 40, 0) 100%),
+        #0d0b0a;
+    }
+    #f01-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 0;
+    }
+    #f01-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+      opacity: 0.05;
+      z-index: 30;
+      background-size: 240px 240px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+
+    /* ---------- camera + Droste levels ---------- */
+    #f01-cam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 2;
+    }
+    .f01-level {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    /* a nested level = the whole 1920x1080 frame shrunk into the 1100x618.75 screen (scale 1100/1920), static CSS, never tweened */
+    .f01-screen > .f01-level {
+      transform: scale(0.5729166667);
+      transform-origin: 0 0;
+    }
+    .f01-lvground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f01-seedground {
+      background: #0d0b0a;
+    }
+    #f01-seedhalo {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: radial-gradient(ellipse 660px 330px at 960px 529px, rgba(194, 91, 40, 0.26) 0%, rgba(194, 91, 40, 0.1) 45%, rgba(194, 91, 40, 0.03) 75%, rgba(194, 91, 40, 0) 100%);
+    }
+
+    /* ---------- video-player (glass-card-dark on the dark world) ---------- */
+    .f01-player {
+      position: absolute;
+      left: 410px;
+      top: 72px;
+      width: 1100px;
+      height: 698.75px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: linear-gradient(160deg, rgba(40, 33, 28, 0.92), rgba(24, 20, 17, 0.9) 45%, rgba(20, 16, 14, 0.9) 80%, rgba(30, 24, 20, 0.92));
+      box-shadow: 0 0 0 1px rgba(245, 239, 231, 0.1), 0 50px 120px rgba(0, 0, 0, 0.7);
+    }
+    .f01-screen {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1100px;
+      height: 618.75px;
+      overflow: hidden;
+      background: #0d0b0a;
+    }
+    .f01-bar {
+      position: absolute;
+      left: 0;
+      top: 618.75px;
+      width: 1100px;
+      height: 80px;
+      box-sizing: border-box;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    .f01-playbtn {
+      flex: none;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #c25b28;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 8px 22px rgba(168, 77, 34, 0.4);
+    }
+    .f01-playbtn svg {
+      display: block;
+      margin-left: 3px;
+    }
+    .f01-track {
+      flex: none;
+      position: relative;
+      width: 808px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(155, 146, 137, 0.38);
+    }
+    .f01-played {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 808px;
+      height: 4px;
+      border-radius: 2px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+    }
+    .f01-head {
+      position: absolute;
+      left: -8px;
+      top: -6px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #f5efe7;
+      box-shadow: 0 0 0 3px rgba(194, 91, 40, 0.35), 0 2px 6px rgba(0, 0, 0, 0.5);
+    }
+    .f01-time {
+      flex: none;
+      width: 140px;
+      text-align: right;
+      font: 400 20px/1 "Space Mono", monospace;
+      color: #cdbfb2;
+      white-space: nowrap;
+    }
+
+    /* ---------- phrase = the voice, small, word by word ---------- */
+    .f01-row {
+      position: absolute;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      white-space: nowrap;
+      font: 600 54px/1.18 "Instrument Sans", sans-serif;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+    }
+    .f01-lvrow {
+      left: 0;
+      top: 804px;
+      width: 1920px;
+      justify-content: center;
+    }
+    #f01-seedrow {
+      left: 0;
+      top: 493.18px;
+      width: 1920px;
+      justify-content: center;
+    }
+    .f01-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    /* accent pill: the only highlight mechanism */
+    .f01-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.06em 0.32em;
+      transform-origin: 0% 50%;
+    }
+    .f01-pillbg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f01-pilltx {
+      position: relative;
+      display: inline-flex;
+      color: #ffffff;
+    }
+    .f01-ch {
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="01-cette-video" data-width="1920" data-height="1080" data-duration="2.25">
+    <!-- full-bleed ground (it IS level 0's ground): canvas + terracotta halo behind the player -->
+    <div id="f01-bg" class="clip f01-groundlook" data-start="0" data-duration="2.25" data-track-index="0" data-layout-ignore></div>
+
+    <!-- camera: ONE scale tween (Z0 -> 1, expo.out) around the Droste fixed point -->
+    <div id="f01-cam" data-layout-allow-overflow>
+      <!-- LEVEL block: ground + video-player (its screen holds the next level) + phrase.
+           The script clones this block 4 times and nests each copy in the previous screen.
+           Classes only inside (no ids), so copies never duplicate an id. -->
+      <div id="f01-l0" class="f01-level">
+        <div class="f01-lvground f01-groundlook"></div>
+
+        <!-- video-player
+             Self-contained block (frame 10 copies it onto the paper world with card-light).
+             Card 1100 x 698.75, radius 14: a 16:9 screen 1100 x 618.75 on top + an 80px control bar below.
+             Bar (padding 0 24, gap 24): play disc 56px accent with a white SVG triangle,
+             progress track 808 x 4 (ink-mute) with an accent played part (GSAP scaleX from the left)
+             and a round playhead (GSAP x = fraction x 808), Space Mono 20px timecode right aligned. -->
+        <div class="f01-player">
+          <div class="f01-screen"></div>
+          <div class="f01-bar">
+            <div class="f01-playbtn">
+              <svg width="20" height="22" viewBox="0 0 20 22">
+                <path d="M3.2 2.4 L18 11 L3.2 19.6 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.4" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <div class="f01-track">
+              <div class="f01-played"></div>
+              <div class="f01-head"></div>
+            </div>
+            <div class="f01-time">0:01 / 0:44</div>
+          </div>
+        </div>
+        <!-- /video-player -->
+
+        <div class="f01-row f01-lvrow">
+          <span class="f01-pill"><span class="f01-pillbg"></span><span class="f01-pilltx"><span class="f01-ch">a</span><span class="f01-ch">u</span><span class="f01-ch">c</span><span class="f01-ch">u</span><span class="f01-ch">n</span><span class="f01-ch">e</span><span class="f01-ch">&nbsp;</span><span class="f01-ch">a</span><span class="f01-ch">g</span><span class="f01-ch">e</span><span class="f01-ch">n</span><span class="f01-ch">c</span><span class="f01-ch">e</span></span></span>
+          <span class="f01-w f01-wne">ne</span>
+          <span class="f01-w f01-wla">l’a</span>
+          <span class="f01-w f01-wfaite">faite.</span>
+        </div>
+      </div>
+
+      <!-- SEED: the innermost image (moved by the script into the deepest screen): « Cette vidéo, » alone on the dark stage -->
+      <div id="f01-seed" class="f01-level">
+        <div class="f01-lvground f01-seedground"></div>
+        <div id="f01-seedhalo"></div>
+        <div id="f01-seedrow" class="f01-row">
+          <span class="f01-w" id="f01-cette">Cette</span>
+          <span class="f01-w" id="f01-video">vidéo,</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- static film grain on top (full-duration clip) -->
+    <div id="f01-grain" class="clip" data-start="0" data-duration="2.25" data-track-index="1" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      // ---------- Droste geometry (analytic, no DOM measurement) ----------
+      // A level is the whole 1920x1080 frame; its player screen (410, 72, 1100 x 618.75) shows the next level
+      // at S = 1100 / 1920. The map p -> screenOrigin + S * p has one fixed point P; scaling the camera by 1/S
+      // around P maps level n+1 exactly onto level n, so ONE scale tween around P is the whole pull-back.
+      var S = 1100 / 1920;
+      var SX = 410;
+      var SY = 72;
+      var PX = SX / (1 - S); // 960
+      var PY = SY / (1 - S); // 168.585
+      var DEPTH = 5; // level 0 + 4 nested copies; the seed sits in the 4th copy's screen (depth 5)
+      var OVER = 1.03; // slight over-zoom: the innermost bezel and control bar stay off-frame at t = 0
+      var Z0 = OVER / Math.pow(S, DEPTH); // about 16.69: the innermost screen fills the frame
+      var TRACK_W = 808;
+
+      var cam = document.getElementById("f01-cam");
+      var lv0 = document.getElementById("f01-l0");
+      var seed = document.getElementById("f01-seed");
+
+      // ---------- build: 4 copies of the bare level, nested screen in screen ----------
+      var levels = [lv0];
+      for (var i = 1; i <= 4; i++) {
+        var copy = lv0.cloneNode(true);
+        copy.removeAttribute("id");
+        levels.push(copy);
+      }
+      // level 0's ground is the static full-bleed clip #f01-bg
+      lv0.removeChild(lv0.querySelector(".f01-lvground"));
+      // collect every level's own elements BEFORE nesting (querySelector would otherwise hit a deeper copy first)
+      var pick = function (sel) {
+        return levels.map(function (l) {
+          return l.querySelector(sel);
+        });
+      };
+      var screens = pick(".f01-screen");
+      var pills = pick(".f01-pill");
+      var pillbgs = pick(".f01-pillbg");
+      var wNe = pick(".f01-wne");
+      var wLa = pick(".f01-wla");
+      var wFaite = pick(".f01-wfaite");
+      var played = pick(".f01-played");
+      var heads = pick(".f01-head");
+      var chars = levels.map(function (l) {
+        return l.querySelectorAll(".f01-ch");
+      });
+      for (var j = 1; j < levels.length; j++) {
+        screens[j - 1].appendChild(levels[j]);
+      }
+      screens[levels.length - 1].appendChild(seed);
+      // seed phrase dead centre on screen at t = 0 (compensates the over-zoom around P)
+      document.getElementById("f01-seedrow").style.top = (PY + (540 - PY) / OVER - 36).toFixed(2) + "px";
+
+      var tl = gsap.timeline({ paused: true, defaults: { force3D: false } });
+
+      // word-by-word (frame.md): each word on its voice timestamp
+      var word = function (el, at) {
+        tl.fromTo(el, { opacity: 0, y: 10, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, at);
+      };
+
+      // ---------- build-time states ----------
+      gsap.set(pills, { rotation: 0, force3D: false });
+      gsap.set(cam, { transformOrigin: PX + "px " + PY + "px", scale: Z0, force3D: false });
+
+      // ---------- SCENE 1 (0.00-0.80): « Cette vidéo, » alone, dead centre, camera static ----------
+      tl.fromTo("#f01-seedhalo", { opacity: 0.55 }, { opacity: 1, duration: 0.8, ease: "power2.out" }, 0);
+      tl.fromTo("#f01-cette", { opacity: 0.35, y: 6, filter: "blur(5px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, 0); // Cette@0.03
+      word("#f01-video", 0.26); // vidéo@0.28
+
+      // playhead (every level in sync): 0:01 of 0:44, moves slightly
+      tl.fromTo(played, { scaleX: 0.023 }, { scaleX: 0.05, duration: 2.25, ease: "none" }, 0);
+      tl.fromTo(heads, { x: 0.023 * TRACK_W }, { x: 0.05 * TRACK_W, duration: 2.25, ease: "none" }, 0);
+
+      // ---------- SCENE 2 (0.80-2.25): ONE decelerating pull-back, then locked ----------
+      tl.fromTo(cam, { scale: Z0 }, { scale: 1, duration: 0.9, ease: "expo.out", immediateRender: false }, 0.8);
+
+      // phrase under the player, every level in sync (true Droste: the same image at every depth)
+      // [pill: aucune agence] traces first, then its letters write inside (aucune@0.85, agence@1.12)
+      var PILL_AT = 0.84;
+      tl.set(pillbgs, { opacity: 1, immediateRender: false }, PILL_AT);
+      tl.fromTo(pillbgs, { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out" }, PILL_AT);
+      tl.fromTo(pills, { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, PILL_AT);
+      var column = function (n) {
+        return chars.map(function (list) {
+          return list[n];
+        });
+      };
+      for (var c = 0; c < chars[0].length; c++) {
+        tl.fromTo(column(c), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out" }, PILL_AT + 0.18 + c * 0.02);
+      }
+      word(wNe, 1.38); // ne@1.40
+      word(wLa, 1.53); // l’a@1.55
+      word(wFaite, 1.73); // faite@1.75
+      // hold: camera locked at 1.70, last word lands 2.03, only the playhead keeps moving to 2.25
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["01-cette-video"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,768 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #f5efe7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground (full-duration clip) ---------- */
+    #f01-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0d0b0a;
+      z-index: 0;
+    }
+    #f01-haloA {
+      position: absolute;
+      left: 260px;
+      top: 40px;
+      width: 1400px;
+      height: 1000px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.24), rgba(194, 91, 40, 0.1) 45%, rgba(194, 91, 40, 0.03) 75%, rgba(194, 91, 40, 0));
+    }
+    #f01-haloB {
+      position: absolute;
+      left: 790px;
+      top: 9px;
+      width: 1200px;
+      height: 900px;
+      border-radius: 50%;
+      opacity: 0;
+      background: radial-gradient(closest-side, rgba(212, 112, 63, 0.26), rgba(194, 91, 40, 0.11) 45%, rgba(194, 91, 40, 0.03) 75%, rgba(194, 91, 40, 0));
+    }
+    #f01-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+      opacity: 0.05;
+      z-index: 30;
+      background-size: 240px 240px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+
+    /* ---------- shared ---------- */
+    .f01-layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #f01-s12 { z-index: 2; }
+    #f01-s3 { z-index: 3; opacity: 0; visibility: hidden; }
+    #f01-s4 { z-index: 4; opacity: 0; visibility: hidden; }
+
+    /* phrase = the voice, small, word by word */
+    .f01-row {
+      position: absolute;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      white-space: nowrap;
+      font: 600 54px/1.18 "Instrument Sans", sans-serif;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+    }
+    .f01-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    /* accent pill: the only highlight mechanism */
+    .f01-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.06em 0.32em;
+      transform-origin: 0% 50%;
+    }
+    .f01-pillbg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f01-pilltx {
+      position: relative;
+      display: inline-flex;
+      color: #ffffff;
+    }
+    .f01-ch {
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+
+    /* ---------- scenes 1-2 : phrase + website mock + camera ---------- */
+    #f01-p1fx { transform-origin: 960px 820px; }
+    #f01-p1row {
+      left: 0;
+      top: 784px;
+      width: 1920px;
+      justify-content: center;
+    }
+    #f01-camOuter { transform-origin: 50% 50%; }
+    #f01-mockrise {
+      position: absolute;
+      left: 370px;
+      top: 70px;
+      width: 1180px;
+      height: 620px;
+      opacity: 0;
+    }
+    #f01-mock {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1180px;
+      height: 620px;
+      box-sizing: border-box;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(245, 239, 231, 0.1);
+      background: linear-gradient(160deg, rgba(40, 33, 28, 0.92), rgba(24, 20, 17, 0.9) 45%, rgba(20, 16, 14, 0.9) 80%, rgba(30, 24, 20, 0.92));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 50px 120px rgba(0, 0, 0, 0.7);
+    }
+    .f01-dot {
+      position: absolute;
+      top: 20px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    #f01-url {
+      position: absolute;
+      left: 390px;
+      top: 11px;
+      width: 400px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(245, 239, 231, 0.06);
+      font: 400 15px/30px "Space Mono", monospace;
+      letter-spacing: 0.04em;
+      color: #9b9289;
+      text-align: center;
+    }
+    #f01-body {
+      position: absolute;
+      left: 9px;
+      top: 51px;
+      width: 1160px;
+      height: 558px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f6f1e9;
+    }
+    #f01-logo {
+      position: absolute;
+      left: 40px;
+      top: 24px;
+      font: 600 22px/1.2 "Instrument Sans", sans-serif;
+      letter-spacing: -0.01em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f01-nav {
+      position: absolute;
+      top: 35px;
+      width: 56px;
+      height: 9px;
+      border-radius: 5px;
+      background: #d3c8bb;
+    }
+    .f01-tbar {
+      position: absolute;
+      left: 48px;
+      height: 11px;
+      border-radius: 6px;
+      background: #d9d0c4;
+    }
+    .f01-img {
+      position: absolute;
+      border-radius: 10px;
+      background: linear-gradient(155deg, #ded5c9 0%, #d8cfc3 50%, #cbbfb0 100%);
+    }
+    #f01-tgrp {
+      position: absolute;
+      left: 28px;
+      top: 96px;
+      width: 520px;
+      height: 136px;
+      transform-origin: 50% 50%;
+    }
+    #f01-tint {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 520px;
+      height: 136px;
+      border-radius: 8px;
+      background: rgba(194, 91, 40, 0.08);
+      opacity: 0;
+    }
+    #f01-sitetitle {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      font: 600 44px/1.1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    #f01-selsvg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+    }
+    .f01-handle {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      box-sizing: border-box;
+      border-radius: 2px;
+      background: #fffdf9;
+      border: 2px solid #c25b28;
+      opacity: 0;
+    }
+    .f01-ring {
+      position: absolute;
+      left: 663px;
+      top: 265px;
+      width: 90px;
+      height: 90px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      border: 3px solid #d4703f;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #f01-cursor {
+      position: absolute;
+      left: -3.5px;
+      top: -3.5px;
+      width: 40px;
+      height: 54px;
+      overflow: visible;
+      transform-origin: 3.5px 3.5px;
+      filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.45));
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ---------- scene 3 : clean stage, giant count ---------- */
+    #f01-s3fx { transform-origin: 50% 50%; }
+    #f01-p2row {
+      left: 0;
+      top: 196px;
+      width: 1920px;
+      justify-content: center;
+    }
+    #f01-numwrap {
+      position: absolute;
+      left: 0;
+      top: 403px;
+      width: 1920px;
+      height: 234px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #f01-numgrp {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 40px;
+      white-space: nowrap;
+      font: 700 260px/0.9 "Instrument Sans", sans-serif;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -10.4px;
+      color: #f5efe7;
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    #f01-num {
+      display: inline-flex;
+      justify-content: center;
+      width: 640px;
+    }
+    #f01-euro {
+      display: inline-block;
+      opacity: 0;
+    }
+    #f01-label {
+      position: absolute;
+      left: 0;
+      top: 676px;
+      width: 1920px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 22px;
+      opacity: 0;
+    }
+    .f01-lline {
+      display: block;
+      width: 48px;
+      height: 1px;
+      background: rgba(245, 239, 231, 0.28);
+    }
+    #f01-ltext {
+      display: block;
+      padding-left: 0.2em;
+      font: 400 22px/1 "Space Mono", monospace;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #cdbfb2;
+    }
+
+    /* ---------- scene 4 : phrase left + tilted quote card ---------- */
+    #f01-p3row {
+      left: 140px;
+      top: 420px;
+      justify-content: flex-start;
+    }
+    #f01-cardmove { opacity: 0; }
+    #f01-persp { perspective: 2000px; }
+    #f01-tilt {
+      position: absolute;
+      left: 980px;
+      top: 162px;
+      width: 820px;
+      transform-origin: 50% 50%;
+    }
+    .f01-qcard {
+      box-sizing: border-box;
+      width: 820px;
+      padding: 40px 48px 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 239, 231, 0.1);
+      background: linear-gradient(160deg, rgba(40, 33, 28, 0.92), rgba(24, 20, 17, 0.9) 45%, rgba(20, 16, 14, 0.9) 80%, rgba(30, 24, 20, 0.92));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 50px 120px rgba(0, 0, 0, 0.7);
+    }
+    .f01-qmicro {
+      font: 400 18px/1.2 "Space Mono", monospace;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #9b9289;
+      white-space: nowrap;
+    }
+    .f01-qtitle {
+      margin-top: 10px;
+      font: 600 44px/1.1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+    }
+    .f01-qrule {
+      margin-top: 24px;
+      height: 1px;
+      background: rgba(245, 239, 231, 0.12);
+    }
+    .f01-qrow {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 120px 170px;
+      align-items: center;
+      height: 80px;
+      border-bottom: 1px solid rgba(245, 239, 231, 0.1);
+    }
+    .f01-qlabel {
+      font: 500 28px/1.3 "Instrument Sans", sans-serif;
+      color: #f5efe7;
+      white-space: nowrap;
+    }
+    .f01-qprice {
+      font: 700 30px/1 "Space Mono", monospace;
+      font-variant-numeric: tabular-nums;
+      word-spacing: -0.3em;
+      color: #f5efe7;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .f01-late { opacity: 0; }
+    .f01-sk {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 34px;
+      height: 12px;
+    }
+    .f01-skbar {
+      position: absolute;
+      top: 0;
+      height: 12px;
+      border-radius: 6px;
+      background: rgba(245, 239, 231, 0.07);
+    }
+    .f01-qtotal {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+    }
+    #f01-bwrap {
+      position: relative;
+      transform-origin: 100% 50%;
+    }
+    #f01-bglow {
+      position: absolute;
+      left: -30px;
+      right: -30px;
+      top: -26px;
+      bottom: -26px;
+      border-radius: 40px;
+      background: radial-gradient(closest-side, rgba(224, 138, 92, 0.5), rgba(224, 138, 92, 0));
+    }
+    #f01-badge {
+      position: relative;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font: 700 34px/1 "Space Mono", monospace;
+      word-spacing: -0.3em;
+      color: #ffffff;
+      white-space: nowrap;
+      background: #c25b28;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 12px 36px rgba(168, 77, 34, 0.45);
+    }
+  </style>
+
+  <div id="root" data-composition-id="01-devis" data-width="1920" data-height="1080" data-duration="6.24">
+    <!-- full-bleed ground: canvas + terracotta halos -->
+    <div id="f01-bg" class="clip" data-start="0" data-duration="6.24" data-track-index="0" data-layout-ignore>
+      <div id="f01-haloA"></div>
+      <div id="f01-haloB"></div>
+    </div>
+
+    <!-- SCENES 1-2: phrase, website mock, selection, click, zoom-through -->
+    <div id="f01-s12" class="f01-layer">
+      <div id="f01-s2fx" class="f01-layer">
+        <div id="f01-camOuter" class="f01-layer" data-layout-allow-overflow>
+          <div id="f01-camInner" class="f01-layer">
+            <div id="f01-mockrise">
+              <div id="f01-mock">
+                <span class="f01-dot" style="left: 22px; background: rgba(245, 239, 231, 0.2)"></span>
+                <span class="f01-dot" style="left: 42px; background: rgba(245, 239, 231, 0.14)"></span>
+                <span class="f01-dot" style="left: 62px; background: rgba(245, 239, 231, 0.09)"></span>
+                <div id="f01-url">ton-site.fr</div>
+                <div id="f01-body">
+                  <div id="f01-logo">Studio Lumen</div>
+                  <span class="f01-nav" style="left: 820px"></span>
+                  <span class="f01-nav" style="left: 900px"></span>
+                  <span class="f01-nav" style="left: 980px"></span>
+                  <span class="f01-nav" style="left: 1060px"></span>
+                  <span class="f01-tbar" style="top: 256px; width: 420px"></span>
+                  <span class="f01-tbar" style="top: 280px; width: 380px"></span>
+                  <span class="f01-tbar" style="top: 304px; width: 260px"></span>
+                  <div class="f01-img" style="left: 610px; top: 56px; width: 510px; height: 262px"></div>
+                  <div class="f01-img" style="left: 40px; top: 352px; width: 520px; height: 180px"></div>
+                  <div class="f01-img" style="left: 590px; top: 352px; width: 530px; height: 180px"></div>
+                  <div id="f01-tgrp">
+                    <div id="f01-tint"></div>
+                    <div id="f01-sitetitle">Photographe à Nantes,<br />portraits et mariages</div>
+                    <svg id="f01-selsvg" width="520" height="136" viewBox="0 0 520 136">
+                      <defs>
+                        <mask id="f01-selmaskdef" maskUnits="userSpaceOnUse" x="-12" y="-12" width="544" height="160">
+                          <path id="f01-selmask" d="M9.5 1.5 H510.5 A8 8 0 0 1 518.5 9.5 V126.5 A8 8 0 0 1 510.5 134.5 H9.5 A8 8 0 0 1 1.5 126.5 V9.5 A8 8 0 0 1 9.5 1.5 Z" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="butt" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1"></path>
+                        </mask>
+                      </defs>
+                      <path d="M9.5 1.5 H510.5 A8 8 0 0 1 518.5 9.5 V126.5 A8 8 0 0 1 510.5 134.5 H9.5 A8 8 0 0 1 1.5 126.5 V9.5 A8 8 0 0 1 9.5 1.5 Z" fill="none" stroke="#c25b28" stroke-width="3" stroke-dasharray="12 8" mask="url(#f01-selmaskdef)"></path>
+                    </svg>
+                    <span class="f01-handle" id="f01-hd1" style="left: -6px; top: -6px"></span>
+                    <span class="f01-handle" id="f01-hd2" style="left: 514px; top: -6px"></span>
+                    <span class="f01-handle" id="f01-hd3" style="left: 514px; top: 130px"></span>
+                    <span class="f01-handle" id="f01-hd4" style="left: -6px; top: 130px"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="f01-ring" id="f01-ring1"></div>
+            <div class="f01-ring" id="f01-ring2"></div>
+            <svg id="f01-cursor" width="40" height="54" viewBox="0 0 34 46">
+              <path d="M3 3 L3 37 L11.5 29.2 L17 42 L23 39.4 L17.6 26.8 L29 26.8 Z" fill="#ffffff" stroke="#15110e" stroke-width="2.4" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div id="f01-p1fx" class="f01-layer">
+        <div id="f01-p1row" class="f01-row">
+          <span class="f01-w" id="f01-w1">Une</span>
+          <span class="f01-pill" id="f01-pill1"><span class="f01-pillbg" id="f01-pill1bg"></span><span class="f01-pilltx"><span class="f01-ch">m</span><span class="f01-ch">o</span><span class="f01-ch">d</span><span class="f01-ch">i</span><span class="f01-ch">f</span><span class="f01-ch">i</span><span class="f01-ch">c</span><span class="f01-ch">a</span><span class="f01-ch">t</span><span class="f01-ch">i</span><span class="f01-ch">o</span><span class="f01-ch">n</span></span></span>
+          <span class="f01-w" id="f01-w3">sur</span>
+          <span class="f01-w" id="f01-w4">ton</span>
+          <span class="f01-w" id="f01-w5">site</span>
+          <span class="f01-w" id="f01-w6">?</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 3: clean dark stage, "Une journée." + giant count 1 000 € -->
+    <div id="f01-s3" class="f01-layer">
+      <div id="f01-s3fx" class="f01-layer">
+        <div id="f01-p2row" class="f01-row">
+          <span class="f01-w" id="f01-j1">Une</span>
+          <span class="f01-w" id="f01-j2">journée.</span>
+        </div>
+        <div id="f01-numwrap" data-layout-allow-overflow>
+          <div id="f01-numgrp"><span id="f01-num">0</span><span id="f01-euro">€</span></div>
+        </div>
+        <div id="f01-label"><span class="f01-lline"></span><span id="f01-ltext">1 JOUR DE TRAVAIL</span><span class="f01-lline"></span></div>
+      </div>
+    </div>
+
+    <!-- SCENE 4: phrase anchored left + tilted dark quote card -->
+    <div id="f01-s4" class="f01-layer">
+      <div id="f01-p3row" class="f01-row">
+        <span class="f01-w" id="f01-n1">Une</span>
+        <span class="f01-w" id="f01-n2">nouvelle</span>
+        <span class="f01-w" id="f01-n3">page&nbsp;:</span>
+        <span class="f01-pill" id="f01-pill2"><span class="f01-pillbg" id="f01-pill2bg"></span><span class="f01-pilltx"><span class="f01-ch">6</span><span class="f01-ch">0</span><span class="f01-ch">0</span><span class="f01-ch">&nbsp;</span><span class="f01-ch">€</span></span></span>
+      </div>
+      <div id="f01-cardmove" class="f01-layer">
+        <div id="f01-persp" class="f01-layer">
+          <div id="f01-tilt">
+            <div class="f01-qcard">
+              <div class="f01-qmicro">DEVIS N°&nbsp;0147</div>
+              <div class="f01-qtitle">Prestations web</div>
+              <div class="f01-qrule"></div>
+              <div class="f01-qrow">
+                <div class="f01-qlabel">Modification sur ton site</div>
+                <div class="f01-qmicro">1 jour</div>
+                <div class="f01-qprice">1&nbsp;000&nbsp;€</div>
+              </div>
+              <div class="f01-qrow">
+                <div class="f01-qlabel f01-late" id="f01-r2label">Nouvelle page</div>
+                <div></div>
+                <div class="f01-qprice f01-late" id="f01-r2price">600&nbsp;€</div>
+                <div class="f01-sk" id="f01-sk2"><span class="f01-skbar" style="left: 0; width: 230px"></span><span class="f01-skbar" style="right: 0; width: 96px"></span></div>
+              </div>
+              <div class="f01-qrow">
+                <div class="f01-sk"><span class="f01-skbar" style="left: 0; width: 290px"></span><span class="f01-skbar" style="right: 0; width: 120px"></span></div>
+              </div>
+              <div class="f01-qrow">
+                <div class="f01-sk"><span class="f01-skbar" style="left: 0; width: 200px"></span><span class="f01-skbar" style="right: 0; width: 80px"></span></div>
+              </div>
+              <div class="f01-qtotal">
+                <div class="f01-qmicro">TOTAL</div>
+                <div id="f01-bwrap">
+                  <div id="f01-bglow"></div>
+                  <div id="f01-badge"><span id="f01-totnum">1&nbsp;000</span>&nbsp;€</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- static film grain on top (full-duration clip) -->
+    <div id="f01-grain" class="clip" data-start="0" data-duration="6.24" data-track-index="1" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var $ = function (id) {
+        return document.getElementById("f01-" + id);
+      };
+      var NB = " ";
+      // money readout, rounded to the ten (Math.round), "1 000" with a no-break space
+      var fmt = function (v) {
+        var r = Math.round(v / 10) * 10;
+        if (r >= 1000) return Math.floor(r / 1000) + NB + ("00" + (r % 1000)).slice(-3);
+        return String(r);
+      };
+      // counting-dynamic-scale proxy: GSAP writes proxy.v on every render (seek-safe, no onUpdate),
+      // the setter only rewrites the text (O(1), no style writes).
+      var counter = function (el, start) {
+        var p = { _v: start };
+        Object.defineProperty(p, "v", {
+          get: function () {
+            return this._v;
+          },
+          set: function (x) {
+            this._v = x;
+            el.textContent = fmt(x);
+          },
+        });
+        return p;
+      };
+
+      var tl = gsap.timeline({ paused: true });
+
+      // word-by-word (frame.md): each word on its voice timestamp
+      var word = function (el, at) {
+        tl.fromTo(el, { opacity: 0, y: 10, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, at);
+      };
+      // accent pill (frame.md): traces from the left + straightens, THEN the letters write inside
+      var pill = function (id, at) {
+        var bg = $(id + "bg");
+        tl.set(bg, { opacity: 1, immediateRender: false }, at);
+        tl.fromTo(bg, { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out" }, at);
+        tl.fromTo($(id), { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, at);
+        var chars = document.querySelectorAll("#f01-" + id + " .f01-ch");
+        for (var i = 0; i < chars.length; i++) {
+          tl.fromTo(chars[i], { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out" }, at + 0.18 + i * 0.02);
+        }
+      };
+
+      // ---------- build-time states for elements whose first tween comes later ----------
+      var p1row = $("p1row");
+      gsap.set(p1row, { x: 335.2, y: -280 }); // "Une" alone, dead centre (960, 540)
+      gsap.set($("pill1"), { rotation: 0 });
+      gsap.set($("pill2"), { rotation: 0 });
+      gsap.set($("bwrap"), { scale: 0.86 });
+      gsap.set($("bglow"), { opacity: 0.3 });
+
+      // ---------- ground halos ----------
+      var hA = $("haloA");
+      var hB = $("haloB");
+      tl.fromTo(hA, { opacity: 0.55, scale: 0.55, x: 0, y: 0 }, { opacity: 1, scale: 0.8, duration: 0.6, ease: "power2.out" }, 0);
+      tl.fromTo(hA, { y: 0, scale: 0.8 }, { y: -150, scale: 1.15, duration: 0.7, ease: "power3.inOut", immediateRender: false }, 0.6);
+      tl.fromTo(hA, { scale: 1.15, opacity: 1 }, { scale: 2.1, opacity: 0.25, duration: 0.5, ease: "power3.in", immediateRender: false }, 1.3);
+      tl.fromTo(hA, { y: -20, scale: 0.7, opacity: 0.3 }, { y: -20, scale: 0.8, opacity: 0.6, duration: 0.5, ease: "expo.out", immediateRender: false }, 1.8);
+      tl.fromTo(hA, { scale: 0.8, opacity: 0.6 }, { scale: 1.05, opacity: 1, duration: 0.6, ease: "power4.out", immediateRender: false }, 2.68);
+      tl.fromTo(hA, { x: 0, opacity: 1 }, { x: -200, opacity: 0, duration: 0.32, ease: "power1.in", immediateRender: false }, 3.28);
+      tl.fromTo(hB, { opacity: 0, scale: 0.7 }, { opacity: 0.85, scale: 0.95, duration: 0.7, ease: "power3.out" }, 3.6);
+      tl.fromTo(hB, { opacity: 0.85, scale: 0.95 }, { opacity: 1, scale: 1.06, duration: 0.8, ease: "power3.out", immediateRender: false }, 4.74);
+
+      // ---------- SCENE 1 (0.00-0.75): "Une" alone, then [modification] ----------
+      tl.fromTo($("w1"), { opacity: 0.35, y: 6, filter: "blur(5px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, 0);
+      pill("pill1", 0.2); // modification@0.24
+      tl.fromTo(p1row, { x: 335.2, y: -280 }, { x: 160.95, y: -280, duration: 0.4, ease: "power3.out", immediateRender: false }, 0.2);
+
+      // ---------- SCENE 2 (0.60-1.70): phrase to the lower third, mock rises, select + click ----------
+      tl.fromTo(p1row, { x: 160.95, y: -280 }, { x: 0, y: 0, duration: 0.5, ease: "power3.inOut", immediateRender: false }, 0.6);
+      word($("w3"), 0.78); // sur
+      word($("w4"), 1.04); // ton
+      word($("w5"), 1.18); // site
+      word($("w6"), 1.52); // ?
+      tl.fromTo($("mockrise"), { opacity: 0, y: 140 }, { opacity: 1, y: 0, duration: 0.62, ease: "expo.out" }, 0.62);
+      // dashed selection box draws around the site title
+      tl.fromTo($("selmask"), { attr: { "stroke-dashoffset": 1 } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.34, ease: "power2.inOut" }, 0.84);
+      tl.fromTo($("tint"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 1.0);
+      ["hd1", "hd2", "hd3", "hd4"].forEach(function (id, i) {
+        tl.fromTo($(id), { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.24, ease: "power3.out" }, 1.04 + i * 0.03);
+      });
+      // cursor-click-ripple: move (0.72-1.14) -> click 1.20 -> ripple, click point (708, 310) on the title
+      var cur = $("cursor");
+      var tgrp = $("tgrp");
+      tl.fromTo(cur, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "none" }, 0.72);
+      tl.fromTo(cur, { x: 1500, y: 760 }, { x: 708, y: 310, duration: 0.42, ease: "power3.out" }, 0.72);
+      tl.fromTo(cur, { scale: 1 }, { scale: 0.85, duration: 0.08, ease: "power2.in", immediateRender: false }, 1.2);
+      tl.fromTo(cur, { scale: 0.85 }, { scale: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, 1.28);
+      tl.fromTo(tgrp, { scale: 1 }, { scale: 0.96, duration: 0.08, ease: "power2.in", immediateRender: false }, 1.2);
+      tl.fromTo(tgrp, { scale: 0.96 }, { scale: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, 1.28);
+      tl.fromTo([$("ring1"), $("ring2")], { scale: 0, opacity: 1 }, { scale: 4.2, opacity: 0, duration: 0.7, ease: "power2.out", stagger: 0.1, immediateRender: false }, 1.21);
+      tl.fromTo(cur, { opacity: 1 }, { opacity: 0, duration: 0.16, ease: "power1.in", immediateRender: false }, 1.4);
+
+      // ---------- zoom-through the selection box (coordinate-target-zoom) ----------
+      // target = selection centre (668, 286) -> offset (-292, -254) -> nested wrappers: T = -offset
+      tl.fromTo($("camOuter"), { scale: 1 }, { scale: 3.6, duration: 0.5, ease: "power3.in", immediateRender: false }, 1.3);
+      tl.fromTo($("camInner"), { x: 0, y: 0 }, { x: 292, y: 254, duration: 0.5, ease: "power3.in", immediateRender: false }, 1.3);
+      // full-frame surface: blur 20px, opacity -> 0.15 (linear, separate)
+      tl.fromTo($("s2fx"), { filter: "blur(0px)" }, { filter: "blur(20px)", duration: 0.22, ease: "power3.in", immediateRender: false }, 1.58);
+      tl.fromTo($("s2fx"), { opacity: 1 }, { opacity: 0.15, duration: 0.22, ease: "none", immediateRender: false }, 1.58);
+      // phrase: text-scale zoom-through exit (scale 1.2, blur 10px, opacity 0.15)
+      tl.fromTo($("p1fx"), { scale: 1, filter: "blur(0px)" }, { scale: 1.2, filter: "blur(10px)", duration: 0.2, ease: "power3.in", immediateRender: false }, 1.6);
+      tl.fromTo($("p1fx"), { opacity: 1 }, { opacity: 0.15, duration: 0.2, ease: "none", immediateRender: false }, 1.6);
+      // hard cut at peak blur
+      tl.set($("s12"), { autoAlpha: 0, immediateRender: false }, 1.8);
+      tl.set($("s3"), { autoAlpha: 1, immediateRender: false }, 1.8);
+
+      // ---------- SCENE 3 (1.70-3.45): clean stage, "Une journée.", giant 1 000 € ----------
+      tl.fromTo($("s3fx"), { opacity: 0.15, scale: 0.75, filter: "blur(18px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false }, 1.8);
+      word($("j1"), 1.84); // Une
+      word($("j2"), 2.02); // journée.
+      // counting-dynamic-scale + giant-word (scale + blur land; no tracking, the counter rewrites the text), mille-euros@2.72
+      var ng = $("numgrp");
+      var c1 = counter($("num"), 0);
+      tl.fromTo(ng, { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 2.68);
+      tl.fromTo(ng, { scale: 0.5 }, { scale: 1, duration: 0.46, ease: "power4.out" }, 2.68);
+      tl.fromTo(c1, { v: 0 }, { v: 1000, duration: 0.42, ease: "power4.out" }, 2.68);
+      tl.fromTo($("euro"), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, 2.92);
+      tl.fromTo($("label"), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 2.86);
+
+      // ---------- SCENE 4 (3.45-5.74): cut-the-curve leftward ----------
+      // exit: power4.in, 230px / 0.3s, reading order, last fade dies at the cut (3.58-3.60)
+      [["p2row", 3.256], ["numwrap", 3.278], ["label", 3.3]].forEach(function (e) {
+        tl.fromTo($(e[0]), { x: 0 }, { x: -230, duration: 0.3, ease: "power4.in", immediateRender: false }, e[1]);
+        tl.fromTo($(e[0]), { opacity: 1 }, { opacity: 0, duration: 0.22, ease: "power1.in", immediateRender: false }, e[1] + 0.06);
+      });
+      tl.set($("s4"), { autoAlpha: 1, immediateRender: false }, 3.58);
+      tl.set($("s3"), { autoAlpha: 0, immediateRender: false }, 3.6);
+      // entry: the quote card continues leftward, mirrored power4.out, same 230px / 0.3s
+      tl.fromTo($("cardmove"), { x: 230 }, { x: 0, duration: 0.3, ease: "power4.out", immediateRender: false }, 3.6);
+      tl.fromTo($("cardmove"), { opacity: 0.35 }, { opacity: 1, duration: 0.14, ease: "power2.out", immediateRender: false }, 3.6);
+      tl.fromTo($("tilt"), { rotationY: -22, rotationX: 8 }, { rotationY: -12, rotationX: 4, duration: 1.2, ease: "expo.out" }, 3.6);
+      word($("n1"), 3.58); // Une
+      word($("n2"), 3.74); // nouvelle
+      word($("n3"), 3.98); // page :
+      // [pill: 600 €] + row 2 lands + total counts 1 000 -> 1 600, six-cents-euros@4.74
+      pill("pill2", 4.68);
+      tl.fromTo($("sk2"), { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power1.out", immediateRender: false }, 4.68);
+      tl.fromTo($("r2label"), { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 4.7);
+      tl.fromTo($("r2price"), { opacity: 0, y: -14, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.36, ease: "power3.out" }, 4.76);
+      var c2 = counter($("totnum"), 1000);
+      tl.fromTo(c2, { v: 1000 }, { v: 1600, duration: 0.8, ease: "power3.out", immediateRender: false }, 4.74);
+      tl.fromTo($("bwrap"), { scale: 0.86 }, { scale: 1, duration: 0.8, ease: "power3.out", immediateRender: false }, 4.74);
+      tl.fromTo($("bglow"), { opacity: 0.3 }, { opacity: 1, duration: 0.8, ease: "power3.out", immediateRender: false }, 4.74);
+      // hold: last tween ends 5.54 < 5.74
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["01-devis"] = tl;
+    })();
+  </script>
+</template>

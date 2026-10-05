@@ -1,0 +1,828 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Big Shoulders";
+      src: url("assets/fonts/BigShoulders-800.woff2") format("woff2");
+      font-weight: 800;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground: paper (handoff) that darkens into the brand dark ---------- */
+    #p09-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+    .p09-full {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #p09-paper {
+      background: radial-gradient(ellipse 1500px 900px at 50% 42%, #f9f5ee 0%, #f6f1e9 55%, #efe7dc 100%);
+    }
+    #p09-vig {
+      background: radial-gradient(ellipse 1320px 820px at 50% 46%, rgba(239, 231, 220, 0) 62%, rgba(214, 200, 182, 0.38) 100%);
+    }
+    #p09-dark {
+      background: #0d0b0a;
+      opacity: 0;
+    }
+    #p09-halo {
+      position: absolute;
+      left: 60px;
+      top: -250px;
+      width: 1800px;
+      height: 900px;
+      background: radial-gradient(
+        closest-side,
+        rgba(194, 91, 40, 0.3) 0%,
+        rgba(194, 91, 40, 0.2) 30%,
+        rgba(194, 91, 40, 0.09) 58%,
+        rgba(194, 91, 40, 0.025) 82%,
+        rgba(194, 91, 40, 0) 100%
+      );
+      transform-origin: 50% 30%;
+      opacity: 0;
+    }
+    #p09-envglow {
+      position: absolute;
+      left: 160px;
+      top: 310px;
+      width: 1600px;
+      height: 640px;
+      background: radial-gradient(
+        closest-side,
+        rgba(194, 91, 40, 0.2) 0%,
+        rgba(194, 91, 40, 0.1) 40%,
+        rgba(194, 91, 40, 0.03) 75%,
+        rgba(194, 91, 40, 0) 100%
+      );
+      opacity: 0;
+    }
+    #p09-wavecam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 960px 0px;
+    }
+    #p09-waves {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: visible;
+    }
+
+    /* ---------- stage: the card, inside a 2D camera (cam2) ---------- */
+    #p09-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #p09-cam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 0 0;
+    }
+
+    /* wordmark: ENTREPRENEURS (#f5efe7) + 2.0 (#d4703f), Big Shoulders 800 120 */
+    #p09-wordmark {
+      position: absolute;
+      left: 0;
+      top: 264px;
+      width: 1920px;
+      height: 120px;
+      text-align: center;
+      white-space: nowrap;
+      font-family: "Big Shoulders", sans-serif;
+      font-weight: 800;
+      font-size: 120px;
+      line-height: 1;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      color: #f5efe7;
+    }
+    .p09-l {
+      display: inline-block;
+      opacity: 0;
+    }
+    #p09-two {
+      display: inline-block;
+      margin-left: 0.22em;
+      color: #d4703f;
+      transform-origin: 50% 55%;
+      opacity: 0;
+    }
+
+    /* headline: Forme-toi + pour de bon. (terracotta stroke drawn under it) */
+    #p09-headline {
+      position: absolute;
+      left: 0;
+      top: 434px;
+      width: 1920px;
+      text-align: center;
+      white-space: nowrap;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      font-size: 72px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+    }
+    .p09-w {
+      display: inline-block;
+      color: rgba(245, 239, 231, 0.35);
+      opacity: 0;
+    }
+    #p09-pdb {
+      position: relative;
+      display: inline-block;
+    }
+    #p09-strk {
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 100%;
+      height: 8px;
+      overflow: visible;
+    }
+    #p09-strk-p {
+      fill: none;
+      stroke: #c25b28;
+      stroke-width: 4;
+      stroke-linecap: round;
+      opacity: 0;
+    }
+
+    /* CTA */
+    #p09-ctaglow {
+      position: absolute;
+      left: 410px;
+      top: 442px;
+      width: 1100px;
+      height: 360px;
+      background: radial-gradient(
+        closest-side,
+        rgba(194, 91, 40, 0.34) 0%,
+        rgba(194, 91, 40, 0.16) 45%,
+        rgba(194, 91, 40, 0.04) 78%,
+        rgba(194, 91, 40, 0) 100%
+      );
+      opacity: 0;
+    }
+    #p09-burst {
+      position: absolute;
+      left: 580px;
+      top: 532px;
+      width: 760px;
+      height: 180px;
+      background: radial-gradient(
+        closest-side,
+        rgba(224, 138, 92, 0.75) 0%,
+        rgba(194, 91, 40, 0.4) 50%,
+        rgba(194, 91, 40, 0) 100%
+      );
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    #p09-ctawrap {
+      position: absolute;
+      left: 710px;
+      top: 580px;
+      width: 500px;
+      height: 84px;
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    #p09-cta {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 500px;
+      height: 84px;
+      border-radius: 14px;
+      overflow: hidden;
+      background-color: #f6f1e9;
+      box-shadow: 0px 24px 56px 0px rgba(0, 0, 0, 0.55), 0px 0px 60px 0px rgba(194, 91, 40, 0.38);
+      transform-origin: 50% 50%;
+    }
+    .p09-lab {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 500px;
+      height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-family: "Big Shoulders", sans-serif;
+      font-weight: 800;
+      font-size: 34px;
+      line-height: 1;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #a84d22;
+    }
+    .p09-lab svg {
+      display: block;
+      width: 30px;
+      height: 30px;
+    }
+    #p09-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 500px;
+      height: 84px;
+      background: #c25b28;
+      clip-path: circle(0px at 272px 48px);
+    }
+    #p09-fill .p09-lab {
+      color: #ffffff;
+    }
+    #p09-pulse {
+      position: absolute;
+      left: 700px;
+      top: 570px;
+      width: 520px;
+      height: 104px;
+      box-sizing: border-box;
+      border-radius: 22px;
+      border: 2px solid #c25b28;
+      box-shadow: 0 0 22px rgba(194, 91, 40, 0.75), 0 0 56px rgba(224, 138, 92, 0.4), inset 0 0 14px rgba(224, 138, 92, 0.35);
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+
+    /* URL */
+    #p09-url {
+      position: absolute;
+      left: 0;
+      top: 712px;
+      width: 1920px;
+      text-align: center;
+      white-space: nowrap;
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: 0.16em;
+      color: #9b9289;
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+
+    /* click ripple (the onde), centered on the click point (982, 628) */
+    #p09-ring {
+      position: absolute;
+      left: 932px;
+      top: 578px;
+      width: 100px;
+      height: 100px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      border: 2.5px solid #d4703f;
+      box-shadow: 0 0 18px rgba(224, 138, 92, 0.45);
+      transform-origin: 50% 50%;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* cursor: the wrapper is placed by render(), the tip sits at its (0, 0) */
+    #p09-cur {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+    #p09-cur-in {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      overflow: visible;
+      transform-origin: 0 0;
+      opacity: 0;
+    }
+    #p09-cur-in svg {
+      position: absolute;
+      left: -4px;
+      top: -4px;
+      width: 46px;
+      height: 61px;
+      overflow: visible;
+      filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.55));
+    }
+
+    /* grain: paper grain (handoff, 3.5 %) crossfades into the dark grain */
+    #p09-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+    }
+    .p09-gr {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px;
+    }
+    #p09-gr-light {
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+    }
+    #p09-gr-dark {
+      opacity: 0;
+      mix-blend-mode: screen;
+    }
+  </style>
+
+  <div id="root" data-composition-id="09-fin" data-width="1920" data-height="1080" data-duration="7.22">
+    <div id="p09-ground" class="clip" data-start="0" data-duration="7.22" data-track-index="0" data-layout-ignore>
+      <div id="p09-paper" class="p09-full"></div>
+      <div id="p09-vig" class="p09-full"></div>
+      <div id="p09-dark" class="p09-full"></div>
+      <div id="p09-halo"></div>
+      <div id="p09-envglow"></div>
+      <div id="p09-wavecam">
+        <svg id="p09-waves" viewBox="0 0 1920 1080" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="p09-hlg" gradientUnits="userSpaceOnUse" x1="0" y1="-320" x2="1920" y2="320"></linearGradient>
+          </defs>
+          <g id="p09-wg" fill="none" stroke="#c25b28" stroke-linecap="round" stroke-linejoin="round"></g>
+          <g id="p09-hg" fill="none" stroke="url(#p09-hlg)" stroke-linecap="round" stroke-linejoin="round" opacity="0"></g>
+        </svg>
+      </div>
+    </div>
+
+    <div id="p09-stage" class="clip" data-start="0" data-duration="7.22" data-track-index="1">
+      <div id="p09-cam">
+        <div id="p09-wordmark"><span class="p09-l">E</span><span class="p09-l">N</span><span class="p09-l">T</span><span class="p09-l">R</span><span class="p09-l">E</span><span class="p09-l">P</span><span class="p09-l">R</span><span class="p09-l">E</span><span class="p09-l">N</span><span class="p09-l">E</span><span class="p09-l">U</span><span class="p09-l">R</span><span class="p09-l">S</span><span id="p09-two">2.0</span></div>
+
+        <div id="p09-headline"><span class="p09-w" id="p09-w-forme">Forme-toi</span> <span id="p09-pdb"><span class="p09-w" id="p09-w-pour">pour</span> <span class="p09-w" id="p09-w-de">de</span> <span class="p09-w" id="p09-w-bon">bon.</span><svg id="p09-strk" viewBox="0 0 406 8" preserveAspectRatio="none" aria-hidden="true"><path id="p09-strk-p" d="M3 4 L403 4" pathLength="1" stroke-dasharray="1 1.2" stroke-dashoffset="1.1"/></svg></span></div>
+
+        <div id="p09-ctaglow"></div>
+        <div id="p09-burst"></div>
+        <div id="p09-pulse"></div>
+        <div id="p09-ctawrap">
+          <div id="p09-cta">
+            <div class="p09-lab"><span>JE PRENDS RENDEZ-VOUS</span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16 H26 M18 7.5 L26.5 16 L18 24.5" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="square" stroke-linejoin="miter"/></svg></div>
+            <div id="p09-fill">
+              <div class="p09-lab"><span>JE PRENDS RENDEZ-VOUS</span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16 H26 M18 7.5 L26.5 16 L18 24.5" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="square" stroke-linejoin="miter"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="p09-url">entrepreneurs2-0.com</div>
+
+        <div id="p09-ring"></div>
+
+        <div id="p09-cur">
+          <div id="p09-cur-in">
+            <svg viewBox="0 0 24 32" aria-hidden="true"><path d="M2 2 L2 25 L7.6 19.8 L11.4 28.6 L15 27.1 L11.3 18.4 L18.8 18.4 Z" fill="#ffffff" stroke="#0d0b0a" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="p09-grain" class="clip" data-start="0" data-duration="7.22" data-track-index="2" data-layout-ignore>
+      <div id="p09-gr-light" class="p09-gr"></div>
+      <div id="p09-gr-dark" class="p09-gr"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "09-fin";
+      var DUR = 7.22;
+      var NS = "http://www.w3.org/2000/svg";
+      var byId = function (id) {
+        return document.getElementById(id);
+      };
+      var toArr = function (list) {
+        return Array.prototype.slice.call(list);
+      };
+
+      var E = {
+        p2io: gsap.parseEase("power2.inOut"),
+        p3io: gsap.parseEase("power3.inOut"),
+        p2o: gsap.parseEase("power2.out"),
+        p3o: gsap.parseEase("power3.out"),
+        eio: gsap.parseEase("expo.inOut")
+      };
+      var cl = function (v) {
+        return v < 0 ? 0 : v > 1 ? 1 : v;
+      };
+      var seg = function (t, a, d) {
+        return cl((t - a) / d);
+      };
+      var lerp = function (a, b, k) {
+        return a + (b - a) * k;
+      };
+
+      /* ============ the waves: 34 rows; row 33 (lowest) IS the frise line of the handoff ============ */
+      var N = 34;
+      var XS = 24;
+      var X0 = -48;
+      var NPT = Math.ceil((1968 - X0) / XS) + 1;
+      var TAU = Math.PI * 2;
+      var wg = byId("p09-wg");
+      var hg = byId("p09-hg");
+      var waves = byId("p09-waves");
+      var rows = [];
+      var hrows = [];
+      var AMP = [];
+      var PH = [];
+      var OPF = [];
+      var SWF = [];
+      for (var i = 0; i < N; i++) {
+        var u = i / (N - 1);
+        AMP.push(18 + 8 * Math.sin(i * 0.23 + 0.4));
+        PH.push(i * 0.17);
+        OPF.push(0.12 + 0.62 * Math.pow(1 - u, 1.45));
+        SWF.push(1.6 - 0.55 * u);
+        var p = document.createElementNS(NS, "path");
+        wg.appendChild(p);
+        rows.push(p);
+        var h = document.createElementNS(NS, "path");
+        hg.appendChild(h);
+        hrows.push(h);
+      }
+      var HLN = 41;
+      var hlg = byId("p09-hlg");
+      var hstops = [];
+      for (var k = 0; k < HLN; k++) {
+        var st = document.createElementNS(NS, "stop");
+        st.setAttribute("offset", (k / (HLN - 1)).toFixed(4));
+        st.setAttribute("stop-color", "#f29a68");
+        st.setAttribute("stop-opacity", "0");
+        hlg.appendChild(st);
+        hstops.push(st);
+      }
+
+      var cam = byId("p09-cam");
+      var darkEl = byId("p09-dark");
+      var lastDark = "";
+      var wcam = byId("p09-wavecam");
+      var cur = byId("p09-cur");
+      var lastMask = "";
+      var lastFilter = "";
+      var lastColor = "";
+
+      /* cursor path: one curved move from the bottom right onto the button (quadratic Bezier, power3.out) */
+      var CLICK = 4.3;
+      var CP0 = [1880, 1062];
+      var CP1 = [1470, 690];
+      var CP2 = [982, 628];
+
+      function render(t) {
+        /* ---- camera (cam2): drift s +1.5 %/s, cran x1.05 toward the button at 3.85, then +1 %/s ---- */
+        var cr = E.eio(seg(t, 3.85, 0.3));
+        var s = (1 + 0.015 * Math.min(t, 3.85) + 0.01 * Math.max(0, t - 3.85)) * (1 + 0.05 * cr);
+        var cy = 540 + 10 * cr;
+        cam.style.transform =
+          "translate(" + (960 - 960 * s).toFixed(2) + "px," + (540 - cy * s).toFixed(2) + "px) scale(" + s.toFixed(5) + ")";
+        var ws = 1 + 0.35 * (s - 1);
+        wcam.style.transform = "translate(0px," + (-(cy - 540) * 0.35).toFixed(2) + "px) scale(" + ws.toFixed(5) + ")";
+
+        /* ---- waves ---- */
+        var tight = E.p2io(seg(t, 1.2, 0.2));
+        var B0 = 60 - 20 * tight;
+        var SP = 9.8 - 0.4 * tight;
+        var bot = B0 + 33 * SP;
+        var L = 560 + (bot - 560) * E.p2io(seg(t, 0, 0.4));
+        var m = E.p2io(seg(t, 0, 0.5));
+        var ld = E.p2io(seg(t, 0.04, 0.5));
+        var dx = 14 * t;
+        var ph2 = 0.35 * t;
+        var hlOn = t >= 5.2 && t <= 6.2;
+
+        var cR = Math.round(lerp(194, 212, ld));
+        var cG = Math.round(lerp(91, 112, ld));
+        var cB = Math.round(lerp(40, 63, ld));
+        var col = "rgb(" + cR + "," + cG + "," + cB + ")";
+        if (col !== lastColor) {
+          wg.setAttribute("stroke", col);
+          lastColor = col;
+        }
+
+        for (var r = 0; r < N; r++) {
+          var ti = (N - 1 - r) * 0.008;
+          var br = B0 + r * SP;
+          var spr = r === N - 1 ? 1 : E.p3o(seg(t, ti, 0.26));
+          var y0 = L - (bot - br) * spr;
+          var op;
+          var sw;
+          if (r === N - 1) {
+            op = lerp(1, OPF[r], ld);
+            sw = lerp(4, SWF[r], ld);
+          } else {
+            op = OPF[r] * seg(t, ti, 0.05);
+            sw = SWF[r];
+          }
+          var d = "";
+          if (op > 0.001) {
+            var amp = AMP[r];
+            var ph = PH[r];
+            var ph3 = -0.21 * r + 1.3 + ph2;
+            for (var q = 0; q < NPT; q++) {
+              var x = X0 + q * XS;
+              var xx = x + dx;
+              var yv =
+                y0 +
+                (1 - m) * 6 * Math.sin((TAU * xx) / 240) +
+                m * (amp * Math.sin((TAU * xx) / 1150 + ph) + 6 * Math.sin((TAU * xx) / 470 + ph3));
+              d += (q === 0 ? "M" : " L") + x + " " + yv.toFixed(2);
+            }
+          } else {
+            d = "M0 -50 L1 -50";
+          }
+          rows[r].setAttribute("d", d);
+          rows[r].setAttribute("stroke-opacity", op.toFixed(4));
+          rows[r].setAttribute("stroke-width", sw.toFixed(3));
+          if (hlOn) {
+            hrows[r].setAttribute("d", d);
+            hrows[r].setAttribute("stroke-opacity", (0.3 + 0.6 * (1 - r / (N - 1))).toFixed(3));
+            hrows[r].setAttribute("stroke-width", (sw + 0.8).toFixed(3));
+          }
+        }
+
+        /* the brand's mask (v6 ellipse from the top), faded in once the line has left the handoff */
+        var A = 1 - E.p2io(seg(t, 0.12, 0.45));
+        var mk =
+          "linear-gradient(rgba(0,0,0," + A.toFixed(3) + "), rgba(0,0,0," + A.toFixed(3) + ")), " +
+          "radial-gradient(ellipse 1250px 480px at 960px 0px, #000 40%, rgba(0,0,0,0.45) 72%, rgba(0,0,0,0) 100%)";
+        if (mk !== lastMask) {
+          waves.style.webkitMaskImage = mk;
+          waves.style.maskImage = mk;
+          lastMask = mk;
+        }
+        /* the paper darkens into #0d0b0a in 0.3 s, the edges first (the light dims onto the line) */
+        var dark = E.p2io(seg(t, 0, 0.3));
+        var de = E.p2io(seg(t, 0, 0.24));
+        var dc = E.p2io(seg(t, 0.07, 0.23));
+        var dk =
+          de <= 0 ? "0" : "radial-gradient(ellipse 1150px 720px at 50% 50%, rgba(0,0,0," + dc.toFixed(3) + ") 0%, rgba(0,0,0," +
+          ((dc + de) / 2).toFixed(3) + ") 55%, rgba(0,0,0," + de.toFixed(3) + ") 100%)";
+        if (dk !== lastDark) {
+          if (dk === "0") {
+            darkEl.style.opacity = "0";
+          } else {
+            darkEl.style.opacity = "1";
+            darkEl.style.webkitMaskImage = dk;
+            darkEl.style.maskImage = dk;
+          }
+          lastDark = dk;
+        }
+        var fl = dark > 0.001 ? "drop-shadow(0px 0px 5px rgba(224,138,92," + (0.4 * dark).toFixed(3) + "))" : "none";
+        if (fl !== lastFilter) {
+          waves.style.filter = fl;
+          lastFilter = fl;
+        }
+
+        /* reflet: a warm highlight running along the waves, left to right, linear (5.20 to 6.20) */
+        if (hlOn) {
+          hg.setAttribute("opacity", "1");
+          var hc = -0.15 + 1.3 * ((t - 5.2) / 1.0);
+          for (var k2 = 0; k2 < HLN; k2++) {
+            var o = k2 / (HLN - 1);
+            var z = (o - hc) / 0.06;
+            hstops[k2].setAttribute("stop-opacity", Math.exp(-z * z).toFixed(4));
+          }
+        } else {
+          hg.setAttribute("opacity", "0");
+        }
+
+        /* ---- cursor: one curved move, direct click, then steps aside ---- */
+        var cu = E.p3o(seg(t, 3.85, 0.45));
+        var a0 = (1 - cu) * (1 - cu);
+        var a1 = 2 * (1 - cu) * cu;
+        var a2 = cu * cu;
+        var cx = a0 * CP0[0] + a1 * CP1[0] + a2 * CP2[0];
+        var cyy = a0 * CP0[1] + a1 * CP1[1] + a2 * CP2[1];
+        var lv = E.p2o(seg(t, 4.9, 0.2));
+        cx += 42 * lv;
+        cyy += 43 * lv;
+        cur.style.transform = "translate(" + cx.toFixed(2) + "px," + cyy.toFixed(2) + "px)";
+      }
+
+      /* ============ timeline ============ */
+      var tl = gsap.timeline({ paused: true });
+      var clock = { t: 0 };
+      render(0);
+      tl.fromTo(
+        clock,
+        { t: 0 },
+        {
+          t: DUR,
+          duration: DUR,
+          ease: "none",
+          onUpdate: function () {
+            render(clock.t);
+          }
+        },
+        0
+      );
+
+      /* ---- Scene 1 (0.00 to 3.40): the end card builds ---- */
+      // paper darkens into the brand dark (0.3 s); grain crossfades
+      tl.fromTo(byId("p09-gr-light"), { opacity: 0.035 }, { opacity: 0, duration: 0.3, ease: "power2.inOut" }, 0);
+      tl.fromTo(byId("p09-gr-dark"), { opacity: 0 }, { opacity: 0.055, duration: 0.3, ease: "power2.inOut" }, 0);
+      // the warm halo grows
+      var halo = byId("p09-halo");
+      tl.fromTo(halo, { opacity: 0, scale: 0.6 }, { opacity: 0.85, scale: 1, duration: 0.6, ease: "power2.out", immediateRender: false }, 0.02);
+
+      // ENTREPRENEURS falls letter by letter (0.03 s per letter, x1.4, blur 8 to sharp in 0.12 s)
+      var letters = toArr(byId("p09-wordmark").getElementsByClassName("p09-l"));
+      var two = byId("p09-two");
+      var SPREAD = 7;
+      var spreadX = function (idx) {
+        return (idx - 6.5) * SPREAD;
+      };
+      letters.forEach(function (el, idx) {
+        tl.fromTo(
+          el,
+          { opacity: 0, x: spreadX(idx), y: -16, scale: 1.4, filter: "blur(8px)" },
+          {
+            opacity: 1,
+            x: spreadX(idx),
+            y: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 0.12,
+            ease: "expo.out",
+            immediateRender: false
+          },
+          0.3 + idx * 0.03
+        );
+      });
+      // 2.0 lands in #d4703f (x1.5, blur 10 to sharp in 0.14 s)
+      tl.fromTo(
+        two,
+        { opacity: 0, x: spreadX(13), scale: 1.5, filter: "blur(10px)" },
+        { opacity: 1, x: spreadX(13), scale: 1, filter: "blur(0px)", duration: 0.14, ease: "expo.out", immediateRender: false },
+        0.78
+      );
+      // brand sting on the halo, then it settles
+      tl.fromTo(halo, { opacity: 0.85, scale: 1 }, { opacity: 1, scale: 1.04, duration: 0.3, ease: "power2.out", immediateRender: false }, 0.8);
+      tl.fromTo(halo, { opacity: 1, scale: 1.04 }, { opacity: 0.85, scale: 1, duration: 1.1, ease: "power2.inOut", immediateRender: false }, 1.1);
+      // 1.50 the wordmark letters tighten (x of each letter, 0.2 s)
+      letters.concat([two]).forEach(function (el, idx) {
+        tl.fromTo(el, { x: spreadX(idx) }, { x: 0, duration: 0.2, ease: "power3.inOut", immediateRender: false }, 1.5);
+      });
+
+      // Forme-toi pour de bon. : each word on its voice cue, grey then full
+      var wordIn = function (id, at) {
+        var el = byId(id);
+        tl.fromTo(
+          el,
+          { opacity: 0, y: 10, scale: 1.12, filter: "blur(8px)" },
+          { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false },
+          at
+        );
+        tl.fromTo(
+          el,
+          { color: "rgba(245,239,231,0.35)" },
+          { color: "rgba(245,239,231,1)", duration: 0.2, ease: "power1.out", immediateRender: false },
+          at + 0.12
+        );
+      };
+      wordIn("p09-w-forme", 1.98);
+      wordIn("p09-w-pour", 2.52);
+      wordIn("p09-w-de", 3.0);
+      wordIn("p09-w-bon", 3.18);
+      // the fine terracotta stroke draws under "pour de bon." (2.50 to 3.00)
+      var strk = byId("p09-strk-p");
+      tl.fromTo(strk, { opacity: 0 }, { opacity: 1, duration: 0.02, ease: "none", immediateRender: false }, 2.5);
+      tl.fromTo(
+        strk,
+        { attr: { "stroke-dashoffset": 1.1 } },
+        { attr: { "stroke-dashoffset": 0 }, duration: 0.5, ease: "power2.out", immediateRender: false },
+        2.5
+      );
+
+      // 3.20 the button arrives (x1.1, blur 6 to sharp, 0.14 s expo.out) with ONE terracotta ring pulse
+      var ctaWrap = byId("p09-ctawrap");
+      tl.fromTo(
+        ctaWrap,
+        { opacity: 0, scale: 1.1, filter: "blur(6px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.14, ease: "expo.out", immediateRender: false },
+        3.2
+      );
+      var ctaGlow = byId("p09-ctaglow");
+      tl.fromTo(ctaGlow, { opacity: 0 }, { opacity: 0.55, duration: 0.6, ease: "power2.out", immediateRender: false }, 3.2);
+      var pulse = byId("p09-pulse");
+      tl.fromTo(pulse, { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.18, ease: "power2.out", immediateRender: false }, 3.26);
+      tl.fromTo(pulse, { opacity: 1, scale: 1 }, { opacity: 0, scale: 1.22, duration: 0.5, ease: "power2.out", immediateRender: false }, 3.44);
+
+      /* ---- Scene 2 (3.40 to 7.22): the cursor clicks, living hold ---- */
+      // 3.50 the url prints
+      tl.fromTo(
+        byId("p09-url"),
+        { opacity: 0, scale: 1.1, filter: "blur(6px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.12, ease: "expo.out", immediateRender: false },
+        3.5
+      );
+      // cursor shows at 3.85 (it enters from outside the frame, its path is in render)
+      var curIn = byId("p09-cur-in");
+      tl.fromTo(curIn, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none", immediateRender: false }, 3.85);
+
+      // 4.30 direct click: arrow and button to 0.9 together, bottom of the press on the click
+      var cta = byId("p09-cta");
+      tl.fromTo(curIn, { scale: 1 }, { scale: 0.9, duration: 0.03, ease: "power2.in", immediateRender: false }, CLICK - 0.03);
+      tl.fromTo(curIn, { scale: 0.9 }, { scale: 1, duration: 0.05, ease: "power2.out", immediateRender: false }, CLICK);
+      tl.fromTo(cta, { scale: 1 }, { scale: 0.9, duration: 0.03, ease: "power2.in", immediateRender: false }, CLICK - 0.03);
+      tl.fromTo(cta, { scale: 0.9 }, { scale: 1, duration: 0.05, ease: "power2.out", immediateRender: false }, CLICK);
+      // the button flashes #e08a5c then #fffdf9, then fills with #c25b28 from the click point
+      tl.fromTo(cta, { backgroundColor: "#f6f1e9" }, { backgroundColor: "#e08a5c", duration: 0.02, ease: "none", immediateRender: false }, CLICK - 0.02);
+      tl.fromTo(cta, { backgroundColor: "#e08a5c" }, { backgroundColor: "#fffdf9", duration: 0.03, ease: "none", immediateRender: false }, CLICK + 0.01);
+      tl.fromTo(
+        byId("p09-fill"),
+        { clipPath: "circle(0px at 272px 48px)" },
+        { clipPath: "circle(320px at 272px 48px)", duration: 0.27, ease: "expo.out", immediateRender: false },
+        CLICK
+      );
+      tl.fromTo(
+        cta,
+        { boxShadow: "0px 24px 56px 0px rgba(0, 0, 0, 0.55), 0px 0px 60px 0px rgba(194, 91, 40, 0.38)" },
+        {
+          boxShadow: "0px 20px 50px 0px rgba(0, 0, 0, 0.5), 0px 0px 96px 0px rgba(194, 91, 40, 0.62)",
+          duration: 0.4,
+          ease: "power2.out",
+          immediateRender: false
+        },
+        CLICK
+      );
+      // the terracotta onde, from the click point
+      tl.fromTo(
+        byId("p09-ring"),
+        { opacity: 0.95, scale: 0 },
+        { opacity: 0, scale: 4.6, duration: 0.8, ease: "power2.out", immediateRender: false },
+        CLICK + 0.01
+      );
+      // release bloom behind the button
+      var burst = byId("p09-burst");
+      tl.fromTo(burst, { opacity: 0, scale: 0.9 }, { opacity: 0.75, scale: 1.3, duration: 0.4, ease: "power2.out", immediateRender: false }, CLICK + 0.02);
+      tl.fromTo(burst, { opacity: 0.75 }, { opacity: 0, duration: 0.6, ease: "power2.in", immediateRender: false }, CLICK + 0.42);
+      tl.fromTo(byId("p09-envglow"), { opacity: 0 }, { opacity: 1, duration: 0.9, ease: "power2.out", immediateRender: false }, CLICK + 0.04);
+
+      // 4.40 to 7.22 living hold: the halo slides 20 px, the button glow rises slowly
+      tl.fromTo(halo, { x: 0 }, { x: 20, duration: DUR - 4.4, ease: "none", immediateRender: false }, 4.4);
+      tl.fromTo(ctaGlow, { opacity: 0.55, scale: 1 }, { opacity: 1, scale: 1.08, duration: DUR - 4.4, ease: "power1.inOut", immediateRender: false }, 4.4);
+      // 4.90 the arrow steps aside (60 px, in render) and fades (0.2 s)
+      tl.fromTo(curIn, { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power1.out", immediateRender: false }, 4.9);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

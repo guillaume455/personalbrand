@@ -1,0 +1,1151 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url('assets/fonts/SpaceMono-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url('assets/fonts/SpaceMono-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: block; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #f5efe7;
+    }
+
+    /* ---------- ground: full-bleed clip layer (never on #root) ---------- */
+    #f04-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: #0d0b0a;
+      overflow: hidden;
+    }
+    #f04-halo {
+      position: absolute;
+      left: 260px;
+      top: 150px;
+      width: 1400px;
+      height: 740px;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.2), rgba(194, 91, 40, 0.08) 52%, rgba(194, 91, 40, 0) 100%);
+      opacity: 0;
+    }
+
+    #f04-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* =====================================================================
+       LOOP BLOCK (lifted from frame 03, f04- prefix), shown at scale 0.42.
+       wrapper 1800x780 at left 60 / top 150 -> center exactly (960, 540).
+       ellipse: center (900,390), rx 650, ry 310, starts at 12 o'clock, clockwise.
+       station contents sit in their finished state (this is the loop again).
+       ===================================================================== */
+    .f04-loop {
+      position: absolute;
+      left: 60px;
+      top: 150px;
+      width: 1800px;
+      height: 780px;
+    }
+    .f04-sthalo {
+      position: absolute;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.28), rgba(194, 91, 40, 0.1) 55%, rgba(194, 91, 40, 0) 100%);
+      opacity: 0;
+    }
+    .f04-dothalo {
+      position: absolute;
+      left: -130px;
+      top: -130px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(224, 138, 92, 0.3), rgba(224, 138, 92, 0.1) 50%, rgba(224, 138, 92, 0) 100%);
+    }
+    .f04-dotpos {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+    }
+    .f04-dothalowrap {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      opacity: 0;
+    }
+    .f04-loopsvg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1800px;
+      height: 780px;
+      overflow: visible;
+      filter: drop-shadow(0 0 6px rgba(212, 112, 63, 0.5));
+    }
+    .f04-track {
+      fill: none;
+      stroke: #c25b28;
+      stroke-width: 3.5;
+      stroke-linecap: butt;
+      opacity: 0;
+    }
+    .f04-trail {
+      fill: none;
+      stroke-linecap: round;
+      opacity: 0;
+    }
+    .f04-dot {
+      position: absolute;
+      left: -11px;
+      top: -11px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff3ea 0%, #fff3ea 30%, #e08a5c 68%, rgba(224, 138, 92, 0) 100%);
+      box-shadow: 0 0 20px 7px rgba(224, 138, 92, 0.6);
+      opacity: 0;
+    }
+
+    .f04-st {
+      position: absolute;
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    .f04-socket {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      background: #0d0b0a;
+      opacity: 0.92;
+    }
+    .f04-card {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(40, 33, 28, 0.92), rgba(24, 20, 17, 0.9) 45%, rgba(20, 16, 14, 0.9) 80%, rgba(30, 24, 20, 0.92));
+      border: 1px solid rgba(245, 239, 231, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 50px 120px rgba(0, 0, 0, 0.7);
+      opacity: 0.4;
+    }
+    .f04-ring {
+      position: absolute;
+      left: -1px;
+      top: -1px;
+      right: -1px;
+      bottom: -1px;
+      border-radius: 15px;
+      border: 1.5px solid #d4703f;
+      box-shadow: 0 0 26px rgba(224, 138, 92, 0.45), inset 0 0 18px rgba(224, 138, 92, 0.12);
+      opacity: 0;
+    }
+    .f04-row {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .f04-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 9px;
+    }
+    .f04-micro {
+      display: block;
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 22px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #9b9289;
+      white-space: nowrap;
+    }
+    .f04-tile {
+      flex: 0 0 auto;
+      width: 88px;
+      height: 88px;
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .f04-tile svg { width: 50px; height: 50px; display: block; }
+    .f04-mini {
+      box-sizing: border-box;
+      padding: 9px 16px 11px 16px;
+      border-radius: 10px;
+      background: rgba(245, 239, 231, 0.05);
+      border: 1px solid rgba(245, 239, 231, 0.1);
+    }
+    .f04-subj {
+      display: block;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 31px;
+      color: #f5efe7;
+      white-space: nowrap;
+    }
+    .f04-mk { color: #9b9289; }
+    .f04-bars { display: flex; gap: 10px; margin-top: 8px; }
+    .f04-bar {
+      display: block;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(245, 239, 231, 0.16);
+    }
+    .f04-inv {
+      display: flex;
+      align-items: baseline;
+      white-space: nowrap;
+    }
+    .f04-invl {
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 40px;
+      color: #cdbfb2;
+    }
+    .f04-sep { margin: 0 12px; color: #9b9289; }
+    .f04-amt {
+      display: inline-block;
+      font-family: "Space Mono", monospace;
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 40px;
+      font-variant-numeric: tabular-nums;
+      color: #f5efe7;
+    }
+    .f04-bartop {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 38px;
+      box-sizing: border-box;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border-bottom: 1px solid rgba(245, 239, 231, 0.08);
+    }
+    .f04-wd {
+      display: block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(245, 239, 231, 0.22);
+    }
+    .f04-bartop .f04-micro { margin-left: 12px; }
+    .f04-codebody {
+      position: absolute;
+      left: 0;
+      top: 39px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 20px 0 18px;
+    }
+    .f04-cl {
+      display: flex;
+      font-family: "Space Mono", monospace;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 25px;
+      white-space: pre;
+      color: #f5efe7;
+    }
+    .f04-ln {
+      flex: 0 0 auto;
+      width: 16px;
+      margin-right: 12px;
+      text-align: right;
+      color: #9b9289;
+    }
+    .f04-ct { display: inline-block; }
+    .f04-kw { color: #d4703f; }
+    .f04-str { color: #cdbfb2; }
+    .f04-waitrow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .f04-clock { width: 46px; height: 46px; display: block; flex: 0 0 auto; }
+    .f04-clock circle.f04-face { fill: none; stroke: #cdbfb2; stroke-width: 2.5; }
+    .f04-clock line { stroke: #f5efe7; stroke-linecap: round; }
+    .f04-num {
+      position: relative;
+      width: 140px;
+      height: 58px;
+    }
+    .f04-j {
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-family: "Space Mono", monospace;
+      font-size: 54px;
+      font-weight: 700;
+      line-height: 58px;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+      white-space: nowrap;
+    }
+    .f04-days {
+      display: grid;
+      grid-template-columns: 12px 12px 12px 12px;
+      grid-auto-rows: 12px;
+      gap: 5px;
+      margin-left: 4px;
+    }
+    .f04-day {
+      display: block;
+      border-radius: 3px;
+      background: #a84d22;
+      box-shadow: 0 0 8px rgba(224, 138, 92, 0.3);
+    }
+
+    /* ---------- TOUR counter (vertical ticker, stacked labels moved by y) ---------- */
+    .f04-count {
+      position: absolute;
+      left: 0;
+      top: 740px;
+      width: 1920px;
+      height: 46px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      opacity: 0;
+    }
+    .f04-tour {
+      display: block;
+      font-family: "Space Mono", monospace;
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 46px;
+      letter-spacing: 0.12em;
+      color: #cdbfb2;
+      white-space: nowrap;
+    }
+    .f04-tick {
+      position: relative;
+      width: 24px;
+      height: 46px;
+      overflow: hidden;
+    }
+    .f04-tickin {
+      display: flex;
+      flex-direction: column;
+    }
+    .f04-ti {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Space Mono", monospace;
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 46px;
+      font-variant-numeric: tabular-nums;
+      color: #f5efe7;
+    }
+
+    /* ---------- site-mock: glass frame, paper body (900x520, centered) ---------- */
+    .f04-site {
+      position: absolute;
+      left: 510px;
+      top: 280px;
+      width: 900px;
+      height: 520px;
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    .f04-ghost {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 900px;
+      height: 520px;
+      border-radius: 14px;
+      mix-blend-mode: screen;
+      opacity: 0;
+    }
+    #f04-gA { background: #c25b28; }
+    #f04-gW { background: #ffffff; }
+    .f04-shell {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 900px;
+      height: 520px;
+      box-sizing: border-box;
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(40, 33, 28, 0.98), rgba(24, 20, 17, 0.97) 45%, rgba(20, 16, 14, 0.97) 80%, rgba(30, 24, 20, 0.98));
+      border: 1px solid rgba(245, 239, 231, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 50px 120px rgba(0, 0, 0, 0.7);
+    }
+    .f04-top {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 900px;
+      height: 50px;
+    }
+    .f04-dots {
+      position: absolute;
+      left: 22px;
+      top: 0;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .f04-tdot {
+      display: block;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: rgba(245, 239, 231, 0.22);
+    }
+    .f04-url {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 10px;
+      margin: 0 auto;
+      width: 280px;
+      height: 30px;
+      box-sizing: border-box;
+      border-radius: 8px;
+      background: rgba(245, 239, 231, 0.06);
+      border: 1px solid rgba(245, 239, 231, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .f04-ustack { display: grid; }
+    .f04-utxt {
+      grid-area: 1 / 1;
+      font-family: "Space Mono", monospace;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 28px;
+      color: #cdbfb2;
+      white-space: nowrap;
+    }
+    .f04-utxt.f04-base { z-index: 2; }
+    .f04-utxt.f04-gh { z-index: 1; opacity: 0; mix-blend-mode: screen; }
+    #f04-uA { color: #c25b28; }
+    #f04-uW { color: #ffffff; }
+
+    .f04-body {
+      position: absolute;
+      left: 8px;
+      top: 50px;
+      width: 884px;
+      height: 462px;
+      border-radius: 8px;
+      background: #f6f1e9;
+      overflow: hidden;
+    }
+    .f04-logo {
+      position: absolute;
+      left: 36px;
+      top: 22px;
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      background: #1a1612;
+    }
+    .f04-navbars {
+      position: absolute;
+      right: 36px;
+      top: 22px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .f04-navbar {
+      display: block;
+      height: 9px;
+      border-radius: 5px;
+      background: #ddd3c6;
+    }
+    .f04-tstack {
+      position: absolute;
+      left: 36px;
+      top: 74px;
+      display: grid;
+    }
+    .f04-ttxt {
+      grid-area: 1 / 1;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 58px;
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f04-ttxt.f04-base { z-index: 2; }
+    .f04-ttxt.f04-gh { z-index: 1; opacity: 0; color: #c25b28; }
+    .f04-sub {
+      position: absolute;
+      left: 36px;
+      height: 10px;
+      border-radius: 5px;
+      background: #ddd3c6;
+    }
+    .f04-btn {
+      position: absolute;
+      left: 36px;
+      top: 216px;
+      width: 150px;
+      height: 44px;
+      border-radius: 10px;
+      background: #1a1612;
+    }
+    .f04-img {
+      position: absolute;
+      border-radius: 12px;
+      background: linear-gradient(155deg, #ddd4c8, #d8cfc3 55%, #cfc5b8);
+      box-shadow: 0 10px 24px rgba(60, 40, 20, 0.1);
+    }
+    #f04-blkA { left: 452px; top: 70px; width: 396px; height: 196px; transform-origin: 18% 20%; }
+    #f04-blkB { left: 313px; top: 292px; width: 257px; height: 132px; transform-origin: 82% 20%; }
+
+    .f04-badgewrap {
+      position: absolute;
+      left: 0;
+      top: 222px;
+      width: 900px;
+      text-align: center;
+    }
+    .f04-badge {
+      display: inline-block;
+      padding: 12px 26px;
+      border-radius: 12px;
+      background: #c25b28;
+      color: #ffffff;
+      font-family: "Space Mono", monospace;
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 44px;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 18px 44px rgba(0, 0, 0, 0.45), 0 0 40px rgba(224, 138, 92, 0.25);
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+
+    /* ---------- phrase: word by word + the traced accent pill ---------- */
+    .f04-phrase {
+      position: absolute;
+      left: 0;
+      top: 150px;
+      width: 1920px;
+      text-align: center;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+    }
+    .f04-line { display: block; white-space: nowrap; }
+    .f04-w { display: inline-block; opacity: 0; }
+    .f04-pill {
+      position: relative;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      color: #ffffff;
+    }
+    .f04-pillbg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f04-pw { position: relative; display: inline-block; }
+    .f04-l { display: inline-block; opacity: 0; }
+
+    /* ---------- the pivot: lone caret, then the light-point, all at (960, 540) ---------- */
+    #f04-dark {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #f04-bloom {
+      position: absolute;
+      left: 610px;
+      top: 190px;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(224, 138, 92, 0.42), rgba(194, 91, 40, 0.16) 45%, rgba(194, 91, 40, 0) 100%);
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    #f04-caretglow {
+      position: absolute;
+      left: 880px;
+      top: 420px;
+      width: 160px;
+      height: 240px;
+      background: radial-gradient(closest-side, rgba(224, 138, 92, 0.6), rgba(224, 138, 92, 0.2) 50%, rgba(224, 138, 92, 0) 100%);
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    #f04-lp {
+      position: absolute;
+      left: 780px;
+      top: 360px;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, #ffffff 0%, #fff3ea 9%, rgba(255, 243, 234, 0.85) 14%, #e08a5c 30%, rgba(224, 138, 92, 0.35) 52%, rgba(224, 138, 92, 0) 100%);
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    #f04-caret {
+      position: absolute;
+      left: 958px;
+      top: 511px;
+      width: 4px;
+      height: 58px;
+      border-radius: 2px;
+      background: #d4703f;
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    #f04-core {
+      position: absolute;
+      left: 951px;
+      top: 531px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 22px 8px rgba(255, 243, 234, 0.9), 0 0 60px 20px rgba(224, 138, 92, 0.55);
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+
+    /* static film grain, top layer */
+    #f04-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.05;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px;
+    }
+  </style>
+
+  <div id="root" data-composition-id="04-casse" data-width="1920" data-height="1080" data-duration="4.10">
+    <div id="f04-ground" class="clip" data-start="0" data-duration="4.10" data-track-index="0" data-layout-ignore>
+      <div id="f04-halo"></div>
+    </div>
+
+    <!-- Scenes 1 + 2 (everything here vanishes on the hard cut at 2.62) -->
+    <div id="f04-stage" class="clip" data-start="0" data-duration="4.10" data-track-index="1">
+
+      <!-- loop: lifted from frame 03 (#f03-loop), f04- prefix, scaled 0.42 around its center (960, 540) -->
+      <div id="f04-loop" class="f04-loop" data-layout-allow-overflow>
+        <div id="f04-sthalo1" class="f04-sthalo" data-layout-ignore style="left: 510px; top: -80px; width: 780px; height: 320px;"></div>
+        <div id="f04-sthalo2" class="f04-sthalo" data-layout-ignore style="left: 1200px; top: 233px; width: 700px; height: 314px;"></div>
+        <div id="f04-sthalo3" class="f04-sthalo" data-layout-ignore style="left: 610px; top: 566px; width: 580px; height: 268px;"></div>
+        <div id="f04-sthalo4" class="f04-sthalo" data-layout-ignore style="left: -80px; top: 236px; width: 660px; height: 308px;"></div>
+
+        <div id="f04-dothalowrap" class="f04-dothalowrap" data-layout-ignore><div class="f04-dothalo"></div></div>
+
+        <svg class="f04-loopsvg" viewBox="0 0 1800 780" width="1800" height="780" xmlns="http://www.w3.org/2000/svg">
+          <path id="f04-track" class="f04-track" d="M 900 80 A 650 310 0 0 1 1550 390 A 650 310 0 0 1 900 700 A 650 310 0 0 1 250 390 A 650 310 0 0 1 900 80 Z" />
+          <path id="f04-trail3" class="f04-trail" stroke="#d4703f" stroke-width="3.5" stroke-opacity="0.3" data-len="260" d="M 900 80 A 650 310 0 0 1 1550 390 A 650 310 0 0 1 900 700 A 650 310 0 0 1 250 390 A 650 310 0 0 1 900 80 Z" />
+          <path id="f04-trail2" class="f04-trail" stroke="#d4703f" stroke-width="4.5" stroke-opacity="0.62" data-len="140" d="M 900 80 A 650 310 0 0 1 1550 390 A 650 310 0 0 1 900 700 A 650 310 0 0 1 250 390 A 650 310 0 0 1 900 80 Z" />
+          <path id="f04-trail1" class="f04-trail" stroke="#e08a5c" stroke-width="5.5" stroke-opacity="1" data-len="64" d="M 900 80 A 650 310 0 0 1 1550 390 A 650 310 0 0 1 900 700 A 650 310 0 0 1 250 390 A 650 310 0 0 1 900 80 Z" />
+        </svg>
+
+        <div id="f04-dotpos" class="f04-dotpos"><div id="f04-dot" class="f04-dot"></div></div>
+
+        <!-- station 1, 12 o'clock: EXPLIQUER (the broken site lands here) -->
+        <div id="f04-st1" class="f04-st" style="left: 630px; top: 10px; width: 540px; height: 140px;">
+          <div class="f04-socket"></div>
+          <div id="f04-card1" class="f04-card">
+            <div class="f04-row">
+              <div class="f04-tile">
+                <svg viewBox="0 0 24 24" fill="#EA4335" xmlns="http://www.w3.org/2000/svg"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+              </div>
+              <div class="f04-col">
+                <span class="f04-micro">Expliquer</span>
+                <div class="f04-mini">
+                  <span class="f04-subj"><span class="f04-mk">Objet&nbsp;:</span> bouton de réservation</span>
+                  <div class="f04-bars">
+                    <i class="f04-bar" style="width: 190px;"></i>
+                    <i class="f04-bar" style="width: 120px;"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="f04-ring1" class="f04-ring"></div>
+          </div>
+        </div>
+
+        <!-- station 2, 3 o'clock: TRADUIRE (mini code window, canonical lines 1-3) -->
+        <div id="f04-st2" class="f04-st" style="left: 1320px; top: 323px; width: 460px; height: 134px;">
+          <div class="f04-socket"></div>
+          <div id="f04-card2" class="f04-card">
+            <div class="f04-bartop">
+              <i class="f04-wd"></i><i class="f04-wd"></i><i class="f04-wd"></i>
+              <span class="f04-micro">Traduire</span>
+            </div>
+            <div class="f04-codebody">
+              <div class="f04-cl"><span class="f04-ln">1</span><span class="f04-ct"><span class="f04-kw">const</span> page = <span class="f04-kw">await</span> build(site.routes);</span></div>
+              <div class="f04-cl"><span class="f04-ln">2</span><span class="f04-ct"><span class="f04-kw">if</span> (!page.ok) <span class="f04-kw">return</span> retry(site);</span></div>
+              <div class="f04-cl"><span class="f04-ln">3</span><span class="f04-ct"><span class="f04-kw">&lt;div</span> <span class="f04-kw">class</span>=<span class="f04-str">"hero"</span><span class="f04-kw">&gt;</span></span></div>
+            </div>
+            <div id="f04-ring2" class="f04-ring"></div>
+          </div>
+        </div>
+
+        <!-- station 3, 6 o'clock: ATTENDRE -->
+        <div id="f04-st3" class="f04-st" style="left: 730px; top: 636px; width: 340px; height: 128px;">
+          <div class="f04-socket"></div>
+          <div id="f04-card3" class="f04-card">
+            <div class="f04-row">
+              <div class="f04-col">
+                <span class="f04-micro">Attendre</span>
+                <div class="f04-waitrow">
+                  <svg class="f04-clock" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="f04-face" cx="23" cy="23" r="19" />
+                    <line id="f04-hhand" x1="23" y1="23" x2="23" y2="14" stroke-width="3" transform="rotate(90 23 23)" />
+                    <line id="f04-mhand" x1="23" y1="23" x2="23" y2="9" stroke-width="2.2" transform="rotate(0 23 23)" />
+                    <circle cx="23" cy="23" r="2.6" fill="#d4703f" />
+                  </svg>
+                  <div class="f04-num">
+                    <span class="f04-j">J+12</span>
+                  </div>
+                  <div class="f04-days">
+                    <i class="f04-day"></i><i class="f04-day"></i><i class="f04-day"></i><i class="f04-day"></i>
+                    <i class="f04-day"></i><i class="f04-day"></i><i class="f04-day"></i><i class="f04-day"></i>
+                    <i class="f04-day"></i><i class="f04-day"></i><i class="f04-day"></i><i class="f04-day"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="f04-ring3" class="f04-ring"></div>
+          </div>
+        </div>
+
+        <!-- station 4, 9 o'clock: PAYER -->
+        <div id="f04-st4" class="f04-st" style="left: 40px; top: 326px; width: 420px; height: 128px;">
+          <div class="f04-socket"></div>
+          <div id="f04-card4" class="f04-card">
+            <div class="f04-row">
+              <div class="f04-tile">
+                <svg viewBox="0 0 24 24" fill="#635BFF" xmlns="http://www.w3.org/2000/svg"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/></svg>
+              </div>
+              <div class="f04-col">
+                <span class="f04-micro">Payer</span>
+                <div class="f04-mini f04-inv">
+                  <span class="f04-invl">Facture</span><span class="f04-invl f04-sep">·</span><span class="f04-amt">850&nbsp;€</span>
+                </div>
+              </div>
+            </div>
+            <div id="f04-ring4" class="f04-ring"></div>
+          </div>
+        </div>
+      </div>
+      <!-- /loop -->
+
+      <!-- TOUR counter under the loop -->
+      <div id="f04-count" class="f04-count">
+        <span class="f04-tour">TOUR</span>
+        <div class="f04-tick">
+          <div id="f04-tickin" class="f04-tickin">
+            <div class="f04-ti">2</div>
+            <div class="f04-ti">3</div>
+            <div class="f04-ti">4</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- site-mock: glass frame, paper body, Studio Lumen. Ghost channels (accent, white) sit behind the base. -->
+      <div id="f04-site" class="f04-site">
+        <div id="f04-gA" class="f04-ghost" aria-hidden="true"></div>
+        <div id="f04-gW" class="f04-ghost" aria-hidden="true"></div>
+        <div class="f04-shell">
+          <div class="f04-top">
+            <div class="f04-dots"><i class="f04-tdot"></i><i class="f04-tdot"></i><i class="f04-tdot"></i></div>
+            <div class="f04-url">
+              <div class="f04-ustack">
+                <span id="f04-uA" class="f04-utxt f04-gh" aria-hidden="true">ton-site.fr</span>
+                <span id="f04-uW" class="f04-utxt f04-gh" aria-hidden="true">ton-site.fr</span>
+                <span class="f04-utxt f04-base">ton-site.fr</span>
+              </div>
+            </div>
+          </div>
+          <div class="f04-body">
+            <div class="f04-logo"></div>
+            <div class="f04-navbars">
+              <i class="f04-navbar" style="width: 54px;"></i>
+              <i class="f04-navbar" style="width: 66px;"></i>
+              <i class="f04-navbar" style="width: 48px;"></i>
+              <i class="f04-navbar" style="width: 72px;"></i>
+            </div>
+            <div class="f04-tstack">
+              <span id="f04-tA" class="f04-ttxt f04-gh" aria-hidden="true">Studio Lumen</span>
+              <span class="f04-ttxt f04-base">Studio Lumen</span>
+            </div>
+            <i class="f04-sub" style="top: 160px; width: 330px;"></i>
+            <i class="f04-sub" style="top: 184px; width: 250px;"></i>
+            <div class="f04-btn"></div>
+            <div id="f04-blkA" class="f04-img"></div>
+            <div class="f04-img" style="left: 36px; top: 292px; width: 257px; height: 132px;"></div>
+            <div id="f04-blkB" class="f04-img"></div>
+            <div class="f04-img" style="left: 590px; top: 292px; width: 257px; height: 132px;"></div>
+          </div>
+        </div>
+        <div class="f04-badgewrap"><span id="f04-badge" class="f04-badge">ERREUR 500</span></div>
+      </div>
+
+      <!-- the phrase, word by word on the voice, at the top -->
+      <div id="f04-phrase" class="f04-phrase">
+        <span class="f04-line">
+          <span class="f04-w" data-cue="0.38">Et</span>
+          <span class="f04-w" data-cue="0.60">quand</span>
+          <span class="f04-w" data-cue="0.78">ça</span>
+          <span class="f04-w" data-cue="1.04">cassait,</span>
+          <span class="f04-w" data-cue="1.54">tu</span>
+          <span class="f04-pill" data-trace="1.84"><span class="f04-pillbg"></span><span class="f04-pw" data-cue="1.90"><span class="f04-l">r</span><span class="f04-l">e</span><span class="f04-l">c</span><span class="f04-l">o</span><span class="f04-l">m</span><span class="f04-l">m</span><span class="f04-l">e</span><span class="f04-l">n</span><span class="f04-l">ç</span><span class="f04-l">a</span><span class="f04-l">i</span><span class="f04-l">s</span><span class="f04-l">.</span></span></span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Scene 3: the empty dark stage, one caret at (960, 540), then the light-point -->
+    <div id="f04-dark" class="clip" data-start="0" data-duration="4.10" data-track-index="2">
+      <div id="f04-bloom" data-layout-ignore></div>
+      <div id="f04-caretglow" data-layout-ignore></div>
+      <div id="f04-lp" data-layout-ignore></div>
+      <div id="f04-caret"></div>
+      <div id="f04-core"></div>
+    </div>
+
+    <div id="f04-grain" class="clip" data-start="0" data-duration="4.10" data-track-index="3" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "04-casse";
+      var DUR = 4.1;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]') || document;
+      function $(id) { return root.querySelector("#f04-" + id) || document.getElementById("f04-" + id); }
+      function $$(sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
+      function px(v) { return parseFloat(v) || 0; }
+      // seek-safe proxy: the setter does the DOM write, so any seek recomputes the frame
+      function proxy(init, fn) {
+        var o = { _v: init };
+        Object.defineProperty(o, "v", {
+          get: function () { return this._v; },
+          set: function (n) { this._v = n; fn(n); },
+          enumerable: true
+        });
+        return o;
+      }
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ---------- timing (voice cues + beats) ----------
+      var T_BREAK = 1.04;      // "cassait"
+      var T_SHRINK = 1.45;     // Scene 2: the site shrinks into station 1
+      var D_SHRINK = 0.3;
+      var T_PEN = 1.48, D_PEN = 0.3;
+      var T_ST1 = 1.72;        // station 1 catches the site
+      var LAPS = [             // TOUR 2, 3, 4: faster on each lap
+        { t0: 1.74, d: 0.42 },
+        { t0: 2.16, d: 0.26 },
+        { t0: 2.42, d: 0.20 }
+      ];
+      var T_CUT = 2.62;        // hard cut: the stage is empty
+      var T_ON1 = 2.70, T_OFF = 3.10, T_ON2 = 3.40, T_GLOW = 3.55;
+
+      // =====================================================================
+      // Scene 1: the site, then it breaks
+      // =====================================================================
+      var halo = $("halo"), site = $("site"), stage = $("stage");
+      // hard cut in: the site is already on screen at the first frame (no empty dark frame at the cut)
+      tl.fromTo(halo, { opacity: 0.5 }, { opacity: 1, duration: 0.5, ease: "power1.out" }, 0);
+      tl.fromTo(site,
+        { opacity: 0.7, scale: 1.03, filter: "blur(4px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.4, ease: "expo.out" },
+        0);
+
+      // chromatic-glitch (accent + white channels only): quantized time, deterministic hash, envelope 1 -> 0
+      var G_DUR = 0.25, G_STEP = 1 / 24;
+      function glitchHash(n) {
+        var x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+        return x - Math.floor(x);
+      }
+      var gLayers = [
+        { el: $("gA"), max: 14, sign: 1, op: 0.85 },
+        { el: $("gW"), max: 14, sign: -1, op: 0.7 },
+        { el: $("tA"), max: 9, sign: 1, op: 0.72 },
+        { el: $("uA"), max: 6, sign: 1, op: 0.85 },
+        { el: $("uW"), max: 6, sign: -1, op: 0.85 }
+      ];
+      function applyGlitch(t) {
+        var p = Math.min(1, Math.max(0, t / G_DUR));
+        var a = p >= 1 ? 0 : 1 - p * p * p; // power3.in decay: most of the violence up front
+        var step = Math.floor((T_BREAK + t) / G_STEP + 1e-6);
+        var h = glitchHash(step * 13);
+        var dir = h > 0.5 ? 1 : -1;
+        var mag = 0.35 + 0.65 * glitchHash(step * 17 + 3);
+        gLayers.forEach(function (g, layer) {
+          var jx = g.sign * dir * mag * g.max * a * (0.75 + 0.25 * glitchHash(step * 5 + layer * 7));
+          var jy = (glitchHash(step * 29 + layer * 11) * 2 - 1) * g.max * 0.35 * a;
+          g.el.style.transform = "translate(" + jx.toFixed(2) + "px, " + jy.toFixed(2) + "px)";
+        });
+      }
+      applyGlitch(G_DUR); // rest state: every ghost at exactly 0
+      var glitch = proxy(0, applyGlitch);
+      gLayers.forEach(function (g) { tl.set(g.el, { opacity: g.op }, T_BREAK); });
+      tl.fromTo(glitch, { v: 0 }, { v: G_DUR, duration: G_DUR, ease: "none", immediateRender: false }, T_BREAK);
+      // clean resolve: clamp the ghosts off, bit-exact
+      gLayers.forEach(function (g) { tl.set(g.el, { opacity: 0 }, T_BREAK + G_DUR); });
+
+      // two blocks drop and tilt, the error badge pops
+      tl.fromTo($("blkA"), { y: 0, rotation: 0 }, { y: 54, rotation: 8, duration: 0.3, ease: "power2.in", immediateRender: false }, 1.08);
+      tl.fromTo($("blkB"), { y: 0, rotation: 0 }, { y: 42, rotation: -9, duration: 0.28, ease: "power2.in", immediateRender: false }, 1.14);
+      tl.fromTo($("badge"),
+        { opacity: 0, scale: 0.55, rotation: -12 },
+        { opacity: 1, scale: 1, rotation: -4, duration: 0.3, ease: "expo.out" },
+        1.12);
+
+      // =====================================================================
+      // Scene 2: the site shrinks into station 1 of the loop (morph onto its 227x59 box)
+      // =====================================================================
+      tl.fromTo(site,
+        { scaleX: 1, scaleY: 1, y: 0, filter: "blur(0px)" },
+        { scaleX: 0.252, scaleY: 0.113, y: -130.2, filter: "blur(6px)", duration: D_SHRINK, ease: "power3.inOut", immediateRender: false },
+        T_SHRINK);
+      tl.fromTo(site, { opacity: 1 }, { opacity: 0, duration: 0.11, ease: "none", immediateRender: false }, T_SHRINK + D_SHRINK - 0.11);
+
+      // =====================================================================
+      // loop (lifted from frame 03 with the #f04-loop block), shown at 0.42
+      // =====================================================================
+      var loop = $("loop");
+      gsap.set(loop, { scale: 0.42, transformOrigin: "50% 50%" });
+
+      var track = $("track");
+      var RX = 650, RY = 310, CX = 900, CY = 390;
+      var L = Math.PI * (3 * (RX + RY) - Math.sqrt((3 * RX + RY) * (RX + 3 * RY)));
+      try { L = track.getTotalLength() || L; } catch (e) {}
+      function pointAt(s) {
+        try { return track.getPointAtLength(s); } catch (e) {
+          var ang = (s / L) * Math.PI * 2;
+          return { x: CX + RX * Math.sin(ang), y: CY - RY * Math.cos(ang) };
+        }
+      }
+
+      // svg-path-draw: the accent loop traces itself from 12 o'clock, clockwise
+      track.style.strokeDasharray = L + " " + L;
+      track.style.strokeDashoffset = String(L);
+      tl.set(track, { opacity: 1 }, T_PEN);
+      tl.fromTo(track, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: D_PEN, ease: "power2.out", immediateRender: false }, T_PEN);
+
+      // stations: geometry from inline styles (wrapper coordinates)
+      var ST = [1, 2, 3, 4].map(function (n) {
+        var el = $("st" + n);
+        return { n: n, el: el, x: px(el.style.left), y: px(el.style.top), w: px(el.style.width), h: px(el.style.height) };
+      });
+      ST.forEach(function (s) { gsap.set(s.el, { scale: 0.94 }); });
+      function inside(r, p) { return p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h; }
+      function entryOf(i) {
+        var c = i === 0 ? L : (L * i) / 4;
+        var s = c;
+        for (var k = 0; k < 1200; k++) {
+          if (!inside(ST[i], pointAt(s))) return s + 1;
+          s -= 1;
+        }
+        return c;
+      }
+      var E = [entryOf(0), entryOf(1), entryOf(2), entryOf(3)];
+
+      // dim stations fade in as the pen reaches them; station 1 fades in under the landing site
+      function penTime(s) { return D_PEN * (1 - Math.cbrt(1 - Math.min(0.999, s / L))); }
+      tl.fromTo(ST[0].el, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, T_ST1 - 0.1);
+      [1, 2, 3].forEach(function (i) {
+        tl.fromTo(ST[i].el, { opacity: 0 }, { opacity: 1, duration: 0.16, ease: "power1.out" }, T_PEN + Math.max(0.01, penTime(E[i]) - 0.03));
+      });
+
+      // a station lights on its first pass (40% -> 100%, 0.94 -> 1, halo); every pass flashes its ring
+      function flashRing(n, t) {
+        tl.fromTo($("ring" + n), { opacity: 1 }, { opacity: 0.3, duration: 0.18, ease: "power1.out", immediateRender: false }, t);
+      }
+      function lightStation(n, t) {
+        tl.fromTo($("st" + n), { scale: 0.94 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, t);
+        tl.fromTo($("card" + n), { opacity: 0.4 }, { opacity: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, t);
+        tl.fromTo($("sthalo" + n), { opacity: 0 }, { opacity: 0.5, duration: 0.2, ease: "power1.out", immediateRender: false }, t);
+        flashRing(n, t);
+      }
+      lightStation(1, T_ST1);
+
+      // the traveling dot + comet trail: seek-safe proxy, its setter places everything
+      var dotPos = $("dotpos"), dotHalo = $("dothalowrap");
+      var trails = [$("trail1"), $("trail2"), $("trail3")].map(function (p) {
+        var T = px(p.getAttribute("data-len"));
+        p.style.strokeDasharray = T + " " + (L + T + 20);
+        p.style.strokeDashoffset = String(T);
+        return { el: p, T: T };
+      });
+      function placeDot(s) {
+        var sm = ((s % L) + L) % L;
+        var pt = pointAt(sm);
+        var tr = "translate(" + pt.x.toFixed(2) + "px, " + pt.y.toFixed(2) + "px)";
+        dotPos.style.transform = tr;
+        dotHalo.style.transform = tr;
+        for (var i = 0; i < trails.length; i++) trails[i].el.style.strokeDashoffset = (trails[i].T - sm).toFixed(2);
+      }
+      var dot = proxy(0, placeDot);
+      placeDot(0);
+
+      // one tween per lap, constant speed inside a lap; the speed steps up under station 1 (12 o'clock)
+      LAPS.forEach(function (lap, k) {
+        tl.fromTo(dot, { v: k * L }, { v: (k + 1) * L, duration: lap.d, ease: "none", immediateRender: false }, lap.t0);
+        [1, 2, 3].forEach(function (i) {
+          var t = lap.t0 + lap.d * (E[i] / L);
+          if (k === 0) lightStation(i + 1, t); else flashRing(i + 1, t);
+        });
+        var t1 = lap.t0 + lap.d * (E[0] / L);
+        if (t1 < T_CUT - 0.01) flashRing(1, t1);
+      });
+
+      var T_GO = LAPS[0].t0;
+      tl.fromTo($("dot"), { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.12, ease: "power2.out" }, T_GO);
+      tl.fromTo(dotHalo, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, T_GO);
+      tl.fromTo(trails.map(function (t) { return t.el; }), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, T_GO);
+
+      // svg-icon-enrichment: the clock hands spin while the loop runs (SVG transform attribute, proxy setter)
+      var mh = $("mhand"), hh = $("hhand");
+      var clock = proxy(0, function (d) {
+        mh.setAttribute("transform", "rotate(" + d.toFixed(2) + " 23 23)");
+        hh.setAttribute("transform", "rotate(" + (90 + d / 12).toFixed(2) + " 23 23)");
+      });
+      tl.fromTo(clock, { v: 0 }, { v: 1080, duration: T_CUT - T_PEN, ease: "none", immediateRender: false }, T_PEN);
+
+      // =====================================================================
+      // TOUR counter: vertical-spring-ticker, additive steps, no overshoot (power3.out)
+      // =====================================================================
+      var count = $("count"), tickIn = $("tickin");
+      var ITEM_H = 46;
+      var springs = [];
+      function applyTicker() {
+        var sum = 0;
+        for (var i = 0; i < springs.length; i++) sum += springs[i]._v;
+        tickIn.style.transform = "translateY(" + (-sum * ITEM_H).toFixed(2) + "px)";
+      }
+      springs.push(proxy(0, applyTicker));
+      springs.push(proxy(0, applyTicker));
+      applyTicker();
+      tl.fromTo(count, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, 1.66);
+      tl.fromTo(springs[0], { v: 0 }, { v: 1, duration: 0.28, ease: "power3.out", immediateRender: false }, LAPS[1].t0); // TOUR 3
+      tl.fromTo(springs[1], { v: 0 }, { v: 1, duration: 0.18, ease: "power3.out", immediateRender: false }, LAPS[2].t0); // TOUR 4
+
+      // =====================================================================
+      // phrase: word by word + one traced accent pill
+      // =====================================================================
+      $$(".f04-w").forEach(function (w) {
+        var t = parseFloat(w.getAttribute("data-cue"));
+        tl.fromTo(w,
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" },
+          t);
+      });
+      $$(".f04-pill").forEach(function (p) {
+        var t = parseFloat(p.getAttribute("data-trace"));
+        var bg = p.querySelector(".f04-pillbg");
+        tl.set(bg, { opacity: 1 }, t);
+        tl.fromTo(bg, { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out" }, t);
+        tl.fromTo(bg, { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out" }, t);
+      });
+      $$(".f04-pw").forEach(function (w) {
+        var t = parseFloat(w.getAttribute("data-cue"));
+        var letters = Array.prototype.slice.call(w.querySelectorAll(".f04-l"));
+        tl.fromTo(letters,
+          { opacity: 0, x: -8 },
+          { opacity: 1, x: 0, duration: 0.16, ease: "power3.out", stagger: 0.02 },
+          t);
+      });
+
+      // =====================================================================
+      // Scene 3: hard cut, empty dark stage, one caret, then light
+      // =====================================================================
+      tl.set(stage, { opacity: 0 }, T_CUT);
+      tl.set(halo, { opacity: 0 }, T_CUT);
+
+      var caret = $("caret");
+      // finite blink steps
+      tl.set(caret, { opacity: 1 }, T_ON1);
+      tl.set(caret, { opacity: 0 }, T_OFF);
+      tl.set(caret, { opacity: 1 }, T_ON2);
+
+      // the caret glows...
+      tl.fromTo(caret, { backgroundColor: "#d4703f" }, { backgroundColor: "#fff3ea", duration: 0.18, ease: "power2.out", immediateRender: false }, T_GLOW);
+      tl.fromTo($("caretglow"), { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.out" }, T_GLOW);
+      // ...and contracts into a point at (960, 540)
+      tl.fromTo(caret, { scaleY: 1 }, { scaleY: 0.07, duration: 0.2, ease: "power3.in", immediateRender: false }, 3.62);
+      tl.fromTo($("caretglow"), { scaleY: 1, scaleX: 1 }, { scaleY: 0.55, scaleX: 0.9, duration: 0.2, ease: "power3.in", immediateRender: false }, 3.62);
+      // the light-point ignites at the contraction and brightens to the end (the flood takes it from 3.75)
+      tl.fromTo($("core"), { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.16, ease: "power2.out" }, 3.7);
+      tl.fromTo($("lp"), { opacity: 0, scale: 0.04 }, { opacity: 1, scale: 0.38, duration: 0.18, ease: "power2.out" }, 3.68);
+      tl.fromTo($("lp"), { scale: 0.38 }, { scale: 1, duration: DUR - 3.86, ease: "power2.in", immediateRender: false }, 3.86);
+      tl.fromTo($("bloom"), { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: DUR - 3.72, ease: "power2.in" }, 3.72);
+
+      // hold to the exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

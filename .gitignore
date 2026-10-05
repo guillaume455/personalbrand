@@ -7,3 +7,16 @@ work/*
 # Les rushes source dans rushes/ sont volontairement autorisés : c'est par eux
 # qu'ils arrivent jusqu'à la session de montage. À purger de l'historique une
 # fois les 6 clips validés (voir README).
+
+# HyperFrames / motion-design (github.com/cblain100-prog/motion-design-claude-code)
+node_modules/
+.env
+*/renders/
+*/snapshots/
+examples/*/renders/
+examples/*/snapshots/
+examples/*/*/renders/
+examples/*/*/snapshots/
+.hyperframes/
+_references/
+.DS_Store

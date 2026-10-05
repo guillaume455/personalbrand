@@ -1,0 +1,271 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #f5efe7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground (full-duration clip): canvas + terracotta halos ---------- */
+    #f02-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0d0b0a;
+      z-index: 0;
+    }
+    #f02-haloA {
+      position: absolute;
+      left: 210px;
+      top: 20px;
+      width: 1500px;
+      height: 1000px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.17), rgba(194, 91, 40, 0.07) 45%, rgba(194, 91, 40, 0.02) 75%, rgba(194, 91, 40, 0));
+    }
+    #f02-haloB {
+      position: absolute;
+      left: 580px;
+      top: 320px;
+      width: 900px;
+      height: 600px;
+      border-radius: 50%;
+      opacity: 0.55;
+      background: radial-gradient(closest-side, rgba(212, 112, 63, 0.24), rgba(194, 91, 40, 0.1) 45%, rgba(194, 91, 40, 0.03) 75%, rgba(194, 91, 40, 0));
+    }
+    #f02-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+      opacity: 0.05;
+      z-index: 30;
+      background-size: 240px 240px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+
+    /* ---------- camera + credit roll ---------- */
+    .f02-layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #f02-cam {
+      z-index: 2;
+      transform-origin: 1030px 622px; /* the pill at its hit (x 1030, y 659 - roll 37) */
+    }
+
+    /* credits (frame.md): role micro above, name title below, centered, 90px between blocks */
+    .f02-block {
+      position: absolute;
+      left: 0;
+      width: 1920px;
+      height: 90px;
+    }
+    .f02-role {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 22px;
+      box-sizing: border-box;
+      padding-left: 0.2em; /* balances the trailing 0.2em tracking so the role centers */
+      font: 400 18px/22px "Space Mono", monospace;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-align: center;
+      white-space: nowrap;
+      color: #9b9289;
+    }
+    .f02-name {
+      position: absolute;
+      left: 0;
+      top: 36px;
+      width: 1920px;
+      height: 54px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 11px;
+      white-space: nowrap;
+      font: 600 44px/1.1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+    }
+    .f02-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    .f02-late {
+      opacity: 0;
+    }
+
+    /* accent pill: the only highlight mechanism */
+    .f02-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.06em 0.32em;
+      transform-origin: 0% 50%;
+    }
+    .f02-pillbg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f02-pilltx {
+      position: relative;
+      display: inline-flex;
+      color: #ffffff;
+    }
+    .f02-ch {
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="02-generique" data-width="1920" data-height="1080" data-duration="3.45">
+    <!-- full-bleed ground -->
+    <div id="f02-bg" class="clip" data-start="0" data-duration="3.45" data-track-index="0" data-layout-ignore>
+      <div id="f02-haloA"></div>
+      <div id="f02-haloB"></div>
+    </div>
+
+    <!-- camera (kick on the pill) > roll (linear drift up 60px) > credit blocks -->
+    <div id="f02-cam" class="f02-layer">
+      <div id="f02-roll" class="f02-layer">
+        <!-- block 1: present at the cut -->
+        <div class="f02-block" style="top: 236px">
+          <div class="f02-role" id="f02-r1">RÉALISATION</div>
+          <div class="f02-name" id="f02-n1"><span>Une vidéo Entrepreneurs 2.0</span></div>
+        </div>
+
+        <!-- block 2: MOTION DESIGN / Aucun motion designer. -->
+        <div class="f02-block" style="top: 416px">
+          <div class="f02-role f02-late" id="f02-r2">MOTION DESIGN</div>
+          <div class="f02-name">
+            <span class="f02-w" id="f02-m1">Aucun</span>
+            <span class="f02-w" id="f02-m2">motion</span>
+            <span class="f02-w" id="f02-m3">designer.</span>
+          </div>
+        </div>
+
+        <!-- block 3: STUDIO / Aucun [studio.] -->
+        <div class="f02-block" style="top: 596px">
+          <div class="f02-role f02-late" id="f02-r3">STUDIO</div>
+          <div class="f02-name">
+            <span class="f02-w" id="f02-s1">Aucun</span>
+            <span class="f02-pill" id="f02-pill"><span class="f02-pillbg" id="f02-pillbg"></span><span class="f02-pilltx"><span class="f02-ch">s</span><span class="f02-ch">t</span><span class="f02-ch">u</span><span class="f02-ch">d</span><span class="f02-ch">i</span><span class="f02-ch">o</span><span class="f02-ch">.</span></span></span>
+          </div>
+        </div>
+
+        <!-- block 4: dimmer, AGENCE / em dash placeholder -->
+        <div class="f02-block" style="top: 776px">
+          <div class="f02-role f02-late" id="f02-r4">AGENCE</div>
+          <div class="f02-name"><span class="f02-w" id="f02-a1">&#8212;</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- static film grain on top (full-duration clip) -->
+    <div id="f02-grain" class="clip" data-start="0" data-duration="3.45" data-track-index="1" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var $ = function (id) {
+        return document.getElementById("f02-" + id);
+      };
+      var DUR = 2.85;
+      // one cue grid from the voice (kinetic-beat-slam: every beat reads its time from here)
+      var CUE = { aucun1: 0.07, motion: 0.39, designer: 0.69, aucun2: 1.38, studio: 1.75, voiceEnd: 2.08 };
+
+      var tl = gsap.timeline({ paused: true });
+
+      // word-by-word (frame.md): each word lands ON its voice timestamp
+      var word = function (el, at, to) {
+        tl.fromTo(el, { opacity: 0, y: 10, filter: "blur(8px)" }, { opacity: to === undefined ? 1 : to, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, at);
+      };
+      // accent pill (frame.md): traces from the left + straightens, THEN the letters write inside
+      var pill = function (at) {
+        var bg = $("pillbg");
+        tl.set(bg, { opacity: 1, immediateRender: false }, at);
+        tl.fromTo(bg, { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out" }, at);
+        tl.fromTo($("pill"), { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, at);
+        var chars = document.querySelectorAll("#f02-pill .f02-ch");
+        for (var i = 0; i < chars.length; i++) {
+          tl.fromTo(chars[i], { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out" }, at + 0.18 + i * 0.02);
+        }
+      };
+
+      // build-time state for the pill wrapper (its rotation tween starts later)
+      gsap.set($("pill"), { rotation: 0 });
+
+      // ---------- the roll: one continuous linear drift up, ~60px over the frame ----------
+      tl.fromTo($("roll"), { y: 0 }, { y: -60, duration: DUR, ease: "none" }, 0);
+
+      // ---------- block 1 (0.00): RÉALISATION, already there at the cut, settles into focus ----------
+      tl.fromTo([$("r1"), $("n1")], { opacity: 0.4, y: 6, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, 0);
+
+      // ---------- block 2: MOTION DESIGN @0.05, name writes on the voice ----------
+      word($("r2"), 0.05);
+      word($("m1"), CUE.aucun1);
+      word($("m2"), CUE.motion);
+      word($("m3"), CUE.designer);
+
+      // ---------- block 3: STUDIO @1.30, Aucun @1.38, [pill: studio.] @1.75 ----------
+      word($("r3"), 1.3);
+      word($("s1"), CUE.aucun2);
+      pill(CUE.studio - 0.04); // traces 1 frame before the word
+
+      // tiny camera kick on the pill (kinetic-beat-slam hit): short push, long power4 settle
+      tl.fromTo($("cam"), { scale: 1 }, { scale: 1.035, duration: 0.09, ease: "power2.out", immediateRender: false }, CUE.studio);
+      tl.fromTo($("cam"), { scale: 1.035 }, { scale: 1, duration: 0.6, ease: "power4.out", immediateRender: false }, CUE.studio + 0.09);
+      // the halo behind the pill warms on the hit
+      tl.fromTo($("haloB"), { opacity: 0.55, scale: 0.92 }, { opacity: 1, scale: 1.04, duration: 0.6, ease: "power3.out", immediateRender: false }, CUE.studio - 0.02);
+
+      // ---------- block 4 @2.10, dimmer: AGENCE / em dash ----------
+      word($("r4"), 2.1, 0.5);
+      word($("a1"), 2.18, 0.45);
+
+      // hold: the roll keeps drifting to 2.85 (last reveal ends 2.48)
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["02-generique"] = tl;
+    })();
+  </script>
+</template>

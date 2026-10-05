@@ -1,0 +1,779 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); font-weight: 800; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #1a1612; -webkit-font-smoothing: antialiased; }
+
+  /* ===================== LIGNE v8 : début du bloc CSS à copier ===================== */
+  .fx-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+  .fx-q { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .fx-q svg { display: block; overflow: visible; }
+  /* sols : papier chaud (monde clair) et scène sombre de la marque (pivot, carte de fin) */
+  .fx-paper { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+    background: radial-gradient(ellipse 1500px 900px at 50% 42%, #f9f5ee 0%, #f6f1e9 55%, #efe7dc 100%); }
+  .fx-dark { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #0d0b0a; }
+  .fx-vignette { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none;
+    background: radial-gradient(ellipse 1320px 820px at 50% 46%, rgba(239,231,220,0) 62%, rgba(214,200,182,.38) 100%); }
+  .fx-grain { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; opacity: .035; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+    background-size: 240px 240px; }
+  .fx-grain.dark { opacity: .055; mix-blend-mode: screen; }
+  .fx-floorcv { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+  /* ombre de contact sous une station posée sur la frise (placée par fxShadow) */
+  .fx-contact { position: absolute; left: 0; top: 0; width: 400px; height: 60px; border-radius: 50%; transform-origin: 0 0;
+    background: radial-gradient(closest-side, rgba(60,40,20,.20), rgba(60,40,20,.08) 55%, rgba(60,40,20,0)); }
+  /* barres d'attente (voies de la frise, quads) : hachures d'encre, se tendent par scaleX (origine à gauche) */
+  .fx-wait { position: absolute; left: 0; top: 0; height: 70px; border-radius: 12px; overflow: hidden; transform-origin: 0 50%;
+    box-shadow: inset 0 0 0 2.5px rgba(26,22,18,.42); background: rgba(26,22,18,.05); }
+  .fx-wait::before { content: ""; position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(135deg, rgba(26,22,18,.30) 0 5px, rgba(26,22,18,0) 5px 22px); }
+  .fx-wait-l { position: absolute; left: 20px; top: 16px; padding: 2px 10px; border-radius: 6px; background: #f6f1e9; font: 700 30px/34px "Space Mono", monospace; letter-spacing: .1em; color: rgba(26,22,18,.78); white-space: nowrap; }
+  /* cartes (monde clair) : blanc chaud, ombres douces, angles 16 px */
+  .fx-card { position: absolute; left: 0; top: 0; background: #fffdf9; border-radius: 16px;
+    box-shadow: 0 30px 80px rgba(60,40,20,.14), 0 2px 6px rgba(60,40,20,.07), 0 0 0 1px rgba(26,22,18,.05); }
+  .fx-micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: rgba(26,22,18,.55); white-space: nowrap; }
+  /* sous-titre : la phrase de la voix, bas centre (zone y 890 à 980), mot par mot, gris puis encre */
+  .fx-sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+    letter-spacing: -0.015em; color: #1a1612; white-space: nowrap; text-shadow: 0 2px 16px rgba(246,241,233,.95), 0 0 2px rgba(246,241,233,.9); }
+  .fx-sub.dark { color: #f5efe7; text-shadow: 0 2px 16px rgba(13,11,10,.9); }
+  .fx-sw { display: inline-block; opacity: 0; }
+  /* la boîte d'encre (mot clé) : se trace sous le mot, angles nets, le texte passe en papier */
+  .fx-ink { position: relative; display: inline-block; }
+  .fx-ink-bg { position: absolute; left: -0.14em; right: -0.14em; top: 0.02em; bottom: -0.02em; border-radius: 3px; background: #1a1612;
+    transform-origin: 0 50%; transform: scaleX(0); }
+  .fx-ink-tx { position: relative; text-shadow: none; }
+  .fx-sub.dark .fx-ink-bg { background: #f5efe7; }
+  /* le trait fin terracotta (mot-pic) : se dessine de gauche à droite sous le mot */
+  .fx-stroke { position: relative; display: inline-block; }
+  .fx-stroke-l { position: absolute; left: 0; right: 0; bottom: -0.06em; height: 4px; border-radius: 2px; background: #c25b28; transform-origin: 0 50%; transform: scaleX(0); }
+  /* texte posé (moments typographiques, séquences 3, 5, 8) : centré, 84 px, jamais énorme */
+  .fx-type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans", sans-serif; letter-spacing: -0.025em; color: #1a1612; white-space: nowrap; }
+  .fx-type.dark { color: #f5efe7; }
+  /* le point de lumière (aujourd'hui) */
+  .fx-pt-glow { position: absolute; border-radius: 50%; transform: translate(-50%, -50%);
+    background: radial-gradient(closest-side, rgba(224,138,92,.55) 0%, rgba(212,112,63,.22) 32%, rgba(194,91,40,.07) 62%, rgba(194,91,40,0) 100%); }
+  .fx-pt-core { position: absolute; border-radius: 50%; transform: translate(-50%, -50%);
+    background: radial-gradient(closest-side, #ffffff 0%, #fffaf4 45%, #f7c7a4 70%, rgba(224,138,92,.6) 88%, rgba(212,112,63,0) 100%);
+    box-shadow: 0 0 26px rgba(255,236,220,.9), 0 0 70px rgba(224,138,92,.55), 0 0 140px rgba(212,112,63,.3); }
+  /* le devis (gabarit fx-devis, 520 × 640) */
+  .fx-devis { width: 520px; height: 640px; }
+  .fx-dv-head { position: absolute; left: 36px; top: 34px; right: 36px; height: 60px; }
+  .fx-dv-mark { position: absolute; left: 0; top: 4px; width: 44px; height: 44px; border-radius: 8px; background: #1a1612; }
+  .fx-dv-name { position: absolute; left: 58px; top: 2px; font: 600 24px/28px "Instrument Sans", sans-serif; color: #1a1612; }
+  .fx-dv-sub { position: absolute; left: 58px; top: 32px; }
+  .fx-dv-kind { position: absolute; right: 0; top: 4px; text-align: right; font: 700 16px/22px "Space Mono", monospace; letter-spacing: .2em; color: #1a1612; }
+  .fx-dv-rule { position: absolute; left: 36px; right: 36px; height: 2px; background: #1a1612; }
+  .fx-dv-row { position: absolute; left: 36px; right: 36px; top: 176px; }
+  .fx-dv-lab { font: 500 26px/32px "Instrument Sans", sans-serif; color: #1a1612; }
+  .fx-dv-desc { margin-top: 6px; font: 400 17px/22px "Instrument Sans", sans-serif; color: rgba(26,22,18,.55); }
+  .fx-dv-qty { position: absolute; right: 0; top: 2px; font: 400 18px/28px "Space Mono", monospace; color: rgba(26,22,18,.7); }
+  .fx-dv-lines { position: absolute; left: 36px; right: 36px; top: 300px; }
+  .fx-dv-lines i { display: block; height: 10px; margin-bottom: 18px; border-radius: 5px; background: rgba(26,22,18,.06); }
+  .fx-dv-tot { position: absolute; left: 36px; right: 36px; bottom: 40px; height: 96px; border-radius: 12px; box-shadow: inset 0 0 0 2px #1a1612; }
+  .fx-dv-tot .fx-micro { position: absolute; left: 22px; top: 40px; color: #1a1612; }
+  .fx-dv-cell { position: absolute; right: 18px; top: 16px; width: 250px; height: 64px; border-radius: 8px; box-shadow: inset 0 0 0 2px rgba(26,22,18,.3); }
+  .fx-dv-price { position: absolute; right: 18px; top: 16px; width: 250px; height: 64px; text-align: center; font: 700 40px/64px "Space Mono", monospace; color: #1a1612; opacity: 0; }
+  .fx-dv-strike { position: absolute; left: 20px; right: 20px; top: 318px; height: 3px; border-radius: 2px; background: #1a1612; transform-origin: 0 50%; transform: scaleX(0); }
+  /* la timeline de montage vidéo (gabarit fx-video, 1000 × 520) */
+  .fx-video { width: 1000px; height: 520px; overflow: hidden; }
+  .fx-vd-bar { position: absolute; left: 0; top: 0; right: 0; height: 64px; border-bottom: 1px solid rgba(26,22,18,.08); }
+  .fx-vd-title { position: absolute; left: 28px; top: 20px; font: 600 22px/24px "Instrument Sans", sans-serif; color: #1a1612; }
+  .fx-vd-file { position: absolute; left: 132px; top: 22px; font: 400 16px/22px "Space Mono", monospace; color: rgba(26,22,18,.55); }
+  .fx-vd-state { position: absolute; right: 22px; top: 16px; height: 32px; padding: 0 14px; border-radius: 8px; font: 700 14px/32px "Space Mono", monospace; letter-spacing: .14em;
+    color: rgba(26,22,18,.7); background: repeating-linear-gradient(135deg, rgba(26,22,18,.12) 0 3px, rgba(26,22,18,.03) 3px 12px); }
+  .fx-vd-bin { position: absolute; left: 24px; top: 88px; width: 220px; }
+  .fx-vd-bin .fx-micro { font-size: 13px; }
+  .fx-vd-rush { position: absolute; width: 100px; height: 58px; border-radius: 6px; background-image: url("assets/img/site-hero.png"); background-size: 360px 205px;
+    box-shadow: 0 6px 16px rgba(60,40,20,.18); }
+  .fx-vd-ruler { position: absolute; left: 272px; right: 24px; top: 92px; height: 30px; border-bottom: 1px solid rgba(26,22,18,.2); font: 400 13px/20px "Space Mono", monospace; color: rgba(26,22,18,.5); }
+  .fx-vd-ruler span { position: absolute; top: 0; }
+  .fx-vd-track { position: absolute; left: 272px; right: 24px; height: 70px; border-radius: 8px; box-shadow: inset 0 0 0 2px rgba(26,22,18,.12);
+    background: repeating-linear-gradient(90deg, rgba(26,22,18,.03) 0 1px, rgba(26,22,18,0) 1px 70px); }
+  .fx-vd-tl { position: absolute; left: -44px; top: 24px; font: 700 14px/20px "Space Mono", monospace; color: rgba(26,22,18,.5); }
+  .fx-vd-clip { position: absolute; top: 6px; height: 58px; border-radius: 6px; background-image: url("assets/img/site-hero.png"); background-size: 360px 205px;
+    box-shadow: inset 0 0 0 2px rgba(26,22,18,.25); opacity: 0; }
+  .fx-vd-wave { position: absolute; left: 6px; top: 6px; right: 6px; height: 58px; opacity: 0; }
+  .fx-vd-head { position: absolute; top: 84px; width: 2px; height: 380px; background: #c25b28; opacity: 0; }
+  /* la notification claire (iOS, gabarit fx-nt, 520 × 92) et la facture (fx-bill, 380 × 210) */
+  .fx-nt { width: 520px; height: 92px; border-radius: 24px; background: rgba(255,253,249,.97);
+    box-shadow: 0 18px 48px rgba(60,40,20,.14), 0 1px 3px rgba(60,40,20,.08), 0 0 0 1px rgba(26,22,18,.05); }
+  .fx-nt-ic { position: absolute; left: 16px; top: 22px; width: 48px; height: 48px; border-radius: 11px; display: flex; align-items: center; justify-content: center; }
+  .fx-nt-ic svg { width: 28px; height: 28px; display: block; }
+  .fx-nt-t { position: absolute; left: 78px; top: 17px; font: 600 22px/28px "Instrument Sans", sans-serif; color: #1a1612; white-space: nowrap; }
+  .fx-nt-b { position: absolute; left: 78px; top: 46px; right: 18px; font: 400 21px/28px "Instrument Sans", sans-serif; color: rgba(26,22,18,.78); white-space: nowrap; overflow: hidden; }
+  .fx-nt-time { position: absolute; right: 20px; top: 19px; font: 400 17px/24px "Instrument Sans", sans-serif; color: rgba(26,22,18,.45); }
+  .fx-bill { width: 380px; height: 210px; }
+  .fx-bill .fx-micro { position: absolute; left: 26px; top: 26px; }
+  .fx-bill-n { position: absolute; right: 26px; top: 24px; font: 400 15px/20px "Space Mono", monospace; color: rgba(26,22,18,.5); }
+  .fx-bill-l { position: absolute; left: 26px; top: 70px; font: 500 22px/28px "Instrument Sans", sans-serif; color: #1a1612; white-space: nowrap; }
+  .fx-bill-a { position: absolute; left: 26px; bottom: 26px; font: 700 34px/40px "Space Mono", monospace; color: #1a1612; white-space: nowrap; }
+  .fx-bill-s { position: absolute; right: 26px; bottom: 32px; font: 700 14px/20px "Space Mono", monospace; letter-spacing: .16em; color: rgba(26,22,18,.6); }
+  /* WhatsApp : bulle entrante (blanche, queue à gauche) et indicateur « en train d'écrire » */
+  .fx-bub-in { position: relative; display: inline-block; padding: 9px 15px 9px 14px; border-radius: 20px; background: #ffffff;
+    filter: drop-shadow(0 0 0.6px rgba(0,0,0,.18)) drop-shadow(0 1px 0.6px rgba(0,0,0,.05)); font: 400 19.5px/25px -apple-system, BlinkMacSystemFont, "Instrument Sans", sans-serif; color: #0a0a0a; white-space: nowrap; }
+  .fx-bub-in .fx-tail-in { position: absolute; left: -6px; bottom: 0; width: 26px; height: 20px; display: block; z-index: -1; }
+  .fx-bub-in .fx-meta-in { display: inline-block; margin-left: 10px; font-size: 14px; color: #6b6b6b; vertical-align: -2px; }
+  .fx-typing { display: inline-flex; gap: 6px; padding: 14px 16px; border-radius: 20px; background: #ffffff; filter: drop-shadow(0 0 0.6px rgba(0,0,0,.18)); }
+  .fx-typing i { width: 9px; height: 9px; border-radius: 50%; background: #9a9a9a; display: block; }
+  /* la pastille d'idée (nuée de la séquence 7) : texte seul, jamais d'icône */
+  .fx-idea { position: absolute; left: 0; top: 0; padding: 18px 30px 18px 28px; border-radius: 18px; background: #fffdf9; white-space: nowrap;
+    font: 600 34px/40px "Instrument Sans", sans-serif; letter-spacing: -0.01em; color: #1a1612;
+    box-shadow: 0 24px 60px rgba(60,40,20,.14), 0 2px 5px rgba(60,40,20,.07), 0 0 0 1px rgba(26,22,18,.05); }
+  .fx-idea b { font: 700 14px/20px "Space Mono", monospace; letter-spacing: .16em; color: rgba(26,22,18,.45); margin-right: 14px; vertical-align: 6px; }
+  /* la carte « méthode » et la puce de contact « Prestataire web » */
+  .fx-method { width: 340px; height: 230px; }
+  .fx-method .fx-micro { position: absolute; left: 26px; top: 26px; color: #1a1612; }
+  .fx-method p { position: absolute; left: 26px; margin: 0; font: 500 22px/28px "Instrument Sans", sans-serif; color: #1a1612; white-space: nowrap; }
+  .fx-method p b { font: 700 16px/28px "Space Mono", monospace; color: rgba(26,22,18,.45); margin-right: 12px; }
+  .fx-chip { height: 76px; padding-right: 26px; border-radius: 38px; display: inline-flex; align-items: center; }
+  .fx-chip-av { width: 52px; height: 52px; margin: 0 16px 0 12px; border-radius: 50%; background: #dfe5e7; overflow: hidden; }
+  .fx-chip-t { font: 600 24px/28px "Instrument Sans", sans-serif; color: #1a1612; }
+  .fx-chip-s { font: 400 15px/20px "Space Mono", monospace; letter-spacing: .1em; color: rgba(26,22,18,.5); }
+  /* la colonne AUJOURD'HUI et l'axe du tableau (monde B, 2D) */
+  .fx-col-band { position: absolute; top: 110px; height: 2000px; background: #fffdf9; box-shadow: 0 0 0 1px rgba(26,22,18,.06), 0 40px 120px rgba(60,40,20,.10); }
+  .fx-col-edge { position: absolute; top: 110px; width: 2px; height: 2000px; background: rgba(26,22,18,.5); }
+  .fx-col-rail { position: absolute; font: 400 20px/1 "Space Mono", monospace; letter-spacing: .08em; color: rgba(26,22,18,.55); white-space: nowrap; text-align: right; width: 90px; }
+  .fx-col-tick { position: absolute; height: 2px; width: 26px; background: rgba(26,22,18,.4); }
+  /* espaces des montants en Space Mono (chasse fixe : une espace y est aussi large qu'un chiffre) : on les dessine étroites */
+  .fx-sp { display: inline-block; width: .28em; }
+  /* ===================== LIGNE v8 : fin du bloc CSS ===================== */
+
+  /* ===================== 01-lundi : styles propres à la séquence ===================== */
+  /* le vrai site dans Safari (reference/v6-05-demande.html, #f05-*), station du LUN 12 */
+  #p01-site { position: absolute; left: 0; top: 0; width: 1128px; height: 692px; }
+  #p01-win { position: absolute; left: 0; top: 0; width: 1128px; height: 692px; border-radius: 14px; overflow: hidden; background: #1f1d1b;
+    box-shadow: 0 40px 110px rgba(40, 24, 14, 0.36), 0 12px 32px rgba(40, 24, 14, 0.22); }
+  #p01-chrome { position: absolute; left: 0; top: 0; width: 1128px; height: 44px; background: linear-gradient(180deg, #242220 0%, #1f1d1b 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.55); box-sizing: border-box; }
+  .p01-tl { position: absolute; top: 16px; width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.28); }
+  #p01-chromeicons { position: absolute; left: 0; top: 0; }
+  #p01-addr { position: absolute; left: 354px; top: 8px; width: 420px; height: 28px; border-radius: 8px; background: #2c2a28;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  #p01-lock { display: block; flex: none; }
+  #p01-url { font: 400 15px/28px "Space Mono", monospace; color: #e4ddd5; white-space: nowrap; }
+  #p01-reload { position: absolute; right: 10px; top: 7px; }
+  #p01-view { position: absolute; left: 0; top: 44px; width: 1128px; height: 648px; overflow: hidden; background: #0f0c0a; }
+  #p01-shot { position: absolute; left: -6px; top: 0; width: 1140px; height: 648px; display: block; }
+  #p01-winedge { position: absolute; left: 0; top: 0; width: 1128px; height: 692px; border-radius: 14px; pointer-events: none;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.07); }
+
+  /* le cadre de sélection autour du titre du site (coordonnées de la vue : titre x 173 à 941, y 208 à 336) */
+  #p01-sel { position: absolute; left: 153px; top: 192px; width: 808px; height: 160px; }
+  #p01-sel-tint { position: absolute; left: 0; top: 0; width: 808px; height: 160px; background: rgba(246, 241, 233, 0.07); opacity: 0; }
+  .p01-sel-h { position: absolute; left: 0; width: 808px; height: 3px; transform: scaleX(0);
+    background: repeating-linear-gradient(90deg, rgba(246, 241, 233, 0.92) 0 12px, rgba(246, 241, 233, 0) 12px 20px); }
+  .p01-sel-v { position: absolute; top: 0; width: 3px; height: 160px; transform: scaleY(0);
+    background: repeating-linear-gradient(180deg, rgba(246, 241, 233, 0.92) 0 12px, rgba(246, 241, 233, 0) 12px 20px); }
+  #p01-sel-t { top: 0; transform-origin: 0 50%; }
+  #p01-sel-b { top: 157px; transform-origin: 100% 50%; }
+  #p01-sel-r { left: 805px; transform-origin: 50% 0; }
+  #p01-sel-l { left: 0; transform-origin: 50% 100%; }
+  .p01-hd { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 2px; background: #fffdf9;
+    box-shadow: 0 0 0 2px #1a1612, 0 2px 6px rgba(0, 0, 0, 0.5); opacity: 0; }
+
+  /* la pastille d'annotation, posée sur le coin haut droit du cadre de sélection (coordonnées du cadre) */
+  #p01-pastille { position: absolute; left: 808px; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: #c25b28;
+    box-shadow: 0 0 0 4px #fffdf9, 0 4px 12px rgba(0, 0, 0, 0.35); opacity: 0; }
+  /* le trait de rappel (écran, recalculé à chaque image) */
+  #p01-lead { position: absolute; left: 0; top: 0; overflow: visible; display: none; }
+
+  /* la carte du message (la demande, envoyée sur WhatsApp) : carte papier de 420 × 160, ancrée par son coin haut gauche (le coin épinglé) */
+  #p01-card { position: absolute; left: 0; top: 0; width: 420px; height: 160px; opacity: 0; }
+  #p01-card .fx-card { width: 420px; height: 160px; }
+  .p01-c-head { position: absolute; left: 24px; top: 20px; height: 26px; display: flex; align-items: center; gap: 10px; white-space: nowrap;
+    font: 600 19px/26px "Instrument Sans", sans-serif; color: #1a1612; }
+  .p01-c-head svg { width: 24px; height: 24px; display: block; flex: none; }
+  .p01-c-to { font-weight: 500; color: rgba(26, 22, 18, 0.55); }
+  .p01-c-msg { position: absolute; left: 24px; top: 60px; font: 500 30px/36px "Instrument Sans", sans-serif; letter-spacing: -0.01em; color: #1a1612; white-space: nowrap; }
+  .p01-c-meta { position: absolute; right: 24px; bottom: 26px; height: 20px; display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    font: 400 16px/20px "Instrument Sans", sans-serif; color: rgba(26, 22, 18, 0.5); font-variant-numeric: tabular-nums; }
+  #p01-ctick { width: 19px; height: 13px; display: block; opacity: 0; transform-origin: 0 50%; }
+  #p01-ctick path { fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; stroke: rgba(26, 22, 18, 0.45); }
+
+  /* l'épingle : un point d'encre cerclé de papier, là où la bulle pique la ligne (LUN 12 09:12) */
+  #p01-pin { position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #1a1612; box-shadow: 0 0 0 3px #f6f1e9, 0 2px 6px rgba(60, 40, 20, 0.3); opacity: 0; }
+
+  /* le devis du MER 14 (gabarit fx-devis) : il tombe vide, son contenu s'imprime, puis son prix */
+  #p01-devis { opacity: 0; }
+  #p01-devis .fx-dv-mark, #p01-devis .fx-dv-name, #p01-devis .fx-dv-sub, #p01-devis .fx-dv-kind, #p01-devis .fx-dv-lab,
+  #p01-devis .fx-dv-desc, #p01-devis .fx-dv-qty, #p01-devis .fx-dv-lines, #p01-devis .fx-dv-tot .fx-micro { opacity: 0; }
+  .p01-pshadow { position: absolute; right: 18px; top: 16px; width: 250px; height: 64px; text-align: center; font: 700 40px/64px "Space Mono", monospace;
+    color: rgba(26, 22, 18, 0.26); opacity: 0; }
+  .p01-dv-stroke { position: absolute; left: 230px; top: 69px; width: 150px; height: 4px; border-radius: 2px; background: #c25b28;
+    transform-origin: 0 50%; transform: scaleX(0); }
+  #p01-dvsh { opacity: 0; }
+
+  /* étiquettes de jour imprimées (même tracé que fxDaySVG, posées par fxPlace au-dessus du ruban) */
+  .p01-lab-in { position: absolute; left: 0; top: 0; width: 360px; height: 130px; opacity: 0.3; }
+  .p01-lab-in svg { display: block; overflow: visible; }
+
+  /* sous-titres : chaque mot arrive gris (encre à 35 %) */
+  .p01-sub .fx-sw { color: rgba(26, 22, 18, 0.35); }
+  
+  /* r3 (Colin, 2026-09-30) : les mots clés passent en boîte terracotta (texte papier), plus en boîte d'encre */
+  .fx-ink-bg, .fx-sub.dark .fx-ink-bg { background: #c25b28 !important; }
+  </style>
+
+  <div id="root" data-composition-id="01-lundi" data-width="1920" data-height="1080" data-duration="6">
+    <!-- gabarit du devis (reference/frise.html, id préfixé) -->
+    <template id="p01-fx-devis">
+      <div class="fx-card fx-devis">
+        <div class="fx-dv-head"><i class="fx-dv-mark"></i><div class="fx-dv-name">Studio Cadran</div><div class="fx-micro fx-dv-sub">Agence web · Nantes</div>
+          <div class="fx-dv-kind">DEVIS<br><span style="font-weight:400;letter-spacing:.06em;color:rgba(26,22,18,.6)">N°&nbsp;0147</span></div></div>
+        <div class="fx-dv-rule" style="top:126px"></div>
+        <div class="fx-dv-row"><div class="fx-dv-lab">Modification sur ton site</div><div class="fx-dv-desc">Changer le titre de la page d’accueil</div><div class="fx-dv-qty">1&nbsp;jour</div></div>
+        <div class="fx-dv-lines"><i style="width:82%"></i><i style="width:64%"></i><i style="width:74%"></i></div>
+        <div class="fx-dv-tot"><span class="fx-micro">Total</span><i class="fx-dv-cell"></i><span class="fx-dv-price">1<i class="fx-sp"></i>000<i class="fx-sp"></i>€</span></div>
+        <i class="fx-dv-strike"></i>
+      </div>
+    </template>
+
+    <svg id="p01-svgdefs" width="0" height="0" style="position: absolute"><defs id="p01-defs"></defs></svg>
+
+    <!-- papier (monde clair) -->
+    <div id="p01-ground" class="clip fx-paper" data-start="0" data-duration="6" data-track-index="0"></div>
+
+    <!-- le monde A sous la caméra 3D : sol de points, frise des jours, stations posées sur la ligne -->
+    <div id="p01-world" class="clip fx-layer" data-start="0" data-duration="6" data-track-index="1" data-layout-allow-overflow>
+      <div id="p01-shake" class="fx-layer" data-layout-allow-overflow>
+        <canvas id="p01-floor" class="fx-floorcv" width="1920" height="1080"></canvas>
+        <div id="p01-ribbon" class="fx-layer" data-layout-allow-overflow>
+          <div id="p01-lab-lun" class="fx-q"><div id="p01-lab-lun-in" class="p01-lab-in"><svg width="360" height="130" viewBox="0 0 360 130" xmlns="http://www.w3.org/2000/svg"><text x="18" y="58" font-family="Space Mono" font-weight="700" font-size="44" letter-spacing="4" fill="rgba(26,22,18,0.92)">LUN 12</text><text x="20" y="98" font-family="Space Mono" font-size="22" letter-spacing="7" fill="rgba(26,22,18,0.5)">JUIN 2023</text></svg></div></div>
+          <div id="p01-lab-ven" class="fx-q"><div id="p01-lab-ven-in" class="p01-lab-in"><svg width="360" height="130" viewBox="0 0 360 130" xmlns="http://www.w3.org/2000/svg"><text x="18" y="58" font-family="Space Mono" font-weight="700" font-size="44" letter-spacing="4" fill="rgba(26,22,18,0.92)">VEN 16</text></svg></div></div>
+          <div id="p01-lab-mer" class="fx-q"><div id="p01-lab-mer-in" class="p01-lab-in"><svg width="360" height="130" viewBox="0 0 360 130" xmlns="http://www.w3.org/2000/svg"><text x="18" y="58" font-family="Space Mono" font-weight="700" font-size="44" letter-spacing="4" fill="rgba(26,22,18,0.92)">MER 14</text></svg></div></div>
+        </div>
+        <div id="p01-stations" class="fx-layer" data-layout-allow-overflow>
+          <div id="p01-sitesh" class="fx-contact"></div>
+          <div id="p01-site">
+            <div id="p01-win">
+              <div id="p01-chrome">
+                <span class="p01-tl" style="left: 16px; background: #ff5f57"></span>
+                <span class="p01-tl" style="left: 36px; background: #febc2e"></span>
+                <span class="p01-tl" style="left: 56px; background: #28c840"></span>
+                <svg id="p01-chromeicons" width="1128" height="44" viewBox="0 0 1128 44" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="90.75" y="15.75" width="18.5" height="13.5" rx="3" stroke="#8f8983" stroke-width="1.5"></rect>
+                  <path d="M96.5 16 V29" stroke="#8f8983" stroke-width="1.5"></path>
+                  <path d="M137 16 L131 22 L137 28" stroke="#a39d97" stroke-width="1.8"></path>
+                  <path d="M157 16 L163 22 L157 28" stroke="#5d5853" stroke-width="1.8"></path>
+                  <path d="M1024 20.5 H1022 V30.5 H1034 V20.5 H1032 M1028 13.5 V25 M1024.5 17 L1028 13.5 L1031.5 17" stroke="#8f8983" stroke-width="1.5"></path>
+                  <path d="M1062 16 V28 M1056 22 H1068" stroke="#8f8983" stroke-width="1.6"></path>
+                  <rect x="1091.75" y="18.75" width="10.5" height="10.5" rx="2" stroke="#8f8983" stroke-width="1.5"></rect>
+                  <path d="M1095 15.75 H1103 A2 2 0 0 1 1105.25 17.75 V25.5" stroke="#8f8983" stroke-width="1.5"></path>
+                </svg>
+                <div id="p01-addr">
+                  <svg id="p01-lock" width="10" height="13" viewBox="0 0 10 13">
+                    <path d="M2.6 6 V4.1 A2.4 2.4 0 0 1 7.4 4.1 V6" fill="none" stroke="#b8b0a8" stroke-width="1.4"></path>
+                    <rect x="0.8" y="5.6" width="8.4" height="6.8" rx="1.5" fill="#b8b0a8"></rect>
+                  </svg>
+                  <span id="p01-url">entrepreneurs2-0.com</span>
+                  <svg id="p01-reload" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#8f8983" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11.6 7.4 A4.6 4.6 0 1 1 10.1 3.6"></path>
+                    <path d="M10.6 1.2 V3.9 H7.9"></path>
+                  </svg>
+                </div>
+              </div>
+              <div id="p01-view">
+                <img id="p01-shot" src="assets/img/site-hero.png" width="1140" height="648" alt="" />
+                <div id="p01-sel">
+                  <div id="p01-sel-tint"></div>
+                  <i id="p01-sel-t" class="p01-sel-h"></i>
+                  <i id="p01-sel-r" class="p01-sel-v"></i>
+                  <i id="p01-sel-b" class="p01-sel-h"></i>
+                  <i id="p01-sel-l" class="p01-sel-v"></i>
+                  <i id="p01-hd1" class="p01-hd" style="left: 0; top: 0"></i>
+                  <i id="p01-hd2" class="p01-hd" style="left: 808px; top: 0"></i>
+                  <i id="p01-hd3" class="p01-hd" style="left: 808px; top: 160px"></i>
+                  <i id="p01-hd4" class="p01-hd" style="left: 0; top: 160px"></i>
+                  <i id="p01-pastille"></i>
+                </div>
+              </div>
+              <div id="p01-winedge"></div>
+            </div>
+          </div>
+          <div id="p01-dvsh" class="fx-contact"></div>
+          <div id="p01-devis" class="fx-q"></div>
+          <!-- le trait de rappel : de la pastille du titre à la carte du message -->
+          <svg id="p01-lead" width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+            <line id="p01-lead-l" x1="0" y1="0" x2="0" y2="0" stroke="#c25b28" stroke-width="2.2" stroke-linecap="round"/>
+            <circle id="p01-lead-d" cx="0" cy="0" r="4.5" fill="#c25b28"/>
+          </svg>
+          <!-- la demande : carte du message WhatsApp (icône : assets/icons/whatsapp.svg, même tracé, vert de marque) -->
+          <div id="p01-card">
+            <div class="fx-card">
+              <div class="p01-c-head"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#25D366" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span><span class="p01-c-to">À</span> Prestataire web</span></div>
+              <div class="p01-c-msg">Tu peux modifier le titre<br>de mon site&#8239;?</div>
+              <div class="p01-c-meta">09:12<svg id="p01-ctick" viewBox="0 0 19 13" xmlns="http://www.w3.org/2000/svg"><path d="M1.2 7.2L4.6 10.6L11.8 1.6"/><path d="M7.6 9.4L8.8 10.6L16 1.6"/></svg></div>
+            </div>
+          </div>
+          <div id="p01-pin"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="p01-vig" class="clip fx-vignette" data-start="0" data-duration="6" data-track-index="2"></div>
+
+    <!-- la phrase de la voix, bas centre, mot par mot (temps locaux) -->
+    <div id="p01-subs" class="clip fx-layer" data-start="0" data-duration="6" data-track-index="3" data-layout-allow-overflow>
+      <div id="p01-s1" class="fx-sub p01-sub"><span class="fx-sw" data-cue="0.00">Lundi,</span> <span class="fx-sw" data-cue="0.98">tu</span> <span class="fx-sw" data-cue="1.12">demandes</span> <span class="fx-sw" data-cue="1.44">une</span> <span class="fx-ink"><i id="p01-ink1" class="fx-ink-bg"></i><span class="fx-ink-tx fx-sw" data-cue="1.56">modif</span></span> <span class="fx-sw" data-cue="1.90">sur</span> <span class="fx-sw" data-cue="2.08">ton</span> <span class="fx-sw" data-cue="2.24">site.</span></div>
+      <div id="p01-s2" class="fx-sub p01-sub"><span class="fx-sw" data-cue="3.12">Mercredi,</span> <span class="fx-sw" data-cue="3.88">le</span> <span class="fx-sw" data-cue="3.96">devis</span> <span class="fx-sw" data-cue="4.26">tombe&nbsp;:</span> <span class="fx-sw" data-cue="4.92">mille</span> <span class="fx-sw" data-cue="5.20">euros.</span></div>
+    </div>
+
+    <!-- grain du film, 3,5 % -->
+    <div id="p01-grain" class="clip fx-grain" data-start="0" data-duration="6" data-track-index="4"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "01-lundi";
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+
+/* ===================== kit ligne v8 (à copier) ===================== */
+// Caméra 3D : c = { x, y, z, yaw, pitch, roll } (u et degrés) ; focale fixe 1000 px, centre du cadre (960, 540).
+// Monde : X vers la droite (le temps), Y vers le haut, Z vers le fond. yaw > 0 regarde vers +X ; pitch > 0 regarde vers
+// le haut ; roll > 0 tourne l'image dans le sens horaire.
+var FX_F = 1000;
+function fxRad(d) { return d * Math.PI / 180; }
+function fxToCam(c, p) {
+  var x = p[0] - c.x, y = p[1] - c.y, z = p[2] - c.z;
+  var cy = Math.cos(fxRad(c.yaw)), sy = Math.sin(fxRad(c.yaw));
+  var x1 = cy * x - sy * z, z1 = sy * x + cy * z;
+  var cp = Math.cos(fxRad(c.pitch)), sp = Math.sin(fxRad(c.pitch));
+  return [x1, cp * y - sp * z1, sp * y + cp * z1];
+}
+function fxProject(c, p) {                      // point du monde vers l'écran ; k = px écran par u à cette profondeur
+  var q = fxToCam(c, p), u = FX_F * q[0] / q[2], v = -FX_F * q[1] / q[2];
+  var cr = Math.cos(fxRad(c.roll)), sr = Math.sin(fxRad(c.roll));
+  return { x: 960 + cr * u - sr * v, y: 540 + sr * u + cr * v, z: q[2], k: FX_F / q[2] };
+}
+function fxFromCam(c, q) {                      // espace caméra (sans roulis) vers le monde
+  var cp = Math.cos(fxRad(c.pitch)), sp = Math.sin(fxRad(c.pitch)), cy = Math.cos(fxRad(c.yaw)), sy = Math.sin(fxRad(c.yaw));
+  var y = cp * q[1] + sp * q[2], z1 = -sp * q[1] + cp * q[2];
+  return [cy * q[0] + sy * z1 + c.x, y + c.y, -sy * q[0] + cy * z1 + c.z];
+}
+function fxAdj(m) { return [m[4]*m[8]-m[5]*m[7], m[2]*m[7]-m[1]*m[8], m[1]*m[5]-m[2]*m[4], m[5]*m[6]-m[3]*m[8], m[0]*m[8]-m[2]*m[6], m[2]*m[3]-m[0]*m[5], m[3]*m[7]-m[4]*m[6], m[1]*m[6]-m[0]*m[7], m[0]*m[4]-m[1]*m[3]]; }
+function fxMm(a, b) { var c = [], i, j, k, s; for (i = 0; i < 3; i++) for (j = 0; j < 3; j++) { s = 0; for (k = 0; k < 3; k++) s += a[3*i+k] * b[3*k+j]; c[3*i+j] = s; } return c; }
+function fxMv(m, v) { return [m[0]*v[0]+m[1]*v[1]+m[2]*v[2], m[3]*v[0]+m[4]*v[1]+m[5]*v[2], m[6]*v[0]+m[7]*v[1]+m[8]*v[2]]; }
+function fxBasis(p) { var m = [p[0], p[2], p[4], p[1], p[3], p[5], 1, 1, 1]; var v = fxMv(fxAdj(m), [p[6], p[7], 1]); return fxMm(m, [v[0], 0, 0, 0, v[1], 0, 0, 0, v[2]]); }
+// Pose un élément plat (w × h px) sur le quadrilatère du monde O + U·x·s + V·y·s (matrix3d). Renvoie la profondeur
+// moyenne ; -1 et display none si un coin passe à moins de minZ de la caméra (défaut 60) ou si la projection dépasse
+// maxPx (défaut 6000) : un calque géant flouté fait tomber le rendu. Unique écrivain de transform pour cet élément.
+function fxPlace(el, c, w, h, O, U, V, s, minZ, maxPx) {
+  s = s || 1; minZ = minZ || 60; maxPx = maxPx || 6000;
+  function P(a, b) { return fxProject(c, [O[0] + (U[0]*a + V[0]*b) * s, O[1] + (U[1]*a + V[1]*b) * s, O[2] + (U[2]*a + V[2]*b) * s]); }
+  var q = [P(0, 0), P(w, 0), P(0, h), P(w, h)];
+  var bw = Math.max(q[0].x, q[1].x, q[2].x, q[3].x) - Math.min(q[0].x, q[1].x, q[2].x, q[3].x);
+  var bh = Math.max(q[0].y, q[1].y, q[2].y, q[3].y) - Math.min(q[0].y, q[1].y, q[2].y, q[3].y);
+  if (q[0].z < minZ || q[1].z < minZ || q[2].z < minZ || q[3].z < minZ || bw > maxPx || bh > maxPx) { el.style.display = "none"; return -1; }
+  el.style.display = "";
+  var t = fxMm(fxBasis([q[0].x, q[0].y, q[1].x, q[1].y, q[2].x, q[2].y, q[3].x, q[3].y]), fxAdj(fxBasis([0, 0, w, 0, 0, h, w, h])));
+  for (var i = 0; i < 9; i++) t[i] /= t[8];
+  el.style.width = w + "px"; el.style.height = h + "px";
+  el.style.transform = "matrix3d(" + t[0] + "," + t[3] + ",0," + t[6] + "," + t[1] + "," + t[4] + ",0," + t[7] + ",0,0,1,0," + t[2] + "," + t[5] + ",0," + t[8] + ")";
+  return (q[0].z + q[1].z + q[2].z + q[3].z) / 4;
+}
+// Objet debout face caméra : son point d'ancrage (ax, ay) en px tombe sur la projection du point du monde P, à
+// l'échelle base × k ; rot (degrés) s'ajoute au roulis. Renvoie la profondeur (-1 si derrière la caméra).
+function fxStand(el, c, P, base, ax, ay, rot) {
+  var p = fxProject(c, P);
+  if (p.z < 60) { el.style.display = "none"; return -1; }
+  el.style.display = "";
+  var sc = base * p.k;
+  el.style.transformOrigin = "0 0";
+  el.style.transform = "translate(" + p.x.toFixed(2) + "px," + p.y.toFixed(2) + "px) rotate(" + (c.roll + (rot || 0)).toFixed(2) + "deg) scale(" + sc.toFixed(4) + ") translate(" + (-ax) + "px," + (-ay) + "px)";
+  return p.z;
+}
+// Ombre de contact d'une station posée sur la frise : ellipse douce, centrée sous le point P, de largeur w u.
+function fxShadow(el, c, P, w) {
+  var p = fxProject(c, P);
+  if (p.z < 60) { el.style.display = "none"; return; }
+  el.style.display = "";
+  var sx = w * p.k / 400, sy = sx * 0.9;
+  el.style.transform = "translate(" + (p.x - 200 * sx).toFixed(2) + "px," + (p.y - 30 * sy).toFixed(2) + "px) rotate(" + c.roll + "deg) scale(" + sx.toFixed(4) + "," + sy.toFixed(4) + ")";
+}
+// Profondeur de champ : d = { zf, k, max } ; renvoie le flou (px) d'un objet à la profondeur z.
+function fxCoc(z, d) { return Math.min(d.max, d.k * Math.abs(z - d.zf) / z); }
+function fxBlur(el, px, extra) { var f = (px > 0.25 ? "blur(" + px.toFixed(1) + "px)" : "") + (extra ? " " + extra : ""); el.style.filter = f || "none"; }
+
+/* ---- temps : 1 jour = 1300 u ; t = 0 le DIM 11 juin 2023 à 00:00 ---- */
+var FX_DAY = 1300;
+function fxX(t) { return -1400 + t * FX_DAY; }        // abscisse monde d'un instant t (jours)
+var FX_WD = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
+var FX_MO = ["JANV.", "FÉVR.", "MARS", "AVR.", "MAI", "JUIN", "JUIL.", "AOÛT", "SEPT.", "OCT.", "NOV.", "DÉC."];
+function fxDate(i) { var d = new Date(Date.UTC(2023, 5, 11 + i)); return { wd: FX_WD[d.getUTCDay()], d: d.getUTCDate(), m: d.getUTCMonth(), y: d.getUTCFullYear() }; }
+
+/* ---- LA FRISE DES JOURS (claire) : une règle, graduations qui PENDENT sous la ligne ----
+   Un jour = quad de 1300 × 620 u, plan Z = 0 : la ligne (Y 600) en y local 20 ; heures 22 u, 06:00, 12:00, 18:00 en 48 u
+   avec leur heure ; minuit en 170 u ; « LUN 12 » (Space Mono 700 44 u) sous la graduation ; mois dessous ; trois voies
+   (hachures d'attente) de 70 u en y local 330, 420, 510 (Y 290, 200, 110), dessinées seulement si o.lanes. Les stations
+   se POSENT sur la ligne (pied en Y 600). */
+var FX_RH = 620, FX_LINE = 600;
+function fxDaySVG(i, o) {
+  var W = FX_DAY, B = 20, ink = "rgba(26,22,18,", s = [], dt = fxDate(i);
+  s.push('<svg width="' + W + '" height="' + FX_RH + '" viewBox="0 0 ' + W + ' ' + FX_RH + '" xmlns="http://www.w3.org/2000/svg">');
+  s.push('<line x1="0" y1="' + B + '" x2="' + W + '" y2="' + B + '" stroke="' + ink + '0.78)" stroke-width="3"/>');
+  for (var h = 0; h < 24; h++) {
+    var x = h * W / 24, big = h === 0, mid = h % 6 === 0, len = big ? 170 : mid ? 48 : 22;
+    s.push('<line x1="' + x + '" y1="' + B + '" x2="' + x + '" y2="' + (B + len) + '" stroke="' + ink + (big ? "0.9" : mid ? "0.5" : "0.28") + ')" stroke-width="' + (big ? 2.6 : mid ? 2 : 1.6) + '"/>');
+    if (mid && !big) s.push('<text x="' + (x + 8) + '" y="' + (B + 72) + '" font-family="Space Mono" font-size="20" letter-spacing="2" fill="' + ink + '0.42)">' + (h < 10 ? "0" : "") + h + ':00</text>');
+  }
+  s.push('<text x="18" y="' + (B + 158) + '" font-family="Space Mono" font-weight="700" font-size="44" letter-spacing="4" fill="' + ink + '0.92)">' + dt.wd + " " + dt.d + '</text>');
+  if ((o && o.month === i) || dt.d === 1) s.push('<text x="20" y="' + (B + 198) + '" font-family="Space Mono" font-size="22" letter-spacing="7" fill="' + ink + '0.5)">' + FX_MO[dt.m].replace(".", "") + " " + dt.y + '</text>');
+  if (o && o.lanes) for (var l = 0; l < 3; l++) s.push('<rect x="4" y="' + (330 + l * 90) + '" width="' + (W - 8) + '" height="70" rx="12" fill="none" stroke="' + ink + '0.07)" stroke-width="1.6"/>');
+  s.push('</svg>');
+  return s.join("");
+}
+/* ---- LA FRISE DES ANNÉES (claire, séquence 5) : un an = 1200 u, de juin à juin, plan Z = 400 ; ligne en Y 600 ;
+   années « 2024 » (Space Mono 700 300 u) posées AU-DESSUS de la ligne (on longe les années), mois pendus dessous ---- */
+var FX_YEAR = 1200, FX_YRH = 760, FX_YLINE = 420;         // quad 1200 × 760 u, la ligne en y local 420
+function fxYearSVG(y) {
+  var W = FX_YEAR, B = FX_YLINE, ink = "rgba(26,22,18,", s = [];
+  s.push('<svg width="' + W + '" height="' + FX_YRH + '" viewBox="0 0 ' + W + ' ' + FX_YRH + '" xmlns="http://www.w3.org/2000/svg">');
+  s.push('<line x1="0" y1="' + B + '" x2="' + W + '" y2="' + B + '" stroke="' + ink + '0.78)" stroke-width="3"/>');
+  for (var wk = 0; wk < 52; wk++) { var xw = wk * W / 52; s.push('<line x1="' + xw + '" y1="' + B + '" x2="' + xw + '" y2="' + (B + 16) + '" stroke="' + ink + '0.26)" stroke-width="1.6"/>'); }
+  for (var m = 0; m < 12; m++) {
+    var x = m * W / 12, big = m === 0;
+    s.push('<line x1="' + x + '" y1="' + (big ? B - 380 : B) + '" x2="' + x + '" y2="' + (B + (big ? 120 : 44)) + '" stroke="' + ink + (big ? .9 : .5) + ')" stroke-width="' + (big ? 3.2 : 2.2) + '"/>');
+    if (!big) s.push('<text x="' + (x + 8) + '" y="' + (B + 76) + '" font-family="Space Mono" font-size="24" letter-spacing="1" fill="' + ink + '0.5)">' + FX_MO[(m + 5) % 12] + '</text>');
+  }
+  if (y >= 2023) s.push('<text x="14" y="' + (B - 40) + '" font-family="Space Mono" font-weight="700" font-size="300" letter-spacing="-6" fill="' + ink + '0.92)">' + y + '</text>');
+  s.push('</svg>');
+  return s.join("");
+}
+// Construit un ruban : o = { kind: "day"|"year", first, last, lanes, month } ; renvoie { segs } à poser à chaque image.
+function fxBuildRibbon(host, o) {
+  var rb = { o: o, segs: [] };
+  for (var i = o.first; i <= o.last; i++) {
+    var el = document.createElement("div"); el.className = "fx-q";
+    el.innerHTML = o.kind === "year" ? fxYearSVG(i) : fxDaySVG(i, o);
+    host.appendChild(el); rb.segs.push({ el: el, i: i });
+  }
+  return rb;
+}
+// Pose le ruban pour la caméra c ; d = profondeur de champ ; extraBlur(seg, z) optionnel (flou de mouvement, px).
+// Jours : quad de Y 620 à Y 0 (ligne en Y 600), Z 0. Années : quad de Y 600 + 420 = 1020 à Y 260 (ligne en Y 600), Z 400.
+function fxUpdateRibbon(rb, c, d, extraBlur) {
+  var yr = rb.o.kind === "year", W = yr ? FX_YEAR : FX_DAY, H = yr ? FX_YRH : FX_RH, Z = yr ? 400 : 0;
+  var top = yr ? 600 + FX_YLINE : FX_RH;                 // le haut du quad, pour que la ligne tombe en Y 600 dans les deux cas
+  rb.segs.forEach(function (sg) {
+    var X = yr ? -1500 + (sg.i - 2023) * FX_YEAR : fxX(sg.i);
+    var z = fxPlace(sg.el, c, W, H, [X, top, Z], [1, 0, 0], [0, -1, 0]);
+    if (z < 0) return;
+    fxBlur(sg.el, fxCoc(z, d) + (extraBlur ? extraBlur(sg, z) : 0));
+  });
+}
+// Barre d'attente hachurée sur une voie (0, 1, 2) de la frise des jours, de t0 à t1 (jours) ; renvoie la poignée.
+function fxMakeWait(host, lane, t0, t1, label) {
+  var el = document.createElement("div"); el.className = "fx-q";
+  var w = (t1 - t0) * FX_DAY;
+  el.innerHTML = '<div class="fx-wait" style="width:' + w + 'px"><span class="fx-wait-l">' + (label || "EN ATTENTE") + '</span></div>';
+  host.appendChild(el);
+  return { el: el, bar: el.firstChild, lane: lane, t0: t0, w: w };
+}
+function fxUpdateWait(wt, c, d) {
+  var z = fxPlace(wt.el, c, wt.w, 70, [fxX(wt.t0), 290 - wt.lane * 90, -2], [1, 0, 0], [0, -1, 0]);
+  if (z > 0) fxBlur(wt.el, fxCoc(z, d));
+  return z;
+}
+// Sol pointillé (Y 0) : dessiné point par point dans UN canvas écran (aucun calque GPU géant). o = { x0, x1, z0, z1, step }.
+function fxDrawFloor(canvas, c, d, o) {
+  var ctx = canvas.getContext("2d"), step = o.step || 100;
+  ctx.clearRect(0, 0, 1920, 1080);
+  var xa = Math.max(o.x0, Math.floor((c.x - 5000) / step) * step), xb = Math.min(o.x1, c.x + 12000);
+  for (var X = xa; X <= xb; X += step) for (var Z = o.z0; Z <= o.z1; Z += step) {
+    var p = fxProject(c, [X, 0, Z]);
+    if (p.z < 250 || p.x < -40 || p.x > 1960 || p.y < -40 || p.y > 1120) continue;
+    var r = Math.max(0.6, Math.min(6, 2.4 * p.k)), b = Math.min(10, fxCoc(p.z, d)) * 0.6, R = r + b;
+    var fade = Math.max(0, Math.min(1, (p.z - 250) / 500) * (1 - (p.z - 600) / 4200));
+    var a = 0.14 * fade * (r * r) / (R * R);
+    if (a < 0.004) continue;
+    ctx.fillStyle = "rgba(26,22,18," + a.toFixed(3) + ")";
+    ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, 6.2832); ctx.fill();
+  }
+}
+/* ---- flous directionnels : fx-mb1 … fx-mb40 (stdDeviation « n 0 », horizontal) ; ids préfixés ---- */
+function fxMbDefs(defs, prefix) {
+  for (var n = 1; n <= 40; n++) {
+    var f = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+    f.setAttribute("id", prefix + "mb" + n); f.setAttribute("x", "-30%"); f.setAttribute("y", "-10%"); f.setAttribute("width", "160%"); f.setAttribute("height", "120%");
+    f.innerHTML = '<feGaussianBlur stdDeviation="' + n + ' ' + (n > 8 ? 0.6 : 0) + '"/>';
+    defs.appendChild(f);
+  }
+}
+/* ===================== fin du kit ligne v8 ===================== */
+
+      /* ===================== 01-lundi : construction ===================== */
+      var DUR = 6;
+      function $(n) { return root.querySelector("#p01-" + n); }
+
+      // directional blurs p01-mb1 … p01-mb40 (whips along the frise)
+      fxMbDefs($("defs"), "p01-");
+
+      var shakeEl = $("shake"), ribbonEl = $("ribbon"), floorCv = $("floor");
+      var FLOOR = { x0: -4000, x1: 24000, z0: -1500, z1: 4000 };
+      var floorTmp = document.createElement("canvas"); floorTmp.width = 1920; floorTmp.height = 1080;
+
+      // the frise of days, DIM 11 to SAM 17 (month under LUN 12)
+      var rb = fxBuildRibbon(ribbonEl, { kind: "day", first: 0, last: 6, month: 1 });
+      // the printed labels of LUN 12, MER 14 (and VEN 16, printed by the next sequence) live on their own quads, above the ribbon
+      var LABS = [[$("lab-lun"), 1], [$("lab-mer"), 3], [$("lab-ven"), 5]];
+      LABS.forEach(function (L) { ribbonEl.appendChild(L[0]); });
+      var jeuLab = null;
+      rb.segs.forEach(function (sg) {
+        var lab = sg.el.querySelector('text[font-size="44"]');
+        if (lab) lab.style.opacity = (sg.i === 1 || sg.i === 3 || sg.i === 5) ? "0" : "0.3";       // days not lived yet stay faint
+        if (sg.i === 4) jeuLab = lab;
+        if (sg.i === 1) Array.prototype.forEach.call(sg.el.querySelectorAll('text[font-size="22"]'), function (m) { m.style.opacity = "0"; });
+      });
+      // Monday's graduations (24 ticks + 06:00, 12:00, 18:00), ordered left to right, start faint then light up
+      var MON = [];
+      (function () {
+        var svg = rb.segs[1].el;
+        var lines = Array.prototype.slice.call(svg.querySelectorAll("line"), 1);
+        lines.forEach(function (l) { MON.push({ el: l, x: parseFloat(l.getAttribute("x1")) }); });
+        Array.prototype.forEach.call(svg.querySelectorAll('text[font-size="20"]'), function (t) { MON.push({ el: t, x: parseFloat(t.getAttribute("x")) - 4 }); });
+        MON.sort(function (a, b) { return a.x - b.x; });
+        MON.forEach(function (m) { m.el.style.opacity = "0.4"; });
+      })();
+
+      // stations
+      var site = $("site"), siteSh = $("sitesh");
+      var devis = $("devis"), dvSh = $("dvsh");
+      devis.appendChild(root.querySelector("#p01-fx-devis").content.cloneNode(true));
+      var dvCard = devis.firstElementChild; dvCard.style.position = "relative";
+      var dvTot = dvCard.querySelector(".fx-dv-tot"), dvPrice = dvCard.querySelector(".fx-dv-price");
+      var pShadow = document.createElement("span"); pShadow.className = "p01-pshadow"; pShadow.innerHTML = dvPrice.innerHTML;
+      dvTot.insertBefore(pShadow, dvPrice);
+      var dvStroke = document.createElement("i"); dvStroke.className = "p01-dv-stroke"; dvTot.appendChild(dvStroke);
+      var card = $("card"), pin = $("pin"), leadEl = $("lead"), leadL = $("lead-l"), leadD = $("lead-d");
+
+      /* ---- positions (frame.md, LA FRISE) ---- */
+      var SITE_P = [fxX(1.5), FX_LINE, -4];            // (550, 600, -4), base 0.85, anchor (564, 692)
+      var DEVIS_X = fxX(3.5);                          // 3150, MER 14 at noon
+      var PIN_X = fxX(1.385);                          // 400 : LUN 12 09:12
+      var CARD_Z = -20, CARD_BASE = 0.95;              // the message card, anchored on its top left corner (the pinned corner)
+      var PAS_W = [SITE_P[0] + (961 - 564) * 0.85, FX_LINE + (692 - 236) * 0.85, -4];   // the pastille : top right corner of the selection frame
+      // rest place of the card, in the free paper right of the site : its top left corner at (1449, 170) px at 1.40 s
+      var CARD_REST = (function () {
+        var cam = { x: 578, y: 760, z: -1064, yaw: 0, pitch: -2, roll: 0 }, X = cam.x, Y = cam.y, k0 = 1000 / (CARD_Z - cam.z), i, p;
+        var sx = 1449, sy = 170;
+        for (i = 0; i < 8; i++) { p = fxProject(cam, [X, Y, CARD_Z]); X += (sx - p.x) / p.k; Y -= (sy - p.y) / p.k; }
+        return [X, Y];
+      })();
+
+      /* ---- the camera and the animated state (tweened on the ONE timeline, written by render) ---- */
+      var C = { x: 550, y: 760, z: -1120, yaw: 0, pitch: -2, roll: 0 };
+      var V = {
+        cb: 0, mbx: 1,                                  // whip blur (px of horizontal motion blur) and its gain
+        vib: 1, shk: 1,                                 // ribbon vibration, camera shake (0 → 1 once, 1 = at rest)
+        cX: CARD_REST[0] - 60, cY: CARD_REST[1],        // message card anchor (world)
+        cE: 1.1, cP: 1, cK: 1, cB: 6, ln: 0,            // card entrance scale, press, fold, entrance blur ; leader line drawn (0 → 1)
+        pin: 0,
+        dvY: 920, dvRot: -16, dvShG: 0.3, dvShO: 0,    // devis hover height / fall, rotation, its contact shadow
+        dW: 0, dQy: 420, dQz: 900, dvB: 6               // devis riding with the camera (0) → posed in the world (1), entrance blur
+      };
+
+      function edgeBlur(c, sg) {                       // light depth falloff at the frame edges
+        var xc = fxProject(c, [fxX(sg.i) + FX_DAY / 2, FX_LINE, 0]).x;
+        return 1.6 * Math.max(0, Math.min(1, (Math.abs(xc - 960) - 700) / 600));
+      }
+
+      /* ===================== render : the ONE writer of the world (timeline onUpdate) ===================== */
+      // Whip blur = horizontal motion blur only (fxMbDefs), as the next sequence reads it: at 6.00, cb = 12 gives
+      // url(#p01-mb12) on ribbon, labels and stations, and the floor smeared by 7 copies at k x cb x 0.5 px.
+      function render() {
+        var c = C, cb = V.cb * V.mbx;
+        var d = { zf: -c.z, k: 8, max: 16 };
+        var n = Math.round(Math.min(40, cb));
+        var mb = n >= 1 ? "url(#p01-mb" + n + ")" : "";
+        var eF = 1 - Math.min(1, V.cb / 12);             // the edge falloff fades out under motion blur
+
+        // camera shake (4 px, 0.12 s) and the ruler vibrating under the devis (1.5 px, 0.1 s)
+        if (V.shk < 1) {
+          var ks = Math.sin(V.shk * Math.PI * 4) * (1 - V.shk);
+          shakeEl.style.transform = "translate(" + (1.5 * Math.sin(V.shk * Math.PI * 5) * (1 - V.shk)).toFixed(2) + "px," + (4 * ks).toFixed(2) + "px)";
+        } else shakeEl.style.transform = "none";
+        ribbonEl.style.transform = V.vib < 1 ? "translateY(" + (1.5 * Math.sin(V.vib * Math.PI * 3) * (1 - V.vib)).toFixed(2) + "px)" : "none";
+
+        // floor of dots, drawn off screen then copied (smeared horizontally during a whip ; never a blurred giant layer)
+        fxDrawFloor(floorTmp, c, d, FLOOR);
+        var fctx = floorCv.getContext("2d");
+        fctx.clearRect(0, 0, 1920, 1080);
+        if (cb < 0.5) { fctx.globalAlpha = 1; fctx.drawImage(floorTmp, 0, 0); }
+        else { fctx.globalAlpha = 1 / 7; for (var k = -3; k <= 3; k++) fctx.drawImage(floorTmp, k * cb * 0.5, 0); fctx.globalAlpha = 1; }
+
+        // the frise of days
+        fxUpdateRibbon(rb, c, d, function (sg, z) { var e = edgeBlur(c, sg) * eF; sg.bl = fxCoc(z, d) + e; return e; });
+        if (mb) rb.segs.forEach(function (sg) { if (sg.el.style.display !== "none") fxBlur(sg.el, sg.bl, mb); });
+        LABS.forEach(function (L) {
+          var z = fxPlace(L[0], c, 360, 130, [fxX(L[1]), FX_RH - 120, 0], [1, 0, 0], [0, -1, 0]);
+          if (z > 0) fxBlur(L[0], fxCoc(z, d) + edgeBlur(c, { i: L[1] }) * eF, mb);
+        });
+
+        // LUN 12 : the real site in Safari, posed on the line, with its contact shadow
+        fxShadow(siteSh, c, [SITE_P[0], SITE_P[1], SITE_P[2] + 1], 1128 * 0.85 * 0.9);
+        var zs = fxStand(site, c, SITE_P, 0.85, 564, 692);
+        if (zs > 0) fxBlur(site, fxCoc(zs, d), mb);
+
+        // the request : message card linked to the title by a leader line, then pinned on the line at 09:12
+        var cs = CARD_BASE * V.cE * V.cP * V.cK;
+        var zc = fxStand(card, c, [V.cX, V.cY, CARD_Z], cs, 0, 0);
+        if (zc > 0) fxBlur(card, fxCoc(zc, d) + V.cB, mb);
+        var zp = fxStand(pin, c, [PIN_X, FX_LINE, CARD_Z - 2], 0.8 * V.pin, 9, 9);
+        pin.style.opacity = V.pin > 0.001 ? "1" : "0";
+        if (zp > 0) fxBlur(pin, fxCoc(zp, d), mb);
+        if (V.ln > 0.002 && zc > 0) {
+          var a = fxProject(c, PAS_W), b = fxProject(c, [V.cX, V.cY - 80 * cs, CARD_Z]);
+          var dx = b.x - a.x, dy = b.y - a.y, L = Math.sqrt(dx * dx + dy * dy) || 1, r0 = 21 * 0.85 * a.k;     // start at the pastille's rim
+          var x1 = a.x + dx / L * r0, y1 = a.y + dy / L * r0, x2 = x1 + (b.x - x1) * V.ln, y2 = y1 + (b.y - y1) * V.ln;
+          leadL.setAttribute("x1", x1.toFixed(1)); leadL.setAttribute("y1", y1.toFixed(1));
+          leadL.setAttribute("x2", x2.toFixed(1)); leadL.setAttribute("y2", y2.toFixed(1));
+          leadD.setAttribute("cx", x2.toFixed(1)); leadD.setAttribute("cy", y2.toFixed(1));
+          leadEl.style.display = "block";
+        } else leadEl.style.display = "none";
+
+        // MER 14 : the devis falls on its day, its shadow grows first
+        fxShadow(dvSh, c, [DEVIS_X, FX_LINE, -3], 520 * 0.9 * V.dvShG);
+        dvSh.style.opacity = V.dvShO.toFixed(3);
+        fxBlur(dvSh, 4 * (1 - V.dvShG));
+        // it arrives with the camera (a point in front of the lens, camera space), then detaches onto MER 14
+        var dP = [DEVIS_X, V.dvY, -4];
+        if (V.dW < 1) {
+          var q = fxFromCam(c, [200, V.dQy, V.dQz]), w = V.dW;
+          dP = [q[0] + (dP[0] - q[0]) * w, q[1] + (dP[1] - q[1]) * w, q[2] + (dP[2] - q[2]) * w];
+        }
+        var nD = Math.round(Math.min(40, cb * V.dW));
+        var zd = fxStand(devis, c, dP, 1.0, 260, 640, V.dvRot);
+        if (zd > 0) fxBlur(devis, fxCoc(zd, d) + V.dvB, nD >= 1 ? "url(#p01-mb" + nD + ")" : "");
+      }
+
+      /* ===================== the one paused timeline ===================== */
+      var tl = gsap.timeline({ paused: true, onUpdate: render });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+      function sw(target, from, to, pos) { var t = {}, k; for (k in to) t[k] = to[k]; t.duration = 0.001; t.ease = "none"; ft(target, from, t, pos); }
+      function cam(from, to, dur, ease, pos) { var t = {}, k; for (k in to) t[k] = to[k]; t.duration = dur; t.ease = ease; ft(C, from, t, pos); }
+      var WHIP_OUT = function (p) { return Math.pow(p, 2.585); };   // power2.in family, tuned so the seam leaves at +6000 u/s
+
+      /* ---- camera track ---- */
+      // scene 1 : drift x +20 u/s, z +40 u/s (a slight push)
+      cam({ x: 550, z: -1120 }, { x: 610, z: -1000 }, 3.0, "none", 0);
+      // scene 2 : whip LUN → MER. power2.in to the blur peak (60.6 % of the way, speeds matched), then expo.out to rest
+      var A = { x: 610, y: 760, z: -1000, yaw: 0, pitch: -2, roll: 0 }, B = { x: 3150, y: 830, z: -1200, yaw: 3, pitch: -2, roll: -1 }, F = 0.6063, M = {};
+      for (var key in A) M[key] = A[key] + (B[key] - A[key]) * F;
+      cam(A, M, 0.2, "power2.in", 3.0);
+      cam(M, B, 0.3, "expo.out", 3.2);
+      // drift z +40 u/s (push toward the price)
+      cam({ z: -1200 }, { z: -1122.4 }, 1.94, "none", 3.5);
+      // 5.44 → 6.00 : whip toward Friday, handoff cam(4450, 815, -1225, 2.5, -2, -1), +6000 u/s in x at 6.00
+      cam({ x: 3150, y: 830, z: -1122.4, yaw: 3, pitch: -2, roll: -1 }, { x: 4450, y: 815, z: -1225, yaw: 2.5, pitch: -2, roll: -1 }, 0.56, WHIP_OUT, 5.44);
+      // camera blur envelopes (peak 12 px)
+      sw(V, { mbx: 1 }, { mbx: 2.5 }, 3.0);                 // stronger smear inside the LUN → MER whip (peak speed 23 000 u/s)
+      ft(V, { cb: 0 }, { cb: 12, duration: 0.2, ease: "power2.in" }, 3.0);
+      ft(V, { cb: 12 }, { cb: 0, duration: 0.3, ease: "expo.out" }, 3.2);
+      sw(V, { mbx: 2.5 }, { mbx: 1 }, 3.5);
+      ft(V, { cb: 0 }, { cb: 12, duration: 0.56, ease: WHIP_OUT }, 5.44);
+
+      /* ---- scene 1 : LUN 12 ---- */
+      // « LUN 12 » prints under the line (0.3 → 1, x1.2 blur 6 → sharp, 0.12 s)
+      ft($("lab-lun-in"), { opacity: 0.3, scale: 1.2, filter: "blur(6px)", transformOrigin: "108px 60px" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.12, ease: "power3.out" }, 0);
+      // Monday's graduations light up left to right (0.01 s apart)
+      MON.forEach(function (m, i) { ft(m.el, { opacity: 0.4 }, { opacity: 1, duration: 0.12, ease: "power2.out" }, 0.10 + i * 0.01); });
+      // 0.52 : the dashed selection frame traces around the site's title (0.2 s), then its 4 handles (0.03 s apart)
+      ft($("sel-tint"), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.out" }, 0.52);
+      ft($("sel-t"), { scaleX: 0 }, { scaleX: 1, duration: 0.05, ease: "none" }, 0.52);
+      ft($("sel-r"), { scaleY: 0 }, { scaleY: 1, duration: 0.05, ease: "none" }, 0.57);
+      ft($("sel-b"), { scaleX: 0 }, { scaleX: 1, duration: 0.05, ease: "none" }, 0.62);
+      ft($("sel-l"), { scaleY: 0 }, { scaleY: 1, duration: 0.05, ease: "power2.out" }, 0.67);
+      [1, 2, 3, 4].forEach(function (k, i) { ft($("hd" + k), { opacity: 0, scale: 0.2 }, { opacity: 1, scale: 1, duration: 0.1, ease: "power3.out" }, 0.72 + i * 0.03); });
+      // 0.98 « tu » : an annotation pastille lands on the corner of the selection frame (review tool)
+      ft($("pastille"), { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.14, ease: "power3.out" }, 0.98);
+      // 1.04 its leader line runs to the free paper on the right ; 1.12 « demandes » : the message card lands at its end
+      ft(V, { ln: 0 }, { ln: 1, duration: 0.18, ease: "power2.out" }, 1.04);
+      ft(card, { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "none" }, 1.12);
+      ft(V, { cE: 1.1, cB: 6 }, { cE: 1, cB: 0, duration: 0.14, ease: "expo.out" }, 1.12);
+      ft(V, { cX: CARD_REST[0] - 60 }, { cX: CARD_REST[0], duration: 0.3, ease: "expo.out" }, 1.12);
+      // 1.56 click : the message is sent, its two grey ticks print (with the keyword box of the subtitle)
+      ft(V, { cP: 1 }, { cP: 0.97, duration: 0.05, ease: "power2.out" }, 1.56);
+      ft(V, { cP: 0.97 }, { cP: 1, duration: 0.14, ease: "power2.out" }, 1.61);
+      ft($("ctick"), { opacity: 0, scaleX: 0.2 }, { opacity: 1, scaleX: 1, duration: 0.12, ease: "power3.out" }, 1.56);
+      // 1.70 the card slides 20 px to the right (drift)
+      ft(V, { cX: CARD_REST[0] }, { cX: CARD_REST[0] + 21, duration: 0.82, ease: "none" }, 1.70);
+      // 2.52 silence : the annotation folds away (line retracts, frame and pastille fade) ; the card shrinks (x0.38, clear of « 12:00 »),
+      // drops along the right of the site, slides under the line and pins itself on the frise at LUN 12 09:12
+      ft($("sel"), { opacity: 1 }, { opacity: 0, duration: 0.18, ease: "power1.in" }, 2.52);
+      ft(V, { ln: 1 }, { ln: 0, duration: 0.12, ease: "power2.in" }, 2.52);
+      ft(V, { cK: 1 }, { cK: 0.38, duration: 0.2, ease: "power2.in" }, 2.52);
+      ft(V, { cY: CARD_REST[1] }, { cY: FX_LINE, duration: 0.22, ease: "power2.inOut" }, 2.52);
+      ft(V, { cX: CARD_REST[0] + 21 }, { cX: PIN_X, duration: 0.24, ease: "power2.inOut" }, 2.62);
+      ft(V, { cY: FX_LINE }, { cY: FX_LINE + 3, duration: 0.06, ease: "power2.out" }, 2.86);
+      ft(V, { cY: FX_LINE + 3 }, { cY: FX_LINE, duration: 0.06, ease: "power2.in" }, 2.92);
+      ft(V, { pin: 0 }, { pin: 1, duration: 0.1, ease: "power3.out" }, 2.86);
+
+      /* ---- scene 2 : MER 14 ---- */
+      // « MER 14 » prints under the line
+      ft($("lab-mer-in"), { opacity: 0.3, scale: 1.2, filter: "blur(6px)", transformOrigin: "108px 45px" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.12, ease: "power3.out" }, 3.40);
+      // 3.10 its shadow appears on the line at MER 14 and grows as the devis comes down (clearly, then fast at the fall)
+      ft(V, { dvShO: 0 }, { dvShO: 1, duration: 0.3, ease: "power1.out" }, 3.10);
+      ft(V, { dvShG: 0.3 }, { dvShG: 0.6, duration: 0.86, ease: "none" }, 3.10);
+      ft(V, { dvShG: 0.6 }, { dvShG: 1, duration: 0.30, ease: "power2.in" }, 3.96);
+      // 3.08 the devis comes from the camera during the whip (large, slightly blurred, turning), rides with it,
+      // 3.20 → 3.60 detaches and settles above MER 14, comes down slowly, then 3.96 falls : contact on « tombe » (4.26)
+      ft(devis, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, 3.08);
+      ft(V, { dQy: 420 }, { dQy: 110, duration: 0.24, ease: "expo.out" }, 3.08);
+      ft(V, { dvB: 6 }, { dvB: 0, duration: 0.3, ease: "power2.out" }, 3.08);
+      ft(V, { dvRot: -16 }, { dvRot: -9, duration: 0.52, ease: "power2.out" }, 3.08);
+      ft(V, { dW: 0 }, { dW: 1, duration: 0.4, ease: "power2.inOut" }, 3.20);
+      ft(V, { dvY: 920, dvRot: -9 }, { dvY: 880, dvRot: -8, duration: 0.36, ease: "none" }, 3.60);
+      ft(V, { dvY: 880, dvRot: -8 }, { dvY: FX_LINE, dvRot: -3, duration: 0.30, ease: "power2.in" }, 3.96);
+      // 4.26 contact : settle 0.97 → 1, the ruler vibrates under it, the camera shakes
+      ft(dvCard, { scaleY: 0.97, transformOrigin: "50% 100%" }, { scaleY: 1, duration: 0.08, ease: "power2.out" }, 4.26);
+      ft(V, { vib: 0 }, { vib: 1, duration: 0.1, ease: "none" }, 4.26);
+      ft(V, { shk: 0 }, { shk: 1, duration: 0.12, ease: "none" }, 4.26);
+      // 4.50 its content prints (mark, name, DEVIS N° 0147, the line, 1 jour …), 0.04 s apart
+      [".fx-dv-mark", ".fx-dv-name", ".fx-dv-sub", ".fx-dv-kind", ".fx-dv-lab", ".fx-dv-desc", ".fx-dv-qty", ".fx-dv-lines", ".fx-dv-tot .fx-micro"].forEach(function (s, i) {
+        ft(dvCard.querySelector(s), { opacity: 0, y: 6, filter: "blur(4px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 4.50 + i * 0.04);
+      });
+      // 4.80 the price's shadow in the cell, 4.92 « 1 000 € » prints (x1.3 blur 6 → sharp), the shadow tightens under it
+      ft(pShadow, { opacity: 0, scale: 1.18, y: 10, filter: "blur(8px)" }, { opacity: 1, scale: 1.1, y: 8, filter: "blur(6px)", duration: 0.12, ease: "power2.out" }, 4.80);
+      ft(dvPrice, { opacity: 0, scale: 1.3, filter: "blur(6px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.12, ease: "power3.out" }, 4.92);
+      ft(pShadow, { opacity: 1, scale: 1.1, y: 8, filter: "blur(6px)" }, { opacity: 0.35, scale: 1, y: 2, filter: "blur(2px)", duration: 0.14, ease: "power3.out" }, 4.92);
+      // 5.00 → 5.40 the thin terracotta stroke draws under the price
+      ft(dvStroke, { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out" }, 5.00);
+      // during the whip toward Friday the week moves on : JEU 15 prints as we cross it, VEN 16 lifts, ready to print
+      // (at 6.00 : JEU 15 at full ink, VEN 16 at 0.3, x1.2, blur 6, the state the next sequence starts from)
+      ft(jeuLab, { opacity: 0.3 }, { opacity: 1, duration: 0.3, ease: "power1.inOut" }, 5.56);
+      ft($("lab-ven-in"), { scale: 1, filter: "blur(0px)", transformOrigin: "108px 42px" }, { scale: 1.2, filter: "blur(6px)", duration: 0.3, ease: "power1.inOut" }, 5.56);
+
+      /* ---- the voice line : word by word, grey then ink ; one highlight per sentence ---- */
+      var GREY = "rgba(26,22,18,0.35)";
+      ["s1", "s2"].forEach(function (s) {
+        Array.prototype.forEach.call($(s).querySelectorAll(".fx-sw"), function (w) {
+          var cue = parseFloat(w.getAttribute("data-cue")), inkWord = w.classList.contains("fx-ink-tx");
+          ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+          if (inkWord) ft(w, { color: GREY }, { color: "#f6f1e9", duration: 0.1, ease: "none" }, cue + 0.04);
+          else ft(w, { color: GREY }, { color: "#1a1612", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+        });
+      });
+      ft($("ink1"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 1.54);
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.86);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 5.60);
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      // first image = handoff_in, before any seek
+      render();
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

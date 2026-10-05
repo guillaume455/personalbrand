@@ -1,0 +1,592 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground-light: paper + one soft warm radial behind the focal (full-duration clip) ---------- */
+    .f07-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #f6f1e9;
+    }
+    /* Centered on the input's final place (960, 520); starts shifted behind the right wing. */
+    .f07-halo {
+      position: absolute;
+      left: 210px;
+      top: 70px;
+      width: 1500px;
+      height: 900px;
+      border-radius: 50%;
+      opacity: 0;
+      transform-origin: 50% 50%;
+      background: radial-gradient(
+        closest-side,
+        rgba(194, 91, 40, 0.1),
+        rgba(194, 91, 40, 0.05) 45%,
+        rgba(194, 91, 40, 0.014) 75%,
+        rgba(194, 91, 40, 0)
+      );
+    }
+
+    /* static grain 3% (full-duration clip, on top) */
+    .f07-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+      opacity: 0.03;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    }
+
+    .f07-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* ---------- phrase: small, centered, top; word by word ---------- */
+    .f07-phrase {
+      position: absolute;
+      left: 0;
+      top: 104px;
+      width: 1920px;
+      z-index: 5;
+      text-align: center;
+      white-space: nowrap;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+    }
+    .f07-w {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* accent-pill: traces first, then the letters write inside */
+    .f07-pill {
+      display: inline-block;
+      position: relative;
+      padding: 0.06em 0.32em;
+      transform-origin: 0% 50%;
+    }
+    .f07-pill-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f07-pill-txt {
+      position: relative;
+      color: #ffffff;
+    }
+    .f07-ch {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* ---------- split wings (full-canvas layers so each tilts around its own column) ---------- */
+    .f07-left-go,
+    .f07-left-wing,
+    .f07-right-wing {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f07-left-wing {
+      opacity: 0;
+      transform-origin: 480px 520px;
+    }
+    .f07-right-wing {
+      opacity: 0;
+      transform-origin: 1440px 520px;
+    }
+
+    /* ---------- LEFT: persona-traducteur above the role-card ---------- */
+    .f07-figure {
+      position: absolute;
+      left: 330px;
+      top: 290px;
+      width: 300px;
+      height: 340px;
+      filter: drop-shadow(0 18px 30px rgba(60, 40, 20, 0.14));
+    }
+    .f07-persona-traducteur {
+      width: 300px;
+      height: 340px;
+    }
+    .f07-persona-traducteur svg {
+      display: block;
+    }
+
+    /* role-card, card-light on paper (widened to carry the Scene's title) */
+    .f07-role-card {
+      position: absolute;
+      left: 220px;
+      top: 600px;
+      width: 520px;
+      height: 128px;
+      box-sizing: border-box;
+      border-radius: 14px;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      box-shadow:
+        0 30px 80px rgba(60, 40, 20, 0.14),
+        0 2px 6px rgba(60, 40, 20, 0.08);
+    }
+    .f07-role-micro {
+      position: absolute;
+      left: 30px;
+      top: 20px;
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 22px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #5a5348;
+    }
+    .f07-role-title {
+      position: absolute;
+      left: 30px;
+      top: 52px;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 44px;
+      font-weight: 600;
+      line-height: 48px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      color: #1a1612;
+    }
+
+    /* ---------- RIGHT: chat-input (card-light on paper), authored at its FINAL centered geometry.
+       Shot 1 is the same card at uniform scale 0.52 shifted to the right column (card-morph-anchor). ---------- */
+    .f07-ask {
+      position: absolute;
+      left: 220px;
+      top: 350px;
+      width: 1480px;
+      height: 340px;
+      box-sizing: border-box;
+      overflow: hidden;
+      border-radius: 34.6px;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      box-shadow: 0px 30px 80px 0px rgba(60, 40, 20, 0.14), 0px 2px 6px 0px rgba(60, 40, 20, 0.08), 0px 0px 0px 0px rgba(194, 91, 40, 0);
+      transform-origin: 50% 50%;
+    }
+    .f07-label {
+      position: absolute;
+      left: 60px;
+      top: 46px;
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #5a5348;
+    }
+    .f07-prompt {
+      position: absolute;
+      left: 60px;
+      top: 98px;
+      width: 1260px;
+      white-space: pre;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 52px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      color: #1a1612;
+    }
+    .f07-cara {
+      position: relative;
+    }
+    .f07-caret {
+      position: absolute;
+      left: 3px;
+      top: 0.02em;
+      width: 4px;
+      height: 58px;
+      border-radius: 2px;
+      background: #d4703f;
+      opacity: 0;
+    }
+    .f07-send {
+      position: absolute;
+      right: 40px;
+      bottom: 40px;
+      width: 92px;
+      height: 92px;
+      border-radius: 14px;
+      background: linear-gradient(160deg, #d4703f, #c25b28 55%, #a84d22);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        0 12px 26px rgba(194, 91, 40, 0.3);
+      opacity: 0.4;
+    }
+    .f07-arrow {
+      position: absolute;
+      left: 26px;
+      top: 26px;
+      width: 40px;
+      height: 40px;
+      display: block;
+    }
+  </style>
+
+  <div id="root" data-composition-id="07-demander" data-width="1920" data-height="1080" data-duration="4.6">
+    <div id="f07-ground" class="clip f07-ground" data-start="0" data-duration="4.6" data-track-index="0">
+      <div id="f07-halo" class="f07-halo"></div>
+    </div>
+
+    <div id="f07-stage" class="clip f07-stage" data-start="0" data-duration="4.6" data-track-index="1">
+      <!-- LEFT WING: slide-out/dim wrapper > entry wrapper (split-tilt) > persona + role-card -->
+      <div id="f07-left-go" class="f07-left-go">
+        <div id="f07-left-wing" class="f07-left-wing">
+          <div class="f07-figure">
+            <!-- persona-traducteur (developer / agency / provider). Self-contained block, 300×340. Glasses, headset, laptop. Paper world: no dark rim, soft warm shadow on the wrapper. -->
+            <div class="f07-persona-traducteur">
+              <svg viewBox="0 0 300 340" width="300" height="340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20 340 L20 298 C20 256 58 230 110 224 L190 224 C242 230 280 256 280 298 L280 340 Z" fill="#4a3f36" />
+                <path d="M54 262 C60 288 74 298 92 298" fill="none" stroke="#3f352d" stroke-width="30" stroke-linecap="round" />
+                <path d="M246 262 C240 288 226 298 208 298" fill="none" stroke="#3f352d" stroke-width="30" stroke-linecap="round" />
+                <path d="M130 170 L170 170 L170 224 L150 240 L130 224 Z" fill="#d9b294" />
+                <circle cx="88" cy="128" r="10" fill="#ddb597" />
+                <circle cx="212" cy="128" r="10" fill="#ddb597" />
+                <circle cx="150" cy="120" r="62" fill="#e8c4a8" />
+                <path d="M90 110 C88 72 116 52 150 52 C186 52 212 72 210 110 C204 94 188 86 168 84 C144 82 110 88 90 110 Z" fill="#6b5a4c" />
+                <path d="M84 124 C80 36 220 36 216 124" fill="none" stroke="#2e2924" stroke-width="9" stroke-linecap="round" />
+                <rect x="74" y="110" width="20" height="38" rx="9" fill="#2e2924" />
+                <rect x="206" y="110" width="20" height="38" rx="9" fill="#2e2924" />
+                <path d="M86 146 C90 172 106 182 124 182" fill="none" stroke="#2e2924" stroke-width="5" stroke-linecap="round" />
+                <circle cx="127" cy="182" r="6" fill="#2e2924" />
+                <circle cx="128" cy="130" r="15" fill="none" stroke="#1a1612" stroke-width="3" />
+                <circle cx="172" cy="130" r="15" fill="none" stroke="#1a1612" stroke-width="3" />
+                <path d="M143 128 Q150 123 157 128 M113 127 L99 123 M187 127 L201 123" fill="none" stroke="#1a1612" stroke-width="3" stroke-linecap="round" />
+                <circle cx="128" cy="131" r="4.5" fill="#1a1612" />
+                <circle cx="172" cy="131" r="4.5" fill="#1a1612" />
+                <rect x="92" y="222" width="116" height="72" rx="7" fill="#2e2924" stroke="rgba(245,239,231,0.08)" stroke-width="1.5" />
+                <circle cx="150" cy="258" r="6" fill="rgba(245,239,231,0.16)" />
+                <rect x="82" y="292" width="136" height="9" rx="4" fill="#1f1a16" />
+                <circle cx="92" cy="297" r="11" fill="#e8c4a8" />
+                <circle cx="208" cy="297" r="11" fill="#e8c4a8" />
+              </svg>
+            </div>
+            <!-- /persona-traducteur -->
+          </div>
+
+          <!-- role-card, card-light on paper: micro « RÔLE » + title -->
+          <div id="f07-role-card" class="f07-role-card">
+            <div class="f07-role-micro">R&Ocirc;LE</div>
+            <div id="f07-role-title" class="f07-role-title">Quelqu&rsquo;un qui sait faire</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT WING: split-tilt entry wrapper > chat-input (the card-morph-anchor container) -->
+      <div id="f07-right-wing" class="f07-right-wing">
+        <div id="f07-ask" class="f07-ask">
+          <div class="f07-label">TA DEMANDE, EN FRAN&Ccedil;AIS</div>
+          <div class="f07-prompt"><span id="f07-typed"></span><span class="f07-cara"><span id="f07-caret" class="f07-caret"></span></span></div>
+          <div id="f07-send" class="f07-send">
+            <svg class="f07-arrow" viewBox="0 0 40 40" width="40" height="40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M20 31 V10 M11 19 L20 10 L29 19" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phrase A (Scene 1), word by word on the voice -->
+      <div id="f07-phrase-a" class="f07-phrase"><span id="f07-a1" class="f07-w">Tu</span> <span id="f07-a2" class="f07-w">n&rsquo;as</span> <span id="f07-a3" class="f07-w">plus</span> <span id="f07-a4" class="f07-w">besoin</span> <span id="f07-a5" class="f07-w">de</span> <span id="f07-a6" class="f07-w">quelqu&rsquo;un</span> <span id="f07-a7" class="f07-w">qui</span> <span id="f07-a8" class="f07-w">sait</span> <span id="f07-a9" class="f07-w">faire.</span></div>
+
+      <!-- Phrase B (Scene 2), word by word + the one traced accent pill -->
+      <div id="f07-phrase-b" class="f07-phrase"><span id="f07-b1" class="f07-w">Tu</span> <span id="f07-b2" class="f07-w">as</span> <span id="f07-b3" class="f07-w">besoin</span> <span id="f07-b4" class="f07-w">de</span> <span id="f07-pill" class="f07-pill"><span id="f07-pill-bg" class="f07-pill-bg"></span><span id="f07-pill-txt" class="f07-pill-txt" data-text="savoir demander."></span></span></div>
+    </div>
+
+    <div id="f07-grain" class="clip f07-grain" data-start="0" data-duration="4.6" data-track-index="2"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var DURATION = 4.2;
+      window.__timelines = window.__timelines || {};
+
+      function el(name) {
+        return document.getElementById("f07-" + name);
+      }
+
+      /* ---------- build-time DOM (deterministic) ---------- */
+
+      /* seeded PRNG (Park-Miller), fixed seed: the keystroke rhythm is identical on every render */
+      var seed = 20260707;
+      function rnd() {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+      }
+
+      /* pill letters */
+      var pillTxt = el("pill-txt");
+      var pillText = pillTxt.getAttribute("data-text");
+      for (var p = 0; p < pillText.length; p++) {
+        var c = document.createElement("span");
+        c.className = "f07-ch";
+        c.textContent = pillText.charAt(p) === " " ? " " : pillText.charAt(p);
+        pillTxt.appendChild(c);
+      }
+      var pillCh = pillTxt.querySelectorAll(".f07-ch");
+
+      var halo = el("halo");
+      var leftGo = el("left-go");
+      var leftWing = el("left-wing");
+      var rightWing = el("right-wing");
+      var ask = el("ask");
+      var typed = el("typed");
+      var caret = el("caret");
+      var send = el("send");
+
+      /* card-morph-anchor geometry: the card is authored at its final centered size (1480x340 at 960,520).
+         Shot 1 = uniform scale S1, shifted to the right column centre (1440,520). */
+      var S1 = 0.52;
+      var DX1 = 480;
+      var R1 = 18 / S1; /* apparent 18px radius in shot 1 (borderRadius is pre-scale) */
+      var R2 = 14; /* apparent 14px radius at scale 1 */
+      var SH1 = "0px 30px 80px 0px rgba(60,40,20,0.14), 0px 2px 6px 0px rgba(60,40,20,0.08), 0px 0px 0px 0px rgba(194,91,40,0)";
+      var SH2 = "0px 40px 100px 0px rgba(60,40,20,0.16), 0px 2px 6px 0px rgba(60,40,20,0.08), 0px 0px 60px 0px rgba(194,91,40,0.07)";
+      gsap.set(ask, { x: DX1, y: 0, scale: S1, borderRadius: R1, boxShadow: SH1 });
+      gsap.set(halo, { x: DX1, scale: 0.6 });
+
+      /* ---------- timeline ---------- */
+      var tl = gsap.timeline({ paused: true });
+
+      /* Every later element is opacity:0 in CSS and revealed here; every fromTo is
+         immediateRender:false and its from-state equals the previous end-state on the
+         same property, so any seek order lands on the right frame. */
+      function ft(node, from, to, at) {
+        to.immediateRender = false;
+        tl.fromTo(node, from, to, at);
+      }
+      function on(node, at) {
+        ft(node, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, at);
+      }
+      function off(node, at) {
+        ft(node, { opacity: 1 }, { opacity: 0, duration: 0.01, ease: "none" }, at);
+      }
+
+      /* frame.md word-by-word */
+      function wordIn(node, at) {
+        ft(node, { opacity: 0, y: 10, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, at);
+      }
+
+      /* frame.md accent-pill: trace from the left (rotation -8 -> 0), then the letters write inside */
+      function pillIn(at) {
+        ft(el("pill-bg"), { scaleX: 0, opacity: 1 }, { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out" }, at);
+        ft(el("pill"), { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out" }, at);
+        ft(pillCh, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.16, ease: "power2.out", stagger: 0.02 }, at + 0.2);
+      }
+
+      /* ---------- Ground halo ---------- */
+      ft(halo, { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.1);
+
+      /* ---------- Scene 1 (0.00-2.30): split, role-card + translator | empty chat-input ----------
+         comparison-split signature: opposite-wing entry with mirrored book-open rotateY, right 0.18 s behind. */
+      ft(
+        leftWing,
+        { x: -240, rotationY: 36, scale: 0.85, transformPerspective: 1400 },
+        { x: 0, rotationY: 8, scale: 1, transformPerspective: 1400, duration: 0.8, ease: "expo.out" },
+        0.02
+      );
+      ft(leftWing, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "none" }, 0.02);
+      ft(
+        rightWing,
+        { x: 240, rotationY: -36, scale: 0.85, transformPerspective: 1400 },
+        { x: 0, rotationY: -8, scale: 1, transformPerspective: 1400, duration: 0.8, ease: "expo.out" },
+        0.2
+      );
+      ft(rightWing, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "none" }, 0.2);
+
+      /* phrase A, each word on its voice cue (starts 1 frame early) */
+      wordIn(el("a1"), 0.25); /* Tu 0.27 */
+      wordIn(el("a2"), 0.35); /* n'as 0.37 */
+      wordIn(el("a3"), 0.49); /* plus 0.51 */
+      wordIn(el("a4"), 0.69); /* besoin 0.71 */
+      wordIn(el("a5"), 0.87); /* de 0.89 */
+      wordIn(el("a6"), 1.09); /* quelqu'un 1.11 */
+      wordIn(el("a7"), 1.37); /* qui 1.39 */
+      wordIn(el("a8"), 1.57); /* sait 1.59 */
+      wordIn(el("a9"), 1.77); /* faire 1.79 */
+
+      /* On « sait » (1.59): the left side dims to 30% and slides left out of frame by 2.30 (power3.in). */
+      ft(leftGo, { opacity: 1 }, { opacity: 0.3, duration: 0.26, ease: "power1.out" }, 1.59);
+      ft(leftGo, { x: 0 }, { x: -1040, duration: 0.71, ease: "power3.in" }, 1.59);
+
+      /* The empty input waits: the caret blinks in finite 0.5 s on/off steps. */
+      on(caret, 0.4);
+      off(caret, 0.65);
+      on(caret, 0.9);
+      off(caret, 1.15);
+      on(caret, 1.4);
+      off(caret, 1.65);
+      on(caret, 1.9);
+      off(caret, 2.15);
+      on(caret, 2.4); /* solid while typing */
+
+      /* ---------- Scene 2 (2.30-4.20): card-morph-anchor, the input glides to centre and grows ----------
+         One tween, all channels: x (landing on the centre) + uniform scale + paint-only borderRadius / boxShadow.
+         The wing's tilt resolves in the same window, same ease; the halo travels with it. */
+      var MORPH_START = 2.18;
+      var MORPH_DUR = 0.86;
+      ft(
+        ask,
+        { x: DX1, y: 0, scale: S1, borderRadius: R1, boxShadow: SH1 },
+        { x: 0, y: 0, scale: 1, borderRadius: R2, boxShadow: SH2, duration: MORPH_DUR, ease: "power2.inOut" },
+        MORPH_START
+      );
+      ft(
+        rightWing,
+        { rotationY: -8, transformPerspective: 1400 },
+        { rotationY: 0, transformPerspective: 1400, duration: MORPH_DUR, ease: "power2.inOut" },
+        MORPH_START
+      );
+      ft(halo, { x: DX1, scale: 0.6 }, { x: 0, scale: 1, duration: MORPH_DUR, ease: "power2.inOut" }, MORPH_START);
+
+      /* Typing, char by char, 2.50 -> 3.80. A proxy whose setter writes the visible substring:
+         the tweened value IS timeline time, mapped through a fixed keystroke schedule
+         (seeded rhythm, longer beats after spaces and punctuation). Two lines max. */
+      var PROMPT = "Ajoute un bouton “Réserver” sous le titre,\naux couleurs de ma marque.";
+      var N = PROMPT.length;
+      var T0 = 2.48;
+      var FIRST = 2.5;
+      var T1 = 3.8;
+      var cum = [0];
+      var sum = 0;
+      for (var k = 1; k < N; k++) {
+        var prev = PROMPT.charAt(k - 1);
+        var ch = PROMPT.charAt(k);
+        var base = 1;
+        if (prev === " ") base = 1.5;
+        if (prev === "," || prev === ".") base = 2.2;
+        if (ch === "\n" || prev === "\n") base = Math.max(base, 1.3);
+        sum += base * (0.7 + 0.6 * rnd());
+        cum.push(sum);
+      }
+      var keyTimes = [];
+      for (k = 0; k < N; k++) keyTimes.push(FIRST + (T1 - FIRST) * (cum[k] / sum));
+
+      var shown = -1;
+      function paint(t) {
+        var n = 0;
+        while (n < N && keyTimes[n] <= t + 1e-6) n++;
+        if (n !== shown) {
+          shown = n;
+          typed.textContent = PROMPT.slice(0, n);
+        }
+      }
+      var typerT = T0;
+      var typer = {};
+      Object.defineProperty(typer, "t", {
+        get: function () {
+          return typerT;
+        },
+        set: function (v) {
+          typerT = v;
+          paint(v);
+        },
+        enumerable: true,
+        configurable: true
+      });
+      paint(-1);
+      ft(typer, { t: T0 }, { t: T1, duration: T1 - T0, ease: "none" }, T0);
+
+      /* the send button arms with the first keystroke */
+      ft(send, { opacity: 0.4 }, { opacity: 1, duration: 0.2, ease: "power1.out" }, FIRST);
+
+      /* finished request: one blink on the hold */
+      off(caret, 4.05);
+
+      /* ---------- Phrase seam (cut catalog: waterfall cut, leftward like the wing that leaves) ----------
+         Phrase A rips left word by word on power4.in; the last fade dies at the cut (2.46);
+         phrase B continues leftward, each word on its own cue (power4.out, mirrored). */
+      var CUT = 2.46;
+      var EX_MOVE = 0.34;
+      var EX_FADE = 0.18;
+      var EX_LAG = 0.07;
+      var EX_STAG = 0.022;
+      var exitUnits = [el("a1"), el("a2"), el("a3"), el("a4"), el("a5"), el("a6"), el("a7"), el("a8"), el("a9")];
+      var lastExit = CUT - EX_FADE - EX_LAG;
+      exitUnits.forEach(function (unit, idx) {
+        var st = lastExit - (exitUnits.length - 1 - idx) * EX_STAG;
+        ft(unit, { x: 0 }, { x: -230, duration: EX_MOVE, ease: "power4.in" }, st);
+        ft(unit, { opacity: 1 }, { opacity: 0, duration: EX_FADE, ease: "power1.in" }, st + EX_LAG);
+      });
+
+      function slideIn(node, at) {
+        ft(node, { x: 230, filter: "blur(8px)" }, { x: 0, filter: "blur(0px)", duration: 0.3, ease: "power4.out" }, at);
+        ft(node, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, at);
+      }
+      slideIn(el("b1"), 2.48); /* Tu 2.50 */
+      slideIn(el("b2"), 2.59); /* as 2.61 */
+      slideIn(el("b3"), 2.75); /* besoin 2.77 */
+      slideIn(el("b4"), 2.95); /* de 2.97 */
+      pillIn(3.13); /* savoir 3.17, demander 3.51 */
+
+      /* Hold to the end (no exit, no breathing loop). */
+      tl.set({}, {}, DURATION);
+
+      window.__timelines["07-demander"] = tl;
+    })();
+  </script>
+</template>

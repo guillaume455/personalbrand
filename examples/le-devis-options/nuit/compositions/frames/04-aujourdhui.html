@@ -1,0 +1,585 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #f5efe7;
+    }
+
+    /* ---------- ground-warm-night (track 0, full duration, static: the orchestrator's bloom settles into it) ---------- */
+    #f04-ground {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: #120d0a;
+      overflow: hidden;
+    }
+    /* the lamp: one big warm radial behind the focal point (accent-light 38%, radius 900px, soft falloff) */
+    #f04-ground-warm {
+      position: absolute;
+      left: 60px;
+      top: -460px;
+      width: 1800px;
+      height: 1800px;
+      border-radius: 50%;
+      background: radial-gradient(
+        closest-side,
+        rgba(212, 112, 63, 0.38) 0%,
+        rgba(212, 112, 63, 0.31) 16%,
+        rgba(212, 112, 63, 0.19) 38%,
+        rgba(212, 112, 63, 0.08) 64%,
+        rgba(212, 112, 63, 0.02) 86%,
+        rgba(212, 112, 63, 0) 100%
+      );
+    }
+    /* second faint radial off-center for depth (accent-glow 12%) */
+    #f04-ground-side {
+      position: absolute;
+      left: 940px;
+      top: -470px;
+      width: 1240px;
+      height: 1240px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(224, 138, 92, 0.12) 0%, rgba(224, 138, 92, 0.05) 50%, rgba(224, 138, 92, 0) 100%);
+    }
+    /* soft light falloff toward the edges of the room */
+    #f04-ground-vignette {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: radial-gradient(ellipse 78% 72% at 50% 42%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.22) 78%, rgba(0, 0, 0, 0.48) 100%);
+    }
+
+    /* ---------- scene (track 1, full duration) ---------- */
+    #f04-scene {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* Scene 1: micro + giant word */
+    #f04-s1 {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 960px 450px;
+    }
+    #f04-micro {
+      position: absolute;
+      left: 0;
+      top: 300px;
+      width: 1920px;
+      box-sizing: border-box;
+      padding-left: 0.2em;
+      text-align: center;
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 24px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #cdbfb2;
+      opacity: 0;
+    }
+    #f04-giant-wrap {
+      position: absolute;
+      left: 0;
+      top: 333px;
+      width: 1920px;
+      height: 234px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* one shadow for the whole word (per-letter shadows would overlap the neighbouring glyphs) */
+      filter: drop-shadow(0 26px 44px rgba(10, 6, 4, 0.5));
+    }
+    #f04-giant {
+      display: block;
+      flex: 0 0 auto;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 700;
+      font-size: 260px;
+      line-height: 0.9;
+      letter-spacing: -13px;
+      text-indent: -13px;
+      white-space: nowrap;
+      color: #f5efe7;
+      opacity: 0;
+    }
+
+    /* Scene 2: orb + orbit */
+    #f04-camera {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 960px 430px;
+    }
+    /* ambient-glow-bloom: the orb's strong warm bloom that lights the stage around it */
+    #f04-glow {
+      position: absolute;
+      left: 310px;
+      top: -220px;
+      width: 1300px;
+      height: 1300px;
+      border-radius: 50%;
+      z-index: 0;
+      background: radial-gradient(
+        closest-side,
+        rgba(236, 142, 92, 1) 0%,
+        rgba(212, 112, 63, 0.86) 13%,
+        rgba(194, 91, 40, 0.5) 29%,
+        rgba(168, 77, 34, 0.22) 52%,
+        rgba(168, 77, 34, 0.07) 76%,
+        rgba(168, 77, 34, 0) 100%
+      );
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    #f04-ring-svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: visible;
+      z-index: 1;
+      opacity: 0;
+    }
+    #f04-orb {
+      position: absolute;
+      left: 845px;
+      top: 315px;
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      z-index: 25;
+      transform-origin: 50% 50%;
+      background:
+        radial-gradient(circle at 36% 31%, rgba(255, 243, 234, 0.95) 0%, rgba(255, 243, 234, 0.4) 13%, rgba(255, 243, 234, 0) 28%),
+        radial-gradient(circle at 44% 40%, #eb9a6c 0%, #e08a5c 14%, #d4703f 34%, #c25b28 62%, #a84d22 100%);
+      box-shadow:
+        inset -18px -24px 50px rgba(90, 34, 10, 0.42),
+        inset 10px 12px 30px rgba(255, 243, 234, 0.2),
+        inset 0 0 0 1px rgba(255, 214, 186, 0.22);
+      opacity: 0;
+    }
+
+    .f04-orbit {
+      position: absolute;
+      left: 960px;
+      top: 430px;
+    }
+    /* glass-card-warm */
+    .f04-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 30px 20px 24px;
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(64, 46, 36, 0.94), rgba(40, 30, 24, 0.92) 50%, rgba(34, 25, 20, 0.94));
+      border: 1px solid rgba(255, 210, 175, 0.16);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 235, 215, 0.18),
+        0 40px 110px rgba(0, 0, 0, 0.65),
+        0 0 60px rgba(194, 91, 40, 0.12);
+      white-space: nowrap;
+      transform-origin: 50% 50%;
+      will-change: transform;
+      opacity: 0;
+    }
+    .f04-dot {
+      display: block;
+      flex: 0 0 auto;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #d4703f;
+    }
+    .f04-label {
+      display: block;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 1.3;
+      color: #f5efe7;
+    }
+
+    /* Phrase, lower-center, word by word + accent pill */
+    #f04-phrase {
+      position: absolute;
+      left: 0;
+      top: 780px;
+      width: 1920px;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 14px;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      font-size: 54px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+      text-shadow: 0 6px 24px rgba(10, 6, 4, 0.45);
+      white-space: nowrap;
+    }
+    .f04-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    #f04-pill {
+      display: inline-block;
+      position: relative;
+      margin-left: 2px;
+      padding: 0.06em 0.32em;
+      transform-origin: 0% 50%;
+      text-shadow: none;
+    }
+    #f04-pill-bg {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      box-shadow: 0 14px 40px rgba(10, 6, 4, 0.45);
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    #f04-pill-txt {
+      position: relative;
+      display: inline-block;
+      color: #fffdf9;
+    }
+    .f04-ch {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* ---------- grain (track 2, full duration, static 5%) ---------- */
+    #f04-grain {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='220' height='220' filter='url(%23g)'/></svg>");
+      background-size: 220px 220px;
+    }
+  </style>
+
+  <div id="root" data-composition-id="04-aujourdhui" data-width="1920" data-height="1080" data-duration="3.36">
+    <div id="f04-ground" class="clip" data-start="0" data-duration="3.36" data-track-index="0">
+      <div id="f04-ground-warm" data-layout-ignore></div>
+      <div id="f04-ground-side" data-layout-ignore></div>
+      <div id="f04-ground-vignette" data-layout-ignore></div>
+    </div>
+
+    <div id="f04-scene" class="clip" data-start="0" data-duration="3.36" data-track-index="1">
+      <!-- Scene 1 (0.00 to 1.40): SAUF QUE + giant word -->
+      <div id="f04-s1">
+        <div id="f04-micro">Sauf que</div>
+        <div id="f04-giant-wrap">
+          <div id="f04-giant">Aujourd’hui,</div>
+        </div>
+      </div>
+
+      <!-- Scene 2 (1.40 to 2.86): orb + orbiting tasks -->
+      <div id="f04-camera">
+        <div id="f04-glow" data-layout-ignore></div>
+        <svg id="f04-ring-svg" data-layout-ignore viewBox="0 0 1920 1080" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+          <ellipse id="f04-ring" cx="960" cy="430" rx="560" ry="240" fill="none" stroke="rgba(236,150,104,0.34)" stroke-width="1.5"></ellipse>
+        </svg>
+        <div id="f04-orb"></div>
+
+        <div id="f04-orbit-0" class="f04-orbit" data-angle="208">
+          <div id="f04-card-0" class="f04-card">
+            <span class="f04-dot"></span>
+            <span class="f04-label">Modifier ton site</span>
+          </div>
+        </div>
+        <div id="f04-orbit-1" class="f04-orbit" data-angle="332">
+          <div id="f04-card-1" class="f04-card">
+            <span class="f04-dot"></span>
+            <span class="f04-label">Créer une page</span>
+          </div>
+        </div>
+        <div id="f04-orbit-2" class="f04-orbit" data-angle="92">
+          <div id="f04-card-2" class="f04-card">
+            <span class="f04-dot"></span>
+            <span class="f04-label">Réparer une automatisation</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="f04-phrase">
+        <span id="f04-w0" class="f04-w">L’IA</span>
+        <span id="f04-w1" class="f04-w">sait</span>
+        <span id="f04-w2" class="f04-w">faire</span>
+        <span id="f04-pill">
+          <span id="f04-pill-bg"></span>
+          <span id="f04-pill-txt"><span class="f04-ch">t</span><span class="f04-ch">o</span><span class="f04-ch">u</span><span class="f04-ch">t</span><span class="f04-ch">&nbsp;</span><span class="f04-ch">ç</span><span class="f04-ch">a</span><span class="f04-ch">.</span></span>
+        </span>
+      </div>
+    </div>
+
+    <div id="f04-grain" class="clip" data-start="0" data-duration="3.36" data-track-index="2" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      var DUR = 2.86;
+      // Frame-local cues (word cues from the voice)
+      var T_MICRO = 0.3; // "SAUF QUE"
+      var T_GIANT = 0.44; // "Sauf"; giant lands before "qu'aujourd'hui" @0.60
+      var T_CUT = 1.4; // hard-cut swap to the hub
+      var EXIT = 0.18; // zoom-through exit into the cut
+      var T_RING = 1.46;
+      var T_W = [1.54, 1.68, 1.86]; // L'IA, sait, faire
+      var T_PILL = 1.98; // pill traces 2 frames before "tout" @2.04
+      var T_CHARS = 2.08;
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ---------- Scene 1 (0.00 to 1.40) ---------- */
+
+      // micro, word-by-word entrance
+      tl.fromTo(
+        $("f04-micro"),
+        { opacity: 0, y: 10, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" },
+        T_MICRO,
+      );
+
+      // giant-word tracking via transforms (spacing stays static in CSS; it snaps to device pixels under seek capture):
+      // letters split into inline-blocks, each starts offset as if tracked +0.4em, then slides home.
+      var trackChars = function (root) {
+        var t = root.textContent;
+        root.textContent = "";
+        var out = [];
+        for (var i = 0; i < t.length; i++) {
+          var s = document.createElement("span");
+          s.style.display = "inline-block";
+          s.style.whiteSpace = "pre";
+          s.textContent = t[i];
+          root.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      };
+      var trackIn = function (chars, spread, dur, ease, at) {
+        var n = chars.length;
+        chars.forEach(function (c, i) {
+          tl.fromTo(c, { x: (i - (n - 1) / 2) * spread }, { x: 0, duration: dur, ease: ease, immediateRender: false }, at);
+        });
+      };
+      // giant-word: tracking 0.35em -> -0.05em (260px: 104px of travel per letter step),
+      // opacity + blur 12 -> 0, 0.5s expo.out
+      tl.fromTo(
+        $("f04-giant"),
+        { opacity: 0, filter: "blur(12px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" },
+        T_GIANT,
+      );
+      trackIn(trackChars($("f04-giant")), 104, 0.5, "expo.out", T_GIANT);
+
+      /* ---------- Seam: forward zoom-through, hard cut at peak blur (cut catalog) ---------- */
+      var s1 = $("f04-s1");
+      tl.fromTo(
+        s1,
+        { scale: 1, filter: "blur(0px)" },
+        { scale: 1.18, filter: "blur(10px)", duration: EXIT, ease: "power3.in", immediateRender: false },
+        T_CUT - EXIT,
+      );
+      tl.fromTo(s1, { opacity: 1 }, { opacity: 0.15, duration: EXIT, ease: "none", immediateRender: false }, T_CUT - EXIT);
+      tl.set(s1, { opacity: 0 }, T_CUT);
+
+      /* ---------- Scene 2 (1.40 to 2.86) ---------- */
+
+      // gentle pull-back under the hub (orbit finisher's ecosystem reveal)
+      var cam = $("f04-camera");
+      gsap.set(cam, { transformOrigin: "960px 430px" });
+      tl.fromTo(
+        cam,
+        { scale: 1.035 },
+        { scale: 1, duration: DUR - T_CUT, ease: "power2.out", immediateRender: false },
+        T_CUT,
+      );
+
+      // the orb enters at the cut with matched blur/opacity, and the glow blooms behind it as ONE beat
+      var BLOOM = 0.6;
+      tl.fromTo(
+        $("f04-orb"),
+        { opacity: 0.15, scale: 0.6, filter: "blur(10px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: BLOOM, ease: "expo.out", immediateRender: false },
+        T_CUT,
+      );
+      // ambient-glow-bloom, hero bloom (bloom-and-hold: scene under 3s, no breathe); strong warm bloom, under the 0.45 ceiling
+      tl.fromTo(
+        $("f04-glow"),
+        { opacity: 0, scale: 0.85 },
+        { opacity: 0.42, scale: 1, duration: BLOOM, ease: "power2.out", immediateRender: false },
+        T_CUT,
+      );
+
+      // orbit ring draws on (clockwise, like the orbit)
+      var CX = 960;
+      var CY = 430;
+      var RX = 560;
+      var RY = 240;
+      var PERIM = Math.PI * (3 * (RX + RY) - Math.sqrt((3 * RX + RY) * (RX + 3 * RY)));
+      var DASH = Math.ceil(PERIM) + 4;
+      var ring = $("f04-ring");
+      ring.setAttribute("stroke-dasharray", DASH + " " + DASH);
+      ring.setAttribute("stroke-dashoffset", String(DASH));
+      tl.set($("f04-ring-svg"), { opacity: 1 }, T_RING);
+      tl.fromTo(
+        ring,
+        { attr: { "stroke-dashoffset": DASH } },
+        { attr: { "stroke-dashoffset": 0 }, duration: 0.7, ease: "power2.inOut", immediateRender: false },
+        T_RING,
+      );
+
+      // orbit-3d-entry: each card is parked on its orbital position, flips in IN PLACE from 3D space,
+      // then keeps travelling clockwise on the ellipse (one deterministic driver, own start angle per card)
+      var REV = 18; // seconds per revolution
+      var STAGGER = 0.1;
+      var ENTRY = 0.6;
+      var T_CARD = 1.5;
+      var orbits = [];
+      for (var i = 0; i < 3; i++) {
+        var pos = $("f04-orbit-" + i);
+        orbits.push({
+          el: pos,
+          a0: (Number(pos.getAttribute("data-angle")) / 360) * Math.PI * 2,
+          start: T_CARD + i * STAGGER,
+        });
+      }
+      function renderOrbit(t) {
+        for (var k = 0; k < orbits.length; k++) {
+          var o = orbits[k];
+          var p = Math.max(0, t - o.start) / REV;
+          var a = o.a0 + p * Math.PI * 2;
+          var x = Math.cos(a) * RX;
+          var y = Math.sin(a) * RY;
+          var depth = (y + RY) / (2 * RY); // 0 = back of the ring, 1 = front
+          o.el.style.zIndex = String(1 + Math.round(depth * 49)); // capped band [1, 50]; orb sits at 25
+          o.el.style.transform =
+            "translate(-50%, -50%) translate(" +
+            x.toFixed(2) +
+            "px, " +
+            y.toFixed(2) +
+            "px) scale(" +
+            (0.92 + 0.08 * depth).toFixed(4) +
+            ")";
+          // depth cue: cards at the back of the ring sit a touch further from the lamp
+          o.el.style.filter = "brightness(" + (0.8 + 0.2 * depth).toFixed(4) + ")";
+        }
+      }
+      renderOrbit(0);
+      var driver = { t: 0 };
+      tl.fromTo(
+        driver,
+        { t: 0 },
+        {
+          t: DUR,
+          duration: DUR,
+          ease: "none",
+          onUpdate: function () {
+            renderOrbit(driver.t);
+          },
+        },
+        0,
+      );
+
+      for (var j = 0; j < 3; j++) {
+        var card = $("f04-card-" + j);
+        gsap.set(card, { transformPerspective: 900, transformOrigin: "50% 50%" });
+        tl.fromTo(
+          card,
+          { rotateX: 70, rotateY: -50, z: -300, scale: 0.4, opacity: 0 },
+          { rotateX: 0, rotateY: 0, z: 0, scale: 1, opacity: 1, duration: ENTRY, ease: "power4.out", immediateRender: false },
+          T_CARD + j * STAGGER,
+        );
+      }
+
+      // phrase, word by word on the voice
+      for (var w = 0; w < T_W.length; w++) {
+        tl.fromTo(
+          $("f04-w" + w),
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+          T_W[w],
+        );
+      }
+
+      // accent-pill: traces first (scaleX from the left + rotation settle), THEN the letters write inside
+      tl.fromTo(
+        $("f04-pill-bg"),
+        { scaleX: 0, opacity: 1 },
+        { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out", immediateRender: false },
+        T_PILL,
+      );
+      tl.fromTo(
+        $("f04-pill"),
+        { rotation: -8 },
+        { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false },
+        T_PILL,
+      );
+      var chars = document.querySelectorAll("#f04-pill-txt .f04-ch");
+      for (var c = 0; c < chars.length; c++) {
+        tl.fromTo(
+          chars[c],
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.2, ease: "power3.out", immediateRender: false },
+          T_CHARS + c * 0.02,
+        );
+      }
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["04-aujourdhui"] = tl;
+    })();
+  </script>
+</template>

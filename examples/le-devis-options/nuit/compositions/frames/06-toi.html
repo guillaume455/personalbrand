@@ -1,0 +1,561 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-500.woff2') format('woff2');
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-600.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-700.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url('assets/fonts/SpaceMono-400.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url('assets/fonts/SpaceMono-700.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #f5efe7;
+      -webkit-font-smoothing: antialiased;
+    }
+    #root *,
+    #root *::before,
+    #root *::after {
+      box-sizing: border-box;
+    }
+
+    /* ground-warm-night: solid #120d0a + one big warm radial behind the focal (TOI.)
+       + a faint off-center radial behind the card for depth + edge vignette */
+    #f06-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 0;
+      background: #120d0a;
+      overflow: hidden;
+    }
+    #f06-lamp {
+      position: absolute;
+      left: 480px;
+      top: -400px;
+      width: 1800px;
+      height: 1800px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(212, 112, 63, 0.38), rgba(212, 112, 63, 0.22) 28%, rgba(194, 91, 40, 0.1) 55%, rgba(194, 91, 40, 0.03) 78%, rgba(194, 91, 40, 0) 100%);
+    }
+    #f06-fill {
+      position: absolute;
+      left: -180px;
+      top: -120px;
+      width: 1200px;
+      height: 1000px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(224, 138, 92, 0.12), rgba(224, 138, 92, 0.05) 50%, rgba(224, 138, 92, 0) 100%);
+    }
+    #f06-vignette {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: radial-gradient(ellipse 75% 80% at 62% 44%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.28) 82%, rgba(0, 0, 0, 0.5) 100%);
+    }
+
+    #f06-content {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 1;
+    }
+
+    /* the pinned anchor: le devis (glass-card-warm), 1.25x, inside the left 45% (x <= 864) */
+    #f06-card {
+      position: absolute;
+      left: 60px;
+      top: 116px;
+      width: 804px;
+      padding: 48px 40px 44px 70px;
+      border-radius: 16px;
+      /* glass-card-warm + a rim light on the right edge, the side facing the lamp (depth) */
+      background: linear-gradient(100deg, rgba(224, 138, 92, 0) 52%, rgba(224, 138, 92, 0.07) 100%), linear-gradient(160deg, rgba(64, 46, 36, 0.94), rgba(40, 30, 24, 0.92) 50%, rgba(34, 25, 20, 0.94));
+      border: 1px solid rgba(255, 210, 175, 0.16);
+      box-shadow: inset 0 1px 0 rgba(255, 235, 215, 0.18), 0 40px 110px rgba(0, 0, 0, 0.65), 0 0 60px rgba(194, 91, 40, 0.12);
+      opacity: 0;
+    }
+    #f06-ref {
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.3;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #cdbfb2;
+    }
+    #f06-title {
+      margin-top: 10px;
+      font-size: 55px;
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+    }
+    #f06-rows {
+      margin-top: 30px;
+      border-top: 1px solid rgba(255, 210, 175, 0.14);
+    }
+    .f06-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      column-gap: 20px;
+      align-items: center;
+      height: 96px;
+      border-bottom: 1px solid rgba(255, 210, 175, 0.14);
+    }
+    .f06-labwrap {
+      position: relative;
+      justify-self: start;
+      white-space: nowrap;
+    }
+    .f06-lab {
+      display: inline-block;
+      font-size: 34px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: #f5efe7;
+    }
+    /* strike: the ✕ mark in the left gutter, drawn stroke by stroke (SVG, the glyph is not in the fonts) */
+    .f06-x {
+      position: absolute;
+      left: -52px;
+      top: 50%;
+      width: 28px;
+      height: 28px;
+      margin-top: -14px;
+      overflow: visible;
+      opacity: 0;
+    }
+    .f06-x line {
+      stroke: #d4703f;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 20;
+      stroke-dashoffset: 20;
+    }
+    /* strike: the accent line across the label */
+    .f06-strike {
+      position: absolute;
+      left: -8px;
+      right: -8px;
+      top: 55%;
+      height: 4px;
+      margin-top: -2px;
+      border-radius: 2px;
+      background: #d4703f;
+      box-shadow: 0 0 10px rgba(194, 91, 40, 0.35);
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f06-qty {
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 22px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #9b9289;
+      white-space: nowrap;
+    }
+    .f06-price {
+      position: relative;
+      font-family: "Space Mono", monospace;
+      font-weight: 700;
+      font-size: 37px;
+      line-height: 1.3;
+      font-variant-numeric: tabular-nums;
+      color: #f5efe7;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .f06-old {
+      display: inline-block;
+    }
+    .f06-new {
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: #d4703f;
+      opacity: 0;
+    }
+    #f06-total {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #f06-total-label {
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 22px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #cdbfb2;
+    }
+    #f06-badge {
+      padding: 13px 24px;
+      border-radius: 12px;
+      background: #c25b28;
+      color: #ffffff;
+      font-family: "Space Mono", monospace;
+      font-weight: 700;
+      font-size: 37px;
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      box-shadow: inset 0 1px 0 rgba(255, 220, 195, 0.28), 0 12px 32px rgba(194, 91, 40, 0.34);
+    }
+
+    /* the cycling region (right): one group per question state */
+    #f06-right {
+      position: absolute;
+      left: 900px;
+      top: 0;
+      width: 960px;
+      height: 900px;
+    }
+    /* faint warm glow behind the giant TOI. (a light behind the word, never a glow on the text) */
+    #f06-toiglow {
+      position: absolute;
+      left: 30px;
+      top: 200px;
+      width: 900px;
+      height: 620px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(224, 138, 92, 0.3), rgba(212, 112, 63, 0.14) 45%, rgba(194, 91, 40, 0.04) 75%, rgba(194, 91, 40, 0) 100%);
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    .f06-group {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 960px;
+      height: 900px;
+    }
+    .f06-q {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 313px;
+      text-align: center;
+      white-space: nowrap;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+    }
+    .f06-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    .f06-toi {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 397px;
+      text-align: center;
+      white-space: nowrap;
+      font-size: 260px;
+      font-weight: 700;
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      text-indent: -0.05em;
+      color: #f5efe7;
+      transform-origin: 50% 80%;
+      opacity: 0;
+    }
+
+    /* static film grain (5%) on top of everything */
+    #f06-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 2;
+      opacity: 0.05;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+    }
+  </style>
+
+  <div id="root" data-composition-id="06-toi" data-width="1920" data-height="1080" data-duration="5.78">
+    <div class="clip" id="f06-bg" data-start="0" data-duration="5.78" data-track-index="0" data-layout-ignore>
+      <div id="f06-lamp"></div>
+      <div id="f06-fill"></div>
+      <div id="f06-vignette"></div>
+    </div>
+
+    <div class="clip" id="f06-content" data-start="0" data-duration="5.78" data-track-index="1">
+      <div id="f06-card">
+        <div id="f06-ref">Devis N°&nbsp;0147</div>
+        <div id="f06-title">Prestations web</div>
+        <div id="f06-rows">
+          <div class="f06-row">
+            <span class="f06-labwrap">
+              <svg class="f06-x" id="f06-x1" viewBox="0 0 20 20" aria-hidden="true"><line id="f06-x1a" x1="3" y1="3" x2="17" y2="17"/><line id="f06-x1b" x1="17" y1="3" x2="3" y2="17"/></svg>
+              <span class="f06-lab" id="f06-l1">Modification sur ton site</span>
+              <span class="f06-strike" id="f06-s1"></span>
+            </span>
+            <span class="f06-qty">1 jour</span>
+            <span class="f06-price"><span class="f06-old" id="f06-p1o">1&nbsp;000&nbsp;€</span><span class="f06-new" id="f06-p1n">toi</span></span>
+          </div>
+          <div class="f06-row">
+            <span class="f06-labwrap">
+              <svg class="f06-x" id="f06-x2" viewBox="0 0 20 20" aria-hidden="true"><line id="f06-x2a" x1="3" y1="3" x2="17" y2="17"/><line id="f06-x2b" x1="17" y1="3" x2="3" y2="17"/></svg>
+              <span class="f06-lab" id="f06-l2">Nouvelle page</span>
+              <span class="f06-strike" id="f06-s2"></span>
+            </span>
+            <span class="f06-qty"></span>
+            <span class="f06-price"><span class="f06-old" id="f06-p2o">600&nbsp;€</span><span class="f06-new" id="f06-p2n">toi</span></span>
+          </div>
+          <div class="f06-row">
+            <span class="f06-labwrap">
+              <svg class="f06-x" id="f06-x3" viewBox="0 0 20 20" aria-hidden="true"><line id="f06-x3a" x1="3" y1="3" x2="17" y2="17"/><line id="f06-x3b" x1="17" y1="3" x2="3" y2="17"/></svg>
+              <span class="f06-lab" id="f06-l3">Réparer l’automatisation</span>
+              <span class="f06-strike" id="f06-s3"></span>
+            </span>
+            <span class="f06-qty"></span>
+            <span class="f06-price"><span class="f06-old" id="f06-p3o">sur devis</span><span class="f06-new" id="f06-p3n">toi</span></span>
+          </div>
+          <div class="f06-row">
+            <span class="f06-labwrap">
+              <span class="f06-lab" id="f06-l4">Délai</span>
+            </span>
+            <span class="f06-qty"></span>
+            <span class="f06-price"><span class="f06-old" id="f06-p4o">quand il aura le temps</span><span class="f06-new" id="f06-p4n">maintenant</span></span>
+          </div>
+        </div>
+        <div id="f06-total">
+          <span id="f06-total-label">Total</span>
+          <span id="f06-badge">1&nbsp;600&nbsp;€</span>
+        </div>
+      </div>
+
+      <div id="f06-right">
+        <div id="f06-toiglow"></div>
+        <div class="f06-group" id="f06-g0">
+          <div class="f06-q"><span class="f06-w" id="f06-q0w0">La</span> <span class="f06-w" id="f06-q0w1">modification</span>&nbsp;<span class="f06-w" id="f06-q0w2">?</span></div>
+          <div class="f06-toi" id="f06-t0">TOI.</div>
+        </div>
+        <div class="f06-group" id="f06-g1">
+          <div class="f06-q"><span class="f06-w" id="f06-q1w0">La</span> <span class="f06-w" id="f06-q1w1">page</span>&nbsp;<span class="f06-w" id="f06-q1w2">?</span></div>
+          <div class="f06-toi" id="f06-t1">TOI.</div>
+        </div>
+        <div class="f06-group" id="f06-g2">
+          <div class="f06-q"><span class="f06-w" id="f06-q2w0">L’automatisation</span>&nbsp;<span class="f06-w" id="f06-q2w1">?</span></div>
+          <div class="f06-toi" id="f06-t2">TOI.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="clip" id="f06-grain" data-start="0" data-duration="5.78" data-track-index="2" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      var FRAME = "06-toi";
+      var scope = (document.currentScript && document.currentScript.parentNode) || document;
+      function el(id) {
+        var sel = "#f06-" + id;
+        return (scope.querySelector && scope.querySelector(sel)) || document.querySelector(sel);
+      }
+
+      var DUR = 5.38;
+      // Voice cues (frame-local): the single onset arrays every element reads from.
+      var Q = [0.08, 1.88, 3.48]; // "La modification ?" · "La page ?" · "L’automatisation ?"
+      var BEATS = [1.22, 2.8, 4.68]; // "TOI." x3 (kinetic-beat-slam grid)
+      var T_DELAI = 5.0; // row 4 flips to "maintenant", the total badge mutes
+      // word-by-word cues per question state
+      var WORDS = [
+        [["q0w0", 0.08], ["q0w1", 0.18], ["q0w2", 0.88]],
+        [["q1w0", 1.88], ["q1w1", 1.98], ["q1w2", 2.46]],
+        [["q2w0", 3.48], ["q2w1", 4.4]]
+      ];
+
+      var tl = gsap.timeline({ paused: true });
+
+      // Scene 1 (0.0 to 0.30): the quote card enters from the left and pins. It never moves again.
+      tl.fromTo(
+        el("card"),
+        { x: -120, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.3, ease: "power4.out" },
+        0
+      );
+
+      // discrete-text-sequence: whole question states replaced at the cue thresholds.
+      // Reverse search picks the live state; the swap is instant (no crossfade, no smear).
+      var SEQUENCE = [
+        { t: 0, g: 0 },
+        { t: Q[1], g: 1 },
+        { t: Q[2], g: 2 }
+      ];
+      function stateAt(time) {
+        for (var i = SEQUENCE.length - 1; i >= 0; i--) {
+          if (time + 1e-4 >= SEQUENCE[i].t) return SEQUENCE[i].g;
+        }
+        return SEQUENCE[0].g;
+      }
+      var groups = [el("g0"), el("g1"), el("g2")];
+      function applyState(time) {
+        var a = stateAt(time);
+        for (var i = 0; i < groups.length; i++) {
+          var v = i === a ? "visible" : "hidden";
+          if (groups[i].style.visibility !== v) groups[i].style.visibility = v;
+        }
+      }
+      var driver = { t: 0 };
+      tl.fromTo(
+        driver,
+        { t: 0 },
+        {
+          t: DUR,
+          duration: DUR,
+          ease: "none",
+          onUpdate: function () {
+            applyState(driver.t);
+          }
+        },
+        0
+      );
+      applyState(0);
+
+      // word-by-word: each word of the question lands on its voice timestamp
+      WORDS.forEach(function (line) {
+        line.forEach(function (w) {
+          tl.fromTo(
+            el(w[0]),
+            { opacity: 0, y: 10, filter: "blur(8px)" },
+            { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" },
+            w[1]
+          );
+        });
+      });
+
+      // the warm light behind TOI.: switches on with the first hit, then kicks on each re-slam
+      // (a lamp behind the word, never a glow on the text itself)
+      var glow = el("toiglow");
+      tl.fromTo(glow, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, BEATS[0]);
+      tl.fromTo(glow, { scale: 0.88 }, { scale: 1, duration: 0.5, ease: "power3.out", immediateRender: false }, BEATS[1]);
+      tl.fromTo(glow, { scale: 0.88 }, { scale: 1, duration: 0.5, ease: "power3.out", immediateRender: false }, BEATS[2]);
+
+      // giant-word tracking via per-letter transforms (the CSS tracking stays static at -0.05em):
+      // letters split into inline-blocks, each starts offset as if tracked +0.4em, then slides home.
+      var trackChars = function (root) {
+        var t = root.textContent;
+        root.textContent = "";
+        var out = [];
+        for (var i = 0; i < t.length; i++) {
+          var s = document.createElement("span");
+          s.style.display = "inline-block";
+          s.style.whiteSpace = "pre";
+          s.textContent = t[i];
+          root.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      };
+      var trackIn = function (chars, spread, dur, ease, at) {
+        var n = chars.length;
+        chars.forEach(function (c, i) {
+          tl.fromTo(c, { x: (i - (n - 1) / 2) * spread }, { x: 0, duration: dur, ease: ease, immediateRender: false }, at);
+        });
+      };
+      // kinetic-beat-slam + giant-word: every "TOI." tightens its tracking (0.35em to -0.05em)
+      // with blur 12px to 0, and each hit rides a DISTINCT axis and ease.
+      tl.fromTo(
+        el("t0"),
+        { opacity: 0, scale: 1.2, filter: "blur(12px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "power4.out" },
+        BEATS[0]
+      );
+      trackIn(trackChars(el("t0")), 104, 0.5, "power4.out", BEATS[0]);
+      tl.fromTo(
+        el("t1"),
+        { opacity: 0, x: 140, filter: "blur(12px)" },
+        { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.45, ease: "expo.out" },
+        BEATS[1]
+      );
+      trackIn(trackChars(el("t1")), 104, 0.45, "expo.out", BEATS[1]);
+      tl.fromTo(
+        el("t2"),
+        { opacity: 0, y: 90, rotation: 5, filter: "blur(12px)" },
+        { opacity: 1, y: 0, rotation: 0, filter: "blur(0px)", duration: 0.5, ease: "circ.out" },
+        BEATS[2]
+      );
+      trackIn(trackChars(el("t2")), 104, 0.5, "circ.out", BEATS[2]);
+
+      // price flip (cut-the-curve, upward): old value accelerates up and dies at the cut,
+      // new value continues upward from below and decelerates in.
+      function flip(n, at) {
+        var po = el("p" + n + "o"), pn = el("p" + n + "n");
+        tl.fromTo(po, { y: 0 }, { y: -16, duration: 0.1, ease: "power4.in", immediateRender: false }, at);
+        tl.to(po, { opacity: 0, duration: 0.1, ease: "power1.in" }, at);
+        tl.fromTo(pn, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28, ease: "power4.out" }, at + 0.1);
+      }
+
+      // quote-card strike: ✕ drawn in the gutter, accent line across the label, label dims, price flips to "toi".
+      function strike(n, at) {
+        tl.set(el("x" + n), { opacity: 1 }, at);
+        tl.fromTo(el("x" + n + "a"), { strokeDashoffset: 20 }, { strokeDashoffset: 0, duration: 0.14, ease: "power3.out" }, at);
+        tl.fromTo(el("x" + n + "b"), { strokeDashoffset: 20 }, { strokeDashoffset: 0, duration: 0.14, ease: "power3.out" }, at + 0.08);
+        tl.set(el("s" + n), { opacity: 1 }, at + 0.04);
+        tl.fromTo(el("s" + n), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.inOut" }, at + 0.04);
+        tl.to(el("l" + n), { opacity: 0.4, duration: 0.28, ease: "power2.out" }, at + 0.12);
+        flip(n, at + 0.14);
+      }
+      strike(1, BEATS[0]);
+      strike(2, BEATS[1]);
+      strike(3, BEATS[2]);
+
+      // Scene 4 resolve: "Délai" flips to "maintenant", the total badge fades to 30%. Hold.
+      flip(4, T_DELAI);
+      tl.to(el("badge"), { opacity: 0.3, duration: 0.3, ease: "power2.out" }, T_DELAI);
+
+      window.__timelines[FRAME] = tl;
+    })();
+  </script>
+</template>

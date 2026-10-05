@@ -1,0 +1,16 @@
+[
+ ["key-press", 0.62, 0.18], ["key-press", 0.80, 0.16], ["key-press", 0.98, 0.14], ["pop", 1.10, 0.22],
+ ["whoosh-short", 1.15, 0.18], ["typing", 2.70, 0.18], ["typing", 3.30, 0.16], ["whoosh-short", 3.95, 0.2],
+ ["pop", 5.00, 0.22], ["error", 5.12, 0.2], ["whoosh-short", 5.70, 0.2], ["pop", 5.96, 0.2], ["pop", 6.14, 0.26],
+ ["click-soft", 7.38, 0.4], ["click-soft", 8.57, 0.4], ["click-soft", 9.48, 0.4],
+ ["whoosh-short", 10.36, 0.16], ["pop", 10.50, 0.18], ["pop", 12.19, 0.18], ["key-press", 13.33, 0.22], ["ping", 14.48, 0.2],
+ ["error", 16.84, 0.24], ["pop", 16.92, 0.3], ["whoosh-short", 17.34, 0.16], ["whoosh-short", 17.80, 0.14], ["whoosh-short", 18.16, 0.12],
+ ["click-soft", 18.50, 0.3], ["click-soft", 19.20, 0.3], ["whoosh", 19.60, 0.5],
+ ["typing", 21.10, 0.2], ["ping", 22.02, 0.14],
+ ["whoosh-short", 22.95, 0.16], ["typing", 23.25, 0.2], ["typing", 24.25, 0.18], ["click", 25.35, 0.45], ["pop", 25.90, 0.2], ["pop", 26.10, 0.18], ["pop", 26.30, 0.2],
+ ["whoosh-short", 27.25, 0.16], ["whoosh-short", 27.72, 0.2], ["ping", 28.80, 0.18],
+ ["whoosh-short", 30.15, 0.16], ["typing", 30.30, 0.18], ["pop", 31.00, 0.2], ["whoosh-short", 32.40, 0.18],
+ ["click-soft", 34.30, 0.4], ["click-soft", 35.30, 0.4], ["click-soft", 35.93, 0.4], ["whoosh-short", 36.32, 0.2],
+ ["pop", 38.22, 0.2], ["whoosh-short", 39.70, 0.16], ["whoosh-short", 40.60, 0.16], ["ping", 41.00, 0.16], ["whoosh", 43.22, 0.5],
+ ["click", 48.55, 0.45]
+]

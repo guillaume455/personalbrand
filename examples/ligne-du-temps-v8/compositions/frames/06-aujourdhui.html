@@ -1,0 +1,729 @@
+<template>
+  <!-- 06-aujourdhui (v8 r6, 7.08 s, global 25.12 à 32.20) : « Aujourd’hui, l’IA peut faire tout ça, avec les bons outils et
+       les bonnes méthodes. Tu lui expliques avec tes mots, elle le fait. »
+       Monde B v2 (frame.md) : dans la colonne du jour, les tâches à gauche (cartes 700 × 90 en x 1640, y 267, 387, 507) et
+       l'IA à droite (fenêtre Claude en (2420, 215) à 0.7, champ centré en (2827, 449), carte « La méthode » en (2960, 540)).
+       r6 (Colin) : UN seul sujet par plan, le rythme respire avec la voix.
+       1. 0.12 à 1.60 « Claude seul » cam2(2786, 500, 1.40), dérive s +1 %/s : le trait s'ouvre sur la place de Claude ; 0.90
+          « l’IA » la fenêtre (1080 px de large) s'y pose, seule.
+       2. 1.60 « tout ça » : recul expo.out (0,4 s) vers les deux colonnes cam2(2413 + 9 px/s, 465, 0.95), marges égales,
+          pendant que les trois tâches arrivent de la gauche : le sujet, ce sont les tâches.
+       3. 2.30 « avec » : poussée expo.inOut (0,35 s) vers « Claude seul, plus large » cam2(2766, 548, 1.36), dérive s +0,7 %/s ;
+          les tâches sortent par la gauche ; 2.94 les outils se branchent, 3.20 ils s'alignent ; 3.88 la méthode se pose sur le
+          coin bas droit : le sujet, c'est Claude.
+       4. 4.40 cran sur le champ cam2(2856, 468, 1.9) ; 4.86 la demande se tape ; 5.84 la souris, 6.28 clic sur l'envoi (onde),
+          la demande monte en bulle.
+       5. 6.30 les tâches reviennent de la gauche pendant le recul (6.34 à 6.60) vers les deux colonnes cam2(2454, 465, 0.95) ;
+          6.64, 6.82, 6.98 elles passent du cercle creux gris au disque #D97757 coché puis « Fait », chacune reliée à la fenêtre
+          par un filet terracotta de 2 px : le sujet, ce sont les tâches cochées.
+       6. 6.84 recul power2.in vers la couture cam2(1600, 480, 0.80), flou 10 px (séquence 7) ; le rail des minutes et les voies
+          hachurées du passé, à opacité 0 jusque-là, paraissent sous le flou (6.93 à 7.01) ; le devis n'entre qu'à la couture.
+       Partout : rien au-dessous de y 890, aucun liseré (filet droit x 3479, bord haut de la bande et axe hors champ dans les plans
+       « Claude seul » ; filet gauche net à 90 px au moins dans les plans deux colonnes).
+       Cartes simplifiées dans ce fichier (le builder du kit reste intact) : plus de badge hachuré « EN ATTENTE », un cercle creux.
+       Bloc CSS « LIGNE v8 », gabarits fx-devis et fx-method, fxBuildWorldB et utilitaires copiés mot pour mot de
+       reference/frise.html (seuls changements : « ../assets/ » devient « assets/ », ids des gabarits préfixés « p06- »).
+       Fenêtre Claude : reference/v6-05-demande.html (conversation vide, champ au centre), préfixe p06-. -->
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; -webkit-font-smoothing: antialiased; font-family: "Instrument Sans", sans-serif; color: #1a1612; }
+
+  /* ===================== LIGNE v8 : début du bloc CSS à copier ===================== */
+  .fx-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+  .fx-q { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .fx-q svg { display: block; overflow: visible; }
+  /* sols : papier chaud (monde clair) et scène sombre de la marque (pivot, carte de fin) */
+  .fx-paper { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+    background: radial-gradient(ellipse 1500px 900px at 50% 42%, #f9f5ee 0%, #f6f1e9 55%, #efe7dc 100%); }
+  .fx-dark { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #0d0b0a; }
+  .fx-vignette { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none;
+    background: radial-gradient(ellipse 1320px 820px at 50% 46%, rgba(239,231,220,0) 62%, rgba(214,200,182,.38) 100%); }
+  .fx-grain { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; opacity: .035; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+    background-size: 240px 240px; }
+  .fx-grain.dark { opacity: .055; mix-blend-mode: screen; }
+  .fx-floorcv { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+  /* ombre de contact sous une station posée sur la frise (placée par fxShadow) */
+  .fx-contact { position: absolute; left: 0; top: 0; width: 400px; height: 60px; border-radius: 50%; transform-origin: 0 0;
+    background: radial-gradient(closest-side, rgba(60,40,20,.20), rgba(60,40,20,.08) 55%, rgba(60,40,20,0)); }
+  /* barres d'attente (voies de la frise, quads) : hachures d'encre, se tendent par scaleX (origine à gauche) */
+  .fx-wait { position: absolute; left: 0; top: 0; height: 70px; border-radius: 12px; overflow: hidden; transform-origin: 0 50%;
+    box-shadow: inset 0 0 0 2.5px rgba(26,22,18,.42); background: rgba(26,22,18,.05); }
+  .fx-wait::before { content: ""; position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(135deg, rgba(26,22,18,.30) 0 5px, rgba(26,22,18,0) 5px 22px); }
+  .fx-wait-l { position: absolute; left: 20px; top: 16px; padding: 2px 10px; border-radius: 6px; background: #f6f1e9; font: 700 30px/34px "Space Mono", monospace; letter-spacing: .1em; color: rgba(26,22,18,.78); white-space: nowrap; }
+  /* cartes (monde clair) : blanc chaud, ombres douces, angles 16 px */
+  .fx-card { position: absolute; left: 0; top: 0; background: #fffdf9; border-radius: 16px;
+    box-shadow: 0 30px 80px rgba(60,40,20,.14), 0 2px 6px rgba(60,40,20,.07), 0 0 0 1px rgba(26,22,18,.05); }
+  .fx-micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: rgba(26,22,18,.55); white-space: nowrap; }
+  /* sous-titre : la phrase de la voix, bas centre (zone y 890 à 980), mot par mot, gris puis encre */
+  .fx-sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+    letter-spacing: -0.015em; color: #1a1612; white-space: nowrap; text-shadow: 0 2px 16px rgba(246,241,233,.95), 0 0 2px rgba(246,241,233,.9); }
+  .fx-sub.dark { color: #f5efe7; text-shadow: 0 2px 16px rgba(13,11,10,.9); }
+  .fx-sw { display: inline-block; opacity: 0; }
+  /* la boîte d'encre (mot clé) : se trace sous le mot, angles nets, le texte passe en papier */
+  .fx-ink { position: relative; display: inline-block; }
+  .fx-ink-bg { position: absolute; left: -0.14em; right: -0.14em; top: 0.02em; bottom: -0.02em; border-radius: 3px; background: #1a1612;
+    transform-origin: 0 50%; transform: scaleX(0); }
+  .fx-ink-tx { position: relative; text-shadow: none; }
+  .fx-sub.dark .fx-ink-bg { background: #f5efe7; }
+  /* le trait fin terracotta (mot-pic) : se dessine de gauche à droite sous le mot */
+  .fx-stroke { position: relative; display: inline-block; }
+  .fx-stroke-l { position: absolute; left: 0; right: 0; bottom: -0.06em; height: 4px; border-radius: 2px; background: #c25b28; transform-origin: 0 50%; transform: scaleX(0); }
+  /* texte posé (moments typographiques, séquences 3, 5, 8) : centré, 84 px, jamais énorme */
+  .fx-type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans", sans-serif; letter-spacing: -0.025em; color: #1a1612; white-space: nowrap; }
+  .fx-type.dark { color: #f5efe7; }
+  /* le point de lumière (aujourd'hui) */
+  .fx-pt-glow { position: absolute; border-radius: 50%; transform: translate(-50%, -50%);
+    background: radial-gradient(closest-side, rgba(224,138,92,.55) 0%, rgba(212,112,63,.22) 32%, rgba(194,91,40,.07) 62%, rgba(194,91,40,0) 100%); }
+  .fx-pt-core { position: absolute; border-radius: 50%; transform: translate(-50%, -50%);
+    background: radial-gradient(closest-side, #ffffff 0%, #fffaf4 45%, #f7c7a4 70%, rgba(224,138,92,.6) 88%, rgba(212,112,63,0) 100%);
+    box-shadow: 0 0 26px rgba(255,236,220,.9), 0 0 70px rgba(224,138,92,.55), 0 0 140px rgba(212,112,63,.3); }
+  /* le devis (gabarit fx-devis, 520 × 640) */
+  .fx-devis { width: 520px; height: 640px; }
+  .fx-dv-head { position: absolute; left: 36px; top: 34px; right: 36px; height: 60px; }
+  .fx-dv-mark { position: absolute; left: 0; top: 4px; width: 44px; height: 44px; border-radius: 8px; background: #1a1612; }
+  .fx-dv-name { position: absolute; left: 58px; top: 2px; font: 600 24px/28px "Instrument Sans", sans-serif; color: #1a1612; }
+  .fx-dv-sub { position: absolute; left: 58px; top: 32px; }
+  .fx-dv-kind { position: absolute; right: 0; top: 4px; text-align: right; font: 700 16px/22px "Space Mono", monospace; letter-spacing: .2em; color: #1a1612; }
+  .fx-dv-rule { position: absolute; left: 36px; right: 36px; height: 2px; background: #1a1612; }
+  .fx-dv-row { position: absolute; left: 36px; right: 36px; top: 176px; }
+  .fx-dv-lab { font: 500 26px/32px "Instrument Sans", sans-serif; color: #1a1612; }
+  .fx-dv-desc { margin-top: 6px; font: 400 17px/22px "Instrument Sans", sans-serif; color: rgba(26,22,18,.55); }
+  .fx-dv-qty { position: absolute; right: 0; top: 2px; font: 400 18px/28px "Space Mono", monospace; color: rgba(26,22,18,.7); }
+  .fx-dv-lines { position: absolute; left: 36px; right: 36px; top: 300px; }
+  .fx-dv-lines i { display: block; height: 10px; margin-bottom: 18px; border-radius: 5px; background: rgba(26,22,18,.06); }
+  .fx-dv-tot { position: absolute; left: 36px; right: 36px; bottom: 40px; height: 96px; border-radius: 12px; box-shadow: inset 0 0 0 2px #1a1612; }
+  .fx-dv-tot .fx-micro { position: absolute; left: 22px; top: 40px; color: #1a1612; }
+  .fx-dv-cell { position: absolute; right: 18px; top: 16px; width: 250px; height: 64px; border-radius: 8px; box-shadow: inset 0 0 0 2px rgba(26,22,18,.3); }
+  .fx-dv-price { position: absolute; right: 18px; top: 16px; width: 250px; height: 64px; text-align: center; font: 700 40px/64px "Space Mono", monospace; color: #1a1612; opacity: 0; }
+  .fx-dv-strike { position: absolute; left: 20px; right: 20px; top: 318px; height: 3px; border-radius: 2px; background: #1a1612; transform-origin: 0 50%; transform: scaleX(0); }
+  /* la timeline de montage vidéo (gabarit fx-video, 1000 × 520) */
+  .fx-video { width: 1000px; height: 520px; overflow: hidden; }
+  .fx-vd-bar { position: absolute; left: 0; top: 0; right: 0; height: 64px; border-bottom: 1px solid rgba(26,22,18,.08); }
+  .fx-vd-title { position: absolute; left: 28px; top: 20px; font: 600 22px/24px "Instrument Sans", sans-serif; color: #1a1612; }
+  .fx-vd-file { position: absolute; left: 132px; top: 22px; font: 400 16px/22px "Space Mono", monospace; color: rgba(26,22,18,.55); }
+  .fx-vd-state { position: absolute; right: 22px; top: 16px; height: 32px; padding: 0 14px; border-radius: 8px; font: 700 14px/32px "Space Mono", monospace; letter-spacing: .14em;
+    color: rgba(26,22,18,.7); background: repeating-linear-gradient(135deg, rgba(26,22,18,.12) 0 3px, rgba(26,22,18,.03) 3px 12px); }
+  .fx-vd-bin { position: absolute; left: 24px; top: 88px; width: 220px; }
+  .fx-vd-bin .fx-micro { font-size: 13px; }
+  .fx-vd-rush { position: absolute; width: 100px; height: 58px; border-radius: 6px; background-image: url("assets/img/site-hero.png"); background-size: 360px 205px;
+    box-shadow: 0 6px 16px rgba(60,40,20,.18); }
+  .fx-vd-ruler { position: absolute; left: 272px; right: 24px; top: 92px; height: 30px; border-bottom: 1px solid rgba(26,22,18,.2); font: 400 13px/20px "Space Mono", monospace; color: rgba(26,22,18,.5); }
+  .fx-vd-ruler span { position: absolute; top: 0; }
+  .fx-vd-track { position: absolute; left: 272px; right: 24px; height: 70px; border-radius: 8px; box-shadow: inset 0 0 0 2px rgba(26,22,18,.12);
+    background: repeating-linear-gradient(90deg, rgba(26,22,18,.03) 0 1px, rgba(26,22,18,0) 1px 70px); }
+  .fx-vd-tl { position: absolute; left: -44px; top: 24px; font: 700 14px/20px "Space Mono", monospace; color: rgba(26,22,18,.5); }
+  .fx-vd-clip { position: absolute; top: 6px; height: 58px; border-radius: 6px; background-image: url("assets/img/site-hero.png"); background-size: 360px 205px;
+    box-shadow: inset 0 0 0 2px rgba(26,22,18,.25); opacity: 0; }
+  .fx-vd-wave { position: absolute; left: 6px; top: 6px; right: 6px; height: 58px; opacity: 0; }
+  .fx-vd-head { position: absolute; top: 84px; width: 2px; height: 380px; background: #c25b28; opacity: 0; }
+  /* la notification claire (iOS, gabarit fx-nt, 520 × 92) et la facture (fx-bill, 380 × 210) */
+  .fx-nt { width: 520px; height: 92px; border-radius: 24px; background: rgba(255,253,249,.97);
+    box-shadow: 0 18px 48px rgba(60,40,20,.14), 0 1px 3px rgba(60,40,20,.08), 0 0 0 1px rgba(26,22,18,.05); }
+  .fx-nt-ic { position: absolute; left: 16px; top: 22px; width: 48px; height: 48px; border-radius: 11px; display: flex; align-items: center; justify-content: center; }
+  .fx-nt-ic svg { width: 28px; height: 28px; display: block; }
+  .fx-nt-t { position: absolute; left: 78px; top: 17px; font: 600 22px/28px "Instrument Sans", sans-serif; color: #1a1612; white-space: nowrap; }
+  .fx-nt-b { position: absolute; left: 78px; top: 46px; right: 18px; font: 400 21px/28px "Instrument Sans", sans-serif; color: rgba(26,22,18,.78); white-space: nowrap; overflow: hidden; }
+  .fx-nt-time { position: absolute; right: 20px; top: 19px; font: 400 17px/24px "Instrument Sans", sans-serif; color: rgba(26,22,18,.45); }
+  .fx-bill { width: 380px; height: 210px; }
+  .fx-bill .fx-micro { position: absolute; left: 26px; top: 26px; }
+  .fx-bill-n { position: absolute; right: 26px; top: 24px; font: 400 15px/20px "Space Mono", monospace; color: rgba(26,22,18,.5); }
+  .fx-bill-l { position: absolute; left: 26px; top: 70px; font: 500 22px/28px "Instrument Sans", sans-serif; color: #1a1612; white-space: nowrap; }
+  .fx-bill-a { position: absolute; left: 26px; bottom: 26px; font: 700 34px/40px "Space Mono", monospace; color: #1a1612; white-space: nowrap; }
+  .fx-bill-s { position: absolute; right: 26px; bottom: 32px; font: 700 14px/20px "Space Mono", monospace; letter-spacing: .16em; color: rgba(26,22,18,.6); }
+  /* WhatsApp : bulle entrante (blanche, queue à gauche) et indicateur « en train d'écrire » */
+  .fx-bub-in { position: relative; display: inline-block; padding: 9px 15px 9px 14px; border-radius: 20px; background: #ffffff;
+    filter: drop-shadow(0 0 0.6px rgba(0,0,0,.18)) drop-shadow(0 1px 0.6px rgba(0,0,0,.05)); font: 400 19.5px/25px -apple-system, BlinkMacSystemFont, "Instrument Sans", sans-serif; color: #0a0a0a; white-space: nowrap; }
+  .fx-bub-in .fx-tail-in { position: absolute; left: -6px; bottom: 0; width: 26px; height: 20px; display: block; z-index: -1; }
+  .fx-bub-in .fx-meta-in { display: inline-block; margin-left: 10px; font-size: 14px; color: #6b6b6b; vertical-align: -2px; }
+  .fx-typing { display: inline-flex; gap: 6px; padding: 14px 16px; border-radius: 20px; background: #ffffff; filter: drop-shadow(0 0 0.6px rgba(0,0,0,.18)); }
+  .fx-typing i { width: 9px; height: 9px; border-radius: 50%; background: #9a9a9a; display: block; }
+  /* la pastille d'idée (nuée de la séquence 7) : texte seul, jamais d'icône */
+  .fx-idea { position: absolute; left: 0; top: 0; padding: 18px 30px 18px 28px; border-radius: 18px; background: #fffdf9; white-space: nowrap;
+    font: 600 34px/40px "Instrument Sans", sans-serif; letter-spacing: -0.01em; color: #1a1612;
+    box-shadow: 0 24px 60px rgba(60,40,20,.14), 0 2px 5px rgba(60,40,20,.07), 0 0 0 1px rgba(26,22,18,.05); }
+  .fx-idea b { font: 700 14px/20px "Space Mono", monospace; letter-spacing: .16em; color: rgba(26,22,18,.45); margin-right: 14px; vertical-align: 6px; }
+  /* la carte « méthode » et la puce de contact « Prestataire web » */
+  .fx-method { width: 340px; height: 230px; }
+  .fx-method .fx-micro { position: absolute; left: 26px; top: 26px; color: #1a1612; }
+  .fx-method p { position: absolute; left: 26px; margin: 0; font: 500 22px/28px "Instrument Sans", sans-serif; color: #1a1612; white-space: nowrap; }
+  .fx-method p b { font: 700 16px/28px "Space Mono", monospace; color: rgba(26,22,18,.45); margin-right: 12px; }
+  .fx-chip { height: 76px; padding-right: 26px; border-radius: 38px; display: inline-flex; align-items: center; }
+  .fx-chip-av { width: 52px; height: 52px; margin: 0 16px 0 12px; border-radius: 50%; background: #dfe5e7; overflow: hidden; }
+  .fx-chip-t { font: 600 24px/28px "Instrument Sans", sans-serif; color: #1a1612; }
+  .fx-chip-s { font: 400 15px/20px "Space Mono", monospace; letter-spacing: .1em; color: rgba(26,22,18,.5); }
+  /* la colonne AUJOURD'HUI et l'axe du tableau (monde B, 2D) */
+  .fx-col-band { position: absolute; top: 110px; height: 2000px; background: #fffdf9; box-shadow: 0 0 0 1px rgba(26,22,18,.06), 0 40px 120px rgba(60,40,20,.10); }
+  .fx-col-edge { position: absolute; top: 110px; width: 2px; height: 2000px; background: rgba(26,22,18,.5); }
+  .fx-col-rail { position: absolute; font: 400 20px/1 "Space Mono", monospace; letter-spacing: .08em; color: rgba(26,22,18,.55); white-space: nowrap; text-align: right; width: 90px; }
+  .fx-col-tick { position: absolute; height: 2px; width: 26px; background: rgba(26,22,18,.4); }
+  /* espaces des montants en Space Mono (chasse fixe : une espace y est aussi large qu'un chiffre) : on les dessine étroites */
+  .fx-sp { display: inline-block; width: .28em; }
+  /* ===================== LIGNE v8 : fin du bloc CSS ===================== */
+
+    /* ---------- séquence 6 : couches ---------- */
+    #p06-dark { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 0; }
+    #p06-light { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 1; }
+    #p06-edges { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 2; pointer-events: none; }
+    /* le papier s'ouvre depuis le centre (le noir s'écarte) : clip-path inset 50 % → 0 */
+    #p06-open { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; clip-path: inset(0% 50% 0% 50%); }
+    /* la vue : écran fixe, le flou des crans s'y applique (jamais sur un calque plus grand que le cadre) */
+    #p06-view { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
+
+    /* le point de lumière (handoff_in) : enveloppes de taille nulle posées sur le point, le kit centre ses disques */
+    #p06-pt { position: absolute; left: 960px; top: 600px; width: 0; height: 0; transform-origin: 0 0; }
+    .p06-ptw { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-origin: 0 0; }
+    /* le trait de lumière (le point étiré) et les deux bords de l'ouverture : même profil */
+    .p06-beam { position: absolute; left: 880px; top: -100px; width: 160px; height: 1400px; opacity: 0;
+      background: linear-gradient(90deg, rgba(212,112,63,0) 0%, rgba(212,112,63,.08) 22%, rgba(224,138,92,.30) 40%, #fbe2cf 47.5%, #ffffff 50%, #fbe2cf 52.5%, rgba(224,138,92,.30) 60%, rgba(212,112,63,.08) 78%, rgba(212,112,63,0) 100%);
+      -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0%, #000 9%, #000 91%, rgba(0,0,0,0) 100%);
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0%, #000 9%, #000 91%, rgba(0,0,0,0) 100%); }
+    #p06-beam { transform-origin: 80px 700px; }
+
+    /* éléments du monde B qui entrent plus tard (ids posés par le script juste après fxBuildWorldB) */
+    .p06-pc { opacity: 0; }
+    /* r4b : le rail des minutes (texte et graduations) et les trois voies hachurées du passé restent à opacité 0 pendant la
+       séquence ; ils paraissent sous le flou du recul final (6.93 à 7.01) et sont pleins avant la couture */
+    #p06-rl0, #p06-rl1, #p06-rl2, #p06-tk0, #p06-tk1, #p06-tk2, #p06-lane0, #p06-lane1, #p06-lane2 { opacity: 0; }
+    #p06-line0, #p06-line1, #p06-line2 { opacity: 0; }
+    #p06-method > .fx-card { opacity: 0; }
+    #p06-method p { opacity: 0; }
+
+    /* ---------- fenêtre Claude (reference/v6-05-demande.html, préfixe p06-) : native 1100 × 620, posée à 0.62 ---------- */
+    #p06-cw { position: absolute; left: 0; top: 0; width: 1100px; height: 620px; box-sizing: border-box; background: #faf9f5; border: 1px solid #e8e4da;
+      border-radius: 16px; box-shadow: 0 30px 80px rgba(60, 40, 20, 0.18), 0 2px 6px rgba(60, 40, 20, 0.06); overflow: hidden;
+      font-family: "Instrument Sans", sans-serif; color: #1a1612; transform-origin: 50% 50%; opacity: 0; }
+    .p06-cw-bar { position: absolute; left: 0; top: 0; width: 1098px; height: 60px; box-sizing: border-box; padding-left: 22px; border-bottom: 1px solid #ece8df; display: flex; align-items: center; }
+    .p06-cw-lights { display: flex; gap: 9px; }
+    .p06-cw-lights span { display: block; width: 13px; height: 13px; border-radius: 50%; }
+    .p06-cw-toggle { display: block; width: 24px; height: 24px; margin-left: 26px; }
+    .p06-cw-brand { display: flex; align-items: center; gap: 10px; margin-left: 20px; }
+    .p06-cw-logo { display: block; width: 30px; height: 30px; fill: #d97757; }
+    .p06-cw-name { font-size: 26px; font-weight: 600; line-height: 1; color: #1a1612; }
+    .p06-cw-rail { position: absolute; left: 0; top: 60px; width: 64px; height: 558px; box-sizing: border-box; border-right: 1px solid #ece8df; display: flex; flex-direction: column; align-items: center; padding-top: 18px; gap: 18px; }
+    .p06-cw-new { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: #d97757; }
+    .p06-cw-ico { display: block; width: 24px; height: 24px; fill: none; stroke: #7a7468; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .p06-cw-hello { position: absolute; left: 64px; top: 178px; width: 1036px; height: 48px; display: flex; align-items: center; justify-content: center; gap: 14px; }
+    .p06-cw-hello svg { display: block; width: 38px; height: 38px; fill: #d97757; }
+    .p06-cw-hello span { font-size: 36px; font-weight: 500; line-height: 1; letter-spacing: -0.01em; color: #3d3929; white-space: nowrap; }
+    .p06-cw-input { position: absolute; left: 152px; top: 262px; width: 860px; height: 144px; box-sizing: border-box; background: #ffffff; border: 1px solid #d9d3c7; border-radius: 18px;
+      box-shadow: 0 6px 22px rgba(60, 40, 20, 0.08), 0 1px 3px rgba(60, 40, 20, 0.05); }
+    .p06-cw-ph { position: absolute; left: 25px; top: 20px; font-size: 28px; font-weight: 400; line-height: 1.3; color: #8a8578; white-space: nowrap; }
+    .p06-cw-text { position: absolute; left: 24px; top: 17px; width: 812px; font-size: 28px; font-weight: 400; line-height: 1.24; color: #1a1612; white-space: normal; }
+    .p06-cw-caret { display: inline-block; width: 3px; height: 33px; margin-left: 1px; vertical-align: -7px; border-radius: 1px; background: #d97757; opacity: 0; }
+    .p06-cw-plus { position: absolute; left: 14px; bottom: 13px; width: 36px; height: 36px; box-sizing: border-box; border: 1px solid #e5e1d8; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .p06-cw-tool { position: absolute; bottom: 13px; width: 36px; height: 36px; box-sizing: border-box; border: 1px solid #e5e1d8; border-radius: 10px; background: #ffffff;
+      display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(60, 40, 20, 0.06); opacity: 0; }
+    .p06-cw-tool svg { display: block; width: 20px; height: 20px; }
+    .p06-cw-send { position: absolute; right: 14px; bottom: 12px; width: 40px; height: 40px; border-radius: 50%; background: #d97757; display: flex; align-items: center; justify-content: center; transform-origin: 50% 50%; opacity: .45; }
+    /* la demande envoyée : bulle utilisateur, à droite, au-dessus du champ */
+    .p06-cw-user { position: absolute; right: 88px; top: 92px; max-width: 560px; padding: 14px 22px; border-radius: 18px; background: #f0eee6; font-size: 26px; font-weight: 400;
+      line-height: 1.3; color: #1a1612; opacity: 0; z-index: 2; }
+    /* curseur et onde (dans l'emplacement de la fenêtre, hors de son masque) : centre du bouton d'envoi = (978, 374) */
+    .p06-ripple { position: absolute; left: 938px; top: 334px; width: 80px; height: 80px; box-sizing: border-box; border-radius: 50%; border: 3px solid #d97757; opacity: 0; pointer-events: none; }
+    #p06-cursor { position: absolute; left: 975px; top: 371px; width: 34px; height: 46px; opacity: 0; pointer-events: none; }
+    #p06-cursvg { display: block; overflow: visible; transform-origin: 3px 3px; filter: drop-shadow(0 5px 9px rgba(26, 22, 18, 0.35)); }
+
+    /* ---------- miniatures des lignes du jour (112 × 66) ---------- */
+    .p06-shot { position: absolute; left: 0; top: 1px; width: 112px; height: 64px; display: block; }
+    /* capture AVEC bouton, découpée sur la boîte du bouton (image 1151, 1052, 518 × 94 → 45.2, 41.6, 20.4 × 3.7 à 112 × 64) */
+    #p06-t0btn { clip-path: inset(41.1px 45.9px 18.2px 44.7px); opacity: 0; }
+    #p06-t0ring { position: absolute; left: 40.4px; top: 38.1px; width: 30.4px; height: 13.6px; box-sizing: border-box; border-radius: 3px; border: 1.6px solid #c25b28;
+      box-shadow: 0 0 6px rgba(194, 91, 40, 0.8), 0 0 14px rgba(224, 138, 92, 0.45); transform-origin: 50% 50%; opacity: 0; }
+    .p06-at { position: absolute; top: 24px; width: 18px; height: 18px; border-radius: 5px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(60, 40, 20, 0.2); }
+    .p06-at svg { display: block; width: 11px; height: 11px; }
+    .p06-al { position: absolute; top: 32.2px; height: 1.6px; background: rgba(26, 22, 18, 0.62); }
+    .p06-ab { position: absolute; top: 32.4px; height: 1.2px; background: repeating-linear-gradient(90deg, rgba(26, 22, 18, 0.62) 0 1.4px, rgba(26, 22, 18, 0) 1.4px 3px); }
+    #p06-amk, #p06-aweld { opacity: 0; }
+    #p06-adot { position: absolute; left: 0; top: 30.5px; width: 5.2px; height: 5.2px; border-radius: 50%; background: #1a1612; box-shadow: 0 0 0 1.2px #fffdf9; opacity: 0; }
+    .p06-vc { position: absolute; top: 23px; height: 10px; border-radius: 2px; background-image: url("assets/img/site-hero.png"); background-size: 72px 41px; box-shadow: inset 0 0 0 0.8px rgba(26, 22, 18, 0.3); opacity: 0; }
+    #p06-vw { position: absolute; left: 9px; top: 41px; width: 94px; height: 10px; overflow: visible; transform-origin: 0 50%; opacity: 0; }
+    /* r6 : l'état « à faire » d'une ligne = un cercle creux gris ; le disque #D97757 (p06-fill) le remplace à la coche */
+    .p06-ring { position: absolute; left: 4px; top: 4px; width: 26px; height: 26px; box-sizing: border-box; border-radius: 50%; border: 2px solid rgba(26, 22, 18, 0.3); transform-origin: 50% 50%; }
+    .p06-fill { position: absolute; left: 0; top: 0; width: 34px; height: 34px; border-radius: 50%; background: #d97757; transform-origin: 50% 50%; opacity: 0; }
+    /* le geste de liaison : un filet terracotta de 2 px de la fenêtre Claude (bord gauche x 2420) au bout droit d'une carte (x 2340) */
+    .p06-link { position: absolute; left: 2340px; width: 80px; height: 2px; border-radius: 1px; background: #c25b28; transform-origin: 100% 50%; opacity: 0; }
+    #p06-vh { position: absolute; left: 0; top: 17px; width: 1.6px; height: 38px; border-radius: 1px; background: #c25b28; opacity: 0; }
+  
+  /* r3 (Colin, 2026-09-30) : les mots clés passent en boîte terracotta (texte papier), plus en boîte d'encre */
+  .fx-ink-bg, .fx-sub.dark .fx-ink-bg { background: #c25b28 !important; }
+</style>
+
+  <div id="root" data-composition-id="06-aujourdhui" data-width="1920" data-height="1080" data-duration="7.08">
+
+    <!-- gabarits (copiés de reference/frise.html, ids préfixés) -->
+    <template id="p06-fx-devis">
+      <div class="fx-card fx-devis">
+        <div class="fx-dv-head"><i class="fx-dv-mark"></i><div class="fx-dv-name">Studio Cadran</div><div class="fx-micro fx-dv-sub">Agence web · Nantes</div>
+          <div class="fx-dv-kind">DEVIS<br><span style="font-weight:400;letter-spacing:.06em;color:rgba(26,22,18,.6)">N°&nbsp;0147</span></div></div>
+        <div class="fx-dv-rule" style="top:126px"></div>
+        <div class="fx-dv-row"><div class="fx-dv-lab">Modification sur ton site</div><div class="fx-dv-desc">Changer le titre de la page d’accueil</div><div class="fx-dv-qty">1&nbsp;jour</div></div>
+        <div class="fx-dv-lines"><i style="width:82%"></i><i style="width:64%"></i><i style="width:74%"></i></div>
+        <div class="fx-dv-tot"><span class="fx-micro">Total</span><i class="fx-dv-cell"></i><span class="fx-dv-price">1<i class="fx-sp"></i>000<i class="fx-sp"></i>€</span></div>
+        <i class="fx-dv-strike"></i>
+      </div>
+    </template>
+    <template id="p06-fx-method">
+      <div class="fx-card fx-method"><span class="fx-micro">La méthode</span>
+        <p style="top:74px"><b>01</b>Décrire le résultat</p><p style="top:118px"><b>02</b>Donner le contexte</p><p style="top:162px"><b>03</b>Vérifier, puis lancer</p></div>
+    </template>
+    <!-- la vraie fenêtre Claude (conversation vide, champ au centre) + l'onde et le curseur de l'envoi -->
+    <template id="p06-tpl-cw">
+      <div id="p06-cw">
+        <div class="p06-cw-bar">
+          <div class="p06-cw-lights"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+          <svg class="p06-cw-toggle p06-cw-ico" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3.5" y="4.5" width="17" height="15" rx="3"></rect><path d="M9.5 4.5v15"></path></svg>
+          <div class="p06-cw-brand">
+            <svg class="p06-cw-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"></path></svg>
+            <span class="p06-cw-name">Claude</span>
+          </div>
+        </div>
+        <div class="p06-cw-rail">
+          <span class="p06-cw-new"><svg class="p06-cw-ico" style="stroke:#ffffff;stroke-width:2.2;width:18px;height:18px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14M5 12h14"></path></svg></span>
+          <svg class="p06-cw-ico" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 5h14a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 16h-9l-4.5 3.5V16H5a1.5 1.5 0 0 1-1.5-1.5v-8A1.5 1.5 0 0 1 5 5z"></path></svg>
+          <svg class="p06-cw-ico" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 7.5A1.5 1.5 0 0 1 5 6h4.2l2 2H19a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z"></path></svg>
+        </div>
+        <div id="p06-hello" class="p06-cw-hello">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"></path></svg>
+          <span>Comment je peux t’aider&#8239;?</span>
+        </div>
+        <div id="p06-bubble" class="p06-cw-user">Mets un bouton rendez-vous sur mon site, répare mes factures et monte ma vidéo.</div>
+        <div class="p06-cw-input">
+          <span id="p06-ph" class="p06-cw-ph">Écris ta demande à Claude</span>
+          <div id="p06-txt" class="p06-cw-text"><span id="p06-typed"></span><span id="p06-caret" class="p06-cw-caret"></span></div>
+          <span class="p06-cw-plus"><svg class="p06-cw-ico" style="width:20px;height:20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14M5 12h14"></path></svg></span>
+          <span id="p06-tool0" class="p06-cw-tool" style="left:58px"></span>
+          <span id="p06-tool1" class="p06-cw-tool" style="left:100px"></span>
+          <span id="p06-tool2" class="p06-cw-tool" style="left:142px"></span>
+          <span id="p06-tool3" class="p06-cw-tool" style="left:184px"></span>
+          <span id="p06-send" class="p06-cw-send"><svg class="p06-cw-ico" style="stroke:#ffffff;stroke-width:2.4;width:22px;height:22px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></span>
+        </div>
+      </div>
+      <div id="p06-ripple" class="p06-ripple"></div>
+      <div id="p06-cursor"><svg id="p06-cursvg" width="34" height="46" viewBox="0 0 34 46"><path d="M3 3 L3 37 L11.5 29.2 L17 42 L23 39.4 L17.6 26.8 L29 26.8 Z" fill="#ffffff" stroke="#15110e" stroke-width="2.4" stroke-linejoin="round"></path></svg></div>
+    </template>
+
+    <!-- piste 0 : le noir de la marque et le point de lumière (état de couture de la séquence 5) -->
+    <div id="p06-dark" class="clip" data-start="0" data-duration="7.08" data-track-index="0">
+      <div class="fx-dark"></div>
+      <div id="p06-pt">
+        <div id="p06-pth2" class="p06-ptw"><div class="fx-pt-glow" style="left:0;top:0;width:420px;height:420px"></div></div>
+        <div id="p06-pth1" class="p06-ptw"><div class="fx-pt-glow" style="left:0;top:0;width:120px;height:120px"></div></div>
+        <div id="p06-ptc" class="p06-ptw"><div class="fx-pt-core" style="left:0;top:0;width:30px;height:30px"></div></div>
+      </div>
+      <div id="p06-beam" class="p06-beam"></div>
+      <div class="fx-grain dark"></div>
+    </div>
+
+    <!-- piste 1 : le papier et le monde B, ouverts depuis le centre -->
+    <div id="p06-light" class="clip" data-start="0" data-duration="7.08" data-track-index="1">
+      <div id="p06-open">
+        <div class="fx-paper"></div>
+        <div id="p06-view"><div id="p06-world" class="fx-layer"></div></div>
+        <div id="p06-over" class="fx-layer">
+          <div id="p06-sub1" class="fx-sub"><span id="p06-a0" class="fx-sw">Aujourd’hui,</span> <span id="p06-a1" class="fx-sw">l’IA</span> <span id="p06-a2" class="fx-sw">peut</span> <span id="p06-a3" class="fx-sw">faire</span> <span id="p06-a4" class="fx-sw">tout</span> <span id="p06-a5" class="fx-sw">ça,</span></div>
+          <div id="p06-sub2" class="fx-sub"><span id="p06-b0" class="fx-sw">avec</span> <span id="p06-b1" class="fx-sw">les</span> <span id="p06-b2" class="fx-sw">bons</span> <span id="p06-b3" class="fx-sw">outils</span> <span id="p06-b4" class="fx-sw">et</span> <span class="fx-ink"><i id="p06-bx2" class="fx-ink-bg"></i><span class="fx-ink-tx"><span id="p06-b5" class="fx-sw">les</span> <span id="p06-b6" class="fx-sw">bonnes</span> <span id="p06-b7" class="fx-sw">méthodes.</span></span></span></div>
+          <div id="p06-sub3" class="fx-sub"><span id="p06-c0" class="fx-sw">Tu</span> <span id="p06-c1" class="fx-sw">lui</span> <span id="p06-c2" class="fx-sw">expliques</span> <span class="fx-ink"><i id="p06-bx3" class="fx-ink-bg"></i><span class="fx-ink-tx"><span id="p06-c3" class="fx-sw">avec</span> <span id="p06-c4" class="fx-sw">tes</span> <span id="p06-c5" class="fx-sw">mots,</span></span></span> <span id="p06-c6" class="fx-sw">elle</span> <span id="p06-c7" class="fx-sw">le</span> <span id="p06-c8" class="fx-sw">fait.</span></div>
+        </div>
+        <div class="fx-vignette"></div>
+        <div class="fx-grain"></div>
+      </div>
+    </div>
+
+    <!-- piste 2 : les deux bords de lumière de l'ouverture (le trait qui se fend en deux) -->
+    <div id="p06-edges" class="clip" data-start="0" data-duration="7.08" data-track-index="2">
+      <div id="p06-edgeL" class="p06-beam"></div>
+      <div id="p06-edgeR" class="p06-beam"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "06-aujourdhui";
+      var DUR = 7.08;
+      window.__timelines = window.__timelines || {};
+      function $(id) { return document.getElementById("p06-" + id); }
+      function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+      function D(at, d) { return Math.min(d, DUR - at); }                               // aucune tween ne dépasse la durée
+
+      /* ===================== kit ligne v8 (extraits copiés mot pour mot) ===================== */
+      /* ---- MONDE B (2D, papier) : caméra 2D cam2 = { x, y, s } ; le point (x, y) du monde est au centre du cadre ---- */
+      function fxApplyCam2(worldEl, c2) {
+        worldEl.style.transformOrigin = "0 0";
+        worldEl.style.transform = "translate(" + (960 - c2.x * c2.s).toFixed(2) + "px," + (540 - c2.y * c2.s).toFixed(2) + "px) scale(" + c2.s.toFixed(4) + ")";
+      }
+      // L'axe du tableau (monde B) : SVG de x0 à x1 (px du monde), ligne en y 70 ; graduations pendues ; années ; AUJOURD'HUI.
+      function fxAxisSVG(x0, x1, today) {
+        var W = x1 - x0, ink = "rgba(26,22,18,", s = ['<svg width="' + W + '" height="140" viewBox="0 0 ' + W + ' 140" xmlns="http://www.w3.org/2000/svg">'];
+        s.push('<line x1="0" y1="20" x2="' + W + '" y2="20" stroke="' + ink + '0.78)" stroke-width="3"/>');
+        for (var X = x0 + 20; X < today; X += 38.3) { var yr = Math.abs(((X - x0 - 20) / 38.3) % 12) < 0.01; s.push('<line x1="' + (X - x0) + '" y1="20" x2="' + (X - x0) + '" y2="' + (yr ? 88 : 38) + '" stroke="' + ink + (yr ? .85 : .35) + ')" stroke-width="' + (yr ? 2.6 : 1.6) + '"/>'); }
+        [["JUIN 2023", 20], ["JUIN 2024", 20 + 38.3 * 12], ["JUIN 2025", 20 + 38.3 * 24]].forEach(function (L) { s.push('<text x="' + (L[1] + 10) + '" y="80" font-family="Space Mono" font-weight="700" font-size="24" letter-spacing="3" fill="' + ink + '0.8)">' + L[0] + '</text>'); });
+        s.push('</svg>');
+        return s.join("");
+      }
+
+      /* ---- LE MONDE B (séquences 6 et 7) : construit le tableau clair en une fois, positions de frame.md ----
+         Renvoie les poignées à animer. La séquence monte la VRAIE fenêtre Claude (reference/v6-04/05) dans B.claude
+         (boîte de 1100 × 620 déjà posée en (2420, 215) à l'échelle 0.7, monde B v2) et la vraie capture du site dans B.lines[0].thumb. */
+      var FX_B = { col: [1540, 3480], lines: [267, 387, 507], lanes: [590, 700, 810], labels: ["Modifier le titre du site", "Réparer l’automatisation des factures", "Monter la vidéo"],
+        laneLabels: ["MODIF DU SITE", "AUTOMATISATION", "VIDÉO À MONTER"], rails: [["09:41", 200], ["09:42", 420], ["09:43", 690]] };
+      function fxBuildWorldB(host, tplDevis) {
+        var B = { el: host }, h = [];
+        function add(html) { host.insertAdjacentHTML("beforeend", html); return host.lastElementChild; }
+        B.axis = add('<div class="fx-q" style="left:0;top:50px">' + fxAxisSVG(40, 3520, 1540) + '</div>');
+        B.band = add('<div class="fx-col-band" style="left:1540px;width:1940px;transform-origin:50% 0"></div>');
+        B.edges = [add('<div class="fx-col-edge" style="left:1539px"></div>'), add('<div class="fx-col-edge" style="left:3479px"></div>')];
+        B.header = add('<div class="fx-micro" style="position:absolute;left:1640px;top:80px;color:#1a1612;font-weight:700;font-size:22px">Aujourd’hui</div>');
+        B.rails = FX_B.rails.map(function (r) { return [add('<div class="fx-col-rail" style="left:1420px;top:' + (r[1] - 9) + 'px">' + r[0] + '</div>'), add('<div class="fx-col-tick" style="left:1526px;top:' + r[1] + 'px"></div>')]; });
+        B.lanes = FX_B.lanes.map(function (y, i) { var e = add('<div class="fx-wait" style="left:80px;top:' + y + 'px;width:1440px;transform-origin:100% 50%"><span class="fx-wait-l">' + FX_B.laneLabels[i] + '</span></div>'); return e; });
+        B.devis = add('<div class="fx-q" style="left:260px;top:170px;transform:rotate(-4deg) scale(.42);transform-origin:0 0"></div>');
+        B.devis.appendChild(document.getElementById(tplDevis).content.cloneNode(true)); B.devis.firstElementChild.style.position = "relative";
+        B.claude = add('<div class="fx-q" style="left:2420px;top:215px;width:1100px;height:620px;transform:scale(.7);transform-origin:0 0"></div>');
+        B.lines = FX_B.lines.map(function (y, i) {
+          var card = add('<div class="fx-card" style="left:1640px;top:' + y + 'px;width:700px;height:90px"></div>');
+          var thumb = document.createElement("div"); thumb.style.cssText = "position:absolute;left:14px;top:12px;width:112px;height:66px;border-radius:6px;overflow:hidden;background:#1f1d1b"; card.appendChild(thumb);
+          if (i === 1) { thumb.style.background = "#fffdf9"; thumb.innerHTML = ["#7248B9", "#EA4335", "#FF7A59", "#635BFF"].map(function (c, k) { return '<i style="position:absolute;left:' + (4 + k * 27) + 'px;top:21px;width:24px;height:24px;border-radius:6px;background:' + c + ';box-shadow:0 2px 5px rgba(60,40,20,.2)"></i>'; }).join(""); }
+          if (i === 2) { thumb.style.background = "#fffdf9"; thumb.style.boxShadow = "inset 0 0 0 1px rgba(26,22,18,.12)"; thumb.innerHTML = '<i style="position:absolute;left:8px;right:8px;top:22px;height:12px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(26,22,18,.2)"></i><i style="position:absolute;left:8px;right:8px;top:40px;height:12px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(26,22,18,.2)"></i>'; }
+          var lab = document.createElement("div"); lab.style.cssText = "position:absolute;left:146px;top:30px;font:500 24px/30px 'Instrument Sans',sans-serif;color:#1a1612;white-space:nowrap"; lab.textContent = FX_B.labels[i]; card.appendChild(lab);
+          var wait = document.createElement("div"); wait.className = "fx-vd-state"; wait.style.cssText = "position:absolute;right:18px;top:29px"; wait.textContent = "EN ATTENTE"; card.appendChild(wait);
+          var done = document.createElement("div"); done.style.cssText = "position:absolute;right:18px;top:26px;height:38px;display:flex;align-items:center;gap:10px;opacity:0";
+          done.innerHTML = '<i style="width:34px;height:34px;border-radius:50%;background:#D97757;display:block;position:relative"><svg viewBox="0 0 36 36" width="34" height="34" style="position:absolute;left:0;top:0"><path d="M11 18.8 L15.9 23.5 L25.2 13.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i><span style="padding:4px 12px;border-radius:8px;background:#efebe3;font:500 20px/1.2 Instrument Sans;color:#5a5348">Fait</span>';
+          card.appendChild(done);
+          return { card: card, thumb: thumb, label: lab, wait: wait, done: done };
+        });
+        B.method = add('<div class="fx-q" style="left:2960px;top:540px;transform:rotate(3deg);transform-origin:0 0"></div>');
+        B.method.appendChild(document.getElementById("p06-fx-method").content.cloneNode(true)); B.method.firstElementChild.style.position = "relative";
+        return B;
+      }
+
+      /* ---- icônes de marque (Simple Icons CC0, chemins de assets/icons/*.svg, viewBox 0 0 24 24) ---- */
+      var FX_ICON = {"hubspot": "M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z", "gmail": "M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z", "whatsapp": "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z", "stripe": "M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z", "googlecalendar": "M18.316 5.684H24v12.632h-5.684V5.684zM5.684 24h12.632v-5.684H5.684V24zM18.316 5.684V0H1.895A1.894 1.894 0 0 0 0 1.895v16.421h5.684V5.684h12.632zm-7.207 6.25v-.065c.272-.144.5-.349.687-.617s.279-.595.279-.982c0-.379-.099-.72-.3-1.025a2.05 2.05 0 0 0-.832-.714 2.703 2.703 0 0 0-1.197-.257c-.6 0-1.094.156-1.481.467-.386.311-.65.671-.793 1.078l1.085.452c.086-.249.224-.461.413-.633.189-.172.445-.257.767-.257.33 0 .602.088.816.264a.86.86 0 0 1 .322.703c0 .33-.12.589-.36.778-.24.19-.535.284-.886.284h-.567v1.085h.633c.407 0 .748.109 1.02.327.272.218.407.499.407.843 0 .336-.129.614-.387.832s-.565.327-.924.327c-.351 0-.651-.103-.897-.311-.248-.208-.422-.502-.521-.881l-1.096.452c.178.616.505 1.082.977 1.401.472.319.984.478 1.538.477a2.84 2.84 0 0 0 1.293-.291c.382-.193.684-.458.902-.794.218-.336.327-.72.327-1.149 0-.429-.115-.797-.344-1.105a2.067 2.067 0 0 0-.881-.689zm2.093-1.931l.602.913L15 10.045v5.744h1.187V8.446h-.827l-2.158 1.557zM22.105 0h-3.289v5.184H24V1.895A1.894 1.894 0 0 0 22.105 0zm-3.289 23.5l4.684-4.684h-4.684V23.5zM0 22.105C0 23.152.848 24 1.895 24h3.289v-5.184H0v3.289z", "make": "M13.38 3.498c-.27 0-.511.19-.566.465L9.85 18.986a.578.578 0 0 0 .453.678l4.095.826a.58.58 0 0 0 .682-.455l2.963-15.021a.578.578 0 0 0-.453-.678l-4.096-.826a.589.589 0 0 0-.113-.012zm-5.876.098a.576.576 0 0 0-.516.318L.062 17.697a.575.575 0 0 0 .256.774l3.733 1.877a.578.578 0 0 0 .775-.258l6.926-13.781a.577.577 0 0 0-.256-.776L7.762 3.658a.571.571 0 0 0-.258-.062zm11.74.115a.576.576 0 0 0-.576.576v15.426c0 .318.258.578.576.578h4.178a.58.58 0 0 0 .578-.578V4.287a.578.578 0 0 0-.578-.576Z", "googleforms": "M14.727 6h6l-6-6v6zm0 .727H14V0H4.91c-.905 0-1.637.732-1.637 1.636v20.728c0 .904.732 1.636 1.636 1.636h14.182c.904 0 1.636-.732 1.636-1.636V6.727h-6zM7.91 17.318a.819.819 0 1 1 .001-1.638.819.819 0 0 1 0 1.638zm0-3.273a.819.819 0 1 1 .001-1.637.819.819 0 0 1 0 1.637zm0-3.272a.819.819 0 1 1 .001-1.638.819.819 0 0 1 0 1.638zm9 6.409h-6.818v-1.364h6.818v1.364zm0-3.273h-6.818v-1.364h6.818v1.364zm0-3.273h-6.818V9.273h6.818v1.363z", "wordpress": "M21.469 6.825c.84 1.537 1.318 3.3 1.318 5.175 0 3.979-2.156 7.456-5.363 9.325l3.295-9.527c.615-1.54.82-2.771.82-3.864 0-.405-.026-.78-.07-1.11m-7.981.105c.647-.03 1.232-.105 1.232-.105.582-.075.514-.93-.067-.899 0 0-1.755.135-2.88.135-1.064 0-2.85-.15-2.85-.15-.585-.03-.661.855-.075.885 0 0 .54.061 1.125.09l1.68 4.605-2.37 7.08L5.354 6.9c.649-.03 1.234-.1 1.234-.1.585-.075.516-.93-.065-.896 0 0-1.746.138-2.874.138-.2 0-.438-.008-.69-.015C4.911 3.15 8.235 1.215 12 1.215c2.809 0 5.365 1.072 7.286 2.833-.046-.003-.091-.009-.141-.009-1.06 0-1.812.923-1.812 1.914 0 .89.513 1.643 1.06 2.531.411.72.89 1.643.89 2.977 0 .915-.354 1.994-.821 3.479l-1.075 3.585-3.9-11.61.001.014zM12 22.784c-1.059 0-2.081-.153-3.048-.437l3.237-9.406 3.315 9.087c.024.053.05.101.078.149-1.12.393-2.325.609-3.582.609M1.211 12c0-1.564.336-3.05.935-4.39L7.29 21.709C3.694 19.96 1.212 16.271 1.211 12M12 0C5.385 0 0 5.385 0 12s5.385 12 12 12 12-5.385 12-12S18.615 0 12 0", "claude": "m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"};
+      var FX_BRAND = { hubspot: "#FF7A59", gmail: "#EA4335", whatsapp: "#25D366", stripe: "#635BFF", googlecalendar: "#4285F4", make: "#6D00CC", googleforms: "#7248B9", wordpress: "#21759B", claude: "#D97757" };
+      // Icône en SVG : fill = couleur (défaut : couleur de marque). Pour une notification : fond de marque, logo blanc.
+      function fxIconSVG(name, fill) { return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="' + (fill || FX_BRAND[name]) + '" d="' + FX_ICON[name] + '"/></svg>'; }
+
+      // Onde audio de la timeline vidéo : chemin SVG déterministe (692 × 58).
+      function fxWavePath() {
+        var s = "M0 29", i, a;
+        for (i = 0; i <= 692; i += 4) { a = 6 + 20 * Math.abs(Math.sin(i * 0.037) * Math.cos(i * 0.011)) + 6 * Math.abs(Math.sin(i * 0.21)); s += " L" + i + " " + (29 - a).toFixed(1); }
+        for (i = 692; i >= 0; i -= 4) { a = 6 + 20 * Math.abs(Math.sin(i * 0.037) * Math.cos(i * 0.011)) + 6 * Math.abs(Math.sin(i * 0.21)); s += " L" + i + " " + (29 + a).toFixed(1); }
+        return s + "Z";
+      }
+      /* ===================== fin du kit ===================== */
+
+      /* ---------- le monde B (frame.md, LE MONDE B) ---------- */
+      var W = $("world"), VIEW = $("view");
+      var B = fxBuildWorldB(W, "p06-fx-devis");
+      // la vraie fenêtre Claude dans son emplacement (1100 × 620 posé en (1579, 150) à 0.62)
+      B.claude.appendChild(document.getElementById("p06-tpl-cw").content.cloneNode(true));
+      ["gmail", "hubspot", "stripe", "wordpress"].forEach(function (n, i) { $("tool" + i).innerHTML = fxIconSVG(n); });
+      // ids des éléments qui entrent plus tard (la CSS les tient à opacité 0 dès leur création)
+      B.method.id = "p06-method";
+      B.lines.forEach(function (L, i) { L.card.id = "p06-line" + i; });
+      // la ligne 1 (« Réparer l’automatisation des factures ») touchait son état « EN ATTENTE » : interlettrage resserré
+      B.lines.forEach(function (L) { L.label.style.letterSpacing = "-0.02em"; L.wait.style.padding = "0 12px"; L.wait.style.letterSpacing = ".12em"; });
+      // les filets de liaison (fenêtre → carte), un par ligne, à mi-hauteur de chaque carte
+      var LINKS = FX_B.lines.map(function (y, i) {
+        W.insertAdjacentHTML("beforeend", '<i id="p06-link' + i + '" class="p06-link" style="top:' + (y + 44) + 'px"></i>');
+        return W.lastElementChild;
+      });
+      function splitPrint(el) {
+        var t = el.textContent, out = [];
+        el.textContent = "";
+        for (var i = 0; i < t.length; i++) { var s = document.createElement("span"); s.className = "p06-pc"; s.textContent = t[i]; el.appendChild(s); out.push(s); }
+        return out;
+      }
+      var headChars = splitPrint(B.header);
+      B.rails.forEach(function (r, i) { r[0].id = "p06-rl" + i; r[1].id = "p06-tk" + i; });
+      B.lanes.forEach(function (e, i) { e.id = "p06-lane" + i; });
+
+      // miniature 0 : le vrai site, sans puis avec son bouton, et l'anneau terracotta
+      B.lines[0].thumb.innerHTML = '<img class="p06-shot" src="assets/img/site-hero-sans-bouton.png" alt="">' +
+        '<img id="p06-t0btn" class="p06-shot" src="assets/img/site-hero.png" alt=""><i id="p06-t0ring"></i>';
+      // miniature 1 : les quatre tuiles (Forms, Gmail, HubSpot, Stripe), le maillon HubSpot → Stripe cassé, HubSpot grisée
+      (function () {
+        var names = ["googleforms", "gmail", "hubspot", "stripe"], h = "";
+        names.forEach(function (n, k) {
+          h += '<i class="p06-at" style="left:' + (6 + 28 * k) + 'px;background:' + (k === 2 ? "#9b948c" : FX_BRAND[n]) + '">' + fxIconSVG(n, "#fff") + '</i>';
+        });
+        h += '<i id="p06-amk" class="p06-at" style="left:62px;background:' + FX_BRAND.hubspot + '">' + fxIconSVG("hubspot", "#fff") + '</i>';
+        h += '<i class="p06-al" style="left:24px;width:10px"></i><i class="p06-al" style="left:52px;width:10px"></i>';
+        h += '<i id="p06-abrk" class="p06-ab" style="left:80px;width:10px"></i><i id="p06-aweld" class="p06-al" style="left:80px;width:10px"></i>';
+        h += '<i id="p06-adot"></i>';
+        B.lines[1].thumb.innerHTML = h;
+      })();
+      // miniature 2 : la timeline du kit (pistes V1 et A1) + les rushs, l'onde et la tête de lecture
+      (function () {
+        var clips = [[9, 22, -4, -14], [32, 26, -30, -12], [59, 19, -44, -6], [79, 24, -14, -24]], h = "";
+        clips.forEach(function (c, k) { h += '<i id="p06-vc' + k + '" class="p06-vc" style="left:' + c[0] + 'px;width:' + c[1] + 'px;background-position:' + c[2] + 'px ' + c[3] + 'px"></i>'; });
+        h += '<svg id="p06-vw" viewBox="0 0 692 58" preserveAspectRatio="none"><path fill="rgba(26,22,18,.45)" d="' + fxWavePath() + '"/></svg><i id="p06-vh"></i>';
+        B.lines[2].thumb.insertAdjacentHTML("beforeend", h);
+      })();
+      // coches : le trait blanc du disque se dessine (longueur du chemin M11 18.8 L15.9 23.5 L25.2 13.6 ≈ 20.4)
+      B.lines.forEach(function (L) { var pth = L.done.querySelector("path"); pth.style.strokeDasharray = "21 21"; pth.style.strokeDashoffset = "21"; L.done.children[1].style.opacity = "0"; });
+      // r6 : cartes simplifiées (le builder du kit reste intact) : plus de badge hachuré « EN ATTENTE » ; à la place du disque, un
+      // petit cercle creux gris (26 px, filet 2 px, encre à 30 %) ; à la coche il devient le disque #D97757 coché, puis « Fait »
+      B.lines.forEach(function (L, i) {
+        L.wait.style.display = "none";
+        L.done.style.opacity = "1";
+        var disc = L.done.children[0];
+        disc.style.background = "transparent";
+        disc.insertAdjacentHTML("afterbegin", '<i id="p06-ring' + i + '" class="p06-ring"></i><i id="p06-fill' + i + '" class="p06-fill"></i>');
+        L.ring = disc.children[0]; L.fill = disc.children[1];
+      });
+
+      /* ---------- caméra cam2 (le monde B) et tout ce qui dépend de l'horloge : UN seul écrivain, render(t) ---------- */
+      var EXIO = gsap.parseEase("expo.inOut"), EXO = gsap.parseEase("expo.out");
+      var P2I = gsap.parseEase("power2.in");
+      // colonne du jour (monde B v2) : les tâches à gauche, l'IA à droite, marges gauche (bord des cartes, x 1640) et droite
+      // (bord de la fenêtre, x 3190, puis de la carte méthode, x 3300) égales à ±40 px ; le filet gauche de la bande (x 1539)
+      // est dans le champ, net, à 90 px au moins du bord ; le filet droit (x 3479) hors champ
+      // r6 (Colin) : un seul sujet par plan.
+      // C1 « Claude seul » (ouverture, 0.12 à 1.60) : la fenêtre (centre 2805, 432) fait 1080 à 1100 px ; bord haut de la bande
+      // et axe hors champ en haut, filet droit x 3479 hors champ, tout au-dessus de y 890 ; dérive s +1 %/s
+      var C1X = 2786, C1Y = 500, C1S = 1.40;
+      // T2 « deux colonnes » (tout ça, 2.00 à 2.30 ; retour après le gros plan) : marges égales, filet gauche net à 90 px au moins
+      var CS = 0.95, CY = 465;
+      var T2X = 2413, T2V = 9;                                                          // x à 1.60 et dérive x (px/s)
+      // C4 « Claude seul, plus large » (2.65 à 4.40) : la carte méthode a sa place sur le coin bas droit ; dérive s +0,7 %/s
+      var C4X = 2766, C4Y = 548, C4S = 1.36;
+      var CX_R = 2454;                                                                  // x du cadrage deux colonnes au retour du gros plan
+      // gros plan sur le champ de saisie (centre (2827, 449)) : un peu à droite et plus bas pour garder la fenêtre au-dessus de y 890
+      var GX = 2856, GY = 468, GS = 1.9;
+      // couture 6 → 7 (handoff_out)
+      var HX = 1600, HY = 480, HS = 0.80;
+      function s1(t) { return C1S * (1 + 0.01 * Math.max(0, t - 0.12)); }
+      function x2(t) { return T2X + T2V * (t - 1.60); }
+      function s4(t) { return C4S * (1 + 0.007 * Math.max(0, t - 2.65)); }
+      // r6b : quand la carte méthode se pose (3.88 à 4.30), la caméra glisse de 90 u à droite pour centrer le groupe fenêtre + carte
+      var C4DX = 90;
+      function x4(t) { var p = Math.min(1, Math.max(0, (t - 3.88) / 0.42)); return C4X + C4DX * (0.5 - 0.5 * Math.cos(Math.PI * p)); }
+      var S1E = s1(1.60), X2P = x2(2.30);
+      var S_CRAN = s4(4.40), X_CR = x4(4.40), Y_CR = C4Y;                                   // départ du cran vers le champ
+      var X_CU = GX + 10 * (6.34 - 4.60);                                               // x du gros plan au départ du recul
+      var S_R = CS, X_R = CX_R - 6 * (6.84 - 6.60);                                     // départ du recul final (dérive x -6 px/s)
+      function camAt(t) {
+        var p, e;
+        if (t < 1.60) return { x: C1X, y: C1Y, s: s1(t), b: 0 };                       // 1. Claude seul
+        if (t < 2.00) {                                                                 // 3. « tout ça » : recul expo.out vers les deux colonnes
+          p = (t - 1.60) / 0.40; e = EXO(p);
+          return { x: C1X + (x2(t) - C1X) * e, y: C1Y + (CY - C1Y) * e, s: S1E * Math.pow(CS / S1E, e), b: 6 * Math.pow(2, -10 * p) };
+        }
+        if (t < 2.30) return { x: x2(t), y: CY, s: CS, b: 0 };                          //    les tâches arrivent, deux colonnes
+        if (t < 2.65) {                                                                 // 4. « avec » : poussée expo.inOut vers Claude seul, plus large
+          p = (t - 2.30) / 0.35; e = EXIO(p);
+          return { x: X2P + (C4X - X2P) * e, y: CY + (C4Y - CY) * e, s: CS * Math.pow(C4S / CS, e), b: 6 * Math.pow(2, -20 * Math.abs(p - 0.5)) };
+        }
+        if (t < 4.40) return { x: x4(t), y: C4Y, s: s4(t), b: 0 };                       //    outils, méthode : le sujet est Claude
+        if (t < 4.60) {                                                                 // 5. cran expo.inOut vers le champ, flou 0 → 8 → 0
+          p = (t - 4.40) / 0.20; e = EXIO(p);
+          return { x: X_CR + (GX - X_CR) * e, y: Y_CR + (GY - Y_CR) * e, s: S_CRAN * Math.pow(GS / S_CRAN, e), b: 8 * Math.pow(2, -20 * Math.abs(p - 0.5)) };
+        }
+        if (t < 6.34) return { x: GX + 10 * (t - 4.60), y: GY, s: GS, b: 0 };         // gros plan, dérive x +10 px/s
+        if (t < 6.60) {                                                                 // recul expo.out sur la colonne du jour
+          p = (t - 6.34) / 0.26; e = EXO(p);
+          return { x: X_CU + (CX_R - X_CU) * e, y: GY + (CY - GY) * e, s: GS * Math.pow(CS / GS, e), b: 8 * Math.pow(2, -10 * p) };
+        }
+        if (t < 6.84) return { x: CX_R - 6 * (t - 6.60), y: CY, s: CS, b: 0 };        // dérive x -6 px/s
+        p = clamp((t - 6.84) / 0.24, 0, 1); e = P2I(p);                                 // recul power2.in vers la couture, flou 0 → 10
+        return { x: X_R + (HX - X_R) * e, y: CY + (HY - CY) * e, s: S_R + (HS - S_R) * e, b: 10 * p * p };
+      }
+
+      // la demande, tapée par paquets calés sur la voix (90 signes/s dans un paquet)
+      var PROMPT = "Mets un bouton rendez-vous sur mon site, répare mes factures et monte ma vidéo.";
+      var CHUNKS = [["Mets un ", 4.86], ["bouton ", 5.00], ["rendez-vous ", 5.14], ["sur mon site, ", 5.34], ["répare mes ", 5.56], ["factures ", 5.70], ["et monte ", 5.80], ["ma vidéo.", 5.90]];
+      function typedCount(t) {
+        var n = 0;
+        for (var k = 0; k < CHUNKS.length; k++) {
+          var c = CHUNKS[k];
+          if (t >= c[1] - 1e-6) n += Math.min(c[0].length, Math.floor((t - c[1]) * 90 + 1e-6) + 1);
+        }
+        return n;
+      }
+      var SEND = 6.28;
+      var typed = $("typed"), caret = $("caret"), ph = $("ph"), txt = $("txt"), send = $("send"), cursor = $("cursor");
+      var dot = $("adot"), head = $("vh");
+      var lastCount = -1;
+      function render(t) {
+        var c = camAt(t);
+        fxApplyCam2(W, c);
+        VIEW.style.filter = c.b > 0.25 ? "blur(" + c.b.toFixed(2) + "px)" : "none";
+        // la carte de la méthode est en avant : dès que la caméra plonge vers le champ, elle file hors du cadre par la droite
+        // et s'efface (elle ne traverse jamais la bande des sous-titres) ; à la colonne du jour et à la couture : k = 0, opacité 1
+        var s0 = t < 5 ? 1.38 : 0.99, sw = t < 5 ? 0.03 : 0.06;                        // plan C4 (s ≤ 1.377) puis deux colonnes (s 0.95)
+        var k = clamp((c.s - s0) / (1.9 - s0), 0, 1);
+        B.method.style.transform = "translate(" + (600 * k).toFixed(2) + "px,0px) rotate(3deg) scale(" + (1 + 0.1 * k).toFixed(4) + ")";
+        B.method.style.opacity = String(1 - clamp((c.s - s0) / sw, 0, 1));
+
+        // le champ : texte tapé, curseur #D97757, texte indicatif, bouton d'envoi
+        var n = t < SEND + 0.08 ? typedCount(t) : 0;
+        if (n !== lastCount) { typed.textContent = PROMPT.slice(0, n); lastCount = n; }
+        var up = clamp((t - (SEND + 0.01)) / 0.07, 0, 1);                              // le texte quitte le champ par le haut
+        txt.style.opacity = String(1 - up);
+        txt.style.transform = "translate(0px," + (-34 * up * (2 - up)).toFixed(2) + "px)";
+        var on = t >= 4.60 && t < SEND && !(t >= 6.13 && t < 6.26) ? 1 : 0;
+        caret.style.opacity = String(on);
+        ph.style.opacity = String(n === 0 ? (t < SEND ? 1 : clamp((t - (SEND + 0.08)) / 0.1, 0, 1)) : 0);
+        send.style.opacity = String(n > 0 ? 1 : 0.45);
+
+        // la souris : un seul mouvement en courbe depuis le bas droit (0,44 s, power3.out), clic à 6.28, puis elle s'efface au recul
+        if (t < 5.84) cursor.style.opacity = "0";
+        else {
+          var q = clamp((t - 5.84) / 0.44, 0, 1), e = 1 - Math.pow(1 - q, 4), u = 1 - e;
+          var cx = u * u * 255 + 2 * u * e * 60, cy = u * u * 195 + 2 * u * e * 160;
+          cursor.style.transform = "translate(" + cx.toFixed(2) + "px," + cy.toFixed(2) + "px)";
+          cursor.style.opacity = String(Math.min(clamp((t - 5.84) / 0.06, 0, 1), 1 - clamp((t - 6.34) / 0.12, 0, 1)));   // r6 : partie avant que les tâches ne reviennent
+        }
+
+        // l'automatisation qui tourne : un point d'encre court de Forms à Stripe (passages de 0,1 s)
+        var passes = [6.70, 6.86, 7.00], dp = -1;
+        for (var i = 0; i < passes.length; i++) if (t >= passes[i] && t < passes[i] + 0.10) dp = (t - passes[i]) / 0.10;
+        if (dp < 0) dot.style.opacity = "0";
+        else { dot.style.opacity = "1"; dot.style.transform = "translate(" + (12.4 + 84 * dp).toFixed(2) + "px,0px)"; }
+
+        // la vidéo montée : la tête de lecture terracotta passe (9 → 96 px de 6.90 à 7.10)
+        if (t < 6.90) head.style.opacity = "0";
+        else { head.style.opacity = "1"; head.style.transform = "translate(" + (9 + 87 * clamp((t - 6.90) / 0.20, 0, 1)).toFixed(2) + "px,0px)"; }
+      }
+      var clock = { _t: 0 };
+      Object.defineProperty(clock, "t", { get: function () { return this._t; }, set: function (v) { this._t = v; render(v); } });
+
+      var tl = gsap.timeline({ paused: true });
+      tl.fromTo(clock, { t: 0 }, { t: DUR, duration: DUR, ease: "none" }, 0);
+
+      /* ---------- Scene 1 (0.00 à 2.24) : le point s'étire, le noir s'ouvre sur la colonne ---------- */
+      // le point continue de grossir (échelle +2 par seconde, handoff_in) pendant qu'il s'étire en trait
+      tl.fromTo($("pt"), { scale: 1 }, { scale: 1.8, duration: 0.4, ease: "none" }, 0);
+      tl.fromTo($("ptc"), { scaleX: 1, scaleY: 1 }, { scaleX: 0.4, scaleY: 7, duration: 0.12, ease: "expo.out" }, 0);
+      tl.fromTo($("ptc"), { opacity: 1 }, { opacity: 0, duration: 0.09, ease: "power1.in", immediateRender: false }, 0.03);
+      tl.fromTo($("pth1"), { scaleX: 1, scaleY: 1 }, { scaleX: 0.6, scaleY: 4, duration: 0.12, ease: "expo.out" }, 0);
+      tl.fromTo($("pth1"), { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power1.in" }, 0);
+      tl.fromTo($("pth2"), { opacity: 1 }, { opacity: 0, duration: 0.36, ease: "power2.in" }, 0);
+      // le trait de lumière sur toute la hauteur (x 960), expo.out
+      tl.fromTo($("beam"), { scaleY: 0.03 }, { scaleY: 1, duration: 0.12, ease: "expo.out" }, 0);
+      tl.fromTo($("beam"), { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none" }, 0);
+      tl.set($("beam"), { opacity: 0 }, 0.12);
+      // un seul geste : le trait se fend, ses deux bords écartent le noir ; le papier s'ouvre depuis le centre (inset 50 % → 0)
+      tl.fromTo($("open"), { clipPath: "inset(0% 50% 0% 50%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.28, ease: "expo.out", immediateRender: false }, 0.12);
+      tl.fromTo($("edgeL"), { x: 0 }, { x: -960, duration: 0.28, ease: "expo.out", immediateRender: false }, 0.12);
+      tl.fromTo($("edgeR"), { x: 0 }, { x: 960, duration: 0.28, ease: "expo.out", immediateRender: false }, 0.12);
+      tl.fromTo([$("edgeL"), $("edgeR")], { opacity: 0.85 }, { opacity: 0, duration: 0.28, ease: "power2.in", immediateRender: false }, 0.12);
+
+      // 0.40 l'en-tête « AUJOURD’HUI » s'imprime
+      headChars.forEach(function (s, i) { tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: 0.02, ease: "none", immediateRender: false }, 0.40 + i * 0.024); });
+      // le passé (rail des minutes, voies hachurées) : invisible pendant la séquence, il paraît sous le flou du recul final
+      // (6.93 à 7.01) et il est plein avant la couture de 7.08 (la séquence 7 l'attend plein)
+      var PAST = [0, 1, 2].reduce(function (a, i) { return a.concat([$("rl" + i), $("tk" + i), $("lane" + i)]); }, []);
+      tl.fromTo(PAST, { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "power1.out", immediateRender: false }, 6.93);
+
+      // 0.90 « l’IA » : la fenêtre Claude se pose dans la colonne (×1,08, flou 8 → net en 0,14 s)
+      tl.fromTo($("cw"), { opacity: 0, scale: 1.08, filter: "blur(8px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.14, ease: "expo.out", immediateRender: false }, 0.90);
+
+      // 1.60 « tout ça » : les trois lignes du jour arrivent du passé (depuis les voies d'attente) et se posent
+      B.lines.forEach(function (L, i) {
+        var at = 1.60 + i * 0.12;
+        tl.fromTo(L.card, { x: -900, scale: 1.06, filter: "blur(10px)" }, { x: 0, scale: 1, filter: "blur(0px)", duration: 0.42, ease: "expo.out", immediateRender: false }, at);
+        tl.fromTo(L.card, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out", immediateRender: false }, at);
+        // 2.30 « avec » : le sujet redevient Claude, les tâches sortent par la gauche
+        var ex = 2.30 + i * 0.03;
+        tl.fromTo(L.card, { x: 0, filter: "blur(0px)" }, { x: -760, filter: "blur(8px)", duration: 0.3, ease: "power2.in", immediateRender: false }, ex);
+        tl.fromTo(L.card, { opacity: 1 }, { opacity: 0, duration: 0.16, ease: "power1.in", immediateRender: false }, ex + 0.14);
+        // 6.30 elles reviennent de la gauche pendant le recul vers les deux colonnes, posées avant leur coche
+        var back = 6.30 + i * 0.03;
+        tl.fromTo(L.card, { x: -900, filter: "blur(10px)" }, { x: 0, filter: "blur(0px)", duration: 0.28, ease: "expo.out", immediateRender: false }, back);
+        tl.fromTo(L.card, { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "power1.out", immediateRender: false }, back);
+      });
+
+      /* ---------- Scene 2 (2.24 à 4.60) : les outils se branchent, la méthode se pose ---------- */
+      var TY = [-3, 3, -2, 3], TR = [-7, 6, -5, 7], TR0 = [-18, 14, -12, 16];
+      [0, 1, 2, 3].forEach(function (i) {
+        var at = 2.94 + i * 0.06;
+        tl.fromTo($("tool" + i), { opacity: 0, scale: 0.4, y: -16, rotation: TR0[i] }, { opacity: 1, scale: 1, y: TY[i], rotation: TR[i], duration: 0.16, ease: "expo.out", immediateRender: false }, at);
+        tl.fromTo($("tool" + i), { y: TY[i], rotation: TR[i] }, { y: 0, rotation: 0, duration: 0.18, ease: "expo.inOut", immediateRender: false }, 3.20);
+      });
+      // 3.88 « bonnes » : la carte « La méthode » arrive en volant et se pose sur le coin bas droit de la fenêtre
+      var mcard = B.method.firstElementChild;
+      tl.fromTo(mcard, { opacity: 0, x: 230, y: -30, scale: 1.12, rotation: 6, filter: "blur(10px)" }, { opacity: 1, x: 0, y: 0, scale: 1, rotation: 0, filter: "blur(0px)", duration: 0.22, ease: "expo.out", immediateRender: false }, 3.88);
+      // 4.10 ses trois lignes s'impriment
+      Array.prototype.forEach.call(B.method.querySelectorAll("p"), function (pEl, i) {
+        tl.fromTo(pEl, { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.14, ease: "power3.out", immediateRender: false }, 4.10 + i * 0.08);
+      });
+
+      /* ---------- Scene 3 (4.60 à 7.08) : la demande, l'envoi, les trois « Fait » ---------- */
+      // 6.28 clic direct sur l'envoi : pression du curseur (0,85) et du bouton (0,92), une onde #D97757
+      tl.fromTo($("cursvg"), { scale: 1 }, { scale: 0.85, duration: 0.06, ease: "power2.in", immediateRender: false }, SEND);
+      tl.fromTo($("cursvg"), { scale: 0.85 }, { scale: 1, duration: 0.09, ease: "power2.out", immediateRender: false }, SEND + 0.06);
+      tl.fromTo(send, { scale: 1 }, { scale: 0.92, duration: 0.06, ease: "power2.in", immediateRender: false }, SEND);
+      tl.fromTo(send, { scale: 0.92 }, { scale: 1, duration: 0.09, ease: "power2.out", immediateRender: false }, SEND + 0.06);
+      tl.fromTo($("ripple"), { scale: 0.5 }, { scale: 2.6, duration: 0.24, ease: "power2.out", immediateRender: false }, SEND + 0.01);
+      tl.fromTo($("ripple"), { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "none", immediateRender: false }, SEND + 0.01);
+      tl.fromTo($("ripple"), { opacity: 1 }, { opacity: 0, duration: 0.18, ease: "power1.in", immediateRender: false }, SEND + 0.04);
+      // la demande monte en bulle utilisateur ; le salut s'efface
+      tl.fromTo($("bubble"), { y: 70 }, { y: 0, duration: 0.3, ease: "expo.out", immediateRender: false }, SEND + 0.05);
+      tl.fromTo($("bubble"), { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "none", immediateRender: false }, SEND + 0.05);
+      tl.fromTo($("hello"), { opacity: 1, y: 0 }, { opacity: 0, y: -8, duration: 0.08, ease: "power1.out", immediateRender: false }, SEND + 0.01);
+
+      // les trois lignes se résolvent : l'état hachuré s'efface, le disque #D97757 se pose, la coche se trace, « Fait »
+      function resolve(L, at) {
+        tl.fromTo(L.ring, { opacity: 1, scale: 1 }, { opacity: 0, scale: 1.25, duration: 0.08, ease: "power1.out", immediateRender: false }, at);
+        tl.fromTo(L.fill, { opacity: 1, scale: 0.45 }, { opacity: 1, scale: 1, duration: D(at, 0.2), ease: "power3.out", immediateRender: false }, at);
+        tl.fromTo(L.done.querySelector("path"), { strokeDashoffset: 21 }, { strokeDashoffset: 0, duration: D(at + 0.02, 0.08), ease: "power2.out", immediateRender: false }, at + 0.02);
+        tl.fromTo(L.done.children[1], { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: D(at + 0.02, 0.2), ease: "power3.out", immediateRender: false }, at + 0.02);
+      }
+      // 6.64 « elle » : le vrai site gagne son bouton, un anneau terracotta pulse, coche
+      tl.fromTo($("t0btn"), { opacity: 0 }, { opacity: 1, duration: 0.06, ease: "none", immediateRender: false }, 6.58);
+      tl.fromTo($("t0ring"), { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.08, ease: "power2.out", immediateRender: false }, 6.62);
+      tl.fromTo($("t0ring"), { opacity: 1, scale: 1 }, { opacity: 0, scale: 1.7, duration: 0.36, ease: "power2.out", immediateRender: false }, 6.70);
+      // l'IA à droite fait les tâches à gauche : à chaque coche, un filet se trace de la fenêtre à la carte, puis s'efface
+      function link(i, at) {
+        tl.fromTo(LINKS[i], { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, at - 0.1);
+        tl.fromTo(LINKS[i], { opacity: 1 }, { opacity: 0, duration: D(at, 0.2), ease: "power1.in", immediateRender: false }, at);
+      }
+      link(0, 6.64); link(1, 6.82); link(2, 6.98);
+      resolve(B.lines[0], 6.64);
+      // 6.82 « le » : le point court sur les tuiles, le maillon HubSpot → Stripe se ressoude, HubSpot reprend sa couleur, coche
+      tl.fromTo($("amk"), { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "none", immediateRender: false }, 6.75);
+      tl.fromTo($("abrk"), { opacity: 1 }, { opacity: 0, duration: 0.05, ease: "none", immediateRender: false }, 6.78);
+      tl.fromTo($("aweld"), { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none", immediateRender: false }, 6.78);
+      resolve(B.lines[1], 6.82);
+      // 6.98 « fait » : les rushs sautent dans V1, l'onde paraît, la tête de lecture passe, coche
+      [0, 1, 2, 3].forEach(function (k) {
+        tl.fromTo($("vc" + k), { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.1, ease: "power2.out", immediateRender: false }, 6.84 + k * 0.025);
+      });
+      tl.fromTo($("vw"), { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, 6.90);
+      resolve(B.lines[2], 6.98);
+
+      /* ---------- le sous-titre : la phrase de la voix, mot par mot (gris puis encre), une boîte d'encre par phrase ---------- */
+      function word(id, at, inBox) {
+        var g = inBox ? "rgba(246,241,233,.42)" : "rgba(26,22,18,.35)", f = inBox ? "#f6f1e9" : "#1a1612", el = $(id);
+        tl.fromTo(el, { opacity: 0, y: 8, filter: "blur(6px)", color: g }, { opacity: 1, y: 0, filter: "blur(0px)", color: g, duration: D(at, 0.14), ease: "power2.out", immediateRender: at > 0 ? false : true }, at);
+        if (at + 0.12 < DUR) tl.fromTo(el, { color: g }, { color: f, duration: D(at + 0.12, 0.2), ease: "power1.out", immediateRender: false }, at + 0.12);
+      }
+      function box(id, at) { tl.fromTo($(id), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out", immediateRender: false }, at); }
+      function out(id, at, d) { tl.fromTo($(id), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: d, ease: "power1.in", immediateRender: false }, at); }
+      [["a0", 0.00], ["a1", 0.90], ["a2", 1.08], ["a3", 1.36], ["a4", 1.60], ["a5", 1.80]].forEach(function (w) { word(w[0], w[1]); });
+      out("sub1", 2.12, 0.14);
+      [["b0", 2.30], ["b1", 2.52], ["b2", 2.74], ["b3", 2.94], ["b4", 3.40]].forEach(function (w) { word(w[0], w[1]); });
+      box("bx2", 3.70);
+      [["b5", 3.72], ["b6", 3.88], ["b7", 4.10]].forEach(function (w) { word(w[0], w[1], true); });
+      out("sub2", 4.62, 0.14);
+      [["c0", 4.86], ["c1", 5.02], ["c2", 5.16]].forEach(function (w) { word(w[0], w[1]); });
+      box("bx3", 5.60);
+      [["c3", 5.62], ["c4", 5.80], ["c5", 6.04]].forEach(function (w) { word(w[0], w[1], true); });
+      [["c6", 6.64], ["c7", 6.76], ["c8", 6.98]].forEach(function (w) { word(w[0], w[1]); });
+      out("sub3", 7.00, 0.08);
+
+      render(0);
+      tl.set({}, {}, DUR);
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

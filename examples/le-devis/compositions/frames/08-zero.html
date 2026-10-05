@@ -1,0 +1,427 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-600.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url('assets/fonts/SpaceMono-400.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      color: #1a1612;
+    }
+
+    /* ground-light: paper + one soft warm radial behind the focal element (full-bleed clip, lowest track) */
+    .f08-ground {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: #f6f1e9;
+    }
+    .f08-halo {
+      position: absolute;
+      left: 310px;
+      top: -200px;
+      width: 1300px;
+      height: 1300px;
+      border-radius: 50%;
+      opacity: 0.8;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.1) 0%, rgba(194, 91, 40, 0.05) 42%, rgba(194, 91, 40, 0) 100%);
+    }
+
+    /* ---------- Scene 1 ---------- */
+    .f08-s1 {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    .f08-s1move {
+      position: absolute;
+      inset: 0;
+    }
+    .f08-cardpos {
+      position: absolute;
+      left: 380px;
+      top: 162px;
+      width: 1160px;
+      height: 576px;
+    }
+    .f08-tilt {
+      width: 100%;
+      height: 100%;
+      transform: perspective(2000px) rotateY(-12deg) rotateX(7deg) rotateZ(-2.5deg);
+      transform-origin: 50% 50%;
+    }
+    .f08-card {
+      --dof: 0px;
+      filter: blur(var(--dof));
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      box-shadow: 0 30px 80px rgba(60, 40, 20, 0.14), 0 2px 6px rgba(60, 40, 20, 0.08);
+    }
+    .f08-bar {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-left: 28px;
+      border-bottom: 1px solid #e2d9cc;
+    }
+    .f08-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #e2d9cc;
+    }
+    .f08-code {
+      padding: 40px 56px 40px 0;
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 28px;
+      line-height: 54px;
+    }
+    .f08-ln {
+      display: flex;
+      white-space: pre;
+    }
+    .f08-n {
+      width: 84px;
+      padding-right: 34px;
+      text-align: right;
+      color: rgba(155, 146, 137, 0.6);
+      flex: none;
+    }
+    .f08-k { color: #c25b28; }
+    .f08-f { color: #1a1612; }
+    .f08-v { color: #5a5348; }
+    .f08-p { color: #9b9289; }
+
+    .f08-s1phrase {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 900px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* phrase type (frame.md: phrase 54 / 600 / 1.18 / -0.02em) */
+    .f08-line {
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      font-size: 54px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f08-w {
+      display: inline-block;
+      --b: 8px;
+      opacity: 0;
+      filter: blur(var(--b));
+    }
+
+    /* accent-pill: traced bg, then letters write inside */
+    .f08-pill {
+      position: relative;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      margin-left: 0.04em;
+      transform-origin: 0% 50%;
+    }
+    .f08-pillbg {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      opacity: 0;
+      transform-origin: 0% 50%;
+      z-index: 0;
+    }
+    .f08-ch {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      color: #ffffff;
+      opacity: 0;
+    }
+
+    /* ---------- Scene 2 + 3 ---------- */
+    .f08-s2 {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+    .f08-left {
+      position: absolute;
+      left: 300px;
+      top: 0;
+      width: 640px;
+      height: 900px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* giant zero: glyph centered at (1400, 450); box 600x700 at (1100, 100) */
+    .f08-zbox {
+      position: absolute;
+      left: 1100px;
+      top: 100px;
+      width: 600px;
+      height: 700px;
+      opacity: 0;
+    }
+    .f08-zscale {
+      position: absolute;
+      inset: 0;
+    }
+    .f08-zsvg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 600px;
+      height: 700px;
+      overflow: visible;
+    }
+    .f08-ztext {
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      font-size: 800px;
+    }
+    #f08-zfilltext {
+      fill: #c25b28;
+    }
+    #f08-zouttext {
+      fill: none;
+      stroke: #c25b28;
+      stroke-width: 4px;
+    }
+    .f08-zfill {
+      position: absolute;
+      inset: 0;
+      clip-path: inset(648px 0px 0px 0px);
+    }
+
+    .f08-bloom {
+      position: absolute;
+      left: 1100px;
+      top: 150px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      background: radial-gradient(closest-side, rgba(255, 247, 240, 1) 0%, rgba(255, 226, 204, 0.95) 22%, rgba(224, 138, 92, 0.75) 48%, rgba(212, 112, 63, 0.3) 72%, rgba(194, 91, 40, 0) 100%);
+    }
+
+    /* grain 3% (top track) */
+    .f08-grain {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      opacity: 0.03;
+      pointer-events: none;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+  </style>
+
+  <div id="root" data-composition-id="08-zero" data-width="1920" data-height="1080" data-duration="5.0">
+
+    <!-- ground: paper + warm radial (full-bleed, full duration incl. the 0.75 s under the iris) -->
+    <div id="f08-ground" class="clip f08-ground" data-start="0" data-duration="5.0" data-track-index="0" data-layout-ignore>
+      <div id="f08-halo" class="f08-halo"></div>
+    </div>
+
+    <!-- Scene 1 (0.00-1.60): code editor defocuses behind « Pas besoin d’être [technique.] » -->
+    <div id="f08-s1" class="clip f08-s1" data-start="0" data-duration="1.6" data-track-index="1">
+      <div id="f08-s1move" class="f08-s1move">
+        <div class="f08-cardpos" data-layout-ignore>
+          <div class="f08-tilt">
+            <div id="f08-card" class="f08-card">
+              <div class="f08-bar"><span class="f08-dot"></span><span class="f08-dot"></span><span class="f08-dot"></span></div>
+              <div class="f08-code">
+                <div class="f08-ln"><span class="f08-n">1</span><span><span class="f08-k">export</span> <span class="f08-k">async</span> <span class="f08-k">function</span> <span class="f08-f">publish</span><span class="f08-p">(</span><span class="f08-v">site</span><span class="f08-p">) {</span></span></div>
+                <div class="f08-ln"><span class="f08-n">2</span><span>  <span class="f08-k">const</span> <span class="f08-v">pages</span> <span class="f08-p">=</span> <span class="f08-k">await</span> <span class="f08-f">build</span><span class="f08-p">(</span><span class="f08-v">site</span><span class="f08-p">.</span><span class="f08-v">routes</span><span class="f08-p">);</span></span></div>
+                <div class="f08-ln"><span class="f08-n">3</span><span>  <span class="f08-k">if</span> <span class="f08-p">(!</span><span class="f08-v">pages</span><span class="f08-p">.</span><span class="f08-v">length</span><span class="f08-p">)</span> <span class="f08-k">return</span> <span class="f08-f">retry</span><span class="f08-p">(</span><span class="f08-v">site</span><span class="f08-p">);</span></span></div>
+                <div class="f08-ln"><span class="f08-n">4</span><span>  <span class="f08-k">for</span> <span class="f08-p">(</span><span class="f08-k">const</span> <span class="f08-v">page</span> <span class="f08-k">of</span> <span class="f08-v">pages</span><span class="f08-p">) {</span></span></div>
+                <div class="f08-ln"><span class="f08-n">5</span><span>    <span class="f08-k">await</span> <span class="f08-f">deploy</span><span class="f08-p">(</span><span class="f08-v">page</span><span class="f08-p">, {</span> <span class="f08-v">cache</span><span class="f08-p">:</span> <span class="f08-k">true</span> <span class="f08-p">});</span></span></div>
+                <div class="f08-ln"><span class="f08-n">6</span><span>  <span class="f08-p">}</span></span></div>
+                <div class="f08-ln"><span class="f08-n">7</span><span>  <span class="f08-k">return</span> <span class="f08-v">site</span><span class="f08-p">.</span><span class="f08-v">url</span><span class="f08-p">;</span></span></div>
+                <div class="f08-ln"><span class="f08-n">8</span><span><span class="f08-p">}</span></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="f08-s1phrase">
+          <div class="f08-line"><span id="f08-a1" class="f08-w">Pas</span> <span id="f08-a2" class="f08-w">besoin</span> <span id="f08-a3" class="f08-w">d’être</span> <span id="f08-pill1" class="f08-pill"><span id="f08-pill1-bg" class="f08-pillbg"></span><span class="f08-ch">t</span><span class="f08-ch">e</span><span class="f08-ch">c</span><span class="f08-ch">h</span><span class="f08-ch">n</span><span class="f08-ch">i</span><span class="f08-ch">q</span><span class="f08-ch">u</span><span class="f08-ch">e</span><span class="f08-ch">.</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 2 + 3 (1.60-5.00): 50/50 split, the outlined zero fills with terracotta, then blooms at (1400, 450) -->
+    <div id="f08-s2" class="clip f08-s2" data-start="1.6" data-duration="3.4" data-track-index="2">
+      <div id="f08-left" class="f08-left">
+        <div class="f08-line"><span id="f08-b1" class="f08-w">C’est</span> <span id="f08-b2" class="f08-w">pensé</span> <span id="f08-b3" class="f08-w">pour</span> <span id="f08-b4" class="f08-w">ceux</span></div>
+        <div class="f08-line"><span id="f08-b5" class="f08-w">qui</span> <span id="f08-b6" class="f08-w">partent</span> <span id="f08-pill2" class="f08-pill"><span id="f08-pill2-bg" class="f08-pillbg"></span><span class="f08-ch">d</span><span class="f08-ch">e</span> <span class="f08-ch">z</span><span class="f08-ch">é</span><span class="f08-ch">r</span><span class="f08-ch">o</span><span class="f08-ch">.</span></span></div>
+      </div>
+
+      <div id="f08-zbox" class="f08-zbox">
+        <div id="f08-zscale" class="f08-zscale">
+          <div id="f08-zfill" class="f08-zfill">
+            <svg class="f08-zsvg" width="600" height="700" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg">
+              <text id="f08-zfilltext" class="f08-ztext" x="300" y="638" text-anchor="middle">0</text>
+            </svg>
+          </div>
+          <svg class="f08-zsvg" width="600" height="700" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg">
+            <text id="f08-zouttext" class="f08-ztext" x="300" y="638" text-anchor="middle">0</text>
+          </svg>
+        </div>
+      </div>
+
+      <div id="f08-bloom" class="f08-bloom" data-layout-ignore></div>
+    </div>
+
+    <!-- film grain 3%, on top -->
+    <div id="f08-grain" class="clip f08-grain" data-start="0" data-duration="5.0" data-track-index="3" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      function byId(id) {
+        return document.getElementById(id);
+      }
+      function all(sel) {
+        return Array.prototype.slice.call(document.querySelectorAll(sel));
+      }
+
+      var tl = gsap.timeline({ paused: true });
+
+      // word-by-word (frame.md): opacity 0 / y 10 / blur 8 -> sharp, 0.3 s power3.out, on the voice cue
+      function word(id, t) {
+        tl.fromTo(byId(id),
+          { opacity: 0, y: 10, "--b": "8px" },
+          { opacity: 1, y: 0, "--b": "0px", duration: 0.3, ease: "power3.out" },
+          t);
+      }
+      // accent-pill: bg traces scaleX 0->1 from the left (0.28 s power3.out) while straightening -8deg -> 0 (0.4 s),
+      // THEN the letters write inside with a 0.02 s stagger. t = trace start (just before the spoken word).
+      function pill(id, t) {
+        tl.fromTo(byId(id),
+          { rotation: -8 },
+          { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false },
+          t);
+        tl.fromTo(byId(id + "-bg"),
+          { scaleX: 0, opacity: 1 },
+          { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out", immediateRender: false },
+          t);
+        tl.fromTo(all("#" + id + " .f08-ch"),
+          { opacity: 0, y: 6 },
+          { opacity: 1, y: 0, duration: 0.18, ease: "power3.out", stagger: 0.02 },
+          t + 0.18);
+      }
+
+      // ---------- Scene 1 (0.00-1.60) ----------
+      // background code editor: seen under the crossfade, then blurs, recedes and fades to 15% early
+      // (power2.out from 0.05) so the phrase never sits on sharp code
+      tl.fromTo(byId("f08-card"),
+        { "--dof": "0px", opacity: 1, scale: 1 },
+        { "--dof": "10px", opacity: 0.15, scale: 0.965, duration: 0.55, ease: "power2.out", immediateRender: false },
+        0.05);
+
+      // « Pas besoin d’être » + [pill: technique.]  (Pas@0.20 besoin@0.40 d’être@0.56 technique@0.82)
+      word("f08-a1", 0.2);
+      word("f08-a2", 0.4);
+      word("f08-a3", 0.56);
+      pill("f08-pill1", 0.78);
+
+      // cut-the-curve UPWARD: scene 1 accelerates up (power4.in), fade dies 0.02 s before the cut at 1.60
+      var s1 = byId("f08-s1move");
+      tl.fromTo(s1, { y: 0 }, { y: -230, duration: 0.3, ease: "power4.in", immediateRender: false }, 1.3);
+      tl.fromTo(s1, { opacity: 1 }, { opacity: 0, duration: 0.28, ease: "power1.in", immediateRender: false }, 1.3);
+
+      // the warm radial glides from behind the phrase (x 960) to behind the zero (x 1400) under the cut
+      var halo = byId("f08-halo");
+      tl.fromTo(halo, { x: 0 }, { x: 440, duration: 0.8, ease: "power2.inOut", immediateRender: false }, 1.3);
+
+      // ---------- Scene 2 (1.60-3.80) ----------
+      // entry continues upward with the mirrored power4.out (same 230 px / 0.3 s -> matched velocity at the cut)
+      tl.fromTo(byId("f08-zbox"),
+        { y: 230, opacity: 0.35 },
+        { y: 0, opacity: 1, duration: 0.3, ease: "power4.out", immediateRender: false },
+        1.6);
+      tl.fromTo(byId("f08-left"),
+        { y: 230 },
+        { y: 0, duration: 0.3, ease: "power4.out", immediateRender: false },
+        1.6);
+
+      // « C’est pensé pour ceux qui partent » + [pill: de zéro.]
+      word("f08-b1", 1.76);
+      word("f08-b2", 1.88);
+      word("f08-b3", 2.12);
+      word("f08-b4", 2.36);
+      word("f08-b5", 2.46);
+      word("f08-b6", 2.68);
+      pill("f08-pill2", 2.94);
+
+      // zéro@3.14: the outlined zero fills with terracotta from the bottom up (stat-bars-and-fills, clipPath fill)
+      tl.fromTo(byId("f08-zfill"),
+        { clipPath: "inset(648px 0px 0px 0px)" },
+        { clipPath: "inset(50px 0px 0px 0px)", duration: 0.66, ease: "power2.out" },
+        3.14);
+      // the warm radial swells behind the filling zero
+      tl.fromTo(halo,
+        { scale: 1, opacity: 0.8 },
+        { scale: 1.18, opacity: 1, duration: 0.9, ease: "power2.out", immediateRender: false },
+        3.14);
+
+      // ---------- Scene 3 (3.80-4.25, held to 5.00 under the iris) ----------
+      // the filled zero heats up and its center blooms (iris opens from x 1400, y 450)
+      tl.fromTo(byId("f08-zfilltext"),
+        { fill: "#c25b28" },
+        { fill: "#e08a5c", duration: 0.5, ease: "power2.in", immediateRender: false },
+        3.8);
+      tl.fromTo(byId("f08-zouttext"),
+        { stroke: "#c25b28" },
+        { stroke: "#e08a5c", duration: 0.5, ease: "power2.in", immediateRender: false },
+        3.8);
+      tl.fromTo(byId("f08-zscale"),
+        { scale: 1 },
+        { scale: 1.06, duration: 1.2, ease: "power1.in", immediateRender: false },
+        3.8);
+      var bloom = byId("f08-bloom");
+      tl.fromTo(bloom, { scale: 0.12 }, { scale: 1.5, duration: 1.2, ease: "power1.out" }, 3.8);
+      tl.fromTo(bloom, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 3.8);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["08-zero"] = tl;
+    })();
+  </script>
+</template>

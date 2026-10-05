@@ -1,0 +1,802 @@
+<template id="f03-prix-template">
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-600.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-700.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url('assets/fonts/SpaceMono-700.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #f5efe7;
+      font-family: "Instrument Sans";
+    }
+
+    /* ground-dark: canvas + one soft terracotta halo (full-duration clip). */
+    .f03-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 900px 520px at 960px 540px, rgba(194, 91, 40, 0.1), rgba(194, 91, 40, 0) 100%),
+        #0d0b0a;
+    }
+
+    /* Static film grain above everything (full-duration clip). */
+    .f03-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 2;
+      opacity: 0.05;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+    }
+
+    .f03-scene {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      z-index: 1;
+    }
+
+    /* Scenes 1-2 container: covered in one frame by the opaque Stop stage at the cut. */
+    .f03-busy {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* Warm halo behind the persona (center 960,630). */
+    .f03-halo {
+      position: absolute;
+      left: 440px;
+      top: 330px;
+      width: 1040px;
+      height: 600px;
+      opacity: 0;
+      background: radial-gradient(ellipse closest-side, rgba(194, 91, 40, 0.3) 0%, rgba(168, 77, 34, 0.14) 45%, rgba(168, 77, 34, 0) 100%);
+    }
+
+    /* The world darkening at the edges while the swarm crowds in. */
+    .f03-vignette {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0;
+      background: radial-gradient(ellipse 1100px 700px at 960px 560px, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.55) 100%);
+    }
+
+    /* ---------- Swarm: small dark quote cards + envelopes ---------- */
+    .f03-swarm {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f03-slot {
+      position: absolute;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    .f03-qc,
+    .f03-env {
+      position: absolute;
+      left: 0;
+      top: 0;
+      box-sizing: border-box;
+      background: linear-gradient(160deg, rgba(40, 33, 28, 0.92), rgba(24, 20, 17, 0.9) 45%, rgba(20, 16, 14, 0.9) 80%, rgba(30, 24, 20, 0.92));
+      border: 1px solid rgba(245, 239, 231, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 30px 70px rgba(0, 0, 0, 0.65);
+    }
+    .f03-qc {
+      width: 240px;
+      height: 160px;
+      padding: 14px 16px 12px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+    .f03-env {
+      width: 200px;
+      height: 136px;
+      border-radius: 10px;
+    }
+    .f03-far .f03-qc,
+    .f03-far .f03-env {
+      filter: blur(1.2px);
+    }
+    .f03-qc-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 12px;
+    }
+    .f03-qc-dot {
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #d4703f;
+    }
+    .f03-b {
+      display: block;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(205, 191, 178, 0.22);
+    }
+    .f03-b-micro {
+      height: 6px;
+      background: rgba(155, 146, 137, 0.45);
+    }
+    .f03-b-title {
+      margin-top: 10px;
+      height: 10px;
+      background: rgba(245, 239, 231, 0.3);
+    }
+    .f03-b-price {
+      width: 38px;
+      background: rgba(205, 191, 178, 0.34);
+    }
+    .f03-b-t {
+      width: 34px;
+      background: rgba(155, 146, 137, 0.4);
+    }
+    .f03-qc-rows {
+      margin-top: 8px;
+    }
+    .f03-qc-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 18px;
+      border-top: 1px solid #2a2420;
+    }
+    .f03-qc-total {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 7px;
+      border-top: 1px solid #2a2420;
+    }
+    .f03-badge {
+      display: block;
+      padding: 5px 9px;
+      border-radius: 6px;
+      background: #c25b28;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 18px rgba(212, 112, 63, 0.45);
+    }
+    .f03-badge i {
+      display: block;
+      width: 36px;
+      height: 7px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+    .f03-env-art {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: block;
+    }
+    .f03-env-badge {
+      position: absolute;
+      right: -11px;
+      top: -11px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #c25b28;
+      box-shadow: 0 0 0 3px rgba(20, 16, 14, 0.95), 0 0 22px rgba(212, 112, 63, 0.55);
+    }
+
+    /* ---------- Persona « toi » ---------- */
+    .f03-persona {
+      position: absolute;
+      left: 780px;
+      top: 505px;
+      width: 360px;
+      height: 380px;
+      opacity: 0;
+      transform-origin: 50% 100%;
+      filter: drop-shadow(0 0 1.5px rgba(245, 239, 231, 0.32)) drop-shadow(0 18px 40px rgba(0, 0, 0, 0.5));
+      -webkit-mask-image: linear-gradient(to bottom, #000 80%, rgba(0, 0, 0, 0) 100%);
+      mask-image: linear-gradient(to bottom, #000 80%, rgba(0, 0, 0, 0) 100%);
+    }
+    .f03-persona svg {
+      display: block;
+    }
+    .f03-stroke {
+      opacity: 0;
+    }
+
+    /* ---------- Pain pills (center-outward-expansion from the head, 960,650) ---------- */
+    .f03-burst {
+      position: absolute;
+      left: 460px;
+      top: 400px;
+      width: 1000px;
+      height: 500px;
+    }
+    .f03-pp {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px 10px 16px;
+      border-radius: 999px;
+      background: #2e2924;
+      border: 1px solid rgba(245, 239, 231, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 16px 40px rgba(0, 0, 0, 0.6);
+      font-family: "Space Mono";
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 24px;
+      color: #ffffff;
+      white-space: nowrap;
+      will-change: transform, opacity;
+    }
+    .f03-pp svg {
+      display: block;
+      flex: none;
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ---------- Phrase (word by word) + accent pill ---------- */
+    .f03-phrase {
+      position: absolute;
+      left: 0;
+      top: 92px;
+      width: 1920px;
+      text-align: center;
+      white-space: nowrap;
+      font-family: "Instrument Sans";
+      font-weight: 600;
+      font-size: 54px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+    }
+    .f03-w {
+      display: inline-block;
+      opacity: 0;
+      will-change: transform, opacity, filter;
+    }
+    .f03-pill {
+      position: relative;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      color: #ffffff;
+      transform-origin: 0% 50%;
+    }
+    .f03-pill-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      opacity: 0;
+      transform-origin: 0% 50%;
+    }
+    .f03-ch {
+      position: relative;
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+
+    /* ---------- Scene 3: « Stop. » echo-stack ---------- */
+    /* Opaque empty stage: covers Scenes 1-2 in one frame at the cut (no fade-out tween). */
+    .f03-stop {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0;
+      background:
+        radial-gradient(ellipse 900px 520px at 960px 540px, rgba(194, 91, 40, 0.1), rgba(194, 91, 40, 0) 100%),
+        #0d0b0a;
+    }
+    .f03-stop-halo {
+      position: absolute;
+      left: 360px;
+      top: 220px;
+      width: 1200px;
+      height: 640px;
+      opacity: 0;
+      background: radial-gradient(ellipse closest-side, rgba(194, 91, 40, 0.22) 0%, rgba(194, 91, 40, 0.08) 50%, rgba(194, 91, 40, 0) 100%);
+    }
+    /* Keep-out: the stack is clipped at y 900 and tapers symmetrically around y 540. */
+    .f03-stop-clip {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 900px;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 180px, #000 280px, #000 800px, rgba(0, 0, 0, 0) 900px);
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 180px, #000 280px, #000 800px, rgba(0, 0, 0, 0) 900px);
+    }
+    .f03-stop-cam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 960px 540px;
+    }
+    .f03-echo {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      font-family: "Instrument Sans";
+      font-weight: 700;
+      font-size: 260px;
+      line-height: 0.9;
+      letter-spacing: -13px;
+      text-indent: -13px;
+      color: #f5efe7;
+    }
+    .f03-el {
+      position: absolute;
+      left: 0;
+      top: 423px;
+      width: 1920px;
+      height: 234px;
+      text-align: center;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    .f03-el-main {
+      z-index: 2;
+    }
+  </style>
+
+  <div id="root" data-composition-id="03-prix" data-width="1920" data-height="1080" data-duration="3.56">
+    <div id="f03-ground" class="clip f03-ground" data-start="0" data-duration="3.56" data-track-index="0"></div>
+
+    <div id="f03-scene" class="clip f03-scene" data-start="0" data-duration="3.56" data-track-index="1">
+      <div id="f03-busy" class="f03-busy">
+        <div id="f03-halo" class="f03-halo"></div>
+
+        <!-- Swarm: data-order = arrival order, data-edge = entry edge, data-cx/cy = resting center. -->
+        <div id="f03-swarm" class="f03-swarm">
+          <div class="f03-slot" data-order="0" data-edge="L" data-cx="235" data-cy="320" data-s="0.95" data-r="-7" data-rx="4" data-ry="10" data-o="1" style="left:115px; top:240px; width:240px; height:160px; z-index:3;">
+            <div class="f03-qc">
+              <div class="f03-qc-head"><i class="f03-b f03-b-micro" style="width:78px;"></i><i class="f03-qc-dot"></i></div>
+              <i class="f03-b f03-b-title" style="width:62%;"></i>
+              <div class="f03-qc-rows">
+                <div class="f03-qc-row"><i class="f03-b" style="width:52%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:40%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:60%;"></i><i class="f03-b f03-b-price"></i></div>
+              </div>
+              <div class="f03-qc-total"><i class="f03-b f03-b-t"></i><span class="f03-badge"><i></i></span></div>
+            </div>
+          </div>
+
+          <div class="f03-slot" data-order="1" data-edge="R" data-cx="1700" data-cy="300" data-s="0.95" data-r="8" data-rx="4" data-ry="-10" data-o="1" style="left:1600px; top:232px; width:200px; height:136px; z-index:3;">
+            <div class="f03-env">
+              <svg class="f03-env-art" viewBox="0 0 200 136" width="200" height="136"><path d="M12 14 L100 80 L188 14" fill="none" stroke="rgba(245,239,231,0.26)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M12 124 L76 66 M188 124 L124 66" fill="none" stroke="rgba(245,239,231,0.12)" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="f03-env-badge"></span>
+            </div>
+          </div>
+
+          <div class="f03-slot f03-far" data-order="2" data-edge="T" data-cx="560" data-cy="270" data-s="0.8" data-r="-4" data-rx="10" data-ry="6" data-o="0.82" style="left:440px; top:190px; width:240px; height:160px; z-index:2;">
+            <div class="f03-qc">
+              <div class="f03-qc-head"><i class="f03-b f03-b-micro" style="width:70px;"></i><i class="f03-qc-dot"></i></div>
+              <i class="f03-b f03-b-title" style="width:54%;"></i>
+              <div class="f03-qc-rows">
+                <div class="f03-qc-row"><i class="f03-b" style="width:46%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:64%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:38%;"></i><i class="f03-b f03-b-price"></i></div>
+              </div>
+              <div class="f03-qc-total"><i class="f03-b f03-b-t"></i><span class="f03-badge"><i></i></span></div>
+            </div>
+          </div>
+
+          <div class="f03-slot" data-order="3" data-edge="B" data-cx="1480" data-cy="765" data-s="0.9" data-r="6" data-rx="-8" data-ry="-8" data-o="1" style="left:1360px; top:685px; width:240px; height:160px; z-index:3;">
+            <div class="f03-qc">
+              <div class="f03-qc-head"><i class="f03-b f03-b-micro" style="width:82px;"></i><i class="f03-qc-dot"></i></div>
+              <i class="f03-b f03-b-title" style="width:68%;"></i>
+              <div class="f03-qc-rows">
+                <div class="f03-qc-row"><i class="f03-b" style="width:58%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:44%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:66%;"></i><i class="f03-b f03-b-price"></i></div>
+              </div>
+              <div class="f03-qc-total"><i class="f03-b f03-b-t"></i><span class="f03-badge"><i></i></span></div>
+            </div>
+          </div>
+
+          <div class="f03-slot" data-order="4" data-edge="L" data-cx="330" data-cy="575" data-s="0.9" data-r="6" data-rx="-4" data-ry="12" data-o="1" style="left:230px; top:507px; width:200px; height:136px; z-index:3;">
+            <div class="f03-env">
+              <svg class="f03-env-art" viewBox="0 0 200 136" width="200" height="136"><path d="M12 14 L100 80 L188 14" fill="none" stroke="rgba(245,239,231,0.26)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M12 124 L76 66 M188 124 L124 66" fill="none" stroke="rgba(245,239,231,0.12)" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="f03-env-badge"></span>
+            </div>
+          </div>
+
+          <div class="f03-slot" data-order="5" data-edge="R" data-cx="1610" data-cy="575" data-s="1" data-r="-5" data-rx="-4" data-ry="-12" data-o="1" style="left:1490px; top:495px; width:240px; height:160px; z-index:3;">
+            <div class="f03-qc">
+              <div class="f03-qc-head"><i class="f03-b f03-b-micro" style="width:74px;"></i><i class="f03-qc-dot"></i></div>
+              <i class="f03-b f03-b-title" style="width:58%;"></i>
+              <div class="f03-qc-rows">
+                <div class="f03-qc-row"><i class="f03-b" style="width:62%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:48%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:56%;"></i><i class="f03-b f03-b-price"></i></div>
+              </div>
+              <div class="f03-qc-total"><i class="f03-b f03-b-t"></i><span class="f03-badge"><i></i></span></div>
+            </div>
+          </div>
+
+          <div class="f03-slot f03-far" data-order="6" data-edge="T" data-cx="1370" data-cy="265" data-s="0.8" data-r="5" data-rx="10" data-ry="-6" data-o="0.82" style="left:1250px; top:185px; width:240px; height:160px; z-index:2;">
+            <div class="f03-qc">
+              <div class="f03-qc-head"><i class="f03-b f03-b-micro" style="width:66px;"></i><i class="f03-qc-dot"></i></div>
+              <i class="f03-b f03-b-title" style="width:60%;"></i>
+              <div class="f03-qc-rows">
+                <div class="f03-qc-row"><i class="f03-b" style="width:42%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:60%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:50%;"></i><i class="f03-b f03-b-price"></i></div>
+              </div>
+              <div class="f03-qc-total"><i class="f03-b f03-b-t"></i><span class="f03-badge"><i></i></span></div>
+            </div>
+          </div>
+
+          <div class="f03-slot" data-order="7" data-edge="B" data-cx="470" data-cy="770" data-s="0.9" data-r="-6" data-rx="-8" data-ry="8" data-o="1" style="left:370px; top:702px; width:200px; height:136px; z-index:3;">
+            <div class="f03-env">
+              <svg class="f03-env-art" viewBox="0 0 200 136" width="200" height="136"><path d="M12 14 L100 80 L188 14" fill="none" stroke="rgba(245,239,231,0.26)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M12 124 L76 66 M188 124 L124 66" fill="none" stroke="rgba(245,239,231,0.12)" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="f03-env-badge"></span>
+            </div>
+          </div>
+
+          <div class="f03-slot" data-order="8" data-edge="L" data-cx="215" data-cy="790" data-s="0.85" data-r="8" data-rx="-6" data-ry="10" data-o="1" style="left:95px; top:710px; width:240px; height:160px; z-index:3;">
+            <div class="f03-qc">
+              <div class="f03-qc-head"><i class="f03-b f03-b-micro" style="width:76px;"></i><i class="f03-qc-dot"></i></div>
+              <i class="f03-b f03-b-title" style="width:64%;"></i>
+              <div class="f03-qc-rows">
+                <div class="f03-qc-row"><i class="f03-b" style="width:54%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:36%;"></i><i class="f03-b f03-b-price"></i></div>
+                <div class="f03-qc-row"><i class="f03-b" style="width:62%;"></i><i class="f03-b f03-b-price"></i></div>
+              </div>
+              <div class="f03-qc-total"><i class="f03-b f03-b-t"></i><span class="f03-badge"><i></i></span></div>
+            </div>
+          </div>
+
+          <div class="f03-slot" data-order="9" data-edge="R" data-cx="1745" data-cy="790" data-s="0.85" data-r="-9" data-rx="-6" data-ry="-10" data-o="1" style="left:1645px; top:722px; width:200px; height:136px; z-index:3;">
+            <div class="f03-env">
+              <svg class="f03-env-art" viewBox="0 0 200 136" width="200" height="136"><path d="M12 14 L100 80 L188 14" fill="none" stroke="rgba(245,239,231,0.26)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M12 124 L76 66 M188 124 L124 66" fill="none" stroke="rgba(245,239,231,0.12)" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="f03-env-badge"></span>
+            </div>
+          </div>
+        </div>
+
+        <div id="f03-vignette" class="f03-vignette"></div>
+
+        <!-- Persona « toi »: head + shoulders, hands on the head, 3 accent stress strokes. -->
+        <div id="f03-persona" class="f03-persona">
+          <svg viewBox="0 0 360 380" width="360" height="380">
+            <path d="M28 380 L28 346 C28 302 66 274 118 268 L242 268 C294 274 332 302 332 346 L332 380 Z" fill="#2e2924" />
+            <path d="M162 200 L198 200 L198 262 L180 282 L162 262 Z" fill="#d9b294" />
+            <path d="M84 292 L44 178 L116 104" fill="none" stroke="#2e2924" stroke-width="42" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M276 292 L316 178 L244 104" fill="none" stroke="#2e2924" stroke-width="42" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="113" cy="158" r="11" fill="#ddb597" />
+            <circle cx="247" cy="158" r="11" fill="#ddb597" />
+            <circle cx="180" cy="150" r="68" fill="#e8c4a8" />
+            <path d="M112 146 C108 98 140 72 182 72 C224 72 254 100 248 146 C238 124 216 110 190 108 C164 106 134 118 112 146 Z" fill="#1a1612" />
+            <ellipse cx="124" cy="100" rx="25" ry="19" transform="rotate(-38 124 100)" fill="#e8c4a8" />
+            <ellipse cx="236" cy="100" rx="25" ry="19" transform="rotate(38 236 100)" fill="#e8c4a8" />
+            <path d="M127.7 104.7 L143.5 92.4 M120.3 95.3 L136.1 83" fill="none" stroke="#cfa585" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M232.3 104.7 L216.5 92.4 M239.7 95.3 L223.9 83" fill="none" stroke="#cfa585" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="157" cy="160" r="5.5" fill="#1a1612" />
+            <circle cx="203" cy="160" r="5.5" fill="#1a1612" />
+            <g fill="none" stroke="#d4703f" stroke-width="9" stroke-linecap="round">
+              <path id="f03-stroke-a" class="f03-stroke" d="M114.7 66.5 L100 47.6" />
+              <path id="f03-stroke-b" class="f03-stroke" d="M180 46 L180 20" />
+              <path id="f03-stroke-c" class="f03-stroke" d="M245.3 66.5 L260 47.6" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- Pain pills: final offsets from the head center (960,650). -->
+        <div id="f03-burst" class="f03-burst">
+          <div class="f03-pp" data-target-x="-330" data-target-y="-160"><svg viewBox="0 0 14 14"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#d4703f" stroke-width="2.6" stroke-linecap="round" /></svg><span>1&nbsp;000&nbsp;&euro;</span></div>
+          <div class="f03-pp" data-target-x="330" data-target-y="-180"><svg viewBox="0 0 14 14"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#d4703f" stroke-width="2.6" stroke-linecap="round" /></svg><span>600&nbsp;&euro;</span></div>
+          <div class="f03-pp" data-target-x="-385" data-target-y="30"><svg viewBox="0 0 14 14"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#d4703f" stroke-width="2.6" stroke-linecap="round" /></svg><span>Sur devis</span></div>
+          <div class="f03-pp" data-target-x="315" data-target-y="10"><svg viewBox="0 0 14 14"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#d4703f" stroke-width="2.6" stroke-linecap="round" /></svg><span>J+8</span></div>
+          <div class="f03-pp" data-target-x="150" data-target-y="-250"><svg viewBox="0 0 14 14"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#d4703f" stroke-width="2.6" stroke-linecap="round" /></svg><span>D&eacute;lai</span></div>
+          <div class="f03-pp" data-target-x="345" data-target-y="180"><svg viewBox="0 0 14 14"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#d4703f" stroke-width="2.6" stroke-linecap="round" /></svg><span>Prestataire</span></div>
+          <div class="f03-pp" data-target-x="-350" data-target-y="190"><svg viewBox="0 0 14 14"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#d4703f" stroke-width="2.6" stroke-linecap="round" /></svg><span>R&eacute;paration</span></div>
+        </div>
+
+        <!-- Phrase at the top, word by word, one traced accent pill. -->
+        <div id="f03-phrase" class="f03-phrase"><span class="f03-w">Pendant</span> <span class="f03-w">des</span> <span class="f03-w">ann&eacute;es,</span> <span class="f03-w">c&rsquo;&eacute;tait</span> <span id="f03-pill" class="f03-pill"><span id="f03-pill-bg" class="f03-pill-bg"></span><span class="f03-ch">l</span><span class="f03-ch">e</span><span class="f03-ch"> </span><span class="f03-ch">p</span><span class="f03-ch">r</span><span class="f03-ch">i</span><span class="f03-ch">x</span><span class="f03-ch"> </span><span class="f03-ch">&agrave;</span><span class="f03-ch"> </span><span class="f03-ch">p</span><span class="f03-ch">a</span><span class="f03-ch">y</span><span class="f03-ch">e</span><span class="f03-ch">r</span><span class="f03-ch">.</span></span></div>
+      </div>
+
+      <!-- Scene 3: empty dark stage + giant « Stop. » echo-stack. -->
+      <div id="f03-stop" class="f03-stop">
+        <div id="f03-stop-halo" class="f03-stop-halo"></div>
+        <div id="f03-stop-clip" class="f03-stop-clip">
+          <div id="f03-stop-cam" class="f03-stop-cam">
+            <div id="f03-echo" class="f03-echo">
+              <div class="f03-el f03-copy" data-k="4" data-dir="-1" style="filter: blur(6px);" aria-hidden="true">Stop.</div>
+              <div class="f03-el f03-copy" data-k="3" data-dir="-1" style="filter: blur(4.5px);" aria-hidden="true">Stop.</div>
+              <div class="f03-el f03-copy" data-k="2" data-dir="-1" style="filter: blur(3px);" aria-hidden="true">Stop.</div>
+              <div class="f03-el f03-copy" data-k="1" data-dir="-1" style="filter: blur(1.5px);" aria-hidden="true">Stop.</div>
+              <div class="f03-el f03-copy" data-k="1" data-dir="1" style="filter: blur(1.5px);" aria-hidden="true">Stop.</div>
+              <div class="f03-el f03-copy" data-k="2" data-dir="1" style="filter: blur(3px);" aria-hidden="true">Stop.</div>
+              <div class="f03-el f03-copy" data-k="3" data-dir="1" style="filter: blur(4.5px);" aria-hidden="true">Stop.</div>
+              <div class="f03-el f03-copy" data-k="4" data-dir="1" style="filter: blur(6px);" aria-hidden="true">Stop.</div>
+              <div id="f03-stop-word" class="f03-el f03-el-main">Stop.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="f03-grain" class="clip f03-grain" data-start="0" data-duration="3.56" data-track-index="2"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var byId = function (name) {
+        return document.getElementById("f03-" + name);
+      };
+      var all = function (scope, sel) {
+        return Array.prototype.slice.call(scope.querySelectorAll(sel));
+      };
+
+      var DURATION = 3.56;
+      // Voice word cues: the single timing spine every reveal reads from.
+      var CUE = {
+        pendant: 0.08,
+        des: 0.34,
+        annees: 0.54,
+        cetait: 0.78,
+        prix: 1.2,
+        payer: 1.46,
+        pour: 1.62,
+        technique: 2.36,
+        stop: 3.08
+      };
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ---------- Scene 1 (0.00-1.60): persona, stress strokes, phrase + pill ----------
+      tl.fromTo(byId("halo"), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out", immediateRender: false }, 0.02);
+      tl.fromTo(
+        byId("persona"),
+        { opacity: 0, y: 26 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power3.out", immediateRender: false },
+        0.02
+      );
+
+      var STROKES = [
+        { el: byId("stroke-a"), origin: "114.7 66.5", at: 0.14 },
+        { el: byId("stroke-b"), origin: "180 46", at: 0.22 },
+        { el: byId("stroke-c"), origin: "245.3 66.5", at: 0.3 }
+      ];
+      STROKES.forEach(function (s, k) {
+        gsap.set(s.el, { svgOrigin: s.origin });
+        tl.fromTo(
+          s.el,
+          { scale: 0, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.24, ease: "power3.out", immediateRender: false },
+          s.at
+        );
+        // Re-pops as the swarm hits (1.62) and on « technique » (2.36). Explicit up then down tweens.
+        [CUE.pour, CUE.technique].forEach(function (t) {
+          tl.fromTo(s.el, { scale: 1 }, { scale: 1.4, duration: 0.09, ease: "power2.out", immediateRender: false }, t + k * 0.03);
+          tl.fromTo(s.el, { scale: 1.4 }, { scale: 1, duration: 0.22, ease: "power3.out", immediateRender: false }, t + 0.09 + k * 0.03);
+        });
+      });
+
+      // word-by-word: each word ON its voice timestamp.
+      var WORD_CUES = [CUE.pendant, CUE.des, CUE.annees, CUE.cetait];
+      all(byId("phrase"), ".f03-w").forEach(function (w, i) {
+        tl.fromTo(
+          w,
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+          WORD_CUES[i] - 0.02
+        );
+      });
+
+      // accent-pill: traces first (scaleX from the left, rotation -8 -> 0), then the letters write inside.
+      var PILL_AT = CUE.prix - 0.05;
+      tl.fromTo(byId("pill"), { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, PILL_AT);
+      tl.fromTo(
+        byId("pill-bg"),
+        { scaleX: 0, opacity: 1 },
+        { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out", immediateRender: false },
+        PILL_AT
+      );
+      all(byId("pill"), ".f03-ch").forEach(function (c, i) {
+        tl.fromTo(
+          c,
+          { opacity: 0, x: -8 },
+          { opacity: 1, x: 0, duration: 0.16, ease: "power3.out", immediateRender: false },
+          PILL_AT + 0.18 + i * 0.02
+        );
+      });
+
+      // ---------- Scene 2 (1.60-3.05): pain pills burst + swarm closes in ----------
+      // Persona flinches in place as the world arrives (stays put, no camera push).
+      tl.fromTo(byId("persona"), { rotation: 0 }, { rotation: -2.4, duration: 0.07, ease: "power2.out", immediateRender: false }, CUE.pour);
+      tl.fromTo(byId("persona"), { rotation: -2.4 }, { rotation: 1.8, duration: 0.1, ease: "power2.inOut", immediateRender: false }, CUE.pour + 0.07);
+      tl.fromTo(byId("persona"), { rotation: 1.8 }, { rotation: 0, duration: 0.22, ease: "power3.out", immediateRender: false }, CUE.pour + 0.17);
+
+      // center-outward-expansion: pills share the head as origin, partially-spread start.
+      var EXPAND_DUR = 0.7;
+      var EXPAND_EASE = "power3.out";
+      var PILL_STAGGER = 0.12;
+      var START_PROGRESS = 0.3;
+      all(byId("burst"), ".f03-pp").forEach(function (el, i) {
+        var tx = Number(el.dataset.targetX);
+        var ty = Number(el.dataset.targetY);
+        var rot = ((i * 7 + 3) % 9 - 4) * 1.4;
+        tl.fromTo(
+          el,
+          { xPercent: -50, yPercent: -50, x: tx * START_PROGRESS, y: ty * START_PROGRESS, scale: 0.6, rotation: rot * 2.5, opacity: 0 },
+          { xPercent: -50, yPercent: -50, x: tx, y: ty, scale: 1, rotation: rot, opacity: 1, duration: EXPAND_DUR, ease: EXPAND_EASE, immediateRender: false },
+          CUE.pour + i * PILL_STAGGER
+        );
+      });
+
+      // Swarm: 3D fly-in from the four edges, radial close-in around the persona.
+      var SWARM_AT = CUE.pour + 0.02;
+      var SWARM_STAGGER = 0.08;
+      var FLY = 0.9;
+      var slots = all(byId("swarm"), ".f03-slot").sort(function (a, b) {
+        return Number(a.dataset.order) - Number(b.dataset.order);
+      });
+      slots.forEach(function (slot) {
+        var order = Number(slot.dataset.order);
+        var cx = Number(slot.dataset.cx);
+        var cy = Number(slot.dataset.cy);
+        var s = Number(slot.dataset.s);
+        var r = Number(slot.dataset.r);
+        var side = order % 2 ? 1 : -1;
+        var from = { x: 0, y: 0, rotationX: 0, rotationY: 0, rotation: r, scale: s * 1.15, transformPerspective: 900 };
+        var edge = slot.dataset.edge;
+        if (edge === "L") {
+          from.x = -(cx + 300); from.y = side * 80; from.rotationY = -75; from.rotationX = 20; from.rotation = r - 25;
+        } else if (edge === "R") {
+          from.x = 1920 - cx + 300; from.y = side * 80; from.rotationY = 75; from.rotationX = -20; from.rotation = r + 25;
+        } else if (edge === "T") {
+          from.y = -(cy + 240); from.x = side * 100; from.rotationX = 75; from.rotationY = 15; from.rotation = r - 20;
+        } else {
+          from.y = 1080 - cy + 240; from.x = side * 100; from.rotationX = -75; from.rotationY = -15; from.rotation = r + 20;
+        }
+        var at = SWARM_AT + order * SWARM_STAGGER;
+        tl.fromTo(
+          slot,
+          from,
+          {
+            x: 0,
+            y: 0,
+            rotationX: Number(slot.dataset.rx),
+            rotationY: Number(slot.dataset.ry),
+            rotation: r,
+            scale: s,
+            transformPerspective: 900,
+            duration: FLY,
+            ease: "expo.out",
+            immediateRender: false
+          },
+          at
+        );
+        tl.fromTo(slot, { opacity: 0 }, { opacity: Number(slot.dataset.o), duration: 0.12, ease: "none", immediateRender: false }, at);
+      });
+      tl.fromTo(byId("vignette"), { opacity: 0 }, { opacity: 1, duration: 1.3, ease: "power1.inOut", immediateRender: false }, CUE.pour);
+
+      // ---------- Scene 3 (3.05-3.56): hard cut to the empty stage, « Stop. » slams ----------
+      var STOP_AT = CUE.stop;
+      tl.set(byId("stop"), { autoAlpha: 1 }, STOP_AT);
+      tl.fromTo(
+        byId("stop-halo"),
+        { opacity: 0, scale: 0.85 },
+        { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out", immediateRender: false },
+        STOP_AT
+      );
+      // kinetic-beat-slam: small camera kick on the hit, then hold still.
+      tl.fromTo(
+        byId("stop-cam"),
+        { scale: 1.06, y: -14, rotation: -0.7 },
+        { scale: 1, y: 0, rotation: 0, duration: 0.34, ease: "power4.out", immediateRender: false },
+        STOP_AT
+      );
+      // giant-word tracking via transforms (letterSpacing snaps to device pixels under seek capture):
+      // letters split into inline-blocks, each starts offset as if tracked +0.4em, then slides home.
+      var trackChars = function (root) {
+        var t = root.textContent;
+        root.textContent = "";
+        var out = [];
+        for (var i = 0; i < t.length; i++) {
+          var s = document.createElement("span");
+          s.style.display = "inline-block";
+          s.style.whiteSpace = "pre";
+          s.textContent = t[i];
+          root.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      };
+      var trackIn = function (chars, spread, dur, ease, at) {
+        var n = chars.length;
+        chars.forEach(function (c, i) {
+          tl.fromTo(c, { x: (i - (n - 1) / 2) * spread }, { x: 0, duration: dur, ease: ease, immediateRender: false }, at);
+        });
+      };
+      // giant-word: tracking 0.35em -> -0.05em on every copy of the echo-stack.
+      all(byId("echo"), ".f03-el").forEach(function (w) {
+        trackIn(trackChars(w), 104, 0.5, "expo.out", STOP_AT);
+      });
+      tl.fromTo(
+        byId("stop-word"),
+        { opacity: 0, filter: "blur(12px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false },
+        STOP_AT
+      );
+      // echo-stack: copies converge from 180px to 70px steps at 60/35/20/10%.
+      var ECHO_OPACITY = [0.6, 0.35, 0.2, 0.1];
+      all(byId("echo"), ".f03-copy").forEach(function (c) {
+        var k = Number(c.dataset.k);
+        var dir = Number(c.dataset.dir);
+        tl.fromTo(
+          c,
+          { y: dir * k * 180, opacity: 0 },
+          { y: dir * k * 70, opacity: ECHO_OPACITY[k - 1], duration: 0.4, ease: "power3.out", immediateRender: false },
+          STOP_AT
+        );
+      });
+
+      tl.set({}, {}, DURATION);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["03-prix"] = tl;
+    })();
+  </script>
+</template>

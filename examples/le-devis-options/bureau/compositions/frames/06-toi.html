@@ -1,0 +1,788 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* desk-day (solution ground: light oak, window light bands, grain) */
+    .f06-desk {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #e7dccd;
+    }
+    .f06-desk-layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f06-desk-wood {
+      background-size: 1920px 1080px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'><filter id='v' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.0006 0.004' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.30 0 0 0 0 0.16 0.5 0 0 0 -0.22'/></filter><filter id='g' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.001 0.011' numOctaves='3' seed='23'/><feColorMatrix values='0 0 0 0 0.40 0 0 0 0 0.26 0 0 0 0 0.14 1 0 0 0 0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0'/></feComponentTransfer></filter><filter id='p' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='turbulence' baseFrequency='0.0008 0.03' numOctaves='2' seed='31'/><feColorMatrix values='0 0 0 0 0.40 0 0 0 0 0.26 0 0 0 0 0.14 -0.7 0 0 0 0.1'/></filter><rect width='1920' height='1080' filter='url(%23v)'/><rect width='1920' height='1080' filter='url(%23g)'/><rect width='1920' height='1080' filter='url(%23p)'/></svg>");
+    }
+    .f06-desk-light {
+      background: linear-gradient(
+        45deg,
+        rgba(243, 236, 226, 0.000) 170px,
+        rgba(243, 236, 226, 0.103) 205px,
+        rgba(243, 236, 226, 0.330) 240px,
+        rgba(243, 236, 226, 0.557) 275px,
+        rgba(243, 236, 226, 0.660) 310px,
+        rgba(243, 236, 226, 0.660) 380px,
+        rgba(243, 236, 226, 0.557) 415px,
+        rgba(243, 236, 226, 0.330) 450px,
+        rgba(243, 236, 226, 0.103) 485px,
+        rgba(243, 236, 226, 0.000) 520px,
+        rgba(243, 236, 226, 0.000) 475px,
+        rgba(243, 236, 226, 0.103) 510px,
+        rgba(243, 236, 226, 0.330) 545px,
+        rgba(243, 236, 226, 0.557) 580px,
+        rgba(243, 236, 226, 0.660) 615px,
+        rgba(243, 236, 226, 0.660) 650px,
+        rgba(243, 236, 226, 0.557) 685px,
+        rgba(243, 236, 226, 0.330) 720px,
+        rgba(243, 236, 226, 0.103) 755px,
+        rgba(243, 236, 226, 0.000) 790px,
+        rgba(243, 236, 226, 0.000) 1160px,
+        rgba(243, 236, 226, 0.103) 1195px,
+        rgba(243, 236, 226, 0.330) 1230px,
+        rgba(243, 236, 226, 0.557) 1265px,
+        rgba(243, 236, 226, 0.660) 1300px,
+        rgba(243, 236, 226, 0.660) 1410px,
+        rgba(243, 236, 226, 0.557) 1445px,
+        rgba(243, 236, 226, 0.330) 1480px,
+        rgba(243, 236, 226, 0.103) 1515px,
+        rgba(243, 236, 226, 0.000) 1550px,
+        rgba(243, 236, 226, 0.000) 1505px,
+        rgba(243, 236, 226, 0.103) 1540px,
+        rgba(243, 236, 226, 0.330) 1575px,
+        rgba(243, 236, 226, 0.557) 1610px,
+        rgba(243, 236, 226, 0.660) 1645px,
+        rgba(243, 236, 226, 0.660) 1700px,
+        rgba(243, 236, 226, 0.557) 1735px,
+        rgba(243, 236, 226, 0.330) 1770px,
+        rgba(243, 236, 226, 0.103) 1805px,
+        rgba(243, 236, 226, 0.000) 1840px
+      );
+    }
+    .f06-desk-tone {
+      background:
+        radial-gradient(ellipse 1500px 1100px at 16% 6%, rgba(250, 245, 237, 0.42), rgba(250, 245, 237, 0) 70%),
+        radial-gradient(ellipse 1250px 860px at 52% 44%, rgba(90, 60, 30, 0) 58%, rgba(90, 60, 30, 0.11) 100%);
+    }
+    .f06-desk-grain {
+      opacity: 0.03;
+      background-size: 240px 240px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+    }
+    /* /desk-day */
+
+    .f06-scene {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* ==================== quote-sheet (CSS, relit for desk-day) ====================
+       A4 sheet (700 x 990 paper px). .f06-sheet-place carries the prop scale (0.9: 630 x 891 on
+       screen, top edge just off the frame); .f06-sheet carries the resting tilt. The sheet is the
+       pinned anchor of the shot: nothing ever moves it. Short soft day shadow = blurred slab
+       (screen +8 +12, blur 24, rgba(60,40,20,.22) at scale 0.9). */
+    .f06-sheet-place {
+      position: absolute;
+      left: 190px;
+      top: -30px;
+      width: 700px;
+      height: 990px;
+      transform: scale(0.9);
+      transform-origin: 0 0;
+    }
+    .f06-sheet {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      transform: rotate(-2deg);
+      transform-origin: 50% 50%;
+    }
+    .f06-sheet-shadow {
+      position: absolute;
+      left: 9px;
+      top: 13px;
+      width: 700px;
+      height: 990px;
+      border-radius: 3px;
+      background: rgba(60, 40, 20, 0.22);
+      filter: blur(13px);
+    }
+    .f06-paper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      overflow: hidden;
+      border: 1px solid #d9cfc1;
+      border-radius: 3px;
+      background: #fbf8f2;
+      box-shadow: 0 1px 2px rgba(60, 40, 20, 0.18);
+    }
+    .f06-paper-tex {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      opacity: 0.3;
+      mix-blend-mode: multiply;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .42 0 0 0 0 .36 0 0 0 0 .3 1.4 0 0 0 -.6'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23p)'/%3E%3C/svg%3E");
+    }
+    .f06-paper-light {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      mix-blend-mode: multiply;
+      background: linear-gradient(140deg, rgba(255, 252, 246, 0) 0%, rgba(255, 252, 246, 0) 42%, rgba(150, 112, 74, 0.05) 78%, rgba(120, 86, 54, 0.09) 100%);
+    }
+    .f06-q-micro {
+      position: absolute;
+      font: 400 18px/1.2 "Space Mono", monospace;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #5a5348;
+      white-space: nowrap;
+    }
+    .f06-q-title {
+      position: absolute;
+      left: 54px;
+      top: 88px;
+      font: 600 40px/1.1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.01em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f06-q-rule {
+      position: absolute;
+      left: 54px;
+      width: 592px;
+      height: 1px;
+      background: #d9cfc1;
+    }
+    .f06-q-rule-strong {
+      height: 2px;
+      background: #1a1612;
+    }
+    .f06-q-label {
+      position: absolute;
+      left: 54px;
+      font: 500 28px/1.3 "Instrument Sans", sans-serif;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f06-q-price {
+      position: absolute;
+      right: 54px;
+      font: 700 30px/1 "Space Mono", monospace;
+      font-variant-numeric: tabular-nums;
+      word-spacing: -0.3em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f06-q-total {
+      position: absolute;
+      left: 346px;
+      top: 712px;
+      width: 300px;
+      height: 80px;
+      border: 2px solid #1a1612;
+      border-radius: 4px;
+    }
+    .f06-q-totval {
+      position: absolute;
+      right: 20px;
+      top: 23px;
+      font: 700 30px/1 "Space Mono", monospace;
+      font-variant-numeric: tabular-nums;
+      word-spacing: -0.3em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    /* pen ink: wavy strikes (SVG, dash offset synced to the pen tip) */
+    .f06-ink {
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+      mix-blend-mode: multiply;
+    }
+    .f06-ink path {
+      fill: none;
+      stroke: #c25b28;
+      stroke-width: 5.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+    }
+    /* pen writing: accent word revealed left to right exactly behind the pen tip */
+    .f06-hw {
+      position: absolute;
+      padding: 8px 12px 8px 6px;
+      font: 600 46px/1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.01em;
+      color: #c25b28;
+      white-space: nowrap;
+      mix-blend-mode: multiply;
+      transform: rotate(-4deg);
+      transform-origin: 6px 31px;
+      opacity: 0;
+    }
+    /* ==================== /quote-sheet ==================== */
+
+    /* ==================== pen (CSS) ====================
+       Terracotta ballpoint seen from above, ~420 px on screen. The tip is the local origin:
+       .f06-pen = shadow carrier, .f06-pen-trace = tip position, .f06-pen-lift = lift scale,
+       .f06-pen-rot = pen angle (rotates around the tip). All written by one seek-safe setter. */
+    .f06-pen {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      filter: drop-shadow(7px 10px 5px rgba(60, 40, 20, 0.3));
+    }
+    .f06-pen-trace,
+    .f06-pen-lift,
+    .f06-pen-rot {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      transform-origin: 0 0;
+    }
+    .f06-pen-svg {
+      position: absolute;
+      left: -0.83px;
+      top: -12.45px;
+      overflow: visible;
+    }
+    /* ==================== /pen ==================== */
+
+    /* right region: the cycling question + the giant slam */
+    #f06-right {
+      position: absolute;
+      left: 900px;
+      top: 0;
+      width: 980px;
+      height: 900px;
+      z-index: 3;
+    }
+    .f06-group {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 980px;
+      height: 900px;
+    }
+    .f06-q {
+      position: absolute;
+      left: 0;
+      top: 250px;
+      width: 980px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      white-space: nowrap;
+      font: 600 54px/1.18 "Instrument Sans", sans-serif;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+    }
+    .f06-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    .f06-toiwrap {
+      position: absolute;
+      left: 0;
+      top: 338px;
+      width: 980px;
+      height: 234px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .f06-toi {
+      display: block;
+      flex: 0 0 auto;
+      padding-right: 13px;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 700;
+      font-size: 260px;
+      line-height: 0.9;
+      letter-spacing: -13px;
+      white-space: nowrap;
+      color: #1a1612;
+      transform-origin: 50% 60%;
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="06-toi" data-width="1920" data-height="1080" data-duration="5.78">
+    <!-- desk-day -->
+    <div id="f06-desk" class="clip f06-desk" data-start="0" data-duration="5.78" data-track-index="0" data-layout-ignore>
+      <div class="f06-desk-layer f06-desk-wood"></div>
+      <div class="f06-desk-layer f06-desk-light"></div>
+      <div class="f06-desk-layer f06-desk-tone"></div>
+      <div class="f06-desk-layer f06-desk-grain"></div>
+    </div>
+    <!-- /desk-day -->
+
+    <div id="f06-scene" class="clip f06-scene" data-start="0" data-duration="5.78" data-track-index="1" data-layout-allow-overflow>
+      <div class="f06-sheet-place">
+        <!-- ==================== quote-sheet ==================== -->
+        <div class="f06-sheet" id="f06-sheet">
+          <div class="f06-sheet-shadow"></div>
+          <div class="f06-paper">
+            <div class="f06-paper-tex"></div>
+            <div class="f06-q-micro" style="left: 54px; top: 58px">DEVIS N°&nbsp;0147</div>
+            <div class="f06-q-title">Prestations web</div>
+            <div class="f06-q-rule f06-q-rule-strong" style="top: 168px"></div>
+            <!-- row 1 -->
+            <div class="f06-q-label" style="top: 192px">Modification sur ton site</div>
+            <div class="f06-q-micro" style="left: 54px; top: 236px">1 jour</div>
+            <div class="f06-q-price" id="f06-p1" style="top: 195px">1&nbsp;000&nbsp;€</div>
+            <div class="f06-q-rule" style="top: 300px"></div>
+            <!-- row 2 -->
+            <div class="f06-q-label" style="top: 318px">Nouvelle page</div>
+            <div class="f06-q-price" id="f06-p2" style="top: 321px">600&nbsp;€</div>
+            <div class="f06-q-rule" style="top: 426px"></div>
+            <!-- row 3 -->
+            <div class="f06-q-label" style="top: 444px">Réparer l’automatisation</div>
+            <div class="f06-q-price" id="f06-p3" style="top: 447px">sur devis</div>
+            <div class="f06-q-rule" style="top: 552px"></div>
+            <!-- row 4 -->
+            <div class="f06-q-label" style="top: 570px">Délai</div>
+            <div class="f06-q-price" id="f06-p4" style="top: 573px">quand il aura le temps</div>
+            <div class="f06-q-rule" style="top: 678px"></div>
+            <!-- total box -->
+            <div class="f06-q-total">
+              <div class="f06-q-micro" style="left: 20px; top: 27px">Total</div>
+              <div class="f06-q-totval">1&nbsp;600&nbsp;€</div>
+            </div>
+            <div class="f06-q-rule" style="top: 920px"></div>
+            <!-- pen ink: four wavy strikes -->
+            <svg class="f06-ink" width="700" height="990" viewBox="0 0 700 990">
+              <path id="f06-s1" d="M0 0"></path>
+              <path id="f06-s2" d="M0 0"></path>
+              <path id="f06-s3" d="M0 0"></path>
+              <path id="f06-s4" d="M0 0"></path>
+            </svg>
+            <!-- pen writing -->
+            <div class="f06-hw" id="f06-h1">toi</div>
+            <div class="f06-hw" id="f06-h2">toi</div>
+            <div class="f06-hw" id="f06-h3">toi</div>
+            <div class="f06-hw" id="f06-h4">maintenant</div>
+            <div class="f06-paper-light"></div>
+          </div>
+          <!-- ==================== pen ==================== -->
+          <div class="f06-pen" id="f06-pen">
+            <div class="f06-pen-trace" id="f06-pentrace">
+              <div class="f06-pen-lift" id="f06-penlift">
+                <div class="f06-pen-rot" id="f06-penrot">
+                  <svg class="f06-pen-svg" width="466" height="24.9" viewBox="0 0 562 30">
+                    <defs>
+                      <linearGradient id="f06-pen-body" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#6e2f12"></stop>
+                        <stop offset="0.16" stop-color="#a84d22"></stop>
+                        <stop offset="0.32" stop-color="#d4703f"></stop>
+                        <stop offset="0.42" stop-color="#e08a5c"></stop>
+                        <stop offset="0.54" stop-color="#bf5a29"></stop>
+                        <stop offset="0.82" stop-color="#8f4019"></stop>
+                        <stop offset="1" stop-color="#5e270e"></stop>
+                      </linearGradient>
+                      <linearGradient id="f06-pen-grip" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#5a260d"></stop>
+                        <stop offset="0.35" stop-color="#a84d22"></stop>
+                        <stop offset="0.5" stop-color="#c25b28"></stop>
+                        <stop offset="1" stop-color="#4f210b"></stop>
+                      </linearGradient>
+                      <linearGradient id="f06-pen-metal" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#7d7a75"></stop>
+                        <stop offset="0.34" stop-color="#f4f2ee"></stop>
+                        <stop offset="0.6" stop-color="#c3c0ba"></stop>
+                        <stop offset="1" stop-color="#65625d"></stop>
+                      </linearGradient>
+                    </defs>
+                    <!-- metal tip cone + ball -->
+                    <path d="M1 15 L9 12.6 L42 7.5 L42 22.5 L9 17.4 Z" fill="url(#f06-pen-metal)" stroke="#8d8983" stroke-width="0.8" stroke-linejoin="round"></path>
+                    <circle cx="2" cy="15" r="1.8" fill="#2a2724"></circle>
+                    <!-- grip with ribs -->
+                    <rect x="42" y="6" width="112" height="18" rx="3" fill="url(#f06-pen-grip)"></rect>
+                    <path d="M52 7 V23 M62 7 V23 M72 7 V23 M82 7 V23 M92 7 V23 M102 7 V23 M112 7 V23 M122 7 V23 M132 7 V23 M142 7 V23" stroke="#3d1a08" stroke-opacity="0.35" stroke-width="1.4"></path>
+                    <!-- collar -->
+                    <rect x="154" y="2.5" width="12" height="25" rx="2" fill="url(#f06-pen-metal)"></rect>
+                    <!-- barrel -->
+                    <rect x="166" y="1.5" width="360" height="27" rx="3" fill="url(#f06-pen-body)"></rect>
+                    <rect x="172" y="8.5" width="346" height="1.6" rx="0.8" fill="#ffffff" fill-opacity="0.32"></rect>
+                    <!-- end cap + click button -->
+                    <path d="M526 1.5 H540 Q552 1.5 552 15 Q552 28.5 540 28.5 H526 Z" fill="url(#f06-pen-body)"></path>
+                    <rect x="550" y="9" width="11" height="12" rx="3" fill="url(#f06-pen-metal)"></rect>
+                    <!-- pocket clip on top of the barrel -->
+                    <path d="M384 15 Q384 11.2 388 11.2 H536 V18.8 H388 Q384 18.8 384 15 Z" fill="#3a1807" fill-opacity="0.35" transform="translate(2 2.5)"></path>
+                    <path d="M384 15 Q384 11.2 388 11.2 H536 V18.8 H388 Q384 18.8 384 15 Z" fill="url(#f06-pen-metal)"></path>
+                    <circle cx="389" cy="15" r="3.4" fill="url(#f06-pen-metal)" stroke="#6f6c67" stroke-width="0.6"></circle>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ==================== /pen ==================== -->
+        </div>
+        <!-- ==================== /quote-sheet ==================== -->
+      </div>
+
+      <!-- right region: question states + giant slam (fixed-anchor-cycle) -->
+      <div id="f06-right">
+        <div class="f06-group" id="f06-g0">
+          <div class="f06-q"><span class="f06-w" id="f06-q0a">La</span><span class="f06-w" id="f06-q0b">modification</span><span class="f06-w" id="f06-q0m">?</span></div>
+          <div class="f06-toiwrap"><div class="f06-toi" id="f06-t0">TOI.</div></div>
+        </div>
+        <div class="f06-group" id="f06-g1">
+          <div class="f06-q"><span class="f06-w" id="f06-q1a">La</span><span class="f06-w" id="f06-q1b">page</span><span class="f06-w" id="f06-q1m">?</span></div>
+          <div class="f06-toiwrap"><div class="f06-toi" id="f06-t1">TOI.</div></div>
+        </div>
+        <div class="f06-group" id="f06-g2">
+          <div class="f06-q"><span class="f06-w" id="f06-q2a">L’automatisation</span><span class="f06-w" id="f06-q2m">?</span></div>
+          <div class="f06-toiwrap"><div class="f06-toi" id="f06-t2">TOI.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var $ = function (id) {
+        return document.getElementById("f06-" + id);
+      };
+
+      var DUR = 5.38;
+      // Word cues (frame-local): La-modification 0.08, ? 0.88, Toi 1.22, La-page 1.88, ? 2.46, Toi 2.80,
+      // L'automatisation 3.48, ? 4.40, Toi 4.68. One beat array drives the slams AND the pen strikes.
+      var BEATS = [1.22, 2.8, 4.68];
+      var Q_AT = [0.08, 1.88, 3.48];
+      var QM_AT = [0.88, 2.46, 4.4];
+
+      // ---------- baked layout (paper px, measured in headless Chrome with the shipped fonts) ----------
+      var LABEL_TOP = [192, 318, 444, 570];
+      var PRICE_L = [535, 563, 490, 278]; // left edge of each printed price
+      var HW_W = [58, 58, 58, 248]; // advance width of each handwritten word
+      var STRIKE_DY = 19; // label top to strike line
+      var HW_DY = 34; // label top to handwriting box top
+      var HW_PADL = 6,
+        HW_PADR = 12,
+        HW_CY = 31,
+        HW_ROT = [-4, -3, -4, -1.5]; // degrees, per handwritten word
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ---------- ink geometry ---------- */
+      var mkPath = function (pts) {
+        var cum = [0];
+        for (var k = 1; k < pts.length; k++) cum.push(cum[k - 1] + Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]));
+        var d = "M" + pts[0][0].toFixed(2) + " " + pts[0][1].toFixed(2);
+        for (k = 1; k < pts.length; k++) d += " L" + pts[k][0].toFixed(2) + " " + pts[k][1].toFixed(2);
+        return { pts: pts, cum: cum, L: cum[cum.length - 1], d: d };
+      };
+      var pointAt = function (P, s) {
+        var lo = 0,
+          hi = P.cum.length - 1;
+        while (hi - lo > 1) {
+          var mid = (lo + hi) >> 1;
+          if (P.cum[mid] <= s) lo = mid;
+          else hi = mid;
+        }
+        var seg = P.cum[hi] - P.cum[lo] || 1,
+          f = Math.min(1, Math.max(0, (s - P.cum[lo]) / seg));
+        return [P.pts[lo][0] + (P.pts[hi][0] - P.pts[lo][0]) * f, P.pts[lo][1] + (P.pts[hi][1] - P.pts[lo][1]) * f];
+      };
+      // hand-made wavy strike (deterministic): slight rise, two superposed wobbles
+      var wavy = function (xa, xb, yc, ph) {
+        var N = 96,
+          pts = [],
+          cyc = Math.abs(xb - xa) / 128;
+        for (var k = 0; k <= N; k++) {
+          var u = k / N;
+          pts.push([
+            xa + (xb - xa) * u,
+            yc - 3.2 * u + 2.3 * Math.sin(2 * Math.PI * cyc * u + ph) + 0.9 * Math.sin(2 * Math.PI * cyc * 2.3 * u + ph * 1.7),
+          ]);
+        }
+        return mkPath(pts);
+      };
+      var STRIKES = [
+        wavy(40, 664, LABEL_TOP[0] + STRIKE_DY, 0.4),
+        wavy(40, 664, LABEL_TOP[1] + STRIKE_DY, 2.1),
+        wavy(40, 664, LABEL_TOP[2] + STRIKE_DY, 4.0),
+        wavy(664, PRICE_L[3] - 12, LABEL_TOP[3] + STRIKE_DY, 1.2), // Délai: the value only, backhand
+      ];
+      var strikeEls = [$("s1"), $("s2"), $("s3"), $("s4")];
+      STRIKES.forEach(function (P, i) {
+        strikeEls[i].setAttribute("d", P.d);
+        strikeEls[i].setAttribute("stroke-dasharray", P.L.toFixed(2) + " " + (P.L + 24).toFixed(2));
+        strikeEls[i].setAttribute("stroke-dashoffset", P.L.toFixed(2));
+      });
+
+      // handwriting boxes: under each struck price, starting at its left edge
+      var hwEls = [$("h1"), $("h2"), $("h3"), $("h4")];
+      var HW = hwEls.map(function (el, i) {
+        var left = PRICE_L[i] + 2 - HW_PADL,
+          top = LABEL_TOP[i] + HW_DY;
+        el.style.left = left + "px";
+        el.style.top = top + "px";
+        el.style.transform = "rotate(" + HW_ROT[i] + "deg)";
+        return { el: el, ox: left + HW_PADL, oy: top + HW_CY, W: HW_W[i], BW: HW_PADL + HW_W[i] + HW_PADR, letters: i === 3 ? 10 : 3, r: (HW_ROT[i] * Math.PI) / 180 };
+      });
+      // pen tip while writing: the reveal edge, bobbing through the letter band (rotated with the word)
+      var hwTip = function (H, u) {
+        var lx = u * H.W;
+        var ly = 3 + 10 * Math.sin(2 * Math.PI * H.letters * u - Math.PI / 2) * Math.min(1, u * 8, (1 - u) * 8 + 0.35);
+        return [H.ox + lx * Math.cos(H.r) - ly * Math.sin(H.r), H.oy + lx * Math.sin(H.r) + ly * Math.cos(H.r)];
+      };
+
+      /* ---------- pen choreography: one pure function of time ---------- */
+      var E = {
+        none: function (u) {
+          return u;
+        },
+        o2: gsap.parseEase("power2.out"),
+        in2: gsap.parseEase("power2.in"),
+        io2: gsap.parseEase("power2.inOut"),
+        io1: gsap.parseEase("power1.inOut"),
+        s: gsap.parseEase("sine.inOut"),
+      };
+      var lerp = function (a, b, u) {
+        return a + (b - a) * u;
+      };
+      var SEG = [];
+      var cur = { x: 748, y: 430, a: 58, l: 0 }; // resting on the desk, right of the sheet
+      var goTo = function (t0, t1, B, ease, bump) {
+        var A = cur;
+        SEG.push({
+          t0: t0,
+          t1: t1,
+          f: function (u) {
+            var e = ease(u);
+            return { x: lerp(A.x, B.x, e), y: lerp(A.y, B.y, e), a: lerp(A.a, B.a, e), l: lerp(A.l, B.l, e) + (bump || 0) * Math.sin(Math.PI * u) };
+          },
+        });
+        cur = B;
+      };
+      var INK = []; // {t0, t1, ease, kind, i}
+      var strikeStart = function (i, a) {
+        var p = STRIKES[i].pts[0];
+        return { x: p[0], y: p[1], a: a, l: 0 };
+      };
+      var strike = function (i, t0, t1, a0, a1) {
+        var P = STRIKES[i],
+          ease = E.o2;
+        SEG.push({
+          t0: t0,
+          t1: t1,
+          f: function (u) {
+            var q = pointAt(P, P.L * ease(u));
+            return { x: q[0], y: q[1], a: lerp(a0, a1, u), l: 0 };
+          },
+        });
+        INK.push({ t0: t0, t1: t1, ease: ease, kind: "s", i: i });
+        var q = P.pts[P.pts.length - 1];
+        cur = { x: q[0], y: q[1], a: a1, l: 0 };
+      };
+      var hwStart = function (i, a) {
+        var q = hwTip(HW[i], 0);
+        return { x: q[0], y: q[1], a: a, l: 0 };
+      };
+      var write = function (i, t0, t1, a) {
+        var H = HW[i];
+        SEG.push({
+          t0: t0,
+          t1: t1,
+          f: function (u) {
+            var q = hwTip(H, u);
+            return { x: q[0], y: q[1], a: a + 3 * Math.sin(2 * Math.PI * H.letters * u), l: 0 };
+          },
+        });
+        INK.push({ t0: t0, t1: t1, ease: E.none, kind: "w", i: i });
+        var q = hwTip(H, 1);
+        cur = { x: q[0], y: q[1], a: a, l: 0 };
+      };
+      var hover = function (row) {
+        return { x: 716, y: LABEL_TOP[row] + 8, a: 62, l: 1 };
+      };
+      var pre = function (row) {
+        var p = STRIKES[row].pts[0];
+        return { x: p[0] - 14, y: p[1] - 16, a: 42, l: 0.7 };
+      };
+
+      // Scene 1 to 2: rest, pick up, glide to row 1, touch down on the beat
+      SEG.push({ t0: 0, t1: 0.62, f: function () { return { x: 748, y: 430, a: 58, l: 0 }; } });
+      goTo(0.62, 1.12, pre(0), E.io2);
+      goTo(1.12, BEATS[0], strikeStart(0, 45), E.in2);
+      strike(0, BEATS[0], 1.5, 45, 51);
+      goTo(1.5, 1.58, hwStart(0, 46), E.io1, 0.35);
+      write(0, 1.58, 1.84, 46);
+      // Scene 3: lift off to the margin, wait, swoop to row 2 on the beat
+      goTo(1.84, 2.16, hover(1), E.o2);
+      goTo(2.16, 2.5, { x: 720, y: LABEL_TOP[1] + 14, a: 60, l: 1 }, E.s);
+      goTo(2.5, 2.72, pre(1), E.io2);
+      goTo(2.72, BEATS[1], strikeStart(1, 45), E.in2);
+      strike(1, BEATS[1], 3.06, 45, 51);
+      goTo(3.06, 3.14, hwStart(1, 46), E.io1, 0.35);
+      write(1, 3.14, 3.42, 46);
+      // Scene 4: same wait, row 3 on the beat, then the flurry on Délai
+      goTo(3.42, 3.74, hover(2), E.o2);
+      goTo(3.74, 4.36, { x: 720, y: LABEL_TOP[2] + 14, a: 60, l: 1 }, E.s);
+      goTo(4.36, 4.6, pre(2), E.io2);
+      goTo(4.6, BEATS[2], strikeStart(2, 45), E.in2);
+      strike(2, BEATS[2], 4.85, 45, 51);
+      goTo(4.85, 4.88, hwStart(2, 46), E.io1, 0.25);
+      write(2, 4.88, 4.99, 46);
+      goTo(4.99, 5.02, strikeStart(3, 50), E.io1, 0.2);
+      strike(3, 5.02, 5.13, 50, 44);
+      goTo(5.13, 5.16, hwStart(3, 46), E.io1, 0.2);
+      write(3, 5.16, 5.32, 46);
+      goTo(5.32, DUR, { x: cur.x + 22, y: cur.y + 10, a: 50, l: 0.6 }, E.o2);
+
+      var penAt = function (t) {
+        if (t <= SEG[0].t0) return SEG[0].f(0);
+        for (var k = 0; k < SEG.length; k++) {
+          var S = SEG[k];
+          if (t < S.t0) return SEG[k - 1].f(1);
+          if (t <= S.t1) return S.f((t - S.t0) / (S.t1 - S.t0));
+        }
+        return SEG[SEG.length - 1].f(1);
+      };
+
+      var pen = $("pen"),
+        trace = $("pentrace"),
+        lift = $("penlift"),
+        rot = $("penrot");
+      var render = function (t) {
+        var p = penAt(t);
+        trace.style.transform = "translate(" + p.x.toFixed(2) + "px," + p.y.toFixed(2) + "px)";
+        lift.style.transform = "scale(" + (1 + 0.045 * p.l).toFixed(4) + ")";
+        rot.style.transform = "rotate(" + p.a.toFixed(2) + "deg)";
+        pen.style.filter =
+          "drop-shadow(" + (7 + 13 * p.l).toFixed(1) + "px " + (10 + 18 * p.l).toFixed(1) + "px " + (5 + 8 * p.l).toFixed(1) + "px rgba(60,40,20," + (0.3 - 0.1 * p.l).toFixed(3) + "))";
+        for (var k = 0; k < INK.length; k++) {
+          var I = INK[k];
+          var u = Math.min(1, Math.max(0, (t - I.t0) / (I.t1 - I.t0)));
+          var on = t >= I.t0 ? "1" : "0";
+          if (I.kind === "s") {
+            var el = strikeEls[I.i],
+              L = STRIKES[I.i].L;
+            el.style.opacity = on;
+            el.setAttribute("stroke-dashoffset", (L * (1 - I.ease(u))).toFixed(2));
+          } else {
+            var H = HW[I.i];
+            H.el.style.opacity = on;
+            H.el.style.clipPath = u >= 1 ? "none" : "inset(0px " + Math.max(0, H.BW - (HW_PADL + u * H.W)).toFixed(2) + "px 0px 0px)";
+          }
+        }
+      };
+      // seek-safe clock: GSAP writes clock.t on every render, the setter rebuilds the whole pen state
+      var clock = { _t: 0 };
+      Object.defineProperty(clock, "t", {
+        get: function () {
+          return this._t;
+        },
+        set: function (v) {
+          this._t = v;
+          render(v);
+        },
+      });
+      tl.fromTo(clock, { t: 0 }, { t: DUR, duration: DUR, ease: "none" }, 0);
+
+      /* ---------- right region: question cycle (cut-the-curve upward) + giant slams ---------- */
+      var enterWord = function (el, at) {
+        tl.fromTo(el, { y: 200, opacity: 0.35 }, { y: 0, opacity: 1, duration: 0.32, ease: "power4.out", immediateRender: false }, at);
+      };
+      var word = function (el, at) {
+        tl.fromTo(el, { y: 10, opacity: 0, filter: "blur(8px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false }, at);
+      };
+      var exitGroup = function (g, cut) {
+        tl.fromTo(g, { y: 0 }, { y: -200, duration: 0.26, ease: "power4.in", immediateRender: false }, cut - 0.26);
+        tl.fromTo(g, { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power1.in", immediateRender: false }, cut - 0.22);
+      };
+
+      enterWord($("q0a"), Q_AT[0]);
+      enterWord($("q0b"), Q_AT[0] + 0.06);
+      word($("q0m"), QM_AT[0]);
+      exitGroup($("g0"), Q_AT[1]);
+      enterWord($("q1a"), Q_AT[1]);
+      enterWord($("q1b"), Q_AT[1] + 0.06);
+      word($("q1m"), QM_AT[1]);
+      exitGroup($("g1"), Q_AT[2]);
+      enterWord($("q2a"), Q_AT[2]);
+      word($("q2m"), QM_AT[2]);
+
+      // giant tracking tighten via per-letter x (letters split into inline-blocks, spread wide, slide home)
+      var trackChars = function (root) {
+        var t = root.textContent;
+        root.textContent = "";
+        var out = [];
+        for (var i = 0; i < t.length; i++) {
+          var s = document.createElement("span");
+          s.style.display = "inline-block";
+          s.style.whiteSpace = "pre";
+          s.textContent = t[i];
+          root.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      };
+      var trackIn = function (chars, spread, dur, ease, at) {
+        var n = chars.length;
+        chars.forEach(function (c, i) {
+          tl.fromTo(c, { x: (i - (n - 1) / 2) * spread }, { x: 0, duration: dur, ease: ease, immediateRender: false }, at);
+        });
+      };
+      // kinetic-beat-slam: three hits on the beat grid, each on a distinct axis and ease
+      tl.fromTo($("t0"), { opacity: 0, scale: 1.35, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "power4.out", immediateRender: false }, BEATS[0]);
+      trackIn(trackChars($("t0")), 96, 0.45, "power4.out", BEATS[0]);
+      tl.fromTo($("t1"), { opacity: 0, x: 220, filter: "blur(12px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.42, ease: "expo.out", immediateRender: false }, BEATS[1]);
+      trackIn(trackChars($("t1")), 96, 0.42, "expo.out", BEATS[1]);
+      tl.fromTo($("t2"), { opacity: 0, y: 120, rotation: 5, filter: "blur(12px)" }, { opacity: 1, y: 0, rotation: 0, filter: "blur(0px)", duration: 0.5, ease: "circ.out", immediateRender: false }, BEATS[2]);
+      trackIn(trackChars($("t2")), 96, 0.5, "circ.out", BEATS[2]);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["06-toi"] = tl;
+    })();
+  </script>
+</template>

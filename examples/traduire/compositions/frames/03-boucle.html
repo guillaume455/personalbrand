@@ -1,0 +1,763 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url('assets/fonts/SpaceMono-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url('assets/fonts/SpaceMono-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: block; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #f5efe7;
+    }
+
+    /* ---------- ground: full-bleed clip layer (never on #root) ---------- */
+    #f03-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: #0d0b0a;
+      overflow: hidden;
+    }
+    #f03-halo {
+      position: absolute;
+      left: 260px;
+      top: 90px;
+      width: 1400px;
+      height: 820px;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.2), rgba(194, 91, 40, 0.08) 52%, rgba(194, 91, 40, 0) 100%);
+      opacity: 0;
+    }
+
+    #f03-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* =====================================================================
+       LOOP BLOCK (self-contained, lifted as is by frame 04)
+       wrapper 1800x780; every child positioned in wrapper coordinates.
+       ellipse: center (900,390), rx 650, ry 310, starts at 12 o'clock, clockwise.
+       ===================================================================== */
+    .f03-loop {
+      position: absolute;
+      left: 60px;
+      top: 110px;
+      width: 1800px;
+      height: 780px;
+    }
+    .f03-sthalo {
+      position: absolute;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.28), rgba(194, 91, 40, 0.1) 55%, rgba(194, 91, 40, 0) 100%);
+      opacity: 0;
+    }
+    .f03-dothalo {
+      position: absolute;
+      left: -130px;
+      top: -130px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(224, 138, 92, 0.3), rgba(224, 138, 92, 0.1) 50%, rgba(224, 138, 92, 0) 100%);
+    }
+    .f03-dotpos {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+    }
+    .f03-dothalowrap {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      opacity: 0;
+    }
+    .f03-loopsvg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1800px;
+      height: 780px;
+      overflow: visible;
+      filter: drop-shadow(0 0 6px rgba(212, 112, 63, 0.5));
+    }
+    .f03-track {
+      fill: none;
+      stroke: #c25b28;
+      stroke-width: 3.5;
+      stroke-linecap: butt;
+      opacity: 0;
+    }
+    .f03-trail {
+      fill: none;
+      stroke-linecap: round;
+      opacity: 0;
+    }
+    .f03-dot {
+      position: absolute;
+      left: -11px;
+      top: -11px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff3ea 0%, #fff3ea 30%, #e08a5c 68%, rgba(224, 138, 92, 0) 100%);
+      box-shadow: 0 0 20px 7px rgba(224, 138, 92, 0.6);
+      opacity: 0;
+    }
+
+    /* station = scaled wrapper (socket masks the line + glass card on top) */
+    .f03-st {
+      position: absolute;
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    .f03-socket {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      background: #0d0b0a;
+      opacity: 0.92;
+    }
+    .f03-card {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(40, 33, 28, 0.92), rgba(24, 20, 17, 0.9) 45%, rgba(20, 16, 14, 0.9) 80%, rgba(30, 24, 20, 0.92));
+      border: 1px solid rgba(245, 239, 231, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 50px 120px rgba(0, 0, 0, 0.7);
+      opacity: 0.4;
+    }
+    .f03-ring {
+      position: absolute;
+      left: -1px;
+      top: -1px;
+      right: -1px;
+      bottom: -1px;
+      border-radius: 15px;
+      border: 1.5px solid #d4703f;
+      box-shadow: 0 0 26px rgba(224, 138, 92, 0.45), inset 0 0 18px rgba(224, 138, 92, 0.12);
+      opacity: 0;
+    }
+    .f03-row {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .f03-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 9px;
+    }
+    .f03-micro {
+      display: block;
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 22px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #9b9289;
+      white-space: nowrap;
+    }
+
+    /* tool tiles (brand colors only here) */
+    .f03-tile {
+      flex: 0 0 auto;
+      width: 88px;
+      height: 88px;
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .f03-tile svg { width: 50px; height: 50px; display: block; }
+
+    /* mini surfaces (e-mail, invoice) */
+    .f03-mini {
+      box-sizing: border-box;
+      padding: 9px 16px 11px 16px;
+      border-radius: 10px;
+      background: rgba(245, 239, 231, 0.05);
+      border: 1px solid rgba(245, 239, 231, 0.1);
+    }
+    .f03-subj {
+      display: block;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 31px;
+      color: #f5efe7;
+      white-space: nowrap;
+    }
+    .f03-mk { color: #9b9289; }
+    .f03-bars { display: flex; gap: 10px; margin-top: 8px; }
+    .f03-bar {
+      display: block;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(245, 239, 231, 0.16);
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f03-inv {
+      display: flex;
+      align-items: baseline;
+      white-space: nowrap;
+    }
+    .f03-invl {
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 40px;
+      color: #cdbfb2;
+    }
+    .f03-sep { margin: 0 12px; color: #9b9289; }
+    .f03-amt {
+      display: inline-block;
+      font-family: "Space Mono", monospace;
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 40px;
+      font-variant-numeric: tabular-nums;
+      color: #f5efe7;
+      transform-origin: 50% 60%;
+    }
+
+    /* code window (station 2) */
+    .f03-bartop {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 38px;
+      box-sizing: border-box;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border-bottom: 1px solid rgba(245, 239, 231, 0.08);
+    }
+    .f03-wd {
+      display: block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(245, 239, 231, 0.22);
+    }
+    .f03-bartop .f03-micro { margin-left: 12px; }
+    .f03-codebody {
+      position: absolute;
+      left: 0;
+      top: 39px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 20px 0 18px;
+    }
+    .f03-cl {
+      display: flex;
+      font-family: "Space Mono", monospace;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 25px;
+      white-space: pre;
+      color: #f5efe7;
+    }
+    .f03-ln {
+      flex: 0 0 auto;
+      width: 16px;
+      margin-right: 12px;
+      text-align: right;
+      color: #9b9289;
+    }
+    .f03-ct {
+      display: inline-block;
+      clip-path: inset(0% 100% 0% 0%);
+    }
+    .f03-kw { color: #d4703f; }
+    .f03-str { color: #cdbfb2; }
+
+    /* waiting counter (station 3) */
+    .f03-waitrow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .f03-clock { width: 46px; height: 46px; display: block; flex: 0 0 auto; }
+    .f03-clock circle.f03-face { fill: none; stroke: #cdbfb2; stroke-width: 2.5; }
+    .f03-clock line { stroke: #f5efe7; stroke-linecap: round; }
+    .f03-num {
+      position: relative;
+      width: 140px;
+      height: 58px;
+      transform-origin: 0% 50%;
+    }
+    .f03-j {
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-family: "Space Mono", monospace;
+      font-size: 54px;
+      font-weight: 700;
+      line-height: 58px;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    #f03-j1 { opacity: 1; }
+    .f03-days {
+      display: grid;
+      grid-template-columns: 12px 12px 12px 12px;
+      grid-auto-rows: 12px;
+      gap: 5px;
+      margin-left: 4px;
+    }
+    .f03-day {
+      display: block;
+      border-radius: 3px;
+      background: rgba(245, 239, 231, 0.12);
+    }
+
+    /* ---------- phrase: word by word + the traced accent pill ---------- */
+    .f03-phrase {
+      position: absolute;
+      left: 0;
+      top: 394px;
+      width: 1920px;
+      text-align: center;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+    }
+    .f03-line { display: block; white-space: nowrap; }
+    .f03-line + .f03-line + .f03-line { margin-top: 10px; }
+    .f03-w { display: inline-block; opacity: 0; }
+    .f03-pill {
+      position: relative;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      color: #ffffff;
+    }
+    .f03-pillbg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f03-pw { position: relative; display: inline-block; }
+    .f03-l { display: inline-block; opacity: 0; }
+
+    /* static film grain, top layer */
+    #f03-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.05;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px;
+    }
+  </style>
+
+  <div id="root" data-composition-id="03-boucle" data-width="1920" data-height="1080" data-duration="5.4">
+    <div id="f03-ground" class="clip" data-start="0" data-duration="5.4" data-track-index="0" data-layout-ignore>
+      <div id="f03-halo"></div>
+    </div>
+
+    <div id="f03-stage" class="clip" data-start="0" data-duration="5.4" data-track-index="1">
+
+      <!-- loop: self-contained block (frame 04 lifts it as is: this div + its children + the "loop" section of the script).
+           Wrapper 1800x780 at left 60 / top 110. Everything inside is in wrapper coordinates:
+           ellipse center (900,390), rx 650, ry 310; path starts at 12 o'clock and runs clockwise;
+           stations at 12 / 3 / 6 / 9 o'clock (geometry read from their inline styles); dot + comet trail
+           placed by a seek-safe proxy setter with getPointAtLength on #f03-track. -->
+      <div id="f03-loop" class="f03-loop" data-layout-allow-overflow>
+        <div id="f03-sthalo1" class="f03-sthalo" data-layout-ignore style="left: 510px; top: -80px; width: 780px; height: 320px;"></div>
+        <div id="f03-sthalo2" class="f03-sthalo" data-layout-ignore style="left: 1200px; top: 233px; width: 700px; height: 314px;"></div>
+        <div id="f03-sthalo3" class="f03-sthalo" data-layout-ignore style="left: 610px; top: 566px; width: 580px; height: 268px;"></div>
+        <div id="f03-sthalo4" class="f03-sthalo" data-layout-ignore style="left: -80px; top: 236px; width: 660px; height: 308px;"></div>
+
+        <div id="f03-dothalowrap" class="f03-dothalowrap" data-layout-ignore><div class="f03-dothalo"></div></div>
+
+        <svg class="f03-loopsvg" viewBox="0 0 1800 780" width="1800" height="780" xmlns="http://www.w3.org/2000/svg">
+          <path id="f03-track" class="f03-track" d="M 900 80 A 650 310 0 0 1 1550 390 A 650 310 0 0 1 900 700 A 650 310 0 0 1 250 390 A 650 310 0 0 1 900 80 Z" />
+          <path id="f03-trail3" class="f03-trail" stroke="#d4703f" stroke-width="3.5" stroke-opacity="0.3" data-len="260" d="M 900 80 A 650 310 0 0 1 1550 390 A 650 310 0 0 1 900 700 A 650 310 0 0 1 250 390 A 650 310 0 0 1 900 80 Z" />
+          <path id="f03-trail2" class="f03-trail" stroke="#d4703f" stroke-width="4.5" stroke-opacity="0.62" data-len="140" d="M 900 80 A 650 310 0 0 1 1550 390 A 650 310 0 0 1 900 700 A 650 310 0 0 1 250 390 A 650 310 0 0 1 900 80 Z" />
+          <path id="f03-trail1" class="f03-trail" stroke="#e08a5c" stroke-width="5.5" stroke-opacity="1" data-len="64" d="M 900 80 A 650 310 0 0 1 1550 390 A 650 310 0 0 1 900 700 A 650 310 0 0 1 250 390 A 650 310 0 0 1 900 80 Z" />
+        </svg>
+
+        <div id="f03-dotpos" class="f03-dotpos"><div id="f03-dot" class="f03-dot"></div></div>
+
+        <!-- station 1, 12 o'clock: EXPLIQUER -->
+        <div id="f03-st1" class="f03-st" style="left: 630px; top: 10px; width: 540px; height: 140px;">
+          <div class="f03-socket"></div>
+          <div id="f03-card1" class="f03-card">
+            <div class="f03-row">
+              <div class="f03-tile">
+                <svg viewBox="0 0 24 24" fill="#EA4335" xmlns="http://www.w3.org/2000/svg"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+              </div>
+              <div class="f03-col">
+                <span class="f03-micro">Expliquer</span>
+                <div class="f03-mini">
+                  <span class="f03-subj"><span class="f03-mk">Objet&nbsp;:</span> bouton de réservation</span>
+                  <div class="f03-bars">
+                    <i id="f03-bar1" class="f03-bar" style="width: 190px;"></i>
+                    <i id="f03-bar2" class="f03-bar" style="width: 120px;"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="f03-ring1" class="f03-ring"></div>
+          </div>
+        </div>
+
+        <!-- station 2, 3 o'clock: TRADUIRE (mini code window, canonical lines 1-3) -->
+        <div id="f03-st2" class="f03-st" style="left: 1320px; top: 323px; width: 460px; height: 134px;">
+          <div class="f03-socket"></div>
+          <div id="f03-card2" class="f03-card">
+            <div class="f03-bartop">
+              <i class="f03-wd"></i><i class="f03-wd"></i><i class="f03-wd"></i>
+              <span class="f03-micro">Traduire</span>
+            </div>
+            <div class="f03-codebody">
+              <div class="f03-cl"><span class="f03-ln">1</span><span id="f03-cl1" class="f03-ct" data-chars="38"><span class="f03-kw">const</span> page = <span class="f03-kw">await</span> build(site.routes);</span></div>
+              <div class="f03-cl"><span class="f03-ln">2</span><span id="f03-cl2" class="f03-ct" data-chars="33"><span class="f03-kw">if</span> (!page.ok) <span class="f03-kw">return</span> retry(site);</span></div>
+              <div class="f03-cl"><span class="f03-ln">3</span><span id="f03-cl3" class="f03-ct" data-chars="18"><span class="f03-kw">&lt;div</span> <span class="f03-kw">class</span>=<span class="f03-str">"hero"</span><span class="f03-kw">&gt;</span></span></div>
+            </div>
+            <div id="f03-ring2" class="f03-ring"></div>
+          </div>
+        </div>
+
+        <!-- station 3, 6 o'clock: ATTENDRE (J+1 -> J+12 by hard cuts, clock hands enriched) -->
+        <div id="f03-st3" class="f03-st" style="left: 730px; top: 636px; width: 340px; height: 128px;">
+          <div class="f03-socket"></div>
+          <div id="f03-card3" class="f03-card">
+            <div class="f03-row">
+              <div class="f03-col">
+                <span class="f03-micro">Attendre</span>
+                <div class="f03-waitrow">
+                  <svg class="f03-clock" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="f03-face" cx="23" cy="23" r="19" />
+                    <line id="f03-hhand" x1="23" y1="23" x2="23" y2="14" stroke-width="3" transform="rotate(90 23 23)" />
+                    <line id="f03-mhand" x1="23" y1="23" x2="23" y2="9" stroke-width="2.2" transform="rotate(0 23 23)" />
+                    <circle cx="23" cy="23" r="2.6" fill="#d4703f" />
+                  </svg>
+                  <div id="f03-num" class="f03-num">
+                    <span id="f03-j1" class="f03-j">J+1</span>
+                    <span id="f03-j3" class="f03-j">J+3</span>
+                    <span id="f03-j7" class="f03-j">J+7</span>
+                    <span id="f03-j12" class="f03-j">J+12</span>
+                  </div>
+                  <div class="f03-days">
+                    <i class="f03-day"></i><i class="f03-day"></i><i class="f03-day"></i><i class="f03-day"></i>
+                    <i class="f03-day"></i><i class="f03-day"></i><i class="f03-day"></i><i class="f03-day"></i>
+                    <i class="f03-day"></i><i class="f03-day"></i><i class="f03-day"></i><i class="f03-day"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="f03-ring3" class="f03-ring"></div>
+          </div>
+        </div>
+
+        <!-- station 4, 9 o'clock: PAYER -->
+        <div id="f03-st4" class="f03-st" style="left: 40px; top: 326px; width: 420px; height: 128px;">
+          <div class="f03-socket"></div>
+          <div id="f03-card4" class="f03-card">
+            <div class="f03-row">
+              <div class="f03-tile">
+                <svg viewBox="0 0 24 24" fill="#635BFF" xmlns="http://www.w3.org/2000/svg"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/></svg>
+              </div>
+              <div class="f03-col">
+                <span class="f03-micro">Payer</span>
+                <div class="f03-mini f03-inv">
+                  <span class="f03-invl">Facture</span><span class="f03-invl f03-sep">·</span><span id="f03-amt" class="f03-amt">850&nbsp;€</span>
+                </div>
+              </div>
+            </div>
+            <div id="f03-ring4" class="f03-ring"></div>
+          </div>
+        </div>
+      </div>
+      <!-- /loop -->
+
+      <!-- the phrase, word by word on the voice, centered inside the loop -->
+      <div id="f03-phrase" class="f03-phrase">
+        <span class="f03-line">
+          <span class="f03-w" data-cue="0.10">Tu</span>
+          <span class="f03-w" data-cue="0.32">expliquais</span>
+          <span class="f03-w" data-cue="0.70">ce</span>
+          <span class="f03-w" data-cue="0.86">que</span>
+          <span class="f03-w" data-cue="0.96">tu</span>
+          <span class="f03-w" data-cue="1.14">voulais,</span>
+        </span>
+        <span class="f03-line">
+          <span class="f03-w" data-cue="1.79">il</span>
+          <span class="f03-w" data-cue="2.02">traduisait,</span>
+          <span class="f03-w" data-cue="2.93">tu</span>
+          <span class="f03-w" data-cue="3.16">attendais,</span>
+        </span>
+        <span class="f03-line">
+          <span class="f03-pill" data-trace="4.02"><span class="f03-pillbg"></span><span class="f03-pw" data-cue="4.08"><span class="f03-l">t</span><span class="f03-l">u</span></span> <span class="f03-pw" data-cue="4.30"><span class="f03-l">p</span><span class="f03-l">a</span><span class="f03-l">y</span><span class="f03-l">a</span><span class="f03-l">i</span><span class="f03-l">s</span><span class="f03-l">.</span></span></span>
+        </span>
+      </div>
+    </div>
+
+    <div id="f03-grain" class="clip" data-start="0" data-duration="5.4" data-track-index="2" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "03-boucle";
+      var DUR = 5.4;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]') || document;
+      function $(id) { return root.querySelector("#f03-" + id) || document.getElementById("f03-" + id); }
+      function $$(sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
+      function px(v) { return parseFloat(v) || 0; }
+
+      var tl = gsap.timeline({ paused: true });
+
+      // voice cues (word timestamps)
+      var T_S1 = 0.10, T_S2 = 1.79, T_S3 = 2.93, T_S4 = 4.08;
+      var T_GO = 0.40; // the dot leaves station 1 (hidden under it) once the loop is nearly closed
+
+      // ---------- ground halo ----------
+      tl.fromTo($("halo"), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.out" }, 0.01);
+
+      // =====================================================================
+      // loop (lifted with the #f03-loop block)
+      // =====================================================================
+      var track = $("track");
+      var RX = 650, RY = 310, CX = 900, CY = 390;
+      var L = Math.PI * (3 * (RX + RY) - Math.sqrt((3 * RX + RY) * (RX + 3 * RY)));
+      try { L = track.getTotalLength() || L; } catch (e) {}
+      function pointAt(s) {
+        try { return track.getPointAtLength(s); } catch (e) {
+          var a = (s / L) * Math.PI * 2;
+          return { x: CX + RX * Math.sin(a), y: CY - RY * Math.cos(a) };
+        }
+      }
+
+      // svg-path-draw: the accent loop traces itself from 12 o'clock, clockwise, 0.0 -> 0.5
+      var DRAW_DUR = 0.5;
+      track.style.strokeDasharray = L + " " + L;
+      track.style.strokeDashoffset = String(L);
+      tl.set(track, { opacity: 1 }, 0.01);
+      tl.fromTo(track, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: DRAW_DUR, ease: "power2.out" }, 0);
+
+      // stations: geometry from inline styles (wrapper coordinates)
+      var ST = [1, 2, 3, 4].map(function (n) {
+        var el = $("st" + n);
+        return { n: n, el: el, x: px(el.style.left), y: px(el.style.top), w: px(el.style.width), h: px(el.style.height) };
+      });
+      ST.forEach(function (s) { gsap.set(s.el, { scale: 0.94 }); });
+      function inside(r, p) { return p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h; }
+      // arc length where the path enters station i's card (walking back from the station's own point)
+      function entryOf(i) {
+        var c = i === 0 ? L : (L * i) / 4;
+        var s = c;
+        for (var k = 0; k < 1200; k++) {
+          if (!inside(ST[i], pointAt(s))) return s + 1;
+          s -= 1;
+        }
+        return c;
+      }
+      var E1 = entryOf(0), E2 = entryOf(1), E3 = entryOf(2), E4 = entryOf(3);
+
+      // dim stations (40%) fade in as the pen reaches them (inverse of power2.out = cubic out)
+      function penTime(s) { return DRAW_DUR * (1 - Math.cbrt(1 - Math.min(0.999, s / L))); }
+      tl.fromTo(ST[0].el, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, 0.02);
+      [[1, E2], [2, E3], [3, E4]].forEach(function (p) {
+        tl.fromTo(ST[p[0]].el, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "power1.out" }, Math.max(0.02, penTime(p[1]) - 0.04));
+      });
+
+      // a station lights up when the dot reaches it: 40% -> 100%, scale 0.94 -> 1, ring + halo
+      function lightStation(n, t) {
+        var st = $("st" + n), card = $("card" + n), ring = $("ring" + n), halo = $("sthalo" + n);
+        tl.fromTo(st, { scale: 0.94 }, { scale: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, t);
+        tl.fromTo(card, { opacity: 0.4 }, { opacity: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, t);
+        tl.fromTo(ring, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power2.out", immediateRender: false }, t);
+        tl.fromTo(ring, { opacity: 1 }, { opacity: 0.3, duration: 0.6, ease: "power1.out", immediateRender: false }, t + 0.3);
+        tl.fromTo(halo, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out", immediateRender: false }, t);
+        tl.fromTo(halo, { opacity: 1 }, { opacity: 0.45, duration: 0.8, ease: "power1.out", immediateRender: false }, t + 0.35);
+      }
+      lightStation(1, T_S1);
+      lightStation(2, T_S2);
+      lightStation(3, T_S3);
+      lightStation(4, T_S4);
+
+      // the traveling dot + comet trail: seek-safe proxy, its setter places everything (no update callback)
+      var dotPos = $("dotpos"), dotHalo = $("dothalowrap");
+      var trails = [$("trail1"), $("trail2"), $("trail3")].map(function (p) {
+        var T = px(p.getAttribute("data-len"));
+        p.style.strokeDasharray = T + " " + (L + T + 20);
+        p.style.strokeDashoffset = String(T);
+        return { el: p, T: T };
+      });
+      function placeDot(s) {
+        var sm = ((s % L) + L) % L;
+        var pt = pointAt(sm);
+        var tr = "translate(" + pt.x.toFixed(2) + "px, " + pt.y.toFixed(2) + "px)";
+        dotPos.style.transform = tr;
+        dotHalo.style.transform = tr;
+        for (var i = 0; i < trails.length; i++) trails[i].el.style.strokeDashoffset = (trails[i].T - sm).toFixed(2);
+      }
+      var dot = { _s: 0 };
+      Object.defineProperty(dot, "s", {
+        get: function () { return this._s; },
+        set: function (v) { this._s = v; placeDot(v); },
+        enumerable: true
+      });
+      placeDot(0);
+
+      // reaches each station's edge exactly on its cue; constant speed per leg (speed changes hide under the cards)
+      var vC = (E4 - E3) / (T_S4 - T_S3);
+      var S_END = E4 + vC * (DUR - T_S4);
+      tl.fromTo(dot, { s: 0 }, { s: E2, duration: T_S2 - T_GO, ease: "none", immediateRender: false }, T_GO);
+      tl.fromTo(dot, { s: E2 }, { s: E3, duration: T_S3 - T_S2, ease: "none", immediateRender: false }, T_S2);
+      tl.fromTo(dot, { s: E3 }, { s: E4, duration: T_S4 - T_S3, ease: "none", immediateRender: false }, T_S3);
+      tl.fromTo(dot, { s: E4 }, { s: S_END, duration: DUR - T_S4, ease: "none", immediateRender: false }, T_S4);
+
+      tl.fromTo($("dot"), { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }, T_GO);
+      tl.fromTo(dotHalo, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, T_GO);
+      tl.fromTo(trails.map(function (t) { return t.el; }), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, T_GO);
+
+      // the loop restarts: the dot comes back to station 1, which lights again
+      var T_REDO = T_S4 + (E1 - E4) / vC;
+      if (T_REDO < DUR - 0.2) {
+        tl.fromTo($("ring1"), { opacity: 0.3 }, { opacity: 1, duration: 0.14, ease: "power2.out", immediateRender: false }, T_REDO);
+        tl.fromTo($("ring1"), { opacity: 1 }, { opacity: 0.55, duration: Math.max(0.1, DUR - T_REDO - 0.3), ease: "power1.out", immediateRender: false }, T_REDO + 0.25);
+        tl.fromTo($("sthalo1"), { opacity: 0.45 }, { opacity: 1, duration: 0.3, ease: "power1.out", immediateRender: false }, T_REDO);
+      }
+
+      // station 1 content: the e-mail body writes itself while you explain
+      tl.fromTo($("bar1"), { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out", immediateRender: false }, 0.34);
+      tl.fromTo($("bar2"), { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, 0.8);
+
+      // station 2 content: the three canonical code lines type in (clip steps, one char per step)
+      [["cl1", 1.84, 0.3], ["cl2", 2.1, 0.26], ["cl3", 2.36, 0.16]].forEach(function (c) {
+        var el = $(c[0]);
+        var n = parseInt(el.getAttribute("data-chars"), 10) || 20;
+        tl.fromTo(el,
+          { clipPath: "inset(0% 100% 0% 0%)" },
+          { clipPath: "inset(0% 0% 0% 0%)", duration: c[2], ease: "steps(" + n + ")", immediateRender: false },
+          c[1]);
+      });
+
+      // station 3 content: J+1 -> J+3 -> J+7 -> J+12 by hard cuts, the days fill up
+      var days = $$(".f03-day");
+      var FLIPS = [
+        { t: T_S3, id: "j1", lit: 1 },
+        { t: 3.16, id: "j3", lit: 3 },
+        { t: 3.42, id: "j7", lit: 7 },
+        { t: 3.68, id: "j12", lit: 12 }
+      ];
+      var prevId = null, prevLit = 0;
+      FLIPS.forEach(function (f) {
+        if (prevId) {
+          tl.set($(prevId), { opacity: 0 }, f.t);
+          tl.set($(f.id), { opacity: 1 }, f.t);
+          tl.fromTo($("num"), { scale: 1.12 }, { scale: 1, duration: 0.22, ease: "power3.out", immediateRender: false }, f.t);
+        }
+        days.forEach(function (d, i) {
+          if (i >= prevLit && i < f.lit) {
+            tl.set(d, { backgroundColor: "#a84d22", boxShadow: "0 0 8px rgba(224, 138, 92, 0.3)" }, f.t);
+          }
+        });
+        prevId = f.id;
+        prevLit = f.lit;
+      });
+
+      // svg-icon-enrichment: the clock hands spin while you wait (SVG transform attribute, proxy setter)
+      var mh = $("mhand"), hh = $("hhand");
+      var clock = { _d: 0 };
+      Object.defineProperty(clock, "d", {
+        get: function () { return this._d; },
+        set: function (v) {
+          this._d = v;
+          mh.setAttribute("transform", "rotate(" + v.toFixed(2) + " 23 23)");
+          hh.setAttribute("transform", "rotate(" + (90 + v / 12).toFixed(2) + " 23 23)");
+        },
+        enumerable: true
+      });
+      clock.d = 0;
+      tl.fromTo(clock, { d: 0 }, { d: 792, duration: DUR - T_S3, ease: "none", immediateRender: false }, T_S3);
+
+      // station 4 content: the amount lands on "payais"
+      tl.fromTo($("amt"), { scale: 1.2 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 4.3);
+
+      // =====================================================================
+      // phrase: word by word + one traced accent pill
+      // =====================================================================
+      $$(".f03-w").forEach(function (w) {
+        var t = parseFloat(w.getAttribute("data-cue"));
+        tl.fromTo(w,
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" },
+          t);
+      });
+      $$(".f03-pill").forEach(function (p) {
+        var t = parseFloat(p.getAttribute("data-trace"));
+        var bg = p.querySelector(".f03-pillbg");
+        tl.set(bg, { opacity: 1 }, t);
+        tl.fromTo(bg, { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out" }, t);
+        tl.fromTo(bg, { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out" }, t);
+      });
+      $$(".f03-pw").forEach(function (w) {
+        var t = parseFloat(w.getAttribute("data-cue"));
+        var letters = Array.prototype.slice.call(w.querySelectorAll(".f03-l"));
+        tl.fromTo(letters,
+          { opacity: 0, x: -8 },
+          { opacity: 1, x: 0, duration: 0.16, ease: "power3.out", stagger: 0.02 },
+          t);
+      });
+
+      // hold to the exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

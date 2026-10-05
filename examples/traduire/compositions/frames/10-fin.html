@@ -1,0 +1,599 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Big Shoulders";
+      src: url("assets/fonts/BigShoulders-800.woff2") format("woff2");
+      font-weight: 800;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #f5efe7;
+    }
+
+    /* ---------- ground (full-bleed clip, full duration) ---------- */
+    #f10-ground {
+      position: absolute;
+      inset: 0;
+      background: #0d0b0a;
+      overflow: hidden;
+    }
+    #f10-halo {
+      position: absolute;
+      left: 110px;
+      top: -170px;
+      width: 1700px;
+      height: 880px;
+      background: radial-gradient(
+        closest-side,
+        rgba(194, 91, 40, 0.28),
+        rgba(194, 91, 40, 0.12) 48%,
+        rgba(194, 91, 40, 0) 100%
+      );
+      filter: blur(40px);
+      transform-origin: 50% 40%;
+      opacity: 0.45;
+    }
+    #f10-halo-cta {
+      position: absolute;
+      left: 460px;
+      top: 472px;
+      width: 1000px;
+      height: 340px;
+      background: radial-gradient(
+        closest-side,
+        rgba(194, 91, 40, 0.24),
+        rgba(194, 91, 40, 0.08) 55%,
+        rgba(194, 91, 40, 0) 100%
+      );
+      filter: blur(24px);
+      opacity: 0;
+    }
+    #f10-bgglow {
+      position: absolute;
+      left: 160px;
+      top: 300px;
+      width: 1600px;
+      height: 600px;
+      background: radial-gradient(
+        closest-side,
+        rgba(194, 91, 40, 0.22),
+        rgba(194, 91, 40, 0.07) 55%,
+        rgba(194, 91, 40, 0) 100%
+      );
+      opacity: 0;
+    }
+    #f10-waves {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 370px;
+      overflow: hidden;
+      filter: drop-shadow(0 0 5px rgba(224, 138, 92, 0.3));
+      -webkit-mask-image: radial-gradient(
+        ellipse 62% 120% at 50% 0%,
+        #000 40%,
+        rgba(0, 0, 0, 0.4) 70%,
+        rgba(0, 0, 0, 0) 100%
+      );
+      mask-image: radial-gradient(
+        ellipse 62% 120% at 50% 0%,
+        #000 40%,
+        rgba(0, 0, 0, 0.4) 70%,
+        rgba(0, 0, 0, 0) 100%
+      );
+    }
+
+    /* ---------- stage (content clip) ---------- */
+    #f10-stage {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* wordmark: ENTREPRENEURS (ink) + 2.0 (accent-light), Big Shoulders 800 */
+    #f10-wordmark {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 190px;
+      height: 120px;
+      text-align: center;
+      white-space: nowrap;
+      font-family: "Big Shoulders", sans-serif;
+      font-weight: 800;
+      font-size: 120px;
+      line-height: 1;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      color: #f5efe7;
+      z-index: 2;
+    }
+    .f10-l {
+      display: inline-block;
+      opacity: 0;
+    }
+    #f10-two {
+      display: inline-block;
+      margin-left: 0.22em;
+      color: #d4703f;
+      transform-origin: 50% 55%;
+      opacity: 0;
+    }
+
+    /* headline: phrase ramp at 72px, one traced accent pill */
+    #f10-headline {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 372px;
+      text-align: center;
+      white-space: nowrap;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      font-size: 72px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+      z-index: 2;
+    }
+    #f10-forme {
+      display: inline-block;
+      opacity: 0;
+    }
+    #f10-pill {
+      position: relative;
+      display: inline-block;
+      transform-origin: 0% 55%;
+    }
+    #f10-pill-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    #f10-pill-text {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      color: #ffffff;
+    }
+    .f10-pw {
+      display: inline-block;
+    }
+    .f10-pl {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* sub-line: ui ramp, ink-soft */
+    #f10-sub {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 500px;
+      text-align: center;
+      white-space: nowrap;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 1.3;
+      color: #cdbfb2;
+      z-index: 2;
+    }
+    .f10-sw {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* CTA button: paper fill, accent-deep Big Shoulders label, soft terracotta glow */
+    #f10-cta-wrap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 590px;
+      height: 104px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform-origin: 50% 50%;
+      opacity: 0;
+      z-index: 3;
+    }
+    #f10-burst {
+      position: absolute;
+      left: 50%;
+      top: -20px;
+      width: 720px;
+      height: 144px;
+      margin-left: -360px;
+      border-radius: 72px;
+      background: radial-gradient(
+        closest-side,
+        rgba(168, 77, 34, 0.95),
+        rgba(194, 91, 40, 0.5) 55%,
+        rgba(194, 91, 40, 0) 100%
+      );
+      filter: blur(38px);
+      transform-origin: 50% 50%;
+      opacity: 0;
+      z-index: 1;
+    }
+    #f10-cta {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 18px;
+      height: 104px;
+      padding: 0 60px;
+      border-radius: 14px;
+      background-color: #f6f1e9;
+      color: #a84d22;
+      font-family: "Big Shoulders", sans-serif;
+      font-weight: 800;
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      box-shadow: 0px 26px 60px 0px rgba(0, 0, 0, 0.55), 0px 0px 70px 0px rgba(194, 91, 40, 0.4);
+      transform-origin: 50% 50%;
+    }
+    #f10-cta svg {
+      display: block;
+      width: 36px;
+      height: 36px;
+    }
+
+    /* URL: mono, ink-mute */
+    #f10-url-row {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 748px;
+      text-align: center;
+      z-index: 2;
+    }
+    #f10-url {
+      display: inline-block;
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: 0.16em;
+      color: #9b9289;
+      white-space: nowrap;
+      opacity: 0;
+    }
+
+    /* ripple rings, centered on the button's visual center (960, 642) */
+    .f10-ring {
+      position: absolute;
+      left: 910px;
+      top: 592px;
+      width: 100px;
+      height: 100px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      border: 2px solid #e08a5c;
+      transform-origin: 50% 50%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* cursor: tip anchored at the button center */
+    #f10-cursor {
+      position: absolute;
+      left: 960px;
+      top: 642px;
+      width: 0;
+      height: 0;
+      overflow: visible;
+      transform-origin: 0 0;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+    #f10-cursor svg {
+      position: absolute;
+      left: -4px;
+      top: -4px;
+      width: 48px;
+      height: 64px;
+      overflow: visible;
+      filter: drop-shadow(0 4px 7px rgba(0, 0, 0, 0.55));
+    }
+
+    /* grain (static, on top of everything) */
+    #f10-grain {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.05;
+      background-size: 256px 256px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+  </style>
+
+  <div id="root" data-composition-id="10-fin" data-width="1920" data-height="1080" data-duration="7.05">
+    <div id="f10-ground" class="clip" data-start="0" data-duration="7.05" data-track-index="0" data-layout-ignore>
+      <div id="f10-halo"></div>
+      <div id="f10-halo-cta"></div>
+      <div id="f10-bgglow"></div>
+      <svg id="f10-waves" viewBox="0 0 1920 370" width="1920" height="370" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
+    </div>
+
+    <div id="f10-stage" class="clip" data-start="0" data-duration="7.05" data-track-index="1">
+      <div id="f10-wordmark"><span class="f10-l">E</span><span class="f10-l">N</span><span class="f10-l">T</span><span class="f10-l">R</span><span class="f10-l">E</span><span class="f10-l">P</span><span class="f10-l">R</span><span class="f10-l">E</span><span class="f10-l">N</span><span class="f10-l">E</span><span class="f10-l">U</span><span class="f10-l">R</span><span class="f10-l">S</span><span id="f10-two">2.0</span></div>
+
+      <div id="f10-headline"><span id="f10-forme">Forme-toi</span> <span id="f10-pill"><span id="f10-pill-bg"></span><span id="f10-pill-text"><span class="f10-pw" id="f10-pw-1"><span class="f10-pl">p</span><span class="f10-pl">o</span><span class="f10-pl">u</span><span class="f10-pl">r</span></span> <span class="f10-pw" id="f10-pw-2"><span class="f10-pl">d</span><span class="f10-pl">e</span></span> <span class="f10-pw" id="f10-pw-3"><span class="f10-pl">b</span><span class="f10-pl">o</span><span class="f10-pl">n</span><span class="f10-pl">.</span></span></span></span></div>
+
+      <div id="f10-sub"><span class="f10-sw">Pensé</span> <span class="f10-sw">pour</span> <span class="f10-sw">ceux</span> <span class="f10-sw">qui</span> <span class="f10-sw">ne</span> <span class="f10-sw">sont</span> <span class="f10-sw">pas</span> <span class="f10-sw">techniques.</span></div>
+
+      <div id="f10-cta-wrap">
+        <div id="f10-burst"></div>
+        <div id="f10-cta"><span>JE PRENDS RENDEZ-VOUS</span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16 H26 M18 7.5 L26.5 16 L18 24.5" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="square" stroke-linejoin="miter"/></svg></div>
+      </div>
+
+      <div id="f10-url-row"><span id="f10-url">entrepreneurs2-0.com</span></div>
+
+      <div class="f10-ring" id="f10-ring-1"></div>
+      <div class="f10-ring" id="f10-ring-2"></div>
+
+      <div id="f10-cursor">
+        <svg viewBox="0 0 24 32" aria-hidden="true"><path d="M2 2 L2 25 L7.6 19.8 L11.4 28.6 L15 27.1 L11.3 18.4 L18.8 18.4 Z" fill="#ffffff" stroke="#0d0b0a" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+
+    <div id="f10-grain" class="clip" data-start="0" data-duration="7.05" data-track-index="2" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "10-fin";
+      var byId = function (id) {
+        return document.getElementById(id);
+      };
+      var toArr = function (list) {
+        return Array.prototype.slice.call(list);
+      };
+      var stage = byId("f10-stage");
+
+      /* ---- terracotta wave texture: 34 thin lines across the top third, deterministic ---- */
+      var svg = byId("f10-waves");
+      var NS = "http://www.w3.org/2000/svg";
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      var N = 34;
+      var rows = [];
+      for (var i = 0; i < N; i++) {
+        var t = i / (N - 1);
+        var base = 8 + i * 9.6;
+        var amp = 18 + 8 * Math.sin(i * 0.23 + 0.4);
+        var ph = i * 0.17;
+        var op = 0.06 + 0.56 * Math.pow(1 - t, 1.6);
+        var sw = 1.5 - 0.5 * t;
+        var halves = [];
+        for (var s = 0; s < 2; s++) {
+          var dir = s === 0 ? 1 : -1;
+          var d = "";
+          for (var k = 0; k <= 52; k++) {
+            var x = 960 + dir * k * 20;
+            var y =
+              base +
+              amp * Math.sin((2 * Math.PI * x) / 1150 + ph) +
+              6 * Math.sin((2 * Math.PI * x) / 470 - i * 0.21 + 1.3);
+            d += (k === 0 ? "M" : " L") + x.toFixed(1) + " " + y.toFixed(1);
+          }
+          var p = document.createElementNS(NS, "path");
+          p.setAttribute("d", d);
+          p.setAttribute("pathLength", "1");
+          p.setAttribute("fill", "none");
+          p.setAttribute("stroke", "#d4703f");
+          p.setAttribute("stroke-opacity", op.toFixed(3));
+          p.setAttribute("stroke-width", sw.toFixed(2));
+          p.setAttribute("stroke-dasharray", "1 1");
+          p.setAttribute("stroke-dashoffset", "1");
+          svg.appendChild(p);
+          halves.push(p);
+        }
+        rows.push(halves);
+      }
+
+      var halo = byId("f10-halo");
+      var haloCta = byId("f10-halo-cta");
+      var bgglow = byId("f10-bgglow");
+      var letters = toArr(stage.getElementsByClassName("f10-l"));
+      var two = byId("f10-two");
+      var forme = byId("f10-forme");
+      var pill = byId("f10-pill");
+      var pillBg = byId("f10-pill-bg");
+      var pw1 = toArr(byId("f10-pw-1").getElementsByClassName("f10-pl"));
+      var pw2 = toArr(byId("f10-pw-2").getElementsByClassName("f10-pl"));
+      var pw3 = toArr(byId("f10-pw-3").getElementsByClassName("f10-pl"));
+      var subWords = toArr(stage.getElementsByClassName("f10-sw"));
+      var ctaWrap = byId("f10-cta-wrap");
+      var cta = byId("f10-cta");
+      var burst = byId("f10-burst");
+      var url = byId("f10-url");
+      var rings = [byId("f10-ring-1"), byId("f10-ring-2")];
+      var cursor = byId("f10-cursor");
+
+      var REST_SHADOW = "0px 26px 60px 0px rgba(0, 0, 0, 0.55), 0px 0px 70px 0px rgba(194, 91, 40, 0.4)";
+      var PRESSED_SHADOW = "0px 8px 18px 0px rgba(0, 0, 0, 0.5), 0px 0px 34px 0px rgba(194, 91, 40, 0.3)";
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ===== Scene 1 (0.00-1.90): halo ignites, wave lines draw outward, wordmark cascades, 2.0 lands ===== */
+      tl.fromTo(halo, { opacity: 0.45, scale: 0.97 }, { opacity: 0.8, scale: 1, duration: 1.1, ease: "power2.out" }, 0);
+      for (var r = 0; r < rows.length; r++) {
+        tl.fromTo(
+          rows[r],
+          { attr: { "stroke-dashoffset": 1 } },
+          { attr: { "stroke-dashoffset": 0 }, duration: 1.3, ease: "power2.out" },
+          0.02 + r * 0.016
+        );
+      }
+      // "Entrepreneurs" @0.53: letters cascade left to right (lead letter starts 2 frames early)
+      tl.fromTo(
+        letters,
+        { opacity: 0, y: 48, filter: "blur(10px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out", stagger: 0.03 },
+        0.47
+      );
+      // "deux point zero" @1.11: 2.0 lands in accent-light, inverse-zoom arrival
+      tl.fromTo(
+        two,
+        { opacity: 0, scale: 1.28, filter: "blur(10px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out" },
+        1.07
+      );
+      // brand sting on the halo, then settle
+      tl.to(halo, { opacity: 1, scale: 1.04, duration: 0.35, ease: "power2.out" }, 1.08);
+      tl.to(halo, { opacity: 0.85, scale: 1, duration: 1.2, ease: "power2.inOut" }, 1.43);
+
+      /* ===== Scene 2 (1.90-3.20): Forme-toi + traced pill "pour de bon." ===== */
+      // "Forme-toi" @2.17 (word-by-word spec)
+      tl.fromTo(
+        forme,
+        { opacity: 0, y: 10, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" },
+        2.11
+      );
+      // pill traces first @2.53 (2 frames before "pour"), straightening from -8deg
+      tl.fromTo(
+        pillBg,
+        { scaleX: 0, opacity: 1 },
+        { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out", immediateRender: false },
+        2.53
+      );
+      tl.fromTo(
+        pill,
+        { rotation: -8 },
+        { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false },
+        2.53
+      );
+      // then the letters write inside, each word on its voice cue
+      var writeIn = function (els, at) {
+        tl.fromTo(
+          els,
+          { opacity: 0, y: 8, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.22, ease: "power3.out", stagger: 0.02 },
+          at
+        );
+      };
+      writeIn(pw1, 2.58); // pour @2.59
+      writeIn(pw2, 2.79); // de @2.81
+      writeIn(pw3, 2.97); // bon @2.99
+
+      /* ===== Scene 3 (3.20-4.60): sub-line, CTA on a smooth settle, URL ===== */
+      tl.fromTo(
+        subWords,
+        { opacity: 0, y: 10, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", stagger: 0.045 },
+        3.3
+      );
+      tl.fromTo(
+        ctaWrap,
+        { opacity: 0, y: 30, scale: 0.965, filter: "blur(8px)" },
+        { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.9, ease: "expo.out" },
+        3.6
+      );
+      tl.fromTo(haloCta, { opacity: 0 }, { opacity: 1, duration: 1.0, ease: "power2.out" }, 3.6);
+      // URL: left-to-right wipe
+      tl.fromTo(
+        url,
+        { opacity: 0, clipPath: "inset(0% 100% 0% 0%)" },
+        { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.7, ease: "power2.inOut" },
+        4.0
+      );
+
+      /* ===== Scene 4 (4.60-7.05): cursor glides in, clicks @5.20, then everything holds still ===== */
+      // cursor-click-ripple phase 1: move (x and y on different eases = gentle arc), ends 5.10
+      tl.fromTo(cursor, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.out" }, 4.58);
+      tl.fromTo(cursor, { x: 520 }, { x: 0, duration: 0.52, ease: "power2.inOut" }, 4.58);
+      tl.fromTo(cursor, { y: 150 }, { y: 0, duration: 0.52, ease: "power3.out" }, 4.58);
+
+      var CLICK = 5.2;
+      var PRESS = 0.1;
+      var RELEASE = CLICK + PRESS;
+      // phase 2: cursor compresses more than the target, both return
+      tl.to(cursor, { scale: 0.85, duration: PRESS, ease: "power2.in" }, CLICK);
+      tl.to(cursor, { scale: 1, duration: 0.14, ease: "power2.out" }, RELEASE);
+      // press-release-spring: linear-feel press (scale + darker paper + tight shadow)
+      tl.to(
+        cta,
+        { scale: 0.94, backgroundColor: "#e7dac9", boxShadow: PRESSED_SHADOW, duration: PRESS, ease: "power1.in" },
+        CLICK
+      );
+      // release adjacent to the press (state continuity); small overshoot built without back.out (frame.md)
+      tl.to(
+        cta,
+        { scale: 1.016, backgroundColor: "#f6f1e9", boxShadow: REST_SHADOW, duration: 0.22, ease: "power3.out" },
+        RELEASE
+      );
+      tl.to(cta, { scale: 1, duration: 0.45, ease: "power2.inOut" }, RELEASE + 0.22);
+      // release burst behind the button, then fades
+      tl.fromTo(
+        burst,
+        { opacity: 0, scale: 0.9 },
+        { opacity: 0.7, scale: 1.35, duration: 0.45, ease: "power2.out", immediateRender: false },
+        RELEASE
+      );
+      tl.to(burst, { opacity: 0, duration: 0.55, ease: "power2.in" }, RELEASE + 0.48);
+      // environmental glow stays lit through the final hold
+      tl.fromTo(
+        bgglow,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.9, ease: "power2.out", immediateRender: false },
+        RELEASE
+      );
+      // phase 3: two accent rings from the click point (960, 642); max radius 200px keeps them above y = 900
+      tl.fromTo(
+        rings,
+        { scale: 0, opacity: 0.9 },
+        { scale: 4, opacity: 0, duration: 0.8, ease: "power2.out", stagger: 0.1, immediateRender: false },
+        CLICK + 0.02
+      );
+      // last motion ends ~6.33s; the end card then holds still to 7.05s (final frame)
+      tl.set({ hold: 0 }, { hold: 1 }, 7.05);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

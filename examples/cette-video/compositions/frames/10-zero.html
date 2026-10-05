@@ -1,0 +1,474 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground-light (track 0, full 5.5 s): paper + one soft warm radial behind the play button ---------- */
+    #f10-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: #f6f1e9;
+      overflow: hidden;
+    }
+    #f10-warm {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: radial-gradient(ellipse 760px 520px at 960px 460px, rgba(194, 91, 40, 0.09) 0%, rgba(194, 91, 40, 0.04) 55%, rgba(194, 91, 40, 0) 100%);
+    }
+
+    /* ---------- scene (track 1, full 5.5 s) ---------- */
+    #f10-scene {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* jargon words: Space Mono, ink-dark 50%, scattered around the centre (boxes centred on their point, no CSS transform) */
+    .f10-jar {
+      position: absolute;
+      width: 320px;
+      height: 56px;
+      line-height: 56px;
+      text-align: center;
+      white-space: nowrap;
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      color: rgba(26, 22, 18, 0.5);
+      opacity: 0;
+    }
+
+    /* phrase rows: the voice, small, word by word */
+    .f10-row {
+      position: absolute;
+      left: 0;
+      width: 1920px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 13px;
+      white-space: nowrap;
+      font: 600 54px/1.18 "Instrument Sans", sans-serif;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+    }
+    #f10-p1 {
+      top: 414px;
+    }
+    #f10-p2 {
+      top: 826px;
+    }
+    .f10-w {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* accent pill: the only highlight mechanism */
+    #f10-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.06em 0.32em;
+      transform-origin: 0% 50%;
+    }
+    #f10-pillbg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    #f10-pilltx {
+      position: relative;
+      display: inline-flex;
+      color: #ffffff;
+    }
+    .f10-ch {
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+
+    /* ---------- video-player (card-light on the paper world) ---------- */
+    #f10-player {
+      position: absolute;
+      left: 460px;
+      top: 178.75px;
+      width: 1000px;
+      height: 618.5px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fffdf9;
+      box-shadow: 0 0 0 1px #e2d9cc, 0 30px 80px rgba(60, 40, 20, 0.14), 0 2px 6px rgba(60, 40, 20, 0.08);
+      opacity: 0;
+    }
+    #f10-screen {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1000px;
+      height: 562.5px;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 560px 360px at 500px 281.25px, rgba(194, 91, 40, 0.06) 0%, rgba(194, 91, 40, 0) 100%),
+        #f6f1e9;
+    }
+    /* the paused still: a few soft paper-2 blocks (a paper-world page) */
+    .f10-blk {
+      position: absolute;
+      border-radius: 8px;
+      background: #e2d9cc;
+    }
+    #f10-blk-card {
+      left: 280px;
+      top: 156.25px;
+      width: 440px;
+      height: 250px;
+      border-radius: 12px;
+      background: #efe7dc;
+      box-shadow: 0 0 0 1px #e2d9cc;
+    }
+    #f10-halo {
+      position: absolute;
+      left: 270px;
+      top: 51.25px;
+      width: 460px;
+      height: 460px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(224, 138, 92, 0.5) 0%, rgba(194, 91, 40, 0.18) 45%, rgba(194, 91, 40, 0) 100%);
+      opacity: 0;
+    }
+    /* play disc: 56px, centred on the screen = EXACTLY (960, 460) on the canvas (iris origin of the end card) */
+    #f10-playbtn {
+      position: absolute;
+      left: 472px;
+      top: 253.25px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #c25b28;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 8px 22px rgba(168, 77, 34, 0.35);
+    }
+    #f10-playlit {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 38%, #e08a5c 0%, #d4703f 55%, #c25b28 100%);
+      box-shadow: 0 0 0 6px rgba(224, 138, 92, 0.22), 0 0 36px 10px rgba(224, 138, 92, 0.5);
+      opacity: 0;
+    }
+    #f10-playbtn svg {
+      position: relative;
+      display: block;
+      margin-left: 3px;
+    }
+    #f10-bar {
+      position: absolute;
+      left: 0;
+      top: 562.5px;
+      width: 1000px;
+      height: 56px;
+      box-sizing: border-box;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      background: #fffdf9;
+      box-shadow: inset 0 1px 0 #e2d9cc;
+    }
+    #f10-track {
+      flex: none;
+      position: relative;
+      width: 780px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(155, 146, 137, 0.35);
+    }
+    #f10-played {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+    }
+    #f10-head {
+      position: absolute;
+      left: -8px;
+      top: -6px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fffdf9;
+      box-shadow: 0 0 0 3px rgba(194, 91, 40, 0.45), 0 2px 6px rgba(60, 40, 20, 0.25);
+    }
+    #f10-time {
+      flex: none;
+      width: 140px;
+      text-align: right;
+      font: 400 20px/1 "Space Mono", monospace;
+      color: #5a5348;
+      white-space: nowrap;
+    }
+
+    /* ---------- grain (track 2, full 5.5 s) ---------- */
+    #f10-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+      opacity: 0.03;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+  </style>
+
+  <div id="root" data-composition-id="10-zero" data-width="1920" data-height="1080" data-duration="5.5">
+    <div id="f10-ground" class="clip" data-start="0" data-duration="5.5" data-track-index="0">
+      <div id="f10-warm" data-layout-ignore></div>
+    </div>
+
+    <div id="f10-scene" class="clip" data-start="0" data-duration="5.5" data-track-index="1" data-layout-allow-overflow>
+      <!-- SCENE 1: the jargon, scattered around the centre (falls away from « technique ») -->
+      <div id="f10-j-api" class="f10-jar" style="left: 450px; top: 257px; font-size: 40px">API</div>
+      <div id="f10-j-cron" class="f10-jar" style="left: 800px; top: 187px; font-size: 34px">cron</div>
+      <div id="f10-j-dns" class="f10-jar" style="left: 1160px; top: 252px; font-size: 38px">DNS</div>
+      <div id="f10-j-webhook" class="f10-jar" style="left: 170px; top: 442px; font-size: 36px">webhook</div>
+      <div id="f10-j-json" class="f10-jar" style="left: 1440px; top: 427px; font-size: 40px">JSON</div>
+      <div id="f10-j-ftp" class="f10-jar" style="left: 360px; top: 637px; font-size: 34px">FTP</div>
+      <div id="f10-j-css" class="f10-jar" style="left: 800px; top: 672px; font-size: 38px">CSS</div>
+      <div id="f10-j-ssl" class="f10-jar" style="left: 1230px; top: 627px; font-size: 36px">SSL</div>
+
+      <div id="f10-p1" class="f10-row">
+        <span id="f10-w-et" class="f10-w">Et</span>
+        <span id="f10-w-pas" class="f10-w">pas</span>
+        <span id="f10-w-besoin" class="f10-w">besoin</span>
+        <span id="f10-w-detre" class="f10-w">d’être</span>
+        <span id="f10-w-technique" class="f10-w">technique&nbsp;:</span>
+      </div>
+
+      <!-- video-player
+           Copied from frame 01 (single player, no Droste), restyled card-light for the paper world.
+           Card 1000 x 618.5 at (460, 178.75): a 16:9 screen 1000 x 562.5 on top + a 56px control bar below.
+           Paused at the start: the play disc (56px accent, white SVG triangle) sits centred on the screen,
+           i.e. EXACTLY at (960, 460) on the canvas, the iris origin of the end card.
+           Bar: progress track 780 x 4 (ink-mute) with an accent played part (GSAP scaleX from the left)
+           and a round playhead (GSAP x = fraction x 780), Space Mono 20px timecode right aligned. -->
+      <div id="f10-player">
+        <div id="f10-screen">
+          <div class="f10-blk" style="left: 440px; top: 108px; width: 120px; height: 12px; border-radius: 6px"></div>
+          <div id="f10-blk-card" class="f10-blk"></div>
+          <div class="f10-blk" style="left: 310px; top: 436px; width: 380px; height: 22px; border-radius: 11px"></div>
+          <div class="f10-blk" style="left: 380px; top: 472px; width: 240px; height: 22px; border-radius: 11px"></div>
+          <div id="f10-halo"></div>
+          <div id="f10-playbtn">
+            <div id="f10-playlit"></div>
+            <svg width="20" height="22" viewBox="0 0 20 22">
+              <path d="M3.2 2.4 L18 11 L3.2 19.6 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.4" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+        </div>
+        <div id="f10-bar">
+          <div id="f10-track">
+            <div id="f10-played"></div>
+            <div id="f10-head"></div>
+          </div>
+          <div id="f10-time">0:34 / 0:44</div>
+        </div>
+      </div>
+      <!-- /video-player -->
+
+      <div id="f10-p2" class="f10-row">
+        <span id="f10-w-cest" class="f10-w">c’est</span>
+        <span id="f10-w-pense" class="f10-w">pensé</span>
+        <span id="f10-w-pour" class="f10-w">pour</span>
+        <span id="f10-w-ceux" class="f10-w">ceux</span>
+        <span id="f10-w-qui" class="f10-w">qui</span>
+        <span id="f10-w-partent" class="f10-w">partent</span>
+        <span id="f10-pill"><span id="f10-pillbg"></span><span id="f10-pilltx"><span class="f10-ch f10-ch-de">d</span><span class="f10-ch f10-ch-de">e</span><span class="f10-ch f10-ch-de">&nbsp;</span><span class="f10-ch f10-ch-zero">z</span><span class="f10-ch f10-ch-zero">é</span><span class="f10-ch f10-ch-zero">r</span><span class="f10-ch f10-ch-zero">o</span><span class="f10-ch f10-ch-zero">.</span></span></span>
+      </div>
+    </div>
+
+    <div id="f10-grain" class="clip" data-start="0" data-duration="5.5" data-track-index="2" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var $ = function (id) {
+        return document.getElementById(id);
+      };
+      var DUR = 5.5; // 4.75 + the 0.75 s iris hold owned by the orchestrator
+      var TRACK_W = 780;
+      var NOW = 34; // film time when this frame plays (0:34 of 0:44)
+      var TOTAL = 44;
+      var FRAC = NOW / TOTAL;
+
+      var tl = gsap.timeline({ paused: true });
+
+      // word-by-word (frame.md): each word on its voice timestamp
+      var word = function (id, at) {
+        tl.fromTo($(id), { opacity: 0, y: 10, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false }, at);
+      };
+
+      /* ================= SCENE 1 (0.00-1.75): the jargon, then it falls away ================= */
+      // [id, static rotation, fall distance, extra rotation while falling]
+      var JAR = [
+        ["f10-j-api", -5, 460, -14],
+        ["f10-j-cron", 3, 520, 12],
+        ["f10-j-dns", 4, 470, 16],
+        ["f10-j-webhook", -3, 430, -10],
+        ["f10-j-json", 5, 440, 14],
+        ["f10-j-ftp", 6, 340, 18],
+        ["f10-j-css", -2, 330, -12],
+        ["f10-j-ssl", -4, 350, -16],
+      ];
+      JAR.forEach(function (j, i) {
+        gsap.set($(j[0]), { rotation: j[1] });
+        // scattered in, quick stagger under the first words
+        tl.fromTo(
+          $(j[0]),
+          { opacity: 0, y: 14, rotation: j[1], filter: "blur(6px)" },
+          { opacity: 1, y: 0, rotation: j[1], filter: "blur(0px)", duration: 0.45, ease: "power3.out", immediateRender: false },
+          i * 0.06,
+        );
+      });
+      // from « technique » (0.95) they fall down and away one by one, slight blur (not needed)
+      var FALL_ORDER = [0, 4, 1, 6, 3, 7, 2, 5];
+      FALL_ORDER.forEach(function (idx, k) {
+        var j = JAR[idx];
+        var at = 0.95 + k * 0.07;
+        tl.fromTo(
+          $(j[0]),
+          { y: 0, rotation: j[1], filter: "blur(0px)" },
+          { y: j[2], rotation: j[1] + j[3], filter: "blur(6px)", duration: 0.48, ease: "power2.in", immediateRender: false },
+          at,
+        );
+        tl.fromTo($(j[0]), { opacity: 1 }, { opacity: 0, duration: 0.42, ease: "power1.in", immediateRender: false }, at);
+      });
+
+      // phrase, centred, word by word: Et@0.15 pas@0.31 besoin@0.47 d’être@0.70 technique@0.95
+      word("f10-w-et", 0.13);
+      word("f10-w-pas", 0.29);
+      word("f10-w-besoin", 0.45);
+      word("f10-w-detre", 0.68);
+      word("f10-w-technique", 0.93);
+
+      // cut-the-curve (upward, whole-line variant): the line rips up, fade dies right at the cut (1.80)
+      tl.fromTo("#f10-p1", { y: 0 }, { y: -230, duration: 0.34, ease: "power4.in", immediateRender: false }, 1.46);
+      tl.fromTo("#f10-p1", { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power1.in", immediateRender: false }, 1.48);
+
+      /* ================= SCENE 2 (1.75-4.75, held to 5.50): the player comes back, rewound to 0:00 ================= */
+      // ...and the player rises into the centre, same direction, mirrored ease
+      tl.fromTo("#f10-player", { y: 230 }, { y: 0, duration: 0.4, ease: "power4.out", immediateRender: false }, 1.8);
+      tl.fromTo("#f10-player", { opacity: 0.35 }, { opacity: 1, duration: 0.18, ease: "power1.out", immediateRender: false }, 1.8);
+
+      // stat-bars-and-fills (progress fill, reversed): played part shrinks to 0 from the left origin,
+      // playhead slides back, timecode rolls down to 0:00 by 3.15 (same start, same ease: one beat)
+      var REW_AT = 2.0;
+      var REW_DUR = 1.15;
+      gsap.set("#f10-played", { scaleX: FRAC, transformOrigin: "0% 50%" });
+      gsap.set("#f10-head", { x: FRAC * TRACK_W });
+      tl.fromTo("#f10-played", { scaleX: FRAC }, { scaleX: 0, duration: REW_DUR, ease: "power2.inOut", immediateRender: false }, REW_AT);
+      tl.fromTo("#f10-head", { x: FRAC * TRACK_W }, { x: 0, duration: REW_DUR, ease: "power2.inOut", immediateRender: false }, REW_AT);
+
+      // seek-safe timecode proxy: GSAP writes proxy.v, the setter writes textContent (no onUpdate callback)
+      var timeEl = $("f10-time");
+      var fmt = function (s) {
+        var n = Math.max(0, Math.round(s));
+        var m = Math.floor(n / 60);
+        var ss = n % 60;
+        return m + ":" + (ss < 10 ? "0" : "") + ss + " / 0:" + TOTAL;
+      };
+      var proxy = { _v: NOW };
+      Object.defineProperty(proxy, "v", {
+        get: function () {
+          return this._v;
+        },
+        set: function (x) {
+          this._v = x;
+          timeEl.textContent = fmt(x);
+        },
+      });
+      proxy.v = NOW;
+      tl.fromTo(proxy, { v: NOW }, { v: 0, duration: REW_DUR, ease: "power2.inOut", immediateRender: false }, REW_AT);
+
+      // phrase under the player: c’est@1.91 pensé@2.07 pour@2.33 ceux@2.57 qui@2.69 partent@2.89
+      word("f10-w-cest", 1.89);
+      word("f10-w-pense", 2.05);
+      word("f10-w-pour", 2.31);
+      word("f10-w-ceux", 2.55);
+      word("f10-w-qui", 2.67);
+      word("f10-w-partent", 2.87);
+
+      // [pill: de zéro.] traces first (2 frames before « de »@3.15), then its letters write inside (zéro@3.33)
+      var PILL_AT = 3.12;
+      gsap.set("#f10-pillbg", { scaleX: 0 });
+      gsap.set("#f10-pill", { rotation: -8 });
+      tl.set("#f10-pillbg", { opacity: 1, immediateRender: false }, PILL_AT);
+      tl.fromTo("#f10-pillbg", { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out", immediateRender: false }, PILL_AT);
+      tl.fromTo("#f10-pill", { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, PILL_AT);
+      var letters = function (sel, at) {
+        document.querySelectorAll(sel).forEach(function (ch, i) {
+          tl.fromTo(ch, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out", immediateRender: false }, at + i * 0.02);
+        });
+      };
+      letters("#f10-pill .f10-ch-de", 3.22);
+      letters("#f10-pill .f10-ch-zero", 3.32);
+
+      // the play button glows brighter from 3.60 (disc brightens, halo blooms a beat behind), then holds still
+      tl.fromTo("#f10-playlit", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out", immediateRender: false }, 3.6);
+      tl.fromTo("#f10-halo", { opacity: 0, scale: 0.55 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out", immediateRender: false }, 3.7);
+
+      // hold: everything settled by 4.60; the orchestrator's iris opens from (960, 460) at 4.75, frame held to 5.50
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["10-zero"] = tl;
+    })();
+  </script>
+</template>

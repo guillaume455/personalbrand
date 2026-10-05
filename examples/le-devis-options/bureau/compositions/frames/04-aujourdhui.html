@@ -1,0 +1,667 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+    }
+
+    /* desk-day (solution ground: light oak, window light bands, grain) */
+    .f04-desk {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #e7dccd;
+    }
+    .f04-desk-layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f04-desk-wood {
+      background-size: 1920px 1080px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'><filter id='v' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.0006 0.004' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.30 0 0 0 0 0.16 0.5 0 0 0 -0.22'/></filter><filter id='g' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.001 0.011' numOctaves='3' seed='23'/><feColorMatrix values='0 0 0 0 0.40 0 0 0 0 0.26 0 0 0 0 0.14 1 0 0 0 0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0'/></feComponentTransfer></filter><filter id='p' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='turbulence' baseFrequency='0.0008 0.03' numOctaves='2' seed='31'/><feColorMatrix values='0 0 0 0 0.40 0 0 0 0 0.26 0 0 0 0 0.14 -0.7 0 0 0 0.1'/></filter><rect width='1920' height='1080' filter='url(%23v)'/><rect width='1920' height='1080' filter='url(%23g)'/><rect width='1920' height='1080' filter='url(%23p)'/></svg>");
+    }
+    .f04-desk-light {
+      background: linear-gradient(
+        45deg,
+        rgba(243, 236, 226, 0.000) 170px,
+        rgba(243, 236, 226, 0.103) 205px,
+        rgba(243, 236, 226, 0.330) 240px,
+        rgba(243, 236, 226, 0.557) 275px,
+        rgba(243, 236, 226, 0.660) 310px,
+        rgba(243, 236, 226, 0.660) 380px,
+        rgba(243, 236, 226, 0.557) 415px,
+        rgba(243, 236, 226, 0.330) 450px,
+        rgba(243, 236, 226, 0.103) 485px,
+        rgba(243, 236, 226, 0.000) 520px,
+        rgba(243, 236, 226, 0.000) 475px,
+        rgba(243, 236, 226, 0.103) 510px,
+        rgba(243, 236, 226, 0.330) 545px,
+        rgba(243, 236, 226, 0.557) 580px,
+        rgba(243, 236, 226, 0.660) 615px,
+        rgba(243, 236, 226, 0.660) 650px,
+        rgba(243, 236, 226, 0.557) 685px,
+        rgba(243, 236, 226, 0.330) 720px,
+        rgba(243, 236, 226, 0.103) 755px,
+        rgba(243, 236, 226, 0.000) 790px,
+        rgba(243, 236, 226, 0.000) 1160px,
+        rgba(243, 236, 226, 0.103) 1195px,
+        rgba(243, 236, 226, 0.330) 1230px,
+        rgba(243, 236, 226, 0.557) 1265px,
+        rgba(243, 236, 226, 0.660) 1300px,
+        rgba(243, 236, 226, 0.660) 1410px,
+        rgba(243, 236, 226, 0.557) 1445px,
+        rgba(243, 236, 226, 0.330) 1480px,
+        rgba(243, 236, 226, 0.103) 1515px,
+        rgba(243, 236, 226, 0.000) 1550px,
+        rgba(243, 236, 226, 0.000) 1505px,
+        rgba(243, 236, 226, 0.103) 1540px,
+        rgba(243, 236, 226, 0.330) 1575px,
+        rgba(243, 236, 226, 0.557) 1610px,
+        rgba(243, 236, 226, 0.660) 1645px,
+        rgba(243, 236, 226, 0.660) 1700px,
+        rgba(243, 236, 226, 0.557) 1735px,
+        rgba(243, 236, 226, 0.330) 1770px,
+        rgba(243, 236, 226, 0.103) 1805px,
+        rgba(243, 236, 226, 0.000) 1840px
+      );
+    }
+    .f04-desk-tone {
+      background:
+        radial-gradient(ellipse 1500px 1100px at 16% 6%, rgba(250, 245, 237, 0.42), rgba(250, 245, 237, 0) 70%),
+        radial-gradient(ellipse 1250px 860px at 52% 44%, rgba(90, 60, 30, 0) 58%, rgba(90, 60, 30, 0.11) 100%);
+    }
+    .f04-desk-grain {
+      opacity: 0.03;
+      background-size: 240px 240px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+    }
+    /* /desk-day */
+
+    /* laptop (top-down, open, object-dark) */
+    .f04-laptop {
+      position: absolute;
+      left: 670px;
+      top: 70px;
+      width: 580px;
+      height: 680px;
+      transform-origin: 50% 60%;
+      opacity: 0;
+    }
+    .f04-laptop-lid {
+      position: absolute;
+      left: 0;
+      top: -30px;
+      width: 580px;
+      height: 330px;
+      border-radius: 22px 22px 6px 6px;
+      background: linear-gradient(180deg, #3a342e 0%, #2e2924 30%, #2a2521 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 246, 236, 0.16),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.35),
+        14px 10px 26px rgba(60, 40, 20, 0.26);
+      transform-origin: 50% 100%;
+      transform: perspective(2200px) rotateX(-42deg);
+    }
+    .f04-laptop-screen {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      width: 548px;
+      height: 288px;
+      border-radius: 10px 10px 3px 3px;
+      overflow: hidden;
+      background: radial-gradient(ellipse 120% 100% at 50% 42%, #17120f 0%, #0e0b09 60%, #0a0807 100%);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+    }
+    .f04-laptop-sheen {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 548px;
+      height: 288px;
+      background: linear-gradient(118deg, rgba(255, 250, 244, 0.07) 0%, rgba(255, 250, 244, 0.02) 34%, rgba(255, 250, 244, 0) 35%, rgba(255, 250, 244, 0) 100%);
+    }
+    .f04-laptop-deck {
+      position: absolute;
+      left: 0;
+      top: 300px;
+      width: 580px;
+      height: 380px;
+      border-radius: 12px 12px 26px 26px;
+      background: linear-gradient(162deg, #3b352f 0%, #2f2a25 38%, #29241f 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 246, 236, 0.1),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.3),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.3),
+        1px 2px 3px rgba(40, 25, 10, 0.28),
+        8px 12px 24px rgba(60, 40, 20, 0.26);
+      overflow: hidden;
+    }
+    .f04-laptop-hinge {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 580px;
+      height: 70px;
+      background: linear-gradient(180deg, rgba(10, 8, 6, 0.55) 0%, rgba(10, 8, 6, 0.18) 22%, rgba(10, 8, 6, 0) 100%);
+    }
+    .f04-laptop-spill {
+      position: absolute;
+      left: 40px;
+      top: -40px;
+      width: 500px;
+      height: 240px;
+      background: radial-gradient(ellipse 50% 50% at 50% 30%, rgba(224, 138, 92, 0.55), rgba(194, 91, 40, 0.18) 55%, rgba(194, 91, 40, 0) 100%);
+      opacity: 0;
+    }
+    .f04-laptop-keys {
+      position: absolute;
+      left: 55px;
+      top: 24px;
+      width: 470px;
+      height: 180px;
+    }
+    .f04-laptop-speaker {
+      position: absolute;
+      top: 28px;
+      width: 24px;
+      height: 172px;
+      background-image: radial-gradient(circle at 2px 2px, rgba(0, 0, 0, 0.55) 1.1px, rgba(0, 0, 0, 0) 1.6px);
+      background-size: 6px 6px;
+      opacity: 0.8;
+    }
+    .f04-laptop-pad {
+      position: absolute;
+      left: 170px;
+      top: 222px;
+      width: 240px;
+      height: 134px;
+      border-radius: 10px;
+      background: linear-gradient(160deg, rgba(255, 246, 236, 0.05), rgba(255, 246, 236, 0.015));
+      box-shadow: inset 0 0 0 1px rgba(255, 246, 236, 0.06), inset 0 1px 2px rgba(0, 0, 0, 0.35);
+    }
+    .f04-orb-glow {
+      position: absolute;
+      left: 44px;
+      top: -149px;
+      width: 460px;
+      height: 586px;
+      border-radius: 50%;
+      z-index: 1;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 1) 0%, rgba(168, 77, 34, 0.66) 30%, rgba(168, 77, 34, 0.22) 62%, rgba(168, 77, 34, 0) 100%);
+      opacity: 0;
+    }
+    .f04-orb {
+      position: absolute;
+      left: 210px;
+      top: 64px;
+      width: 128px;
+      height: 162px;
+      border-radius: 50%;
+      z-index: 2;
+      background:
+        radial-gradient(ellipse 24% 24% at 37% 31%, rgba(255, 244, 235, 0.95) 0%, rgba(255, 244, 235, 0.4) 45%, rgba(255, 244, 235, 0) 100%),
+        radial-gradient(ellipse 58% 58% at 45% 41%, rgba(240, 166, 124, 0.9) 0%, rgba(240, 166, 124, 0) 100%),
+        radial-gradient(ellipse 72% 72% at 46% 42%, #e08a5c 0%, #d4703f 32%, #c25b28 64%, #a84d22 100%);
+      box-shadow: inset -12px -16px 30px rgba(100, 36, 10, 0.34), inset 0 0 0 1px rgba(255, 196, 160, 0.14);
+      opacity: 0;
+    }
+    /* /laptop */
+
+    /* sticky-note (square paper-2 note, 260px, folded corner) */
+    .f04-note {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      filter: drop-shadow(1px 2px 1.5px rgba(60, 40, 20, 0.2)) drop-shadow(8px 12px 12px rgba(60, 40, 20, 0.2));
+      opacity: 0;
+    }
+    .f04-note-sheet {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 260px;
+      height: 260px;
+    }
+    .f04-note-paper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 260px;
+      height: 260px;
+      background:
+        linear-gradient(180deg, rgba(120, 90, 60, 0.05) 0px, rgba(120, 90, 60, 0.05) 46px, rgba(120, 90, 60, 0) 47px),
+        linear-gradient(150deg, #f5eee4 0%, #efe7dc 48%, #e8dfd2 100%);
+      clip-path: polygon(0 0, 260px 0, 260px 226px, 226px 260px, 0 260px);
+    }
+    .f04-note-fold {
+      position: absolute;
+      left: 226px;
+      top: 226px;
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #d9cebf 0%, #ece3d7 48%, #f7f1e8 100%);
+      clip-path: polygon(0 0, 34px 0, 0 34px);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.02);
+    }
+    .f04-note-check {
+      position: absolute;
+      left: 28px;
+      top: 66px;
+      width: 28px;
+      height: 28px;
+    }
+    .f04-note-text {
+      position: absolute;
+      left: 28px;
+      top: 108px;
+      width: 214px;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      font-size: 30px;
+      line-height: 1.12;
+      letter-spacing: -0.015em;
+      color: #1a1612;
+    }
+    /* /sticky-note */
+
+    /* scene layer */
+    .f04-scene {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #f04-s1 {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 960px 462px;
+    }
+    #f04-micro {
+      position: absolute;
+      left: 0;
+      top: 302px;
+      width: 1920px;
+      padding-left: 0.2em;
+      text-align: center;
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 24px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #5a5348;
+      opacity: 0;
+    }
+    #f04-giant-wrap {
+      position: absolute;
+      left: 0;
+      top: 348px;
+      width: 1920px;
+      height: 234px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #f04-giant {
+      display: block;
+      flex: 0 0 auto;
+      padding-right: 13px;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 700;
+      font-size: 260px;
+      line-height: 0.9;
+      letter-spacing: -13px;
+      white-space: nowrap;
+      color: #1a1612;
+      opacity: 0;
+    }
+    #f04-s2 {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* phrase (bottom band, word by word, one traced accent pill) */
+    #f04-phrase {
+      position: absolute;
+      left: 0;
+      top: 790px;
+      width: 1920px;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 15px;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      font-size: 54px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f04-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    #f04-pill {
+      display: inline-block;
+      position: relative;
+      margin-left: 2px;
+      padding: 0.02em 0.3em 0.06em;
+      transform-origin: 0% 50%;
+    }
+    #f04-pill-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    #f04-pill-txt {
+      position: relative;
+      display: inline-block;
+      color: #ffffff;
+    }
+    .f04-ch {
+      display: inline-block;
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="04-aujourdhui" data-width="1920" data-height="1080" data-duration="3.36">
+    <!-- desk-day -->
+    <div id="f04-desk" class="clip f04-desk" data-start="0" data-duration="3.36" data-track-index="0" data-layout-ignore>
+      <div class="f04-desk-layer f04-desk-wood"></div>
+      <div class="f04-desk-layer f04-desk-light"></div>
+      <div class="f04-desk-layer f04-desk-tone"></div>
+      <div class="f04-desk-layer f04-desk-grain"></div>
+    </div>
+    <!-- /desk-day -->
+
+    <div id="f04-scene" class="clip f04-scene" data-start="0" data-duration="3.36" data-track-index="1">
+      <!-- Scene 1 (0.00 to 1.40): SAUF QUE + giant word -->
+      <div id="f04-s1">
+        <div id="f04-micro">Sauf que</div>
+        <div id="f04-giant-wrap">
+          <div id="f04-giant">Aujourd’hui,</div>
+        </div>
+      </div>
+
+      <!-- Scene 2 (1.40 to 2.86): laptop + orb, three sticky notes -->
+      <div id="f04-s2">
+        <!-- laptop -->
+        <div id="f04-laptop" class="f04-laptop">
+          <div class="f04-laptop-deck">
+            <div id="f04-spill" class="f04-laptop-spill"></div>
+            <div class="f04-laptop-hinge"></div>
+            <div class="f04-laptop-speaker" style="left: 18px"></div>
+            <div class="f04-laptop-speaker" style="left: 538px"></div>
+            <svg class="f04-laptop-keys" viewBox="0 0 470 180" width="470" height="180" xmlns="http://www.w3.org/2000/svg">
+              <g fill="#1d1916" stroke="rgba(255,246,236,0.05)" stroke-width="0.8"><rect x="1.8" y="1.8" width="45" height="14.2" rx="4"/><rect x="50.4" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="82.8" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="115.2" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="147.7" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="180.1" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="212.5" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="244.9" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="277.3" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="309.7" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="342.1" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="374.6" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="407" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="439.4" y="1.8" width="28.8" height="14.2" rx="4"/><rect x="1.8" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="34.2" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="66.6" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="99" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="131.5" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="163.9" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="196.3" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="228.7" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="261.1" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="293.5" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="325.9" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="358.4" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="390.8" y="19.6" width="28.8" height="28.8" rx="4"/><rect x="423.2" y="19.6" width="45" height="28.8" rx="4"/><rect x="1.8" y="52" width="45" height="28.8" rx="4"/><rect x="50.4" y="52" width="28.8" height="28.8" rx="4"/><rect x="82.8" y="52" width="28.8" height="28.8" rx="4"/><rect x="115.2" y="52" width="28.8" height="28.8" rx="4"/><rect x="147.7" y="52" width="28.8" height="28.8" rx="4"/><rect x="180.1" y="52" width="28.8" height="28.8" rx="4"/><rect x="212.5" y="52" width="28.8" height="28.8" rx="4"/><rect x="244.9" y="52" width="28.8" height="28.8" rx="4"/><rect x="277.3" y="52" width="28.8" height="28.8" rx="4"/><rect x="309.7" y="52" width="28.8" height="28.8" rx="4"/><rect x="342.1" y="52" width="28.8" height="28.8" rx="4"/><rect x="374.6" y="52" width="28.8" height="28.8" rx="4"/><rect x="407" y="52" width="28.8" height="28.8" rx="4"/><rect x="439.4" y="52" width="28.8" height="28.8" rx="4"/><rect x="1.8" y="84.5" width="53.1" height="28.8" rx="4"/><rect x="58.5" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="90.9" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="123.4" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="155.8" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="188.2" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="220.6" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="253" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="285.4" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="317.8" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="350.2" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="382.7" y="84.5" width="28.8" height="28.8" rx="4"/><rect x="415.1" y="84.5" width="53.1" height="28.8" rx="4"/><rect x="1.8" y="116.9" width="69.3" height="28.8" rx="4"/><rect x="74.7" y="116.9" width="28.8" height="28.8" rx="4"/><rect x="107.1" y="116.9" width="28.8" height="28.8" rx="4"/><rect x="139.6" y="116.9" width="28.8" height="28.8" rx="4"/><rect x="172" y="116.9" width="28.8" height="28.8" rx="4"/><rect x="204.4" y="116.9" width="28.8" height="28.8" rx="4"/><rect x="236.8" y="116.9" width="28.8" height="28.8" rx="4"/><rect x="269.2" y="116.9" width="28.8" height="28.8" rx="4"/><rect x="301.6" y="116.9" width="28.8" height="28.8" rx="4"/><rect x="334" y="116.9" width="28.8" height="28.8" rx="4"/><rect x="366.5" y="116.9" width="28.8" height="28.8" rx="4"/><rect x="398.9" y="116.9" width="69.3" height="28.8" rx="4"/><rect x="1.8" y="149.3" width="28.8" height="28.8" rx="4"/><rect x="34.2" y="149.3" width="28.8" height="28.8" rx="4"/><rect x="66.6" y="149.3" width="28.8" height="28.8" rx="4"/><rect x="99" y="149.3" width="36.9" height="28.8" rx="4"/><rect x="139.6" y="149.3" width="158.5" height="28.8" rx="4"/><rect x="301.6" y="149.3" width="36.9" height="28.8" rx="4"/><rect x="342.1" y="149.3" width="28.8" height="28.8" rx="4"/><rect x="374.6" y="164.5" width="28.8" height="13.6" rx="4"/><rect x="407" y="149.3" width="28.8" height="13.6" rx="4"/><rect x="407" y="164.5" width="28.8" height="13.6" rx="4"/><rect x="439.4" y="164.5" width="28.8" height="13.6" rx="4"/></g>
+            </svg>
+            <div class="f04-laptop-pad"></div>
+          </div>
+          <div class="f04-laptop-lid">
+            <div class="f04-laptop-screen">
+              <div id="f04-glow" class="f04-orb-glow"></div>
+              <div id="f04-orb" class="f04-orb"></div>
+              <div class="f04-laptop-sheen"></div>
+            </div>
+          </div>
+        </div>
+        <!-- /laptop -->
+
+        <!-- sticky-note -->
+        <div id="f04-note-1" class="f04-note" style="left: 270px; top: 310px">
+          <div id="f04-note-1-sheet" class="f04-note-sheet">
+            <div class="f04-note-paper"></div>
+            <div class="f04-note-fold"></div>
+            <svg class="f04-note-check" viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.5 4.8 C11 4.2 17.5 4.5 23.2 5 C23.6 11 23.4 17.2 22.9 23.2 C17 23.7 10.8 23.5 4.9 23 C4.5 17 4.6 10.8 5.5 4.8 Z" fill="none" stroke="#5a5348" stroke-width="2.4" stroke-linejoin="round" />
+            </svg>
+            <div class="f04-note-text">Modifier<br />ton site</div>
+          </div>
+        </div>
+        <!-- /sticky-note -->
+        <div id="f04-note-2" class="f04-note" style="left: 1380px; top: 120px">
+          <div id="f04-note-2-sheet" class="f04-note-sheet">
+            <div class="f04-note-paper"></div>
+            <div class="f04-note-fold"></div>
+            <svg class="f04-note-check" viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.5 4.8 C11 4.2 17.5 4.5 23.2 5 C23.6 11 23.4 17.2 22.9 23.2 C17 23.7 10.8 23.5 4.9 23 C4.5 17 4.6 10.8 5.5 4.8 Z" fill="none" stroke="#5a5348" stroke-width="2.4" stroke-linejoin="round" />
+            </svg>
+            <div class="f04-note-text">Créer<br />une page</div>
+          </div>
+        </div>
+        <div id="f04-note-3" class="f04-note" style="left: 1410px; top: 460px">
+          <div id="f04-note-3-sheet" class="f04-note-sheet">
+            <div class="f04-note-paper"></div>
+            <div class="f04-note-fold"></div>
+            <svg class="f04-note-check" viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.5 4.8 C11 4.2 17.5 4.5 23.2 5 C23.6 11 23.4 17.2 22.9 23.2 C17 23.7 10.8 23.5 4.9 23 C4.5 17 4.6 10.8 5.5 4.8 Z" fill="none" stroke="#5a5348" stroke-width="2.4" stroke-linejoin="round" />
+            </svg>
+            <div class="f04-note-text">Réparer une<br />automatisation</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="f04-phrase">
+        <span id="f04-w0" class="f04-w">L’IA</span>
+        <span id="f04-w1" class="f04-w">sait</span>
+        <span id="f04-w2" class="f04-w">faire</span>
+        <span id="f04-pill">
+          <span id="f04-pill-bg"></span>
+          <span id="f04-pill-txt"><span class="f04-ch">t</span><span class="f04-ch">o</span><span class="f04-ch">u</span><span class="f04-ch">t</span><span class="f04-ch">&nbsp;</span><span class="f04-ch">ç</span><span class="f04-ch">a</span><span class="f04-ch">.</span></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      // Word cues (frame-local): Sauf 0.44, qu'aujourd'hui 0.60, l'IA 1.54, sait 1.68, faire 1.86, tout 2.04, ça 2.28
+      var T_MICRO = 0.3;
+      var T_GIANT = 0.44;
+      var T_CUT = 1.4;
+      var EXIT = 0.18;
+      var T_ORB = 1.5;
+      var BLOOM = 0.6;
+      var T_NOTES = [1.6, 1.78, 1.98];
+      var T_W = [1.54, 1.68, 1.86];
+      var T_PILL = 2.0;
+      var T_TOUT = 2.06;
+      var T_CA = 2.28;
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ---------- Scene 1 (0.00 to 1.40): calm desk, micro, giant word ---------- */
+
+      tl.fromTo(
+        $("f04-micro"),
+        { opacity: 0, y: 8 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out", immediateRender: false },
+        T_MICRO,
+      );
+
+      // tracking tighten via per-letter x (letters split into inline-blocks, spread 0.4em, slide home)
+      var trackChars = function (root) {
+        var t = root.textContent;
+        root.textContent = "";
+        var out = [];
+        for (var i = 0; i < t.length; i++) {
+          var s = document.createElement("span");
+          s.style.display = "inline-block";
+          s.style.whiteSpace = "pre";
+          s.textContent = t[i];
+          root.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      };
+      var trackIn = function (chars, spread, dur, ease, at) {
+        var n = chars.length;
+        chars.forEach(function (c, i) {
+          tl.fromTo(c, { x: (i - (n - 1) / 2) * spread }, { x: 0, duration: dur, ease: ease, immediateRender: false }, at);
+        });
+      };
+      tl.fromTo(
+        $("f04-giant"),
+        { opacity: 0, filter: "blur(12px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false },
+        T_GIANT,
+      );
+      trackIn(trackChars($("f04-giant")), 104, 0.55, "expo.out", T_GIANT);
+
+      // hold with a slow forward drift that feeds the zoom-through
+      var s1 = $("f04-s1");
+      tl.fromTo(s1, { scale: 1 }, { scale: 1.03, duration: T_CUT - EXIT - T_GIANT, ease: "none", immediateRender: false }, T_GIANT);
+
+      /* ---------- Seam: forward zoom-through, hard cut at peak blur (cut catalog) ---------- */
+      tl.fromTo(
+        s1,
+        { scale: 1.03, filter: "blur(0px)" },
+        { scale: 1.22, filter: "blur(10px)", duration: EXIT, ease: "power3.in", immediateRender: false },
+        T_CUT - EXIT,
+      );
+      tl.fromTo(s1, { opacity: 1 }, { opacity: 0.15, duration: EXIT, ease: "none", immediateRender: false }, T_CUT - EXIT);
+      tl.set(s1, { opacity: 0 }, T_CUT);
+
+      /* ---------- Scene 2 (1.40 to 2.86) ---------- */
+
+      // laptop continues the forward move from behind the cut
+      tl.fromTo(
+        $("f04-laptop"),
+        { opacity: 0.15, scale: 0.84, filter: "blur(10px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false },
+        T_CUT,
+      );
+
+      // ambient-glow-bloom, hero bloom (bloom-and-hold: scene under 3 s); glow + orb land as one beat
+      tl.fromTo(
+        $("f04-orb"),
+        { opacity: 0, scale: 0.4 },
+        { opacity: 1, scale: 1, duration: BLOOM, ease: "power3.out", immediateRender: false },
+        T_ORB,
+      );
+      tl.fromTo(
+        $("f04-glow"),
+        { opacity: 0, scale: 0.82 },
+        { opacity: 0.42, scale: 1, duration: BLOOM, ease: "power2.out", immediateRender: false },
+        T_ORB,
+      );
+      tl.fromTo(
+        $("f04-spill"),
+        { opacity: 0 },
+        { opacity: 1, duration: BLOOM, ease: "power2.out", immediateRender: false },
+        T_ORB,
+      );
+
+      // sticky notes slide in from left, top, right; fast in, soft landing, tiny rotation settle
+      var NOTES = [
+        { id: "f04-note-1", from: { x: -640, y: 0 }, r0: -12, r1: -5 },
+        { id: "f04-note-2", from: { x: 0, y: -480 }, r0: 11, r1: 5 },
+        { id: "f04-note-3", from: { x: 640, y: 0 }, r0: 4, r1: -3 },
+      ];
+      NOTES.forEach(function (n, i) {
+        var at = T_NOTES[i];
+        tl.fromTo(
+          $(n.id),
+          { x: n.from.x, y: n.from.y, opacity: 1 },
+          { x: 0, y: 0, opacity: 1, duration: 0.5, ease: "power3.out", immediateRender: false },
+          at,
+        );
+        tl.fromTo(
+          $(n.id + "-sheet"),
+          { rotation: n.r0 },
+          { rotation: n.r1, duration: 0.6, ease: "power3.out", immediateRender: false },
+          at,
+        );
+      });
+
+      // phrase, word by word on the voice
+      for (var w = 0; w < T_W.length; w++) {
+        tl.fromTo(
+          $("f04-w" + w),
+          { opacity: 0, y: 12, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+          T_W[w],
+        );
+      }
+
+      // accent pill: traces from the left, then the words write inside
+      tl.fromTo(
+        $("f04-pill-bg"),
+        { scaleX: 0, opacity: 1 },
+        { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out", immediateRender: false },
+        T_PILL,
+      );
+      tl.fromTo($("f04-pill"), { rotation: -10 }, { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, T_PILL);
+      var chars = document.querySelectorAll("#f04-pill-txt .f04-ch");
+      for (var c = 0; c < chars.length; c++) {
+        var at = c < 5 ? T_TOUT + c * 0.02 : T_CA + (c - 5) * 0.02;
+        tl.fromTo(chars[c], { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out", immediateRender: false }, at);
+      }
+
+      // hold to the end of the frame (duration 2.86 s)
+      tl.set({}, {}, 2.86);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["04-aujourdhui"] = tl;
+    })();
+  </script>
+</template>

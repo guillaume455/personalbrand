@@ -1,0 +1,691 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); font-weight: 800; font-style: normal; font-display: block; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #f5efe7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==================== desk-night (CSS, copied from 01-devis) ====================
+       Dark walnut desk under a lamp, seen from above. Full-bleed clip ground.
+       .f03-desk-cam / .f03-desk-camin are camera wrappers (identity when unused):
+       outer = scale + rotation around the frame centre, inner = counter-translate.
+       .f03-desk-shake takes the stamp shake, .f03-desk-base holds this frame's higher
+       camera (static 0.84: wider view, finer grain). Grain + vignette are screen-space. */
+    .f03-desk {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #1c1512;
+    }
+    .f03-desk-shake,
+    .f03-desk-cam,
+    .f03-desk-camin,
+    .f03-desk-base {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 50% 50%;
+    }
+    .f03-desk-base {
+      transform: scale(0.84);
+    }
+    .f03-desk-surface {
+      position: absolute;
+      left: -600px;
+      top: -500px;
+      width: 3120px;
+      height: 2080px;
+      background: radial-gradient(1100px 860px at 1360px 920px, #3b2b21 0%, #36271e 18%, #2c2019 42%, #231a15 68%, #1c1512 100%);
+    }
+    .f03-desk-figure {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3120px;
+      height: 2080px;
+      opacity: 0.6;
+      mix-blend-mode: overlay;
+      background-size: 1400px 700px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1400' height='700'%3E%3Cfilter id='w' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0021 0.062' numOctaves='4' seed='11' stitchTiles='stitch' result='a'/%3E%3CfeTurbulence type='turbulence' baseFrequency='0.0011 0.019' numOctaves='2' seed='4' stitchTiles='stitch' result='b'/%3E%3CfeColorMatrix in='a' type='matrix' values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1' result='a2'/%3E%3CfeColorMatrix in='b' type='matrix' values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1' result='b2'/%3E%3CfeComposite in='a2' in2='b2' operator='arithmetic' k1='0' k2='1.15' k3='-0.6' k4='0.2'/%3E%3C/filter%3E%3Crect width='1400' height='700' filter='url(%23w)'/%3E%3C/svg%3E");
+    }
+    .f03-desk-lines {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3120px;
+      height: 2080px;
+      background:
+        repeating-linear-gradient(0.5deg, rgba(255, 226, 196, 0.035) 0 1px, rgba(0, 0, 0, 0) 1px 7px),
+        repeating-linear-gradient(-0.3deg, rgba(0, 0, 0, 0.05) 0 1px, rgba(0, 0, 0, 0) 1px 11px),
+        repeating-linear-gradient(0.2deg, rgba(255, 226, 196, 0.03) 0 1px, rgba(0, 0, 0, 0) 1px 17px);
+    }
+    .f03-desk-lamp {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3120px;
+      height: 2080px;
+      mix-blend-mode: screen;
+      background: radial-gradient(560px 430px at 1360px 900px, rgba(255, 190, 130, 0.1) 0%, rgba(255, 190, 130, 0.04) 55%, rgba(255, 190, 130, 0) 100%);
+    }
+    .f03-desk-vignette {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: radial-gradient(ellipse 78% 86% at 42% 40%, rgba(0, 0, 0, 0) 48%, rgba(0, 0, 0, 0.42) 100%);
+    }
+    .f03-desk-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.05;
+      background-size: 240px 240px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+    /* ==================== /desk-night ==================== */
+
+    /* ---------- world: shake > camera (outer scale/roll, inner kick offset) ---------- */
+    .f03-view,
+    .f03-shake,
+    .f03-cam,
+    .f03-camin {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 50% 50%;
+    }
+    .f03-view {
+      overflow: hidden;
+    }
+
+    /* ---------- a paper of the pile: .f03-p sits on the stage centre, GSAP x / y are its offset
+       (center-outward-expansion), rotation / scale around its own centre. Shadow slab in screen px
+       (+22 +28, blur 40, away from the lamp); the face is authored in paper px and scaled. ---------- */
+    .f03-p {
+      position: absolute;
+      left: 960px;
+      top: 540px;
+      width: 0;
+      height: 0;
+      opacity: 0;
+    }
+    .f03-p-on {
+      opacity: 1;
+    }
+    .f03-p-sh {
+      position: absolute;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.55);
+      filter: blur(20px);
+    }
+    .f03-p-body {
+      position: absolute;
+    }
+    .f03-p-face {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform-origin: 0 0;
+    }
+
+    /* ==================== quote-sheet (CSS, look copied from 01-devis) ==================== */
+    .f03-paper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      overflow: hidden;
+      border: 1px solid #d9cfc1;
+      border-radius: 3px;
+      background: #fbf8f2;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    .f03-paper-tex {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.4;
+      mix-blend-mode: multiply;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .42 0 0 0 0 .36 0 0 0 0 .3 1.4 0 0 0 -.6'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23p)'/%3E%3C/svg%3E");
+    }
+    .f03-paper-light {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      mix-blend-mode: multiply;
+      background: radial-gradient(ellipse 105% 85% at 18% 50%, rgba(255, 250, 240, 0) 0%, rgba(160, 118, 80, 0.05) 50%, rgba(96, 64, 38, 0.17) 100%);
+    }
+    .f03-q-micro {
+      position: absolute;
+      font: 400 18px/1.2 "Space Mono", monospace;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #5a5348;
+      white-space: nowrap;
+    }
+    .f03-q-title {
+      position: absolute;
+      left: 54px;
+      top: 88px;
+      font: 600 40px/1.1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.01em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f03-q-rule {
+      position: absolute;
+      left: 54px;
+      width: 592px;
+      height: 1px;
+      background: #d9cfc1;
+    }
+    .f03-q-rule-strong {
+      height: 2px;
+      background: #1a1612;
+    }
+    .f03-q-label {
+      position: absolute;
+      left: 54px;
+      font: 500 28px/1.3 "Instrument Sans", sans-serif;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f03-q-price {
+      position: absolute;
+      right: 54px;
+      font: 700 30px/1 "Space Mono", monospace;
+      font-variant-numeric: tabular-nums;
+      word-spacing: -0.3em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f03-q-big {
+      position: absolute;
+      left: 396px;
+      top: 210px;
+      width: 250px;
+      height: 70px;
+    }
+    .f03-q-bigtext {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 250px;
+      height: 70px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font: 700 64px/1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.05em;
+      font-variant-numeric: tabular-nums;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f03-q-bigeuro {
+      display: inline-block;
+      margin-left: 0.16em;
+    }
+    .f03-q-total {
+      position: absolute;
+      left: 346px;
+      width: 300px;
+      height: 80px;
+      border: 2px solid #1a1612;
+      border-radius: 4px;
+    }
+    .f03-q-totval {
+      position: absolute;
+      right: 20px;
+      top: 23px;
+      font: 700 30px/1 "Space Mono", monospace;
+      font-variant-numeric: tabular-nums;
+      word-spacing: -0.3em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f03-ink {
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+      mix-blend-mode: multiply;
+    }
+    /* sheet titled FACTURE (same paper, bigger title) */
+    .f03-f-title {
+      position: absolute;
+      left: 52px;
+      top: 60px;
+      font: 700 78px/1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.03em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    /* ==================== /quote-sheet ==================== */
+
+    /* envelope (top-down, paper-2) */
+    .f03-env {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 640px;
+      height: 420px;
+      overflow: hidden;
+      border: 1px solid #d9cfc1;
+      border-radius: 4px;
+      background: linear-gradient(160deg, #f3ece2 0%, #efe7dc 58%, #e8dfd2 100%);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    .f03-env-art {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    /* sticky note (look copied from 02-attente) */
+    .f03-note {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 420px;
+      height: 420px;
+      clip-path: polygon(0 0, 100% 0, 100% 384px, 384px 100%, 0 100%);
+    }
+    .f03-note-paper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 420px;
+      height: 420px;
+      background: linear-gradient(180deg, #e6ddd0 0px, #ebe2d6 52px, #efe7dc 86px, #f1e9df 72%, #f3ece2 100%);
+    }
+    .f03-glue {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 420px;
+      height: 62px;
+      background: linear-gradient(180deg, rgba(120, 95, 70, 0.07), rgba(120, 95, 70, 0));
+    }
+    .f03-note-ink {
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+    }
+    .f03-note-ink path {
+      fill: none;
+      stroke: #1a1612;
+      stroke-width: 3.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .f03-fold {
+      position: absolute;
+      left: 384px;
+      top: 384px;
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(to bottom right, #d6cab9 0%, #ece4d8 30%, #f6f0e7 49.4%, rgba(0, 0, 0, 0) 50.6%);
+      filter: drop-shadow(-1.5px -1.5px 2px rgba(60, 40, 25, 0.25));
+    }
+
+    /* pain-pills: labels printed on the papers (the cross is an inline SVG, never a glyph) */
+    .f03-pp-at,
+    .f03-pp-rot {
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+    .f03-pp-rot {
+      left: 0;
+      top: 0;
+    }
+    .f03-pp {
+      position: absolute;
+      left: 0;
+      top: -22px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px 0 16px;
+      border-radius: 999px;
+      background: #2e2924;
+      color: #ffffff;
+      font: 700 22px/1 "Space Mono", monospace;
+      font-variant-numeric: tabular-nums;
+      word-spacing: -0.3em;
+      white-space: nowrap;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.28);
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    .f03-pp svg {
+      display: block;
+      flex: none;
+    }
+
+    /* rubber-stamp: self-contained, copied from 02-attente with its HTML block and stampSlam().
+       Place the stamp CENTER with left/top on .f03-stamp; size with --f03-stamp-scale.
+       Giant variant here: authored at 260px text / 12px border (scale 1) so the ink stays sharp. */
+    .f03-stamp { position: absolute; width: 0; height: 0; mix-blend-mode: multiply; pointer-events: none; }
+    .f03-stamp-rot {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, -50%) rotate(-8deg) scale(var(--f03-stamp-scale, 1));
+      transform-origin: 50% 50%;
+    }
+    .f03-stamp-slam { opacity: 0; transform-origin: 50% 50%; }
+    .f03-stamp-ink {
+      display: block;
+      filter: url(#f03-stamp-ink);
+      padding: 35px 80px 10px 80px;
+      border: 12px solid #c25b28;
+      border-radius: 24px;
+      font-family: "Big Shoulders", sans-serif;
+      font-weight: 800;
+      font-size: 260px;
+      line-height: 1;
+      text-transform: uppercase;
+      word-spacing: 0.34em;
+      color: #c25b28;
+      white-space: nowrap;
+    }
+    /* /rubber-stamp */
+
+    /* lamp falloff on the pile + the room getting heavier (screen-space) */
+    .f03-falloff,
+    .f03-dim {
+      position: absolute;
+      left: -40px;
+      top: -40px;
+      width: 2000px;
+      height: 1160px;
+      pointer-events: none;
+    }
+    .f03-falloff {
+      background: radial-gradient(ellipse 1250px 900px at 840px 480px, rgba(12, 8, 5, 0) 38%, rgba(12, 8, 5, 0.34) 100%);
+    }
+    .f03-dim {
+      opacity: 0;
+      background: radial-gradient(ellipse 1150px 820px at 840px 480px, rgba(12, 8, 5, 0.1) 0%, rgba(12, 8, 5, 0.2) 55%, rgba(12, 8, 5, 0.46) 100%);
+    }
+
+    /* ---------- phrase (the voice, word by word; traced accent pill = the only emphasis) ---------- */
+    .f03-hud {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f03-phrase {
+      position: absolute;
+      left: 0;
+      top: 92px;
+      width: 1920px;
+      text-align: center;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+      white-space: nowrap;
+    }
+    .f03-w { display: inline-block; opacity: 0; }
+    .f03-pill { display: inline-block; white-space: nowrap; text-shadow: none; }
+    .f03-seg { position: relative; display: inline-block; padding: 0.02em 0.13em 0.07em 0.13em; color: #ffffff; }
+    .f03-seg-first, .f03-seg-solo { padding-left: 0.3em; }
+    .f03-seg-last, .f03-seg-solo { padding-right: 0.3em; }
+    .f03-segbg { position: absolute; left: 0; top: 0; right: -1px; bottom: 0; background: #c25b28; transform-origin: 0% 50%; opacity: 0; }
+    .f03-seg-first .f03-segbg { border-radius: 14px 0 0 14px; }
+    .f03-seg-last .f03-segbg { border-radius: 0 14px 14px 0; right: 0; }
+    .f03-seg-solo .f03-segbg { border-radius: 14px; right: 0; }
+    .f03-segtx { position: relative; display: inline-block; }
+    .f03-l { display: inline-block; opacity: 0; }
+  </style>
+
+  <div id="root" data-composition-id="03-prix" data-width="1920" data-height="1080" data-duration="3.56">
+    <!-- ==================== desk-night ==================== -->
+    <div id="f03-desk" class="clip f03-desk" data-start="0" data-duration="3.56" data-track-index="0" data-layout-ignore>
+      <div class="f03-desk-shake" id="f03-deskshake">
+        <div class="f03-desk-cam" id="f03-deskcam">
+          <div class="f03-desk-camin" id="f03-deskcamin">
+            <div class="f03-desk-base">
+              <div class="f03-desk-surface">
+                <div class="f03-desk-figure"></div>
+                <div class="f03-desk-lines"></div>
+                <div class="f03-desk-lamp"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="f03-desk-vignette"></div>
+      <div class="f03-desk-grain"></div>
+    </div>
+    <!-- ==================== /desk-night ==================== -->
+
+    <div id="f03-view" class="clip f03-view" data-start="0" data-duration="3.56" data-track-index="1" data-layout-allow-overflow>
+      <div id="f03-shake" class="f03-shake">
+        <div id="f03-cam" class="f03-cam">
+          <div id="f03-camin" class="f03-camin">
+            <!-- the pile: DOM order = landing order (later papers on top) -->
+
+            <div class="f03-p f03-p-on" id="f03-p1" data-cx="960" data-cy="600" data-r="-3"><div class="f03-p-sh" style="left: -167.0px; top: -239.3px; width: 378px; height: 534.6px"></div><div class="f03-p-body" style="left: -189.0px; top: -267.3px; width: 378px; height: 534.6px"><div class="f03-p-face" style="transform: scale(0.54)"><div class="f03-paper"><div class="f03-paper-tex"></div><div class="f03-q-micro" style="left: 54px; top: 58px">DEVIS N°&nbsp;0147</div><div class="f03-q-title">Prestations web</div><div class="f03-q-rule f03-q-rule-strong" style="top: 168px"></div><div class="f03-q-label" style="top: 204px">Modification sur ton site</div><div class="f03-q-micro" style="left: 54px; top: 250px">1 jour</div><div class="f03-q-big"><div class="f03-q-bigtext">1&nbsp;000<span class="f03-q-bigeuro">€</span></div></div><div class="f03-q-rule" style="top: 320px"></div><div class="f03-q-label" style="top: 350px">Nouvelle page</div><div class="f03-q-price" style="top: 353px">600&nbsp;€</div><div class="f03-q-rule" style="top: 416px"></div><div class="f03-q-label" style="top: 446px">Réparer l’automatisation</div><div class="f03-q-price" style="top: 449px">sur devis</div><div class="f03-q-rule" style="top: 512px"></div><div class="f03-q-label" style="top: 542px">Délai</div><div class="f03-q-price" style="top: 545px">quand il aura le temps</div><div class="f03-q-rule" style="top: 608px"></div><div class="f03-q-total" style="top: 652px"><div class="f03-q-micro" style="left: 20px; top: 27px">Total</div><div class="f03-q-totval">1&nbsp;600&nbsp;€</div></div><div class="f03-q-rule" style="top: 920px"></div><svg class="f03-ink" width="700" height="990" viewBox="0 0 700 990"><path d="M675.5 261.9 L677.8 259.9 L679.8 257.9 L681.6 255.8 L683.1 253.7 L684.4 251.6 L685.5 249.5 L686.2 247.3 L686.8 245.2 L687.1 243.0 L687.2 240.9 L687.0 238.8 L686.7 236.7 L686.1 234.6 L685.4 232.6 L684.5 230.5 L683.5 228.5 L682.3 226.5 L680.9 224.6 L679.4 222.6 L677.8 220.7 L676.0 218.8 L674.2 217.0 L672.1 215.2 L670.0 213.4 L667.7 211.6 L665.2 209.9 L662.6 208.2 L659.8 206.6 L656.9 205.0 L653.8 203.5 L650.6 202.1 L647.2 200.7 L643.6 199.4 L639.9 198.2 L636.0 197.0 L632.0 196.0 L627.9 195.0 L623.6 194.2 L619.3 193.4 L614.8 192.7 L610.3 192.2 L605.7 191.7 L601.1 191.3 L596.4 191.0 L591.7 190.7 L587.0 190.6 L582.2 190.5 L577.5 190.4 L572.8 190.4 L568.1 190.5 L563.3 190.6 L558.6 190.8 L553.9 191.0 L549.2 191.3 L544.5 191.6 L539.8 191.9 L535.0 192.3 L530.3 192.7 L525.6 193.1 L520.8 193.7 L516.0 194.2 L511.3 194.9 L506.5 195.6 L501.7 196.4 L497.0 197.2 L492.3 198.2 L487.7 199.2 L483.1 200.4 L478.7 201.6 L474.3 202.9 L470.0 204.3 L465.9 205.8 L461.9 207.3 L458.1 209.0 L454.4 210.7 L451.0 212.5 L447.7 214.4 L444.6 216.3 L441.7 218.3 L439.0 220.3 L436.4 222.4 L434.1 224.5 L431.9 226.6 L429.9 228.8 L428.1 230.9 L426.5 233.1 L425.0 235.3 L423.7 237.5 L422.5 239.7 L421.4 242.0 L420.5 244.2 L419.8 246.4 L419.2 248.7 L418.8 250.9 L418.6 253.2 L418.5 255.4 L418.6 257.6 L418.9 259.9 L419.5 262.1 L420.2 264.2 L421.2 266.4 L422.4 268.5 L423.9 270.6 L425.6 272.6 L427.5 274.6 L429.7 276.5 L432.1 278.4 L434.7 280.2 L437.6 281.9 L440.7 283.5 L443.9 285.1 L447.4 286.5 L451.0 287.9 L454.7 289.2 L458.6 290.4 L462.6 291.5 L466.7 292.5 L470.9 293.5 L475.1 294.4 L479.4 295.3 L483.7 296.1 L488.1 296.8 L492.5 297.5 L496.9 298.1 L501.4 298.7 L505.9 299.3 L510.4 299.8 L515.0 300.3 L519.7 300.7 L524.4 301.1 L529.1 301.5 L533.9 301.7 L538.8 302.0 L543.7 302.1 L548.7 302.2 L553.7 302.2 L558.8 302.1 L563.9 302.0 L569.0 301.7 L574.2 301.3 L579.4 300.9 L584.5 300.3 L589.7 299.6 L594.8 298.8 L599.9 298.0 L604.9 297.0 L609.8 295.9 L614.7 294.7 L619.5 293.5 L624.1 292.2 L628.7 290.8 L633.2 289.3 L637.6 287.8 L641.8 286.2 L646.0 284.5 L650.1 282.8 L654.0 281.1 L657.9 279.3 L661.6 277.5 L665.3 275.6 L668.9 273.7 L672.3 271.7 L675.6 269.8 L678.9 267.7 L681.9 265.7 L684.9 263.6 L687.7 261.4 L690.3 259.3 L692.8 257.1 L695.0 254.8 L697.0 252.6 L698.8 250.3 L700.4 248.0 L701.7 245.6 L702.7 243.3 L703.4 241.0 L703.9 238.7 L704.0 236.4 L703.9 234.1 L703.5 231.8" fill="none" stroke="#c25b28" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path></svg><div class="f03-paper-light"></div></div></div></div></div>
+            <div class="f03-p f03-p-on" id="f03-p2" data-cx="1340" data-cy="420" data-r="7"><div class="f03-p-sh" style="left: -150.8px; top: -85.4px; width: 345.6px; height: 226.8px"></div><div class="f03-p-body" style="left: -172.8px; top: -113.4px; width: 345.6px; height: 226.8px"><div class="f03-p-face" style="transform: scale(0.54)"><div class="f03-env"><div class="f03-paper-tex"></div><svg class="f03-env-art" width="640" height="420" viewBox="0 0 640 420"><path d="M 0 420 L 268 206 M 640 420 L 372 206" fill="none" stroke="rgba(90,70,50,0.2)" stroke-width="2"></path><path d="M 0 0 L 640 0 L 356 238 Q 320 264 284 238 Z" fill="rgba(120,92,64,0.07)" stroke="rgba(90,70,50,0.3)" stroke-width="2" stroke-linejoin="round"></path><path d="M 6 4 L 284 236" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"></path></svg><div class="f03-paper-light"></div></div></div></div></div>
+            <div class="f03-p" id="f03-p3" data-cx="610" data-cy="560" data-r="5" data-t="0.14" data-sp="0.9" data-dy="-70" data-s0="1.2" data-dr="4" data-d="0.5"><div class="f03-p-sh" style="left: -160.0px; top: -229.4px; width: 364px; height: 514.8px"></div><div class="f03-p-body" style="left: -182.0px; top: -257.4px; width: 364px; height: 514.8px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-paper"><div class="f03-paper-tex"></div><div class="f03-f-title">FACTURE</div><div class="f03-q-rule f03-q-rule-strong" style="top: 168px"></div><div class="f03-q-label" style="top: 204px">Modification sur ton site</div><div class="f03-q-price" style="top: 207px">1&nbsp;000&nbsp;€</div><div class="f03-q-rule" style="top: 270px"></div><div class="f03-q-label" style="top: 300px">Nouvelle page</div><div class="f03-q-price" style="top: 303px">600&nbsp;€</div><div class="f03-q-rule" style="top: 366px"></div><div class="f03-q-label" style="top: 396px">Réparer l’automatisation</div><div class="f03-q-price" style="top: 399px">sur devis</div><div class="f03-q-rule" style="top: 462px"></div><div class="f03-q-total" style="top: 506px"><div class="f03-q-micro" style="left: 20px; top: 27px">Total</div><div class="f03-q-totval">1&nbsp;600&nbsp;€</div></div><div class="f03-q-rule" style="top: 920px"></div><div class="f03-paper-light"></div></div></div></div></div>
+            <div class="f03-p" id="f03-p4" data-cx="1250" data-cy="650" data-r="-7" data-t="0.44" data-sp="0.9" data-dy="-70" data-s0="1.2" data-dr="4" data-d="0.5"><div class="f03-p-sh" style="left: -87.2px; top: -81.2px; width: 218.4px; height: 218.4px"></div><div class="f03-p-body" style="left: -109.2px; top: -109.2px; width: 218.4px; height: 218.4px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-note"><div class="f03-note-paper"></div><div class="f03-glue"></div><div class="f03-paper-tex"></div><svg class="f03-note-ink" width="420" height="420" viewBox="0 0 420 420"><path d="M 64 118 C 120 110, 196 124, 300 114" /><path d="M 64 176 C 130 170, 230 184, 350 172" /><path d="M 64 234 C 110 230, 170 240, 238 232" /><path d="M 64 300 C 120 296, 170 304, 214 298" /></svg><div class="f03-fold"></div></div></div></div></div>
+            <div class="f03-p" id="f03-p5" data-cx="1600" data-cy="580" data-r="-4" data-t="0.74" data-sp="0.9" data-dy="-70" data-s0="1.2" data-dr="-4" data-d="0.5"><div class="f03-p-sh" style="left: -160.0px; top: -229.4px; width: 364px; height: 514.8px"></div><div class="f03-p-body" style="left: -182.0px; top: -257.4px; width: 364px; height: 514.8px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-paper"><div class="f03-paper-tex"></div><div class="f03-q-micro" style="left: 54px; top: 58px">DEVIS N°&nbsp;0147</div><div class="f03-q-title">Prestations web</div><div class="f03-q-rule f03-q-rule-strong" style="top: 168px"></div><div class="f03-q-label" style="top: 204px">Modification sur ton site</div><div class="f03-q-price" style="top: 207px">1&nbsp;000&nbsp;€</div><div class="f03-q-micro" style="left: 54px; top: 250px">1 jour</div><div class="f03-q-rule" style="top: 320px"></div><div class="f03-q-label" style="top: 350px">Nouvelle page</div><div class="f03-q-price" style="top: 353px">600&nbsp;€</div><div class="f03-q-rule" style="top: 416px"></div><div class="f03-q-total" style="top: 652px"><div class="f03-q-micro" style="left: 20px; top: 27px">Total</div><div class="f03-q-totval">1&nbsp;600&nbsp;€</div></div><div class="f03-q-rule" style="top: 920px"></div><div class="f03-paper-light"></div></div></div></div></div>
+            <div class="f03-p" id="f03-p6" data-cx="660" data-cy="880" data-r="-5" data-t="1.04" data-sp="0.9" data-dy="-70" data-s0="1.2" data-dr="4" data-d="0.5"><div class="f03-p-sh" style="left: -150.8px; top: -85.4px; width: 345.6px; height: 226.8px"></div><div class="f03-p-body" style="left: -172.8px; top: -113.4px; width: 345.6px; height: 226.8px"><div class="f03-p-face" style="transform: scale(0.54)"><div class="f03-env"><div class="f03-paper-tex"></div><svg class="f03-env-art" width="640" height="420" viewBox="0 0 640 420"><rect x="508" y="34" width="92" height="112" rx="2" fill="#f7f1e8" stroke="#b9ab98" stroke-width="2" stroke-dasharray="5 4"></rect><rect x="522" y="48" width="64" height="84" rx="1" fill="none" stroke="#cdbfb2" stroke-width="2"></rect><path d="M 440 64 C 470 54, 500 74, 530 64 S 590 54, 620 64 M 440 88 C 470 78, 500 98, 530 88 S 590 78, 620 88 M 440 112 C 470 102, 500 122, 530 112 S 590 102, 620 112" fill="none" stroke="rgba(26,22,18,0.32)" stroke-width="3" stroke-linecap="round"></path><rect x="250" y="236" width="250" height="16" rx="3" fill="rgba(26,22,18,0.62)"></rect><rect x="250" y="270" width="196" height="14" rx="3" fill="rgba(90,83,72,0.5)"></rect><rect x="250" y="300" width="222" height="14" rx="3" fill="rgba(90,83,72,0.5)"></rect><rect x="34" y="34" width="120" height="10" rx="3" fill="rgba(90,83,72,0.4)"></rect><rect x="34" y="54" width="86" height="10" rx="3" fill="rgba(90,83,72,0.3)"></rect></svg><div class="f03-paper-light"></div></div></div></div></div>
+            <div class="f03-p" id="f03-p7" data-cx="870" data-cy="318" data-r="4" data-t="1.32" data-sp="0.9" data-dy="-70" data-s0="1.2" data-dr="-4" data-d="0.5"><div class="f03-p-sh" style="left: -87.2px; top: -81.2px; width: 218.4px; height: 218.4px"></div><div class="f03-p-body" style="left: -109.2px; top: -109.2px; width: 218.4px; height: 218.4px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-note"><div class="f03-note-paper"></div><div class="f03-glue"></div><div class="f03-paper-tex"></div><svg class="f03-note-ink" width="420" height="420" viewBox="0 0 420 420"><path d="M 70 110 C 130 104, 190 118, 270 108" /><path d="M 70 168 C 150 160, 250 176, 344 164" /><path d="M 66 262 C 120 250, 200 290, 330 262" /><path d="M 70 330 C 110 326, 150 334, 196 328" /></svg><div class="f03-fold"></div></div></div></div></div>
+            <div class="f03-p" id="f03-p8" data-cx="235" data-cy="450" data-r="-7" data-t="1.62" data-sp="0.3" data-dy="0" data-s0="1.3" data-dr="-5" data-d="0.46"><div class="f03-p-sh" style="left: -160.0px; top: -229.4px; width: 364px; height: 514.8px"></div><div class="f03-p-body" style="left: -182.0px; top: -257.4px; width: 364px; height: 514.8px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-paper"><div class="f03-paper-tex"></div><div class="f03-q-micro" style="left: 54px; top: 58px">DEVIS N°&nbsp;0147</div><div class="f03-q-title">Prestations web</div><div class="f03-q-rule f03-q-rule-strong" style="top: 168px"></div><div class="f03-q-label" style="top: 204px">Modification sur ton site</div><div class="f03-q-price" style="top: 207px">1&nbsp;000&nbsp;€</div><div class="f03-q-micro" style="left: 54px; top: 250px">1 jour</div><div class="f03-q-rule" style="top: 320px"></div><div class="f03-q-label" style="top: 350px">Nouvelle page</div><div class="f03-q-price" style="top: 353px">600&nbsp;€</div><div class="f03-q-rule" style="top: 416px"></div><div class="f03-q-label" style="top: 446px">Réparer l’automatisation</div><div class="f03-q-price" style="top: 449px">sur devis</div><div class="f03-q-rule" style="top: 512px"></div><div class="f03-q-label" style="top: 542px">Délai</div><div class="f03-q-price" style="top: 545px">quand il aura le temps</div><div class="f03-q-rule" style="top: 608px"></div><div class="f03-q-total" style="top: 652px"><div class="f03-q-micro" style="left: 20px; top: 27px">Total</div><div class="f03-q-totval">1&nbsp;600&nbsp;€</div></div><div class="f03-q-rule" style="top: 920px"></div><div class="f03-paper-light"></div></div></div></div><div class="f03-pp-at" style="left: -130px; top: -40px"><div class="f03-pp-rot" style="transform: rotate(3deg)"><div class="f03-pp" data-t="1.86"><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round"></path></svg><span>1&nbsp;000&nbsp;€</span></div></div></div></div>
+            <div class="f03-p" id="f03-p9" data-cx="1700" data-cy="420" data-r="6" data-t="1.74" data-sp="0.3" data-dy="0" data-s0="1.3" data-dr="5" data-d="0.46"><div class="f03-p-sh" style="left: -160.0px; top: -229.4px; width: 364px; height: 514.8px"></div><div class="f03-p-body" style="left: -182.0px; top: -257.4px; width: 364px; height: 514.8px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-paper"><div class="f03-paper-tex"></div><div class="f03-f-title">FACTURE</div><div class="f03-q-rule f03-q-rule-strong" style="top: 168px"></div><div class="f03-q-label" style="top: 204px">Modification sur ton site</div><div class="f03-q-price" style="top: 207px">1&nbsp;000&nbsp;€</div><div class="f03-q-rule" style="top: 270px"></div><div class="f03-q-label" style="top: 300px">Nouvelle page</div><div class="f03-q-price" style="top: 303px">600&nbsp;€</div><div class="f03-q-rule" style="top: 366px"></div><div class="f03-q-label" style="top: 396px">Réparer l’automatisation</div><div class="f03-q-price" style="top: 399px">sur devis</div><div class="f03-q-rule" style="top: 462px"></div><div class="f03-q-total" style="top: 506px"><div class="f03-q-micro" style="left: 20px; top: 27px">Total</div><div class="f03-q-totval">1&nbsp;600&nbsp;€</div></div><div class="f03-q-rule" style="top: 920px"></div><div class="f03-paper-light"></div></div></div></div><div class="f03-pp-at" style="left: -110px; top: 60px"><div class="f03-pp-rot" style="transform: rotate(-4deg)"><div class="f03-pp" data-t="1.98"><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round"></path></svg><span>600&nbsp;€</span></div></div></div></div>
+            <div class="f03-p" id="f03-p10" data-cx="250" data-cy="730" data-r="9" data-t="1.86" data-sp="0.3" data-dy="0" data-s0="1.3" data-dr="-5" data-d="0.46"><div class="f03-p-sh" style="left: -150.8px; top: -85.4px; width: 345.6px; height: 226.8px"></div><div class="f03-p-body" style="left: -172.8px; top: -113.4px; width: 345.6px; height: 226.8px"><div class="f03-p-face" style="transform: scale(0.54)"><div class="f03-env"><div class="f03-paper-tex"></div><svg class="f03-env-art" width="640" height="420" viewBox="0 0 640 420"><path d="M 0 420 L 268 206 M 640 420 L 372 206" fill="none" stroke="rgba(90,70,50,0.2)" stroke-width="2"></path><path d="M 0 0 L 640 0 L 356 238 Q 320 264 284 238 Z" fill="rgba(120,92,64,0.07)" stroke="rgba(90,70,50,0.3)" stroke-width="2" stroke-linejoin="round"></path><path d="M 6 4 L 284 236" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"></path></svg><div class="f03-paper-light"></div></div></div></div><div class="f03-pp-at" style="left: -120px; top: -62px"><div class="f03-pp-rot" style="transform: rotate(-2deg)"><div class="f03-pp" data-t="2.1"><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round"></path></svg><span>Sur devis</span></div></div></div></div>
+            <div class="f03-p" id="f03-p11" data-cx="1745" data-cy="762" data-r="-8" data-t="1.98" data-sp="0.3" data-dy="0" data-s0="1.3" data-dr="5" data-d="0.46"><div class="f03-p-sh" style="left: -87.2px; top: -81.2px; width: 218.4px; height: 218.4px"></div><div class="f03-p-body" style="left: -109.2px; top: -109.2px; width: 218.4px; height: 218.4px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-note"><div class="f03-note-paper"></div><div class="f03-glue"></div><div class="f03-paper-tex"></div><svg class="f03-note-ink" width="420" height="420" viewBox="0 0 420 420"><path d="M 64 118 C 120 110, 196 124, 300 114" /><path d="M 64 176 C 130 170, 230 184, 350 172" /><path d="M 64 234 C 110 230, 170 240, 238 232" /><path d="M 64 300 C 120 296, 170 304, 214 298" /></svg><div class="f03-fold"></div></div></div></div><div class="f03-pp-at" style="left: -50px; top: -14px"><div class="f03-pp-rot" style="transform: rotate(3deg)"><div class="f03-pp" data-t="2.22"><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round"></path></svg><span>J+8</span></div></div></div></div>
+            <div class="f03-p" id="f03-p12" data-cx="470" data-cy="962" data-r="-4" data-t="2.1" data-sp="0.3" data-dy="0" data-s0="1.3" data-dr="-5" data-d="0.46"><div class="f03-p-sh" style="left: -160.0px; top: -229.4px; width: 364px; height: 514.8px"></div><div class="f03-p-body" style="left: -182.0px; top: -257.4px; width: 364px; height: 514.8px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-paper"><div class="f03-paper-tex"></div><div class="f03-f-title">FACTURE</div><div class="f03-q-rule f03-q-rule-strong" style="top: 168px"></div><div class="f03-q-label" style="top: 204px">Modification sur ton site</div><div class="f03-q-price" style="top: 207px">1&nbsp;000&nbsp;€</div><div class="f03-q-rule" style="top: 270px"></div><div class="f03-q-label" style="top: 300px">Nouvelle page</div><div class="f03-q-price" style="top: 303px">600&nbsp;€</div><div class="f03-q-rule" style="top: 366px"></div><div class="f03-q-label" style="top: 396px">Réparer l’automatisation</div><div class="f03-q-price" style="top: 399px">sur devis</div><div class="f03-q-rule" style="top: 462px"></div><div class="f03-q-total" style="top: 506px"><div class="f03-q-micro" style="left: 20px; top: 27px">Total</div><div class="f03-q-totval">1&nbsp;600&nbsp;€</div></div><div class="f03-q-rule" style="top: 920px"></div><div class="f03-paper-light"></div></div></div></div><div class="f03-pp-at" style="left: -80px; top: -150px"><div class="f03-pp-rot" style="transform: rotate(2deg)"><div class="f03-pp" data-t="2.34"><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round"></path></svg><span>Délai</span></div></div></div></div>
+            <div class="f03-p" id="f03-p13" data-cx="1480" data-cy="930" data-r="5" data-t="2.22" data-sp="0.3" data-dy="0" data-s0="1.3" data-dr="5" data-d="0.46"><div class="f03-p-sh" style="left: -160.0px; top: -229.4px; width: 364px; height: 514.8px"></div><div class="f03-p-body" style="left: -182.0px; top: -257.4px; width: 364px; height: 514.8px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-paper"><div class="f03-paper-tex"></div><div class="f03-q-micro" style="left: 54px; top: 58px">DEVIS N°&nbsp;0147</div><div class="f03-q-title">Prestations web</div><div class="f03-q-rule f03-q-rule-strong" style="top: 168px"></div><div class="f03-q-label" style="top: 204px">Modification sur ton site</div><div class="f03-q-price" style="top: 207px">1&nbsp;000&nbsp;€</div><div class="f03-q-micro" style="left: 54px; top: 250px">1 jour</div><div class="f03-q-rule" style="top: 320px"></div><div class="f03-q-label" style="top: 350px">Nouvelle page</div><div class="f03-q-price" style="top: 353px">600&nbsp;€</div><div class="f03-q-rule" style="top: 416px"></div><div class="f03-q-total" style="top: 652px"><div class="f03-q-micro" style="left: 20px; top: 27px">Total</div><div class="f03-q-totval">1&nbsp;600&nbsp;€</div></div><div class="f03-q-rule" style="top: 920px"></div><div class="f03-paper-light"></div></div></div></div><div class="f03-pp-at" style="left: -120px; top: -150px"><div class="f03-pp-rot" style="transform: rotate(-3deg)"><div class="f03-pp" data-t="2.46"><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round"></path></svg><span>Prestataire</span></div></div></div></div>
+            <div class="f03-p" id="f03-p14" data-cx="990" data-cy="980" data-r="-2" data-t="2.34" data-sp="0.3" data-dy="0" data-s0="1.3" data-dr="-5" data-d="0.46"><div class="f03-p-sh" style="left: -160.0px; top: -229.4px; width: 364px; height: 514.8px"></div><div class="f03-p-body" style="left: -182.0px; top: -257.4px; width: 364px; height: 514.8px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-paper"><div class="f03-paper-tex"></div><div class="f03-q-micro" style="left: 54px; top: 58px">DEVIS N°&nbsp;0147</div><div class="f03-q-title">Prestations web</div><div class="f03-q-rule f03-q-rule-strong" style="top: 168px"></div><div class="f03-q-label" style="top: 204px">Modification sur ton site</div><div class="f03-q-price" style="top: 207px">1&nbsp;000&nbsp;€</div><div class="f03-q-micro" style="left: 54px; top: 250px">1 jour</div><div class="f03-q-rule" style="top: 320px"></div><div class="f03-q-label" style="top: 350px">Nouvelle page</div><div class="f03-q-price" style="top: 353px">600&nbsp;€</div><div class="f03-q-rule" style="top: 416px"></div><div class="f03-q-label" style="top: 446px">Réparer l’automatisation</div><div class="f03-q-price" style="top: 449px">sur devis</div><div class="f03-q-rule" style="top: 512px"></div><div class="f03-q-label" style="top: 542px">Délai</div><div class="f03-q-price" style="top: 545px">quand il aura le temps</div><div class="f03-q-rule" style="top: 608px"></div><div class="f03-q-total" style="top: 652px"><div class="f03-q-micro" style="left: 20px; top: 27px">Total</div><div class="f03-q-totval">1&nbsp;600&nbsp;€</div></div><div class="f03-q-rule" style="top: 920px"></div><div class="f03-paper-light"></div></div></div></div><div class="f03-pp-at" style="left: -110px; top: -195px"><div class="f03-pp-rot" style="transform: rotate(2deg)"><div class="f03-pp" data-t="2.58"><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round"></path></svg><span>Réparation</span></div></div></div></div>
+            <div class="f03-p" id="f03-p15" data-cx="150" data-cy="150" data-r="-10" data-t="2.44" data-sp="0.3" data-dy="0" data-s0="1.28" data-dr="5" data-d="0.36"><div class="f03-p-sh" style="left: -150.8px; top: -85.4px; width: 345.6px; height: 226.8px"></div><div class="f03-p-body" style="left: -172.8px; top: -113.4px; width: 345.6px; height: 226.8px"><div class="f03-p-face" style="transform: scale(0.54)"><div class="f03-env"><div class="f03-paper-tex"></div><svg class="f03-env-art" width="640" height="420" viewBox="0 0 640 420"><rect x="508" y="34" width="92" height="112" rx="2" fill="#f7f1e8" stroke="#b9ab98" stroke-width="2" stroke-dasharray="5 4"></rect><rect x="522" y="48" width="64" height="84" rx="1" fill="none" stroke="#cdbfb2" stroke-width="2"></rect><path d="M 440 64 C 470 54, 500 74, 530 64 S 590 54, 620 64 M 440 88 C 470 78, 500 98, 530 88 S 590 78, 620 88 M 440 112 C 470 102, 500 122, 530 112 S 590 102, 620 112" fill="none" stroke="rgba(26,22,18,0.32)" stroke-width="3" stroke-linecap="round"></path><rect x="250" y="236" width="250" height="16" rx="3" fill="rgba(26,22,18,0.62)"></rect><rect x="250" y="270" width="196" height="14" rx="3" fill="rgba(90,83,72,0.5)"></rect><rect x="250" y="300" width="222" height="14" rx="3" fill="rgba(90,83,72,0.5)"></rect><rect x="34" y="34" width="120" height="10" rx="3" fill="rgba(90,83,72,0.4)"></rect><rect x="34" y="54" width="86" height="10" rx="3" fill="rgba(90,83,72,0.3)"></rect></svg><div class="f03-paper-light"></div></div></div></div></div>
+            <div class="f03-p" id="f03-p16" data-cx="1800" data-cy="150" data-r="8" data-t="2.52" data-sp="0.3" data-dy="0" data-s0="1.28" data-dr="-5" data-d="0.36"><div class="f03-p-sh" style="left: -87.2px; top: -81.2px; width: 218.4px; height: 218.4px"></div><div class="f03-p-body" style="left: -109.2px; top: -109.2px; width: 218.4px; height: 218.4px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-note"><div class="f03-note-paper"></div><div class="f03-glue"></div><div class="f03-paper-tex"></div><svg class="f03-note-ink" width="420" height="420" viewBox="0 0 420 420"><path d="M 70 110 C 130 104, 190 118, 270 108" /><path d="M 70 168 C 150 160, 250 176, 344 164" /><path d="M 66 262 C 120 250, 200 290, 330 262" /><path d="M 70 330 C 110 326, 150 334, 196 328" /></svg><div class="f03-fold"></div></div></div></div></div>
+            <div class="f03-p" id="f03-p17" data-cx="110" data-cy="1040" data-r="7" data-t="2.59" data-sp="0.3" data-dy="0" data-s0="1.28" data-dr="5" data-d="0.36"><div class="f03-p-sh" style="left: -160.0px; top: -229.4px; width: 364px; height: 514.8px"></div><div class="f03-p-body" style="left: -182.0px; top: -257.4px; width: 364px; height: 514.8px"><div class="f03-p-face" style="transform: scale(0.52)"><div class="f03-paper"><div class="f03-paper-tex"></div><div class="f03-f-title">FACTURE</div><div class="f03-q-rule f03-q-rule-strong" style="top: 168px"></div><div class="f03-q-label" style="top: 204px">Modification sur ton site</div><div class="f03-q-price" style="top: 207px">1&nbsp;000&nbsp;€</div><div class="f03-q-rule" style="top: 270px"></div><div class="f03-q-label" style="top: 300px">Nouvelle page</div><div class="f03-q-price" style="top: 303px">600&nbsp;€</div><div class="f03-q-rule" style="top: 366px"></div><div class="f03-q-label" style="top: 396px">Réparer l’automatisation</div><div class="f03-q-price" style="top: 399px">sur devis</div><div class="f03-q-rule" style="top: 462px"></div><div class="f03-q-total" style="top: 506px"><div class="f03-q-micro" style="left: 20px; top: 27px">Total</div><div class="f03-q-totval">1&nbsp;600&nbsp;€</div></div><div class="f03-q-rule" style="top: 920px"></div><div class="f03-paper-light"></div></div></div></div></div>
+            <div class="f03-p" id="f03-p18" data-cx="1830" data-cy="1010" data-r="-6" data-t="2.65" data-sp="0.3" data-dy="0" data-s0="1.28" data-dr="-5" data-d="0.36"><div class="f03-p-sh" style="left: -150.8px; top: -85.4px; width: 345.6px; height: 226.8px"></div><div class="f03-p-body" style="left: -172.8px; top: -113.4px; width: 345.6px; height: 226.8px"><div class="f03-p-face" style="transform: scale(0.54)"><div class="f03-env"><div class="f03-paper-tex"></div><svg class="f03-env-art" width="640" height="420" viewBox="0 0 640 420"><path d="M 0 420 L 268 206 M 640 420 L 372 206" fill="none" stroke="rgba(90,70,50,0.2)" stroke-width="2"></path><path d="M 0 0 L 640 0 L 356 238 Q 320 264 284 238 Z" fill="rgba(120,92,64,0.07)" stroke="rgba(90,70,50,0.3)" stroke-width="2" stroke-linejoin="round"></path><path d="M 6 4 L 284 236" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"></path></svg><div class="f03-paper-light"></div></div></div></div></div>
+
+            <!-- rubber-stamp -->
+            <div id="f03-stamp" class="f03-stamp" style="left: 960px; top: 540px; --f03-stamp-scale: 1;">
+              <svg class="f03-stamp-defs" width="0" height="0" style="position: absolute;" aria-hidden="true" focusable="false">
+                <filter id="f03-stamp-ink" x="-4%" y="-10%" width="108%" height="120%" color-interpolation-filters="sRGB">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed="23" result="warp" />
+                  <feDisplacementMap in="SourceGraphic" in2="warp" scale="9" xChannelSelector="R" yChannelSelector="G" result="rough" />
+                  <feTurbulence type="fractalNoise" baseFrequency="0.02 0.045" numOctaves="2" seed="7" result="blot" />
+                  <feColorMatrix in="blot" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -6.2 0 0 0 5.1" result="blotA" />
+                  <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="1" seed="41" result="speck" />
+                  <feColorMatrix in="speck" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -10 0 0 0 7.3" result="speckA" />
+                  <feComposite in="blotA" in2="speckA" operator="in" result="mask" />
+                  <feComposite in="rough" in2="mask" operator="in" />
+                </filter>
+              </svg>
+              <div class="f03-stamp-rot">
+                <div id="f03-stamp-slam" class="f03-stamp-slam">
+                  <div class="f03-stamp-ink">Stop.</div>
+                </div>
+              </div>
+            </div>
+            <!-- /rubber-stamp -->
+          </div>
+        </div>
+        <div class="f03-falloff"></div>
+        <div id="f03-dim" class="f03-dim"></div>
+
+        <!-- phrase band at the top: « Pendant des années, c’était » + [le prix à payer.] -->
+        <div class="f03-hud">
+          <div class="f03-phrase"><span class="f03-w" data-cue="0.08">Pendant</span> <span class="f03-w" data-cue="0.34">des</span> <span class="f03-w" data-cue="0.54">années,</span> <span class="f03-w" data-cue="0.78">c’était</span> <span class="f03-pill"><span class="f03-seg f03-seg-first" data-cue="1.20"><span class="f03-segbg"></span><span class="f03-segtx"><span class="f03-l">l</span><span class="f03-l">e</span><span class="f03-l">&nbsp;</span><span class="f03-l">p</span><span class="f03-l">r</span><span class="f03-l">i</span><span class="f03-l">x</span></span></span><span class="f03-seg" data-cue="1.30"><span class="f03-segbg"></span><span class="f03-segtx"><span class="f03-l">à</span></span></span><span class="f03-seg f03-seg-last" data-cue="1.46"><span class="f03-segbg"></span><span class="f03-segtx"><span class="f03-l">p</span><span class="f03-l">a</span><span class="f03-l">y</span><span class="f03-l">e</span><span class="f03-l">r</span><span class="f03-l">.</span></span></span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "03-prix";
+      var TOTAL = 3.56;
+      var host = document.querySelector('[data-composition-id="' + FID + '"]') || document;
+      function q(id) { return host.querySelector("#" + id) || document.getElementById(id); }
+      function qa(sel) { return Array.prototype.slice.call(host.querySelectorAll(sel)); }
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ---------- stampSlam: rubber-stamp impact (copied from 02-attente) ----------
+      // slamEl = the .xxx-stamp-slam element (CSS opacity:0), t = start of the drop,
+      // shakeEl = optional full-frame wrapper that takes the 2-frame camera shake. Returns the impact time.
+      function stampSlam(timeline, slamEl, t, shakeEl) {
+        var DROP = 0.12;
+        var F = 1 / 30;
+        timeline.fromTo(slamEl,
+          { scale: 1.35, opacity: 0, filter: "blur(2px)" },
+          { scale: 1, opacity: 0.92, filter: "blur(2px)", duration: DROP, ease: "power4.in", immediateRender: false },
+          t);
+        timeline.fromTo(slamEl,
+          { filter: "blur(2px)" },
+          { filter: "blur(0px)", duration: 0.28, ease: "power2.out", immediateRender: false },
+          t + DROP);
+        if (shakeEl) {
+          timeline.fromTo(shakeEl, { x: 0, y: 0 }, {
+            keyframes: [
+              { x: 4, y: -3, duration: F, ease: "none" },
+              { x: -3, y: 2.5, duration: F, ease: "none" },
+              { x: 0, y: 0, duration: F, ease: "none" }
+            ],
+            immediateRender: false
+          }, t + DROP);
+        }
+        return t + DROP;
+      }
+
+      // ---------- phrase: words on their voice cues (Scene 1) ----------
+      qa(".f03-w").forEach(function (w) {
+        var t = parseFloat(w.getAttribute("data-cue"));
+        tl.fromTo(w,
+          { opacity: 0, y: 12, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+          t);
+      });
+      // traced accent pill: each segment traces from the left, then its letters land (x only)
+      qa(".f03-seg").forEach(function (sg) {
+        var t = parseFloat(sg.getAttribute("data-cue"));
+        var bg = sg.querySelector(".f03-segbg");
+        var solo = sg.classList.contains("f03-seg-solo");
+        var tt = t - (solo ? 0.05 : 0.03);
+        tl.set(bg, { opacity: 1, immediateRender: false }, tt);
+        tl.fromTo(bg, { scaleX: 0 }, { scaleX: 1, duration: solo ? 0.26 : 0.2, ease: "power3.out", immediateRender: false }, tt);
+        var letters = Array.prototype.slice.call(sg.querySelectorAll(".f03-l"));
+        var mid = (letters.length - 1) / 2;
+        letters.forEach(function (l, i) {
+          tl.fromTo(l,
+            { opacity: 0, x: (i - mid) * 7 },
+            { opacity: 1, x: 0, duration: 0.26, ease: "power3.out", immediateRender: false },
+            t + i * 0.012);
+        });
+      });
+
+      // ---------- the pile (Scenes 1-2) ----------
+      // Scene 1: sheets drop from above one after another (slight drift, rotation settle).
+      // Scene 2 (from 1.62): center-outward-expansion, every paper leaves the stage centre at
+      // START_PROGRESS of its offset and lands on its target, power3.out, faster and faster.
+      var CX = 960, CY = 540;
+      qa(".f03-p").forEach(function (p) {
+        var tx = Number(p.dataset.cx) - CX;
+        var ty = Number(p.dataset.cy) - CY;
+        var r = Number(p.dataset.r);
+        gsap.set(p, { x: tx, y: ty, rotation: r });
+        if (p.dataset.t === undefined) return; // already on the desk at t = 0
+        var t = Number(p.dataset.t);
+        var sp = Number(p.dataset.sp);
+        var d = Number(p.dataset.d);
+        tl.set(p, { opacity: 1, immediateRender: false }, t); // arrives opaque: the fast drop reads as a slap, not a fade
+        tl.fromTo(p,
+          { x: tx * sp, y: ty * sp + Number(p.dataset.dy), scale: Number(p.dataset.s0), rotation: r + Number(p.dataset.dr) },
+          { x: tx, y: ty, scale: 1, rotation: r, duration: d, ease: "power3.out", immediateRender: false },
+          t);
+        // the shadow tightens as the sheet reaches the desk
+        tl.fromTo(p.querySelector(".f03-p-sh"),
+          { x: 44, y: 56, opacity: 0.3 },
+          { x: 0, y: 0, opacity: 1, duration: d, ease: "power3.out", immediateRender: false },
+          t);
+        // pain-pill printed on the paper as it lands
+        var pill = p.querySelector(".f03-pp");
+        if (pill) {
+          tl.fromTo(pill,
+            { opacity: 0, scale: 1.3 },
+            { opacity: 1, scale: 1, duration: 0.14, ease: "power4.out", immediateRender: false },
+            Number(pill.dataset.t));
+        }
+      });
+
+      // the lamp pool dims while the pile grows (the room gets heavier)
+      tl.fromTo(q("f03-dim"), { opacity: 0 }, { opacity: 1, duration: 1.4, ease: "power1.inOut", immediateRender: false }, 1.62);
+
+      // ---------- camera: slow creep under the pile, hard kick on STOP., then stillness ----------
+      var CAM = [q("f03-deskcam"), q("f03-cam")];
+      var CAMIN = [q("f03-deskcamin"), q("f03-camin")];
+      // wrappers always carry a transform, so a fresh seek and a revisited seek composite identically
+      gsap.set([q("f03-deskshake"), q("f03-shake")].concat(CAMIN), { x: 0, y: 0 });
+      var SLAM_T = 2.96;
+      var S_END = 1.035;
+      tl.fromTo(CAM, { scale: 1 }, { scale: S_END, duration: SLAM_T + 0.12, ease: "sine.in" }, 0);
+
+      // ---------- Scene 3 (3.05-3.56): giant STOP. stamp slams dead centre (kinetic-beat-slam) ----------
+      var IMPACT = stampSlam(tl, q("f03-stamp-slam"), SLAM_T, [q("f03-deskshake"), q("f03-shake")]); // 3.08
+      tl.fromTo(CAM, { scale: S_END * 1.06, rotation: -0.7 }, { scale: S_END, rotation: 0, duration: 0.4, ease: "power4.out", immediateRender: false }, IMPACT);
+      tl.fromTo(CAMIN, { x: 0, y: 0 }, {
+        keyframes: [
+          { x: 12, y: -9, duration: 1 / 30, ease: "none" },
+          { x: -9, y: 7, duration: 1 / 30, ease: "none" },
+          { x: 5, y: -4, duration: 1 / 30, ease: "none" },
+          { x: -2, y: 1.5, duration: 1 / 30, ease: "none" },
+          { x: 0, y: 0, duration: 1 / 30, ease: "none" }
+        ],
+        immediateRender: false
+      }, IMPACT);
+      // hold still to the end (the orchestrator floods the light at 3.4)
+      tl.set({}, {}, TOTAL);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

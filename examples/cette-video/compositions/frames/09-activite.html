@@ -1,0 +1,497 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url('assets/fonts/SpaceMono-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url('assets/fonts/SpaceMono-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: block; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+    }
+
+    /* ---------- ground-light: full-bleed clip (track 0), never on #root ---------- */
+    #f09-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: #f6f1e9;
+      overflow: hidden;
+    }
+    #f09-warm {
+      position: absolute;
+      left: 310px;
+      top: 200px;
+      width: 1300px;
+      height: 800px;
+      border-radius: 50%;
+      opacity: 0.7;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.1), rgba(194, 91, 40, 0.04) 55%, rgba(194, 91, 40, 0));
+    }
+
+    /* ---------- stage (track 1) ---------- */
+    #f09-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* ---------- persona-toi, center-low (center 960,560) ---------- */
+    .f09-toi {
+      position: absolute;
+      left: 810px;
+      top: 390px;
+      width: 300px;
+      height: 340px;
+      opacity: 0;
+    }
+    .f09-lift {
+      width: 300px;
+      height: 340px;
+    }
+    .f09-persona-toi {
+      width: 300px;
+      height: 340px;
+    }
+    .f09-persona-toi svg {
+      display: block;
+    }
+
+    /* ---------- strings (full-frame SVG, frame coordinates) ---------- */
+    .f09-strings {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: visible;
+      pointer-events: none;
+    }
+    .f09-str {
+      fill: none;
+      stroke: #2e2924;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      opacity: 0;
+    }
+    .f09-burst {
+      opacity: 0;
+    }
+    .f09-burst path {
+      fill: none;
+      stroke: #2e2924;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+    }
+
+    /* ---------- laptop (flat, ink-dark body) + floor shadow ---------- */
+    .f09-shadow {
+      position: absolute;
+      left: 700px;
+      top: 836px;
+      width: 520px;
+      height: 48px;
+      opacity: 0;
+      background: radial-gradient(ellipse closest-side, rgba(60, 40, 20, 0.16), rgba(60, 40, 20, 0.05) 60%, rgba(60, 40, 20, 0));
+    }
+    .f09-laptop {
+      position: absolute;
+      left: 790px;
+      top: 660px;
+      width: 340px;
+      height: 200px;
+      opacity: 0;
+    }
+    .f09-laptop svg {
+      display: block;
+    }
+    .f09-sp {
+      opacity: 0;
+    }
+
+    /* ---------- role-cards (card-light 380x120) ---------- */
+    .f09-mv {
+      position: absolute;
+      width: 380px;
+      height: 120px;
+      transform-origin: 50% 50%;
+    }
+    .f09-card {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 380px;
+      height: 120px;
+      box-sizing: border-box;
+      border-radius: 14px;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      box-shadow: 0 30px 80px rgba(60, 40, 20, 0.14), 0 2px 6px rgba(60, 40, 20, 0.08);
+      opacity: 0;
+      transform-origin: 50% 50%;
+    }
+    .f09-micro {
+      position: absolute;
+      left: 28px;
+      top: 20px;
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 22px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #5a5348;
+      white-space: nowrap;
+    }
+    .f09-title {
+      position: absolute;
+      left: 28px;
+      top: 48px;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      font-size: 44px;
+      line-height: 50px;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f09-eye {
+      position: absolute;
+      top: 52px;
+      width: 16px;
+      height: 16px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      background: #fffdf9;
+      border: 3px solid #2e2924;
+    }
+
+    /* ---------- phrase + word-by-word + traced accent pill ---------- */
+    .f09-phrase {
+      position: absolute;
+      left: 0;
+      top: 110px;
+      width: 1920px;
+      text-align: center;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f09-xu { display: inline-block; }
+    .f09-w { display: inline-block; opacity: 0; }
+    .f09-pill {
+      position: relative;
+      display: inline-block;
+      transform-origin: 0% 55%;
+    }
+    .f09-pillbg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f09-pilltext {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      color: #ffffff;
+    }
+    .f09-pw { display: inline-block; }
+    .f09-l { display: inline-block; opacity: 0; }
+
+    /* ---------- static grain (track 2) ---------- */
+    #f09-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.03;
+      pointer-events: none;
+      background-size: 256px 256px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+  </style>
+
+  <div id="root" data-composition-id="09-activite" data-width="1920" data-height="1080" data-duration="4.75">
+    <div id="f09-ground" class="clip" data-start="0" data-duration="4.75" data-track-index="0">
+      <div id="f09-warm"></div>
+    </div>
+
+    <div id="f09-stage" class="clip" data-start="0" data-duration="4.75" data-track-index="1">
+
+      <!-- persona-toi: entry wrapper > lift wrapper > block -->
+      <div id="f09-toi" class="f09-toi">
+        <div id="f09-lift" class="f09-lift">
+          <!-- persona-toi (the entrepreneur). Self-contained block, 300×340. Shirt #3a322c on dark, #2e2924 on paper. -->
+          <div class="f09-persona-toi">
+            <svg viewBox="0 0 300 340" width="300" height="340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M20 340 L20 298 C20 256 58 230 110 224 L190 224 C242 230 280 256 280 298 L280 340 Z" fill="#2e2924" />
+              <path d="M130 170 L170 170 L170 224 L150 240 L130 224 Z" fill="#d9b294" />
+              <path d="M126 226 L150 252 L174 226" fill="none" stroke="rgba(245,239,231,0.14)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="88" cy="128" r="10" fill="#ddb597" />
+              <circle cx="212" cy="128" r="10" fill="#ddb597" />
+              <circle cx="150" cy="120" r="62" fill="#e8c4a8" />
+              <path d="M88 120 C84 72 114 48 152 48 C194 48 222 74 214 120 C204 98 184 86 160 84 C134 82 106 94 88 120 Z" fill="#2e2924" />
+              <circle cx="130" cy="132" r="5.5" fill="#1a1612" />
+              <circle cx="170" cy="132" r="5.5" fill="#1a1612" />
+            </svg>
+          </div>
+          <!-- /persona-toi -->
+        </div>
+      </div>
+
+      <!-- strings: each one is two halves meeting at its midpoint (A: you -> mid, B: card -> mid) -->
+      <svg class="f09-strings" viewBox="0 0 1920 1080" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path id="f09-dev-a" class="f09-str" d="M 862 642 L 746 586" />
+        <path id="f09-dev-b" class="f09-str" d="M 630 530 L 746 586" />
+        <path id="f09-ag-a" class="f09-str" d="M 990 456 L 1090 383" />
+        <path id="f09-ag-b" class="f09-str" d="M 1190 310 L 1090 383" />
+        <path id="f09-pr-a" class="f09-str" d="M 1058 642 L 1179 641" />
+        <path id="f09-pr-b" class="f09-str" d="M 1300 640 L 1179 641" />
+        <g id="f09-dev-burst" class="f09-burst"><path d="M 741 581 L 735 575 M 751 581 L 757 575 M 741 591 L 735 597 M 751 591 L 757 597" /></g>
+        <g id="f09-ag-burst" class="f09-burst"><path d="M 1085 378 L 1079 372 M 1095 378 L 1101 372 M 1085 388 L 1079 394 M 1095 388 L 1101 394" /></g>
+        <g id="f09-pr-burst" class="f09-burst"><path d="M 1174 636 L 1168 630 M 1184 636 L 1190 630 M 1174 646 L 1168 652 M 1184 646 L 1190 652" /></g>
+      </svg>
+
+      <div id="f09-shadow" class="f09-shadow"></div>
+
+      <!-- laptop: flat #2e2924 body, screen shows the tiny site-mock « Studio Lumen » -->
+      <div id="f09-laptop" class="f09-laptop">
+        <svg viewBox="0 0 340 200" width="340" height="200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="30" y="0" width="280" height="180" rx="12" fill="#2e2924" />
+          <circle cx="170" cy="5" r="1.6" fill="#5a5048" />
+          <rect x="40" y="10" width="260" height="158" rx="5" fill="#f6f1e9" />
+          <path d="M40 28 L40 15 Q40 10 45 10 L295 10 Q300 10 300 15 L300 28 Z" fill="#fffdf9" />
+          <line x1="40" y1="28.5" x2="300" y2="28.5" stroke="#e2d9cc" stroke-width="1" />
+          <circle cx="48" cy="19" r="2.2" fill="#d8cfc3" />
+          <circle cx="55" cy="19" r="2.2" fill="#d8cfc3" />
+          <circle cx="62" cy="19" r="2.2" fill="#d8cfc3" />
+          <rect x="128" y="13.5" width="84" height="11" rx="5.5" fill="#efe7dc" />
+          <text x="170" y="21.6" text-anchor="middle" font-family="Space Mono" font-weight="400" font-size="7.5" fill="#5a5348">ton-site.fr</text>
+
+          <g class="f09-sp" data-t="0.34">
+            <rect x="50" y="36" width="30" height="5" rx="2" fill="#1a1612" />
+            <rect x="236" y="37" width="14" height="3" rx="1.5" fill="rgba(90,83,72,0.3)" />
+            <rect x="254" y="37" width="14" height="3" rx="1.5" fill="rgba(90,83,72,0.3)" />
+            <rect x="272" y="37" width="14" height="3" rx="1.5" fill="rgba(90,83,72,0.3)" />
+          </g>
+          <g class="f09-sp" data-t="0.42">
+            <text x="50" y="66" font-family="Instrument Sans" font-weight="600" font-size="20" fill="#1a1612">Studio Lumen</text>
+          </g>
+          <g class="f09-sp" data-t="0.50">
+            <rect x="50" y="74" width="150" height="4" rx="2" fill="rgba(90,83,72,0.22)" />
+            <rect x="50" y="82" width="104" height="4" rx="2" fill="rgba(90,83,72,0.22)" />
+          </g>
+          <g class="f09-sp" data-t="0.56">
+            <rect x="50" y="93" width="48" height="12" rx="3" fill="#1a1612" />
+          </g>
+          <g class="f09-sp" data-t="0.60">
+            <rect x="50" y="114" width="74" height="44" rx="2" fill="#d8cfc3" />
+            <circle cx="108" cy="125" r="4.5" fill="#ebe3d7" />
+            <path d="M50 158 L73 135 L88 149 L100 140 L124 158 Z" fill="#c8bcad" />
+          </g>
+          <g class="f09-sp" data-t="0.65">
+            <rect x="133" y="114" width="74" height="44" rx="2" fill="#d8cfc3" />
+            <circle cx="150" cy="126" r="5" fill="#ebe3d7" />
+            <path d="M133 158 L160 131 L178 148 L192 138 L207 150 L207 158 Z" fill="#c8bcad" />
+          </g>
+          <g class="f09-sp" data-t="0.70">
+            <rect x="216" y="114" width="74" height="44" rx="2" fill="#d8cfc3" />
+            <circle cx="253" cy="124" r="4" fill="#ebe3d7" />
+            <path d="M216 158 L216 146 L233 138 L252 151 L270 134 L290 148 L290 158 Z" fill="#c8bcad" />
+          </g>
+
+          <rect x="36" y="178" width="268" height="6" fill="#241f1b" />
+          <path d="M0 182 L340 182 L334 194 Q331 200 324 200 L16 200 Q9 200 6 194 Z" fill="#2e2924" />
+          <line x1="4" y1="182.75" x2="336" y2="182.75" stroke="rgba(255,253,249,0.10)" stroke-width="1.5" />
+          <rect x="146" y="182" width="48" height="5" rx="2.5" fill="#1f1a16" />
+        </svg>
+      </div>
+
+      <!-- role-cards: drift wrapper > card (pop), eyelet on the edge facing you -->
+      <div id="f09-dev" class="f09-mv" style="left: 250px; top: 470px;">
+        <div id="f09-dev-card" class="f09-card">
+          <div class="f09-micro">R&Ocirc;LE</div>
+          <div class="f09-title">D&eacute;veloppeur</div>
+          <div class="f09-eye" style="left: 372px;"></div>
+        </div>
+      </div>
+      <div id="f09-ag" class="f09-mv" style="left: 1190px; top: 250px;">
+        <div id="f09-ag-card" class="f09-card">
+          <div class="f09-micro">R&Ocirc;LE</div>
+          <div class="f09-title">Agence</div>
+          <div class="f09-eye" style="left: -8px;"></div>
+        </div>
+      </div>
+      <div id="f09-pr" class="f09-mv" style="left: 1300px; top: 580px;">
+        <div id="f09-pr-card" class="f09-card">
+          <div class="f09-micro">R&Ocirc;LE</div>
+          <div class="f09-title">Prestataire</div>
+          <div class="f09-eye" style="left: -8px;"></div>
+        </div>
+      </div>
+
+      <!-- Scene 1 phrase (exit units wrap each word for the waterfall cut) -->
+      <div id="f09-line1" class="f09-phrase"><span class="f09-xu"><span class="f09-w" data-cue="0.10">C&rsquo;est</span></span> <span class="f09-xu"><span class="f09-w" data-cue="0.36">ce</span></span> <span class="f09-xu"><span class="f09-w" data-cue="0.46">qu&rsquo;on</span></span> <span class="f09-xu"><span class="f09-w" data-cue="0.60">t&rsquo;apprend,</span></span> <span class="f09-xu"><span id="f09-pill1" class="f09-pill"><span id="f09-pillbg1" class="f09-pillbg"></span><span class="f09-pilltext"><span class="f09-pw" data-cue="0.90"><span class="f09-l">s</span><span class="f09-l">u</span><span class="f09-l">r</span></span> <span class="f09-pw" data-cue="1.12"><span class="f09-l">t</span><span class="f09-l">o</span><span class="f09-l">n</span></span> <span class="f09-pw" data-cue="1.32"><span class="f09-l">a</span><span class="f09-l">c</span><span class="f09-l">t</span><span class="f09-l">i</span><span class="f09-l">v</span><span class="f09-l">i</span><span class="f09-l">t</span><span class="f09-l">&eacute;</span><span class="f09-l">.</span></span></span></span></span></div>
+
+      <!-- Scene 2 phrase, same slot -->
+      <div id="f09-line2" class="f09-phrase"><span class="f09-w" data-cue="2.36">Pour</span> <span class="f09-w" data-cue="2.48">que</span> <span class="f09-w" data-cue="2.66">tu</span> <span class="f09-w" data-cue="2.76">ne</span> <span class="f09-w" data-cue="2.84">d&eacute;pendes</span> <span class="f09-w" data-cue="3.16">plus</span> <span id="f09-pill2" class="f09-pill"><span id="f09-pillbg2" class="f09-pillbg"></span><span class="f09-pilltext"><span class="f09-pw" data-cue="3.32"><span class="f09-l">d</span><span class="f09-l">e</span></span> <span class="f09-pw" data-cue="3.52"><span class="f09-l">p</span><span class="f09-l">e</span><span class="f09-l">r</span><span class="f09-l">s</span><span class="f09-l">o</span><span class="f09-l">n</span><span class="f09-l">n</span><span class="f09-l">e</span><span class="f09-l">.</span></span></span></span></div>
+    </div>
+
+    <div id="f09-grain" class="clip" data-start="0" data-duration="4.75" data-track-index="2"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "09-activite";
+      var DUR = 4.15;
+      function $(id) { return document.getElementById("f09-" + id); }
+      function all(scope, sel) { return Array.prototype.slice.call(scope.querySelectorAll(sel)); }
+
+      var tl = gsap.timeline({ paused: true });
+      // Every tween is an explicit fromTo that never renders before its own start.
+      function ft(el, from, to, at) {
+        to.immediateRender = false;
+        tl.fromTo(el, from, to, at);
+      }
+
+      // Straight strings: measured length (getTotalLength), exact segment length as fallback.
+      function measure(p) {
+        var len = 0;
+        try { len = p.getTotalLength(); } catch (e) { len = 0; }
+        if (!(len > 0)) {
+          var n = p.getAttribute("d").match(/-?\d+(\.\d+)?/g).map(Number);
+          len = Math.sqrt((n[2] - n[0]) * (n[2] - n[0]) + (n[3] - n[1]) * (n[3] - n[1]));
+        }
+        return len;
+      }
+
+      /* ===== Scene 1 (0.00-2.20): you at your laptop, three roles tied to you ===== */
+
+      // hero: persona-toi rises in, the laptop lands in front of him
+      ft($("toi"), { y: 36 }, { y: 0, duration: 0.6, ease: "expo.out" }, 0);
+      ft($("toi"), { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "none" }, 0);
+      ft($("shadow"), { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 0.1);
+      ft($("laptop"), { y: 44 }, { y: 0, duration: 0.6, ease: "expo.out" }, 0.1);
+      ft($("laptop"), { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "none" }, 0.1);
+
+      // the site-mock builds inside the screen
+      all($("laptop"), ".f09-sp").forEach(function (g) {
+        var t = parseFloat(g.getAttribute("data-t"));
+        ft(g, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, t);
+      });
+
+      // word-by-word phrase (both lines), each word on its voice cue
+      all($("stage"), ".f09-w").forEach(function (w) {
+        var t = parseFloat(w.getAttribute("data-cue"));
+        ft(w, { opacity: 0, y: 10, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, Math.max(0, t - 0.02));
+      });
+
+      // accent pill: traces first (scaleX from the left, -8deg -> 0), then each word's letters write inside
+      function pill(n, at) {
+        ft($("pillbg" + n), { scaleX: 0, opacity: 1 }, { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out" }, at);
+        ft($("pill" + n), { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out" }, at);
+        all($("pill" + n), ".f09-pw").forEach(function (pw) {
+          var t = parseFloat(pw.getAttribute("data-cue"));
+          ft(all(pw, ".f09-l"), { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.22, ease: "power3.out", stagger: 0.02 }, t);
+        });
+      }
+      pill(1, 0.86);
+      pill(2, 3.27);
+
+      // constellation: each role-card pops around you, then its string draws you -> card (svg-path-draw);
+      // Scene 2: each string snaps at its cue (halves recoil to their ends = the draw in reverse), the card drifts off.
+      var STRINGS = [
+        { id: "dev", pop: 0.92, snap: 2.84, cx: 440, cy: 530, mx: 746, my: 586, dx: -99, dy: -48, rot: -4 },
+        { id: "ag", pop: 1.12, snap: 3.16, cx: 1380, cy: 310, mx: 1090, my: 383, dx: 108, dy: -28, rot: 3 },
+        { id: "pr", pop: 1.32, snap: 3.52, cx: 1490, cy: 640, mx: 1179, my: 641, dx: 110, dy: -1, rot: 4 }
+      ];
+      STRINGS.forEach(function (s) {
+        var mv = $(s.id);
+        var card = $(s.id + "-card");
+        var A = $(s.id + "-a");
+        var B = $(s.id + "-b");
+        var burst = $(s.id + "-burst");
+        var la = measure(A);
+        var lb = measure(B);
+        A.setAttribute("stroke-dasharray", la + " " + la);
+        A.setAttribute("stroke-dashoffset", String(la));
+        B.setAttribute("stroke-dasharray", lb + " " + lb);
+        B.setAttribute("stroke-dashoffset", String(-lb));
+        gsap.set(B, { svgOrigin: s.cx + " " + s.cy });
+        gsap.set(burst, { svgOrigin: s.mx + " " + s.my });
+
+        // node pops (scale + blur settle, expo.out)
+        ft(card, { scale: 0.84, y: 14, filter: "blur(8px)" }, { scale: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, s.pop);
+        ft(card, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "none" }, s.pop);
+
+        // connector draws hub -> node: half A (you -> mid), then half B (mid -> card eyelet)
+        var D = s.pop + 0.14;
+        ft(A, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, D);
+        ft(A, { attr: { "stroke-dashoffset": la } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.18, ease: "none" }, D);
+        ft(B, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, D + 0.18);
+        ft(B, { attr: { "stroke-dashoffset": -lb } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.26, ease: "power2.out" }, D + 0.18);
+
+        // snap: split at the midpoint, both halves recoil toward their own ends and fade
+        var T = s.snap;
+        ft(A, { attr: { "stroke-dashoffset": 0 } }, { attr: { "stroke-dashoffset": la }, duration: 0.3, ease: "power3.out" }, T);
+        ft(B, { attr: { "stroke-dashoffset": 0 } }, { attr: { "stroke-dashoffset": lb }, duration: 0.3, ease: "power3.out" }, T);
+        ft([A, B], { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power1.in" }, T + 0.05);
+        ft(burst, { opacity: 1, scale: 0.4 }, { opacity: 0, scale: 1.4, duration: 0.28, ease: "power2.out" }, T);
+
+        // the freed card drifts away (its half of the string travels with it), then fades
+        ft(mv, { x: 0, y: 0, rotation: 0 }, { x: s.dx, y: s.dy, rotation: s.rot, duration: 0.6, ease: "power3.out" }, T + 0.02);
+        ft(B, { x: 0, y: 0, rotation: 0 }, { x: s.dx, y: s.dy, rotation: s.rot, duration: 0.6, ease: "power3.out" }, T + 0.02);
+        ft(mv, { opacity: 1 }, { opacity: 0, duration: 0.46, ease: "power1.in" }, T + 0.1);
+      });
+
+      /* ===== Scene 2 (2.20-4.15): the phrase is replaced, the strings snap one by one ===== */
+
+      // waterfall cut: line 1 leaves word by word leftward, the last unit dies right at the cut
+      var XU = all($("line1"), ".f09-xu");
+      var CUT = 2.34;
+      var FADE = 0.18;
+      var STG = 0.022;
+      var FIRST = CUT - FADE - STG * (XU.length - 1);
+      XU.forEach(function (u, i) {
+        var t = FIRST + i * STG;
+        ft(u, { x: 0 }, { x: -230, duration: 0.34, ease: "power4.in" }, t);
+        ft(u, { opacity: 1 }, { opacity: 0, duration: FADE, ease: "power1.in" }, t);
+      });
+
+      // the warm light behind you opens up as you get free
+      ft($("warm"), { opacity: 0.7, scale: 1 }, { opacity: 1, scale: 1.06, duration: 1.1, ease: "power1.out" }, 2.84);
+
+      // once the last string is gone, you straighten up a touch (one move, then hold)
+      ft($("lift"), { y: 0 }, { y: -6, duration: 0.34, ease: "power2.out" }, 3.8);
+
+      // hold to the exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

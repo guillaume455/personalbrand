@@ -1,0 +1,689 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url('assets/fonts/InstrumentSans-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url('assets/fonts/SpaceMono-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url('assets/fonts/SpaceMono-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: block; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+    }
+
+    /* ---------- ground-light: full-bleed clip (track 0), never on #root ---------- */
+    #f06-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: #f6f1e9;
+      overflow: hidden;
+    }
+    #f06-warm {
+      position: absolute;
+      left: 210px;
+      top: 40px;
+      width: 1500px;
+      height: 860px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.09), rgba(194, 91, 40, 0.035) 55%, rgba(194, 91, 40, 0));
+    }
+
+    /* ---------- stage (track 1) ---------- */
+    #f06-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* ---------- phrase + word-by-word + traced accent pill ---------- */
+    .f06-phrase {
+      position: absolute;
+      left: 0;
+      width: 1920px;
+      text-align: center;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    #f06-line1 { top: 170px; }
+    #f06-line2 { top: 636px; }
+    .f06-w { display: inline-block; opacity: 0; }
+    .f06-pill {
+      position: relative;
+      display: inline-block;
+      transform-origin: 0% 55%;
+    }
+    .f06-pillbg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f06-pilltext {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      color: #ffffff;
+    }
+    .f06-pw { display: inline-block; }
+    .f06-l { display: inline-block; opacity: 0; }
+
+    /* ---------- site-mock (440x290 natural, glides to scale .68) ---------- */
+    .f06-site {
+      position: absolute;
+      left: 592px;
+      top: 325px;
+      width: 440px;
+      height: 290px;
+      transform-origin: 50% 50%;
+      z-index: 2;
+    }
+    .f06-browser {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 440px;
+      height: 290px;
+      box-sizing: border-box;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      border-radius: 14px;
+      box-shadow: 0 30px 80px rgba(60, 40, 20, 0.14), 0 2px 6px rgba(60, 40, 20, 0.08);
+      overflow: hidden;
+      opacity: 0;
+    }
+    .f06-topbar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 438px;
+      height: 34px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #e2d9cc;
+    }
+    .f06-dots {
+      position: absolute;
+      left: 14px;
+      top: 12px;
+      display: flex;
+      gap: 6px;
+    }
+    .f06-dots i {
+      display: block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #d8cfc3;
+    }
+    .f06-url {
+      position: absolute;
+      left: 50%;
+      top: 7px;
+      width: 170px;
+      height: 20px;
+      margin-left: -85px;
+      border-radius: 10px;
+      background: #efe7dc;
+      font-family: "Space Mono", monospace;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 20px;
+      text-align: center;
+      color: #5a5348;
+      white-space: nowrap;
+    }
+    .f06-body {
+      position: absolute;
+      left: 0;
+      top: 34px;
+      width: 438px;
+      height: 254px;
+      background: #f6f1e9;
+    }
+    .f06-sp { position: absolute; opacity: 0; }
+    .f06-nav { left: 22px; top: 16px; width: 394px; height: 12px; }
+    .f06-logo-bar {
+      position: absolute;
+      left: 0;
+      top: 1px;
+      width: 58px;
+      height: 10px;
+      border-radius: 3px;
+      background: #1a1612;
+    }
+    .f06-navlinks {
+      position: absolute;
+      right: 0;
+      top: 3px;
+      display: flex;
+      gap: 12px;
+    }
+    .f06-navlinks i {
+      display: block;
+      width: 30px;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(90, 83, 72, 0.3);
+    }
+    .f06-title {
+      left: 22px;
+      top: 38px;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 34px;
+      font-weight: 600;
+      line-height: 40px;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f06-textbars { left: 22px; top: 88px; width: 300px; height: 24px; }
+    .f06-textbars i {
+      position: absolute;
+      left: 0;
+      display: block;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(90, 83, 72, 0.22);
+    }
+    .f06-btn {
+      left: 22px;
+      top: 124px;
+      width: 96px;
+      height: 24px;
+      border-radius: 6px;
+      background: #1a1612;
+    }
+    .f06-img {
+      top: 162px;
+      width: 124px;
+      height: 74px;
+      border-radius: 6px;
+      background: #d8cfc3;
+      overflow: hidden;
+    }
+    .f06-img svg { display: block; width: 124px; height: 74px; }
+
+    /* ---------- tool tiles ---------- */
+    .f06-tools {
+      position: absolute;
+      left: 1070px;
+      top: 372px;
+      width: 196px;
+      height: 196px;
+      transform-origin: 50% 50%;
+      z-index: 3;
+    }
+    .f06-node {
+      position: absolute;
+      width: 88px;
+      height: 88px;
+      opacity: 0;
+    }
+    .f06-tile,
+    .f06-atile {
+      position: absolute;
+      left: 0;
+      top: 0;
+      box-sizing: border-box;
+      background: #ffffff;
+      border: 1px solid #e2d9cc;
+      box-shadow: 0 14px 34px rgba(60, 40, 20, 0.14), 0 2px 6px rgba(60, 40, 20, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .f06-tile { width: 88px; height: 88px; border-radius: 20px; }
+    .f06-tile svg { display: block; width: 50px; height: 50px; overflow: visible; }
+
+    /* ---------- automation chain ---------- */
+    .f06-auto {
+      position: absolute;
+      left: 1348px;
+      top: 434px;
+      width: 344px;
+      height: 72px;
+      transform-origin: 50% 50%;
+      z-index: 4;
+    }
+    .f06-links {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 344px;
+      height: 72px;
+      overflow: visible;
+      z-index: 0;
+    }
+    .f06-links path {
+      fill: none;
+      stroke: #c25b28;
+      stroke-width: 4;
+      stroke-linecap: round;
+      opacity: 0;
+    }
+    .f06-dot {
+      position: absolute;
+      left: 64px;
+      top: 28px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      z-index: 1;
+      background: radial-gradient(circle, #fff3ea 0%, #fff3ea 22%, #e08a5c 48%, #c25b28 80%);
+      box-shadow: 0 0 14px 4px rgba(194, 91, 40, 0.35);
+      opacity: 0;
+    }
+    .f06-anode {
+      position: absolute;
+      top: 0;
+      width: 72px;
+      height: 72px;
+      z-index: 2;
+      opacity: 0;
+    }
+    .f06-atile { width: 72px; height: 72px; border-radius: 16px; }
+    .f06-atile svg { display: block; width: 40px; height: 40px; }
+
+    /* ---------- video-player (card-light, 600x340 drawing shown at 300x170) ---------- */
+    .f06-player {
+      position: absolute;
+      left: 255px;
+      top: 385px;
+      width: 300px;
+      height: 170px;
+      z-index: 2;
+      opacity: 0;
+    }
+    .f06-pl-card {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 600px;
+      height: 340px;
+      box-sizing: border-box;
+      background: #fffdf9;
+      border: 2px solid #e2d9cc;
+      border-radius: 28px;
+      box-shadow: 0 60px 160px rgba(60, 40, 20, 0.14), 0 4px 12px rgba(60, 40, 20, 0.08);
+      transform: scale(0.5);
+      transform-origin: 0 0;
+      overflow: hidden;
+    }
+    .f06-screen {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      width: 568px;
+      height: 226px;
+      border-radius: 16px;
+      background: radial-gradient(ellipse 60% 70% at 50% 58%, rgba(194, 91, 40, 0.34), rgba(194, 91, 40, 0.1) 55%, rgba(194, 91, 40, 0) 100%), #1a1612;
+    }
+    .f06-play {
+      position: absolute;
+      left: 24px;
+      top: 260px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #c25b28;
+    }
+    .f06-play svg { position: absolute; left: 0; top: 0; width: 56px; height: 56px; display: block; }
+    .f06-track {
+      position: absolute;
+      left: 104px;
+      top: 285px;
+      width: 356px;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(155, 146, 137, 0.45);
+    }
+    .f06-played {
+      position: absolute;
+      left: 104px;
+      top: 285px;
+      width: 356px;
+      height: 6px;
+      border-radius: 3px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+    }
+    .f06-head {
+      position: absolute;
+      left: 95px;
+      top: 279px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #c25b28;
+      box-shadow: 0 2px 6px rgba(60, 40, 20, 0.25);
+    }
+    .f06-time {
+      position: absolute;
+      right: 26px;
+      top: 270px;
+      font-family: "Space Mono", monospace;
+      font-size: 26px;
+      font-weight: 400;
+      line-height: 36px;
+      color: #5a5348;
+      white-space: nowrap;
+    }
+
+    /* ---------- equals signs (ink-dark ui, 44px) ---------- */
+    .f06-eq {
+      position: absolute;
+      top: 440px;
+      width: 40px;
+      height: 60px;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 44px;
+      font-weight: 500;
+      line-height: 60px;
+      text-align: center;
+      color: #1a1612;
+      z-index: 5;
+      opacity: 0;
+    }
+
+    /* ---------- static grain (track 2) ---------- */
+    #f06-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.03;
+      pointer-events: none;
+      background-size: 256px 256px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+  </style>
+
+  <div id="root" data-composition-id="06-pareil" data-width="1920" data-height="1080" data-duration="4.95">
+    <div id="f06-ground" class="clip" data-start="0" data-duration="4.95" data-track-index="0">
+      <div id="f06-warm"></div>
+    </div>
+
+    <div id="f06-stage" class="clip" data-start="0" data-duration="4.95" data-track-index="1">
+
+      <!-- Scene 1 phrase, top -->
+      <div id="f06-line1" class="f06-phrase"><span class="f06-w" data-cue="0.20">Ton</span> <span class="f06-w" data-cue="0.40">site,</span> <span class="f06-w" data-cue="0.82">tes</span> <span class="f06-w" data-cue="1.00">outils,</span> <span class="f06-w" data-cue="1.46">tes</span> <span class="f06-w" data-cue="1.58">automatisations&nbsp;:</span></div>
+
+      <!-- site-mock -->
+      <div id="f06-site" class="f06-site">
+        <div id="f06-browser" class="f06-browser">
+          <div class="f06-topbar">
+            <div class="f06-dots"><i></i><i></i><i></i></div>
+            <div class="f06-url">ton-site.fr</div>
+          </div>
+          <div class="f06-body">
+            <div class="f06-sp f06-nav" data-t="0.32">
+              <span class="f06-logo-bar"></span>
+              <span class="f06-navlinks"><i></i><i></i><i></i></span>
+            </div>
+            <div class="f06-sp f06-title" data-t="0.40">Studio Lumen</div>
+            <div class="f06-sp f06-textbars" data-t="0.48">
+              <i style="top: 0px; width: 300px;"></i>
+              <i style="top: 14px; width: 214px;"></i>
+            </div>
+            <div class="f06-sp f06-btn" data-t="0.54"></div>
+            <div class="f06-sp f06-img" data-t="0.58" style="left: 22px;">
+              <svg viewBox="0 0 124 74" xmlns="http://www.w3.org/2000/svg"><circle cx="94" cy="22" r="8" fill="#ebe3d7" /><path d="M0 74 L36 36 L60 58 L80 42 L124 74 Z" fill="#c8bcad" /></svg>
+            </div>
+            <div class="f06-sp f06-img" data-t="0.63" style="left: 156px;">
+              <svg viewBox="0 0 124 74" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="24" r="9" fill="#ebe3d7" /><path d="M0 74 L44 30 L72 56 L96 38 L124 60 L124 74 Z" fill="#c8bcad" /></svg>
+            </div>
+            <div class="f06-sp f06-img" data-t="0.68" style="left: 290px;">
+              <svg viewBox="0 0 124 74" xmlns="http://www.w3.org/2000/svg"><circle cx="62" cy="20" r="7" fill="#ebe3d7" /><path d="M0 74 L0 52 L28 40 L58 60 L90 34 L124 56 L124 74 Z" fill="#c8bcad" /></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- tool tiles (2x2) -->
+      <div id="f06-tools" class="f06-tools">
+        <div id="f06-tg" class="f06-node" style="left: 0px; top: 0px;">
+          <div class="f06-tile">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path class="f06-logo" fill="#EA4335" fill-opacity="0" stroke="#EA4335" stroke-width="0.5" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+          </div>
+        </div>
+        <div id="f06-tn" class="f06-node" style="left: 108px; top: 0px;">
+          <div class="f06-tile">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path class="f06-logo" fill="#000000" fill-opacity="0" stroke="#000000" stroke-width="0.5" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"/></svg>
+          </div>
+        </div>
+        <div id="f06-ts" class="f06-node" style="left: 0px; top: 108px;">
+          <div class="f06-tile">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path class="f06-logo" fill="#635BFF" fill-opacity="0" stroke="#635BFF" stroke-width="0.5" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/></svg>
+          </div>
+        </div>
+        <div id="f06-tm" class="f06-node" style="left: 108px; top: 108px;">
+          <div class="f06-tile">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path class="f06-logo" fill="#6D00CC" fill-opacity="0" stroke="#6D00CC" stroke-width="0.5" stroke-linejoin="round" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1" d="M13.38 3.498c-.27 0-.511.19-.566.465L9.85 18.986a.578.578 0 0 0 .453.678l4.095.826a.58.58 0 0 0 .682-.455l2.963-15.021a.578.578 0 0 0-.453-.678l-4.096-.826a.589.589 0 0 0-.113-.012zm-5.876.098a.576.576 0 0 0-.516.318L.062 17.697a.575.575 0 0 0 .256.774l3.733 1.877a.578.578 0 0 0 .775-.258l6.926-13.781a.577.577 0 0 0-.256-.776L7.762 3.658a.571.571 0 0 0-.258-.062zm11.74.115a.576.576 0 0 0-.576.576v15.426c0 .318.258.578.576.578h4.178a.58.58 0 0 0 .578-.578V4.287a.578.578 0 0 0-.578-.576Z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- automation chain: Gmail -> Make -> Stripe, linked by drawn accent lines -->
+      <div id="f06-auto" class="f06-auto">
+        <svg class="f06-links" viewBox="0 0 344 72" xmlns="http://www.w3.org/2000/svg">
+          <path id="f06-l1" d="M 72 36 L 136 36" stroke-dasharray="64 64" stroke-dashoffset="64" />
+          <path id="f06-l2" d="M 208 36 L 272 36" stroke-dasharray="64 64" stroke-dashoffset="64" />
+        </svg>
+        <div id="f06-dot" class="f06-dot"></div>
+        <div id="f06-a1" class="f06-anode" style="left: 0px;">
+          <div class="f06-atile">
+            <svg viewBox="0 0 24 24" fill="#EA4335" xmlns="http://www.w3.org/2000/svg"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+          </div>
+        </div>
+        <div id="f06-a2" class="f06-anode" style="left: 136px;">
+          <div class="f06-atile">
+            <svg viewBox="0 0 24 24" fill="#6D00CC" xmlns="http://www.w3.org/2000/svg"><path d="M13.38 3.498c-.27 0-.511.19-.566.465L9.85 18.986a.578.578 0 0 0 .453.678l4.095.826a.58.58 0 0 0 .682-.455l2.963-15.021a.578.578 0 0 0-.453-.678l-4.096-.826a.589.589 0 0 0-.113-.012zm-5.876.098a.576.576 0 0 0-.516.318L.062 17.697a.575.575 0 0 0 .256.774l3.733 1.877a.578.578 0 0 0 .775-.258l6.926-13.781a.577.577 0 0 0-.256-.776L7.762 3.658a.571.571 0 0 0-.258-.062zm11.74.115a.576.576 0 0 0-.576.576v15.426c0 .318.258.578.576.578h4.178a.58.58 0 0 0 .578-.578V4.287a.578.578 0 0 0-.578-.576Z"/></svg>
+          </div>
+        </div>
+        <div id="f06-a3" class="f06-anode" style="left: 272px;">
+          <div id="f06-a3t" class="f06-atile">
+            <svg viewBox="0 0 24 24" fill="#635BFF" xmlns="http://www.w3.org/2000/svg"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- video-player (Scene 2) -->
+      <div id="f06-player" class="f06-player">
+        <div class="f06-pl-card">
+          <div class="f06-screen"></div>
+          <div class="f06-play">
+            <svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><path d="M22.5 17.5 L40 28 L22.5 38.5 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round" /></svg>
+          </div>
+          <div class="f06-track"></div>
+          <div id="f06-played" class="f06-played"></div>
+          <div id="f06-head" class="f06-head"></div>
+          <div class="f06-time">0:44</div>
+        </div>
+      </div>
+
+      <!-- equals signs -->
+      <div id="f06-eq1" class="f06-eq" style="left: 589px;">=</div>
+      <div id="f06-eq2" class="f06-eq" style="left: 996px;">=</div>
+      <div id="f06-eq3" class="f06-eq" style="left: 1300px;">=</div>
+
+      <!-- Scene 2 phrase, under the row -->
+      <div id="f06-line2" class="f06-phrase"><span class="f06-w" data-cue="2.66">c’est</span> <span id="f06-pill" class="f06-pill"><span id="f06-pillbg" class="f06-pillbg"></span><span class="f06-pilltext"><span class="f06-pw" data-cue="2.98"><span class="f06-l">e</span><span class="f06-l">x</span><span class="f06-l">a</span><span class="f06-l">c</span><span class="f06-l">t</span><span class="f06-l">e</span><span class="f06-l">m</span><span class="f06-l">e</span><span class="f06-l">n</span><span class="f06-l">t</span></span> <span class="f06-pw" data-cue="3.44"><span class="f06-l">p</span><span class="f06-l">a</span><span class="f06-l">r</span><span class="f06-l">e</span><span class="f06-l">i</span><span class="f06-l">l</span><span class="f06-l">.</span></span></span></span></div>
+    </div>
+
+    <div id="f06-grain" class="clip" data-start="0" data-duration="4.95" data-track-index="2"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "06-pareil";
+      var DUR = 4.45;
+      function $(id) { return document.getElementById("f06-" + id); }
+      function all(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ---------- build-time Scene 1 layout (wrappers hold their row slot in CSS) ---------- */
+      function SITE_FROM() { return { x: -162, y: 50, scale: 1 }; }
+      function TOOLS_FROM() { return { x: -8, y: -70, scale: 1.15 }; }
+      function AUTO_FROM() { return { x: -160, y: 190, scale: 1 }; }
+      gsap.set($("site"), SITE_FROM());
+      gsap.set($("tools"), TOOLS_FROM());
+      gsap.set($("auto"), AUTO_FROM());
+      gsap.set($("played"), { scaleX: 0.34 });
+      gsap.set($("head"), { x: 121 });
+
+      /* ---------- word-by-word phrase (both lines) ---------- */
+      all("#f06-stage .f06-w").forEach(function (w) {
+        var t = parseFloat(w.getAttribute("data-cue"));
+        tl.fromTo(w,
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+          t);
+      });
+
+      /* ===== Scene 1 (0.00-2.50): three objects land one per beat ===== */
+
+      // 0.20 "Ton site": the site-mock lands, then its parts build
+      tl.fromTo($("browser"),
+        { opacity: 0, y: 40, scale: 0.94, filter: "blur(10px)" },
+        { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out", immediateRender: false },
+        0.2);
+      all("#f06-site .f06-sp").forEach(function (el) {
+        var t = parseFloat(el.getAttribute("data-t"));
+        tl.fromTo(el,
+          { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 0.35, ease: "power3.out", immediateRender: false },
+          t);
+      });
+
+      // 0.82 "tes outils": four tool tiles pop, each logo traces its outline then fills (svg-icon-enrichment)
+      var TOOL_T = [0.82, 0.9, 0.98, 1.06];
+      ["tg", "tn", "ts", "tm"].forEach(function (id, i) {
+        var node = $(id);
+        var t = TOOL_T[i];
+        var logo = node.querySelector(".f06-logo");
+        tl.fromTo(node,
+          { opacity: 0, scale: 0.55, y: 18, rotation: -6 },
+          { opacity: 1, scale: 1, y: 0, rotation: 0, duration: 0.5, ease: "expo.out", immediateRender: false },
+          t);
+        tl.fromTo(logo,
+          { attr: { "stroke-dashoffset": 1 } },
+          { attr: { "stroke-dashoffset": 0 }, duration: 0.34, ease: "power2.out", immediateRender: false },
+          t + 0.06);
+        tl.fromTo(logo,
+          { attr: { "fill-opacity": 0 } },
+          { attr: { "fill-opacity": 1 }, duration: 0.22, ease: "power1.out", immediateRender: false },
+          t + 0.28);
+      });
+
+      // 1.46 "tes automatisations": chain tiles land, accent links draw (svg-path-draw), dot travels once
+      var AUTO_T = [1.46, 1.54, 1.62];
+      ["a1", "a2", "a3"].forEach(function (id, i) {
+        tl.fromTo($(id),
+          { opacity: 0, scale: 0.6, y: 14 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "expo.out", immediateRender: false },
+          AUTO_T[i]);
+      });
+      var LINK_T = [1.66, 1.86];
+      ["l1", "l2"].forEach(function (id, i) {
+        var p = $(id);
+        var len = 64;
+        tl.set(p, { opacity: 1 }, LINK_T[i]);
+        tl.fromTo(p,
+          { attr: { "stroke-dashoffset": len } },
+          { attr: { "stroke-dashoffset": 0 }, duration: 0.28, ease: "power2.out", immediateRender: false },
+          LINK_T[i]);
+      });
+
+      // the dot: plain x tweens (no onUpdate, no repeat), Gmail -> under Make -> Stripe
+      var dot = $("dot");
+      tl.fromTo(dot, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, 1.98);
+      tl.fromTo(dot, { x: 0 }, { x: 64, duration: 0.14, ease: "none", immediateRender: false }, 2.0);
+      tl.fromTo(dot, { x: 64 }, { x: 136, duration: 0.1, ease: "none", immediateRender: false }, 2.14);
+      tl.fromTo(dot, { x: 136 }, { x: 200, duration: 0.14, ease: "none", immediateRender: false }, 2.24);
+      tl.fromTo(dot, { opacity: 1, scale: 1 }, { opacity: 0, scale: 1.8, duration: 0.2, ease: "power2.out", immediateRender: false }, 2.38);
+      // arrival: the last tile answers with a small nudge
+      tl.fromTo($("a3t"), { scale: 1 }, { scale: 1.08, duration: 0.12, ease: "power2.out", immediateRender: false }, 2.38);
+      tl.fromTo($("a3t"), { scale: 1.08 }, { scale: 1, duration: 0.28, ease: "power2.inOut", immediateRender: false }, 2.5);
+
+      /* ===== Scene 2 (2.50-4.45): everything lines up with the player ===== */
+
+      // the top phrase moves down and clears (the phrase slot moves under the row)
+      tl.fromTo($("line1"),
+        { y: 0, opacity: 1, filter: "blur(0px)" },
+        { y: 70, opacity: 0, filter: "blur(8px)", duration: 0.24, ease: "power3.in", immediateRender: false },
+        2.44);
+
+      // glide into one row at y 470 (same direction for all: rightward, into slot)
+      var GLIDE = 0.6;
+      tl.fromTo($("site"), SITE_FROM(), { x: 0, y: 0, scale: 0.68, duration: GLIDE, ease: "power3.out", immediateRender: false }, 2.5);
+      tl.fromTo($("tools"), TOOLS_FROM(), { x: 0, y: 0, scale: 1, duration: GLIDE, ease: "power3.out", immediateRender: false }, 2.52);
+      tl.fromTo($("auto"), AUTO_FROM(), { x: 0, y: 0, scale: 0.85, duration: GLIDE, ease: "power3.out", immediateRender: false }, 2.54);
+
+      // the player slides into the first slot from the left
+      tl.fromTo($("player"),
+        { opacity: 0, x: -100, scale: 0.94, filter: "blur(10px)" },
+        { opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out", immediateRender: false },
+        2.56);
+      // the film keeps playing: progress creeps forward, linear, one shot
+      tl.fromTo($("played"), { scaleX: 0.34 }, { scaleX: 0.42, duration: DUR - 2.56, ease: "none", immediateRender: false }, 2.56);
+      tl.fromTo($("head"), { x: 121 }, { x: 149.5, duration: DUR - 2.56, ease: "none", immediateRender: false }, 2.56);
+
+      // accent pill traces first (2 frames before "exactement"), then letters write inside per word
+      var T_PILL = 2.93;
+      tl.fromTo($("pillbg"),
+        { scaleX: 0, opacity: 1 },
+        { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out", immediateRender: false },
+        T_PILL);
+      tl.fromTo($("pill"),
+        { rotation: -8 },
+        { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false },
+        T_PILL);
+      all("#f06-pill .f06-pw").forEach(function (pw) {
+        var t = parseFloat(pw.getAttribute("data-cue"));
+        var letters = Array.prototype.slice.call(pw.querySelectorAll(".f06-l"));
+        tl.fromTo(letters,
+          { opacity: 0, y: 8, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.22, ease: "power3.out", stagger: 0.02, immediateRender: false },
+          t);
+      });
+
+      // "pareil": the = signs land left to right, then the frame holds
+      var EQ_T = [3.4, 3.47, 3.54];
+      ["eq1", "eq2", "eq3"].forEach(function (id, i) {
+        tl.fromTo($(id),
+          { opacity: 0, scale: 0.5, filter: "blur(6px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.32, ease: "power3.out", immediateRender: false },
+          EQ_T[i]);
+      });
+
+      // hold to the exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

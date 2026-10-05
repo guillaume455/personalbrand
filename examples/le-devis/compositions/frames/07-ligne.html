@@ -1,0 +1,628 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ground-light: solid paper + one soft warm radial + grain 3% (full-duration clip, lowest track) */
+    .f07-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #f6f1e9;
+      z-index: 0;
+    }
+    .f07-halo {
+      position: absolute;
+      left: 210px;
+      top: 90px;
+      width: 1500px;
+      height: 900px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.09), rgba(194, 91, 40, 0.04) 50%, rgba(194, 91, 40, 0) 100%);
+      transform-origin: 50% 50%;
+    }
+    .f07-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+    }
+
+    .f07-scene {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+    .f07-scene12 {
+      z-index: 1;
+    }
+    .f07-scene3 {
+      z-index: 2;
+    }
+    .f07-defs {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    /* camera: stage (exit) > zoom-outer (scale) > zoom-inner (counter-translate) */
+    .f07-stage,
+    .f07-zoom-outer,
+    .f07-zoom-inner {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 50% 50%;
+    }
+
+    /* phrase (typography.phrase) */
+    .f07-phrase {
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f07-p1 {
+      position: absolute;
+      left: 0;
+      top: 88px;
+      width: 1920px;
+      text-align: center;
+    }
+    .f07-w {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* accent-pill: the only emphasis mechanism */
+    .f07-pill {
+      position: relative;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+    }
+    .f07-pill-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f07-pill-txt {
+      position: relative;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+    .f07-ch {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* quote-card on the light world (card-light); fixed geometry: the zoom target is derived from it */
+    .f07-card {
+      position: absolute;
+      left: 510px;
+      top: 200px;
+      width: 900px;
+      height: 624px;
+      box-sizing: border-box;
+      border: 1px solid #e2d9cc;
+      border-radius: 14px;
+      background: #fffdf9;
+      box-shadow:
+        0 30px 80px rgba(60, 40, 20, 0.14),
+        0 2px 6px rgba(60, 40, 20, 0.08);
+    }
+    .f07-head {
+      position: absolute;
+      left: 55px;
+      top: 35px;
+      width: 788px;
+      height: 100px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #e2d9cc;
+    }
+    .f07-micro {
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 22px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #5a5348;
+      white-space: nowrap;
+    }
+    .f07-htitle {
+      margin-top: 8px;
+      font-size: 44px;
+      font-weight: 600;
+      line-height: 48px;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f07-rows {
+      position: absolute;
+      left: 55px;
+      top: 135px;
+      width: 788px;
+      height: 272px;
+    }
+    .f07-row {
+      position: relative;
+      height: 68px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #e2d9cc;
+      display: flex;
+      align-items: center;
+    }
+    .f07-x {
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+      margin-right: 16px;
+    }
+    .f07-lblwrap {
+      position: relative;
+      white-space: nowrap;
+    }
+    .f07-lbl {
+      font-size: 28px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: #5a5348;
+      opacity: 0.5;
+    }
+    .f07-strike {
+      position: absolute;
+      left: -5px;
+      right: -5px;
+      top: 50%;
+      height: 3px;
+      margin-top: -1px;
+      border-radius: 2px;
+      background: #c25b28;
+    }
+    .f07-qty {
+      margin-left: 22px;
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #5a5348;
+      opacity: 0.5;
+      white-space: nowrap;
+    }
+    .f07-price {
+      margin-left: auto;
+      font-family: "Space Mono", monospace;
+      font-size: 30px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #c25b28;
+      white-space: nowrap;
+    }
+    .f07-total {
+      position: absolute;
+      left: 55px;
+      top: 482px;
+      width: 788px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+    }
+    .f07-badge {
+      margin-left: auto;
+      padding: 6px 18px;
+      border-radius: 10px;
+      background: #c25b28;
+      font-family: "Space Mono", monospace;
+      font-size: 30px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #ffffff;
+      white-space: nowrap;
+      opacity: 0.3;
+    }
+
+    /* the last line: micro label + accent-bordered glowing slot (card-local 55/472, 788 x 112) */
+    .f07-slot-label {
+      position: absolute;
+      left: 55px;
+      top: 437px;
+    }
+    .f07-slot {
+      position: absolute;
+      left: 55px;
+      top: 471px;
+      width: 788px;
+      height: 112px;
+    }
+    .f07-slot-frame {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 788px;
+      height: 112px;
+      box-sizing: border-box;
+      border: 2px solid #c25b28;
+      border-radius: 12px;
+      background: rgba(194, 91, 40, 0.05);
+      box-shadow:
+        0 0 0 6px rgba(194, 91, 40, 0.07),
+        0 0 40px rgba(212, 112, 63, 0.3);
+      clip-path: inset(-48px 105% -48px -48px);
+      opacity: 0;
+      z-index: 0;
+    }
+    .f07-comet {
+      position: absolute;
+      left: 24px;
+      top: 80px;
+      width: 740px;
+      height: 20px;
+      filter: url(#f07-streak);
+      z-index: 1;
+    }
+    .f07-comet-tail {
+      position: absolute;
+      left: 0;
+      top: 9px;
+      width: 740px;
+      height: 2px;
+      border-radius: 1px;
+      background: linear-gradient(90deg, rgba(194, 91, 40, 0), rgba(194, 91, 40, 0.7) 45%, #c25b28 85%, #e08a5c);
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f07-comet-head {
+      position: absolute;
+      left: 726px;
+      top: 3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff3ea 0%, #fff3ea 18%, #e08a5c 42%, rgba(224, 138, 92, 0) 72%);
+      opacity: 0;
+    }
+    .f07-write {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 788px;
+      height: 112px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .f07-write .f07-phrase {
+      font-size: 25px;
+    }
+    .f07-write .f07-pill-bg {
+      border-radius: 6px;
+    }
+
+    /* Scene 3: clean paper stage, phrase centered */
+    .f07-s3 {
+      position: absolute;
+      left: 0;
+      top: 408px;
+      width: 1920px;
+      height: 128px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="07-ligne" data-width="1920" data-height="1080" data-duration="6.52">
+    <div id="f07-ground" class="clip f07-ground" data-start="0" data-duration="6.52" data-track-index="0">
+      <div id="f07-halo" class="f07-halo"></div>
+      <div class="f07-grain" aria-hidden="true"></div>
+    </div>
+
+    <div id="f07-scene12" class="clip f07-scene f07-scene12" data-start="0" data-duration="3.84" data-track-index="1">
+      <svg class="f07-defs" width="0" height="0" aria-hidden="true" focusable="false">
+        <filter id="f07-streak" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+          <feGaussianBlur id="f07-streak-blur" in="SourceGraphic" stdDeviation="14 0" />
+        </filter>
+      </svg>
+
+      <div id="f07-stage" class="f07-stage">
+        <div id="f07-zoom-outer" class="f07-zoom-outer" data-layout-allow-overflow>
+          <div id="f07-zoom-inner" class="f07-zoom-inner">
+            <div id="f07-p1" class="f07-phrase f07-p1"><span class="f07-w">Il</span> <span class="f07-w">ne</span> <span class="f07-w">reste</span> <span id="f07-pill1" class="f07-pill"><span class="f07-pill-bg"></span><span class="f07-pill-txt"><span id="f07-pw-quune" class="f07-pw">qu’une</span> <span id="f07-pw-ligne" class="f07-pw">ligne</span></span></span> <span class="f07-w">sur</span> <span class="f07-w">le</span> <span class="f07-w">devis.</span></div>
+
+            <div id="f07-card" class="f07-card">
+              <div id="f07-head" class="f07-head">
+                <div class="f07-micro">Devis N°&nbsp;0147</div>
+                <div class="f07-htitle">Prestations web</div>
+              </div>
+
+              <div id="f07-rows" class="f07-rows">
+                <div class="f07-row">
+                  <svg class="f07-x" viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 3.5L14.5 14.5M14.5 3.5L3.5 14.5" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round" fill="none" /></svg>
+                  <span class="f07-lblwrap"><span class="f07-lbl">Modification sur ton site</span><i class="f07-strike"></i></span>
+                  <span class="f07-qty">1&nbsp;jour</span>
+                  <span class="f07-price">toi</span>
+                </div>
+                <div class="f07-row">
+                  <svg class="f07-x" viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 3.5L14.5 14.5M14.5 3.5L3.5 14.5" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round" fill="none" /></svg>
+                  <span class="f07-lblwrap"><span class="f07-lbl">Nouvelle page</span><i class="f07-strike"></i></span>
+                  <span class="f07-price">toi</span>
+                </div>
+                <div class="f07-row">
+                  <svg class="f07-x" viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 3.5L14.5 14.5M14.5 3.5L3.5 14.5" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round" fill="none" /></svg>
+                  <span class="f07-lblwrap"><span class="f07-lbl">Réparer l’automatisation</span><i class="f07-strike"></i></span>
+                  <span class="f07-price">toi</span>
+                </div>
+                <div class="f07-row">
+                  <svg class="f07-x" viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 3.5L14.5 14.5M14.5 3.5L3.5 14.5" stroke="#c25b28" stroke-width="2.6" stroke-linecap="round" fill="none" /></svg>
+                  <span class="f07-lblwrap"><span class="f07-lbl">Délai</span><i class="f07-strike"></i></span>
+                  <span class="f07-price">maintenant</span>
+                </div>
+              </div>
+
+              <div id="f07-total" class="f07-total">
+                <span class="f07-micro">Total</span>
+                <span class="f07-badge">1&nbsp;600&nbsp;€</span>
+              </div>
+
+              <div id="f07-slot-label" class="f07-micro f07-slot-label">LA SEULE LIGNE QUI RESTE</div>
+              <div id="f07-slot" class="f07-slot">
+                <div id="f07-slot-frame" class="f07-slot-frame"></div>
+                <div id="f07-comet" class="f07-comet">
+                  <div id="f07-comet-tail" class="f07-comet-tail"></div>
+                  <div id="f07-comet-head" class="f07-comet-head"></div>
+                </div>
+                <div class="f07-write">
+                  <div id="f07-p2" class="f07-phrase"><span class="f07-w">Apprendre</span> <span class="f07-w">à</span> <span id="f07-pill2" class="f07-pill"><span class="f07-pill-bg"></span><span class="f07-pill-txt"><span id="f07-pw-ten" class="f07-pw">t’en</span> <span id="f07-pw-servir" class="f07-pw">servir</span></span></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="f07-scene3" class="clip f07-scene f07-scene3" data-start="3.78" data-duration="2.74" data-track-index="2">
+      <div id="f07-s3" class="f07-s3">
+        <div id="f07-p3" class="f07-phrase"><span class="f07-w">C’est</span> <span class="f07-w">la</span> <span class="f07-w">seule</span> <span class="f07-w">qui</span> <span class="f07-w">te</span> <span class="f07-w">rend</span> <span id="f07-pill3" class="f07-pill"><span class="f07-pill-bg"></span><span class="f07-pill-txt"><span id="f07-pw-libre" class="f07-pw">libre.</span></span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var W = 1920;
+      var H = 1080;
+      var byId = function (id) {
+        return document.getElementById(id);
+      };
+      var all = function (sel) {
+        return Array.prototype.slice.call(document.querySelectorAll(sel));
+      };
+
+      // split a text element into per-character spans (class f07-ch, hidden in CSS); spaces stay text nodes
+      function splitChars(el) {
+        var text = el.textContent;
+        var out = [];
+        el.textContent = "";
+        for (var i = 0; i < text.length; i++) {
+          var ch = text.charAt(i);
+          if (ch === " ") {
+            el.appendChild(document.createTextNode(" "));
+            continue;
+          }
+          var s = document.createElement("span");
+          s.className = "f07-ch";
+          s.textContent = ch;
+          el.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      }
+
+      var tl = gsap.timeline({ paused: true });
+
+      // word-by-word (frame.md): each word lands on its voice timestamp
+      function wordIn(el, at) {
+        tl.fromTo(
+          el,
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" },
+          at
+        );
+      }
+
+      // accent-pill: the pill traces first (scaleX from the left, rotation -8 -> 0), then its letters write inside
+      function pillIn(pillId, at, groups) {
+        var bg = byId(pillId).querySelector(".f07-pill-bg");
+        tl.fromTo(bg, { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none" }, at);
+        tl.fromTo(bg, { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out" }, at);
+        tl.fromTo(bg, { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out" }, at);
+        groups.forEach(function (g) {
+          splitChars(byId(g.id)).forEach(function (c, i) {
+            tl.fromTo(c, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.18, ease: "power3.out" }, g.at + i * 0.02);
+          });
+        });
+      }
+
+      // ---------- Scene 1 (0.00-2.10): struck quote on paper, phrase word by word, the last row assembles ----------
+      var p1Words = all("#f07-p1 .f07-w"); // Il, ne, reste, sur, le, devis.
+      var P1_CUES = [0.08, 0.24, 0.44, 1.14, 1.36, 1.52];
+      p1Words.forEach(function (w, i) {
+        wordIn(w, P1_CUES[i]);
+      });
+      pillIn("f07-pill1", 0.58, [
+        { id: "f07-pw-quune", at: 0.74 },
+        { id: "f07-pw-ligne", at: 0.96 }
+      ]);
+
+      // the dimmed total gives way; the new last row assembles at the bottom of the card
+      var ROW_AT = 1.2;
+      tl.to("#f07-total", { opacity: 0, y: 8, duration: 0.24, ease: "power2.in" }, ROW_AT - 0.02);
+      tl.set("#f07-slot-frame", { opacity: 1 }, ROW_AT + 0.02);
+      tl.fromTo(
+        "#f07-slot-frame",
+        { clipPath: "inset(-48px 105% -48px -48px)" },
+        { clipPath: "inset(-48px -6% -48px -48px)", duration: 0.5, ease: "power3.out" },
+        ROW_AT + 0.02
+      );
+      splitChars(byId("f07-slot-label")).forEach(function (c, i) {
+        tl.fromTo(c, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.16, ease: "power3.out" }, ROW_AT + 0.16 + i * 0.02);
+      });
+
+      // ---------- Scene 2 (2.10-3.60): coordinate-target-zoom into the last line ----------
+      // Fixed geometry (see CSS): card 510/200, slot at card-local (55, 471) + 1px card border, 788 x 112
+      // -> slot center (960, 728). Nested wrappers: outer scales about (960, 540), inner counter-translates T = -offset.
+      var SLOT_W = 788;
+      var SLOT_H = 112;
+      var TARGET_OFFSET_X = 510 + 1 + 55 + SLOT_W / 2 - W / 2; // 0 (1px border included)
+      var TARGET_OFFSET_Y = 200 + 1 + 471 + SLOT_H / 2 - H / 2; // 188
+      var MAX_SCALE = Math.min((0.88 * W) / SLOT_W, (0.88 * H) / SLOT_H); // headroom budget, ~2.144
+      var ZOOM_SCALE = Math.min(2.14, MAX_SCALE); // slot text 25px -> ~54px (phrase size) at rest
+      var ZOOM_AT = 2.1;
+      var ZOOM_DUR = 0.9;
+
+      tl.fromTo(
+        "#f07-zoom-outer",
+        { scale: 1 },
+        { scale: ZOOM_SCALE, duration: ZOOM_DUR, ease: "power3.inOut", force3D: false, immediateRender: false },
+        ZOOM_AT
+      );
+      tl.fromTo(
+        "#f07-zoom-inner",
+        { x: 0, y: 0 },
+        { x: -TARGET_OFFSET_X, y: -TARGET_OFFSET_Y, duration: ZOOM_DUR, ease: "power3.inOut", force3D: false, immediateRender: false },
+        ZOOM_AT
+      );
+      tl.to("#f07-p1", { opacity: 0, duration: 0.4, ease: "power2.out" }, ZOOM_AT);
+      tl.to(["#f07-head", "#f07-rows"], { opacity: 0.4, duration: 0.6, ease: "power2.out" }, ZOOM_AT);
+      tl.fromTo("#f07-halo", { scale: 1 }, { scale: 1.3, duration: ZOOM_DUR, ease: "power3.inOut", immediateRender: false }, ZOOM_AT);
+
+      // the line writes itself word by word inside the slot
+      var p2Words = all("#f07-p2 .f07-w"); // Apprendre, à
+      var P2_CUES = [2.26, 2.6];
+      p2Words.forEach(function (w, i) {
+        wordIn(w, P2_CUES[i]);
+      });
+      pillIn("f07-pill2", 2.66, [
+        { id: "f07-pw-ten", at: 2.82 },
+        { id: "f07-pw-servir", at: 2.92 }
+      ]);
+
+      // motion-blur-streak (path A): a terracotta comet streaks behind the words; X-only blur rides
+      // the same window + ease as the move and resolves to 0 at the settle
+      var blurNode = byId("f07-streak-blur");
+      var PEAK_BLUR = 14;
+      var COMET_AT = 2.3;
+      var COMET_DUR = 0.55;
+      var TRACK_W = 740;
+      var blurProxy = { v: PEAK_BLUR };
+      var writeBlur = function () {
+        blurNode.setAttribute("stdDeviation", blurProxy.v.toFixed(2) + " 0");
+      };
+      writeBlur();
+      tl.fromTo("#f07-comet-head", { x: -TRACK_W, opacity: 0 }, { x: 0, opacity: 1, duration: COMET_DUR, ease: "expo.out" }, COMET_AT);
+      tl.fromTo("#f07-comet-tail", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: COMET_DUR, ease: "expo.out" }, COMET_AT);
+      tl.fromTo(blurProxy, { v: PEAK_BLUR }, { v: 0, duration: COMET_DUR, ease: "expo.out", onUpdate: writeBlur }, COMET_AT);
+      tl.to("#f07-comet-tail", { opacity: 0.4, duration: 0.5, ease: "power2.out" }, COMET_AT + COMET_DUR + 0.15);
+
+      // ---------- Scene 3 (3.60-5.92): inverse zoom-through to a clean paper stage, then a still hold ----------
+      var EXIT_AT = 3.62;
+      var CUT = 3.82;
+      var CUT_BLUR = 10; // text-scale subject: same peak blur on both sides of the cut
+      // exit: the zoomed line recedes (scale/blur power3.in, opacity linear on its own tween)
+      tl.fromTo(
+        "#f07-stage",
+        { scale: 1, filter: "blur(0px)" },
+        { scale: 0.8, filter: "blur(" + CUT_BLUR + "px)", duration: CUT - EXIT_AT, ease: "power3.in", immediateRender: false },
+        EXIT_AT
+      );
+      tl.fromTo("#f07-stage", { opacity: 1 }, { opacity: 0.15, duration: CUT - EXIT_AT, ease: "none", immediateRender: false }, EXIT_AT);
+      tl.set("#f07-stage", { opacity: 0 }, CUT);
+
+      // entry: the phrase arrives oversized and retracts into the focal plane (values match at the cut)
+      var p3Words = all("#f07-p3 .f07-w"); // C’est, la, seule, qui, te, rend
+      tl.set(p3Words[0], { opacity: 1 }, CUT); // « C’est » rides the inverse zoom-through in (cue 3.86)
+      tl.fromTo(
+        "#f07-s3",
+        { opacity: 0.15, scale: 1.25, filter: "blur(" + CUT_BLUR + "px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false },
+        CUT
+      );
+      tl.to("#f07-halo", { y: -68, scale: 1.1, duration: 0.5, ease: "expo.out" }, CUT);
+
+      var P3_CUES = [4.06, 4.28, 4.46, 4.64, 4.82];
+      p3Words.slice(1).forEach(function (w, i) {
+        wordIn(w, P3_CUES[i]);
+      });
+      pillIn("f07-pill3", 4.9, [{ id: "f07-pw-libre", at: 5.06 }]);
+
+      // still hold to the end of the frame
+      tl.set({}, {}, 5.92);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["07-ligne"] = tl;
+    })();
+  </script>
+</template>

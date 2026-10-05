@@ -1,0 +1,600 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+    }
+
+    /* ---------- ground-light (track 0, full duration) ---------- */
+    #f05-ground {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: #f6f1e9;
+      overflow: hidden;
+    }
+    #f05-ground-warm {
+      position: absolute;
+      left: 260px;
+      top: -80px;
+      width: 1400px;
+      height: 1000px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.09), rgba(194, 91, 40, 0.04) 55%, rgba(194, 91, 40, 0));
+    }
+
+    /* ---------- scene (track 1, full duration) ---------- */
+    #f05-scene {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* Scene 1: giant word */
+    #f05-s1 {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #f05-giant-wrap {
+      position: absolute;
+      left: 0;
+      top: 303px;
+      width: 1920px;
+      height: 234px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #f05-giant {
+      display: block;
+      flex: 0 0 auto;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 700;
+      font-size: 260px;
+      line-height: 0.9;
+      letter-spacing: -13px;
+      padding-right: 13px;
+      white-space: nowrap;
+      color: #1a1612;
+      opacity: 0;
+    }
+
+    /* Scene 2: code-window (card-light on paper) */
+    #f05-win {
+      position: absolute;
+      left: 360px;
+      top: 270px;
+      width: 1200px;
+      height: 300px;
+      box-sizing: border-box;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      border-radius: 14px;
+      box-shadow: 0 30px 80px rgba(60, 40, 20, 0.14), 0 2px 6px rgba(60, 40, 20, 0.08);
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    #f05-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1198px;
+      height: 56px;
+      border-bottom: 1px solid #e2d9cc;
+    }
+    .f05-dot {
+      position: absolute;
+      top: 22px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #e2d9cc;
+    }
+    .f05-title {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1198px;
+      height: 56px;
+      box-sizing: border-box;
+      padding-left: 0.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 24px;
+      letter-spacing: 0.2em;
+      white-space: pre;
+      color: #5a5348;
+    }
+    .f05-tc {
+      display: inline-block;
+    }
+    #f05-title-fr .f05-tc {
+      opacity: 0;
+    }
+
+    /* code lines (canonical lines 1 and 2) */
+    #f05-code {
+      position: absolute;
+      left: 56px;
+      top: 139px;
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 26px;
+      line-height: 39px;
+      color: #1a1612;
+    }
+    .f05-cl {
+      display: block;
+      height: 39px;
+      white-space: pre;
+    }
+    .f05-ln {
+      display: inline-block;
+      width: 32px;
+      margin-right: 28px;
+      text-align: right;
+      color: #9b9289;
+    }
+    .f05-cc {
+      display: inline-block;
+      white-space: pre;
+    }
+    .f05-kw {
+      color: #d4703f;
+    }
+
+    /* the decoded French sentence (ui, a bit larger) */
+    #f05-sent {
+      position: absolute;
+      left: 0;
+      top: 152px;
+      width: 1198px;
+      height: 52px;
+      text-align: center;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 500;
+      font-size: 40px;
+      line-height: 52px;
+      white-space: nowrap;
+      color: #1a1612;
+    }
+    .f05-s {
+      display: inline-block;
+      position: relative;
+      opacity: 0;
+    }
+    .f05-sg {
+      visibility: hidden;
+      white-space: pre;
+    }
+    .f05-sl {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 2em;
+      margin-left: -1em;
+      text-align: center;
+      white-space: pre;
+    }
+
+    /* Phrase, lower-center, word by word + accent pill */
+    #f05-phrase {
+      position: absolute;
+      left: 0;
+      top: 700px;
+      width: 1920px;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 14px;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      font-size: 54px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f05-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    #f05-pill {
+      display: inline-block;
+      position: relative;
+      margin-left: 2px;
+      padding: 0.06em 0.32em;
+      transform-origin: 0% 50%;
+    }
+    #f05-pill-bg {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    #f05-pill-txt {
+      position: relative;
+      display: inline-block;
+      color: #ffffff;
+    }
+    .f05-ch {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* ---------- grain (track 2, full duration) ---------- */
+    #f05-grain {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='220' height='220' filter='url(%23g)'/></svg>");
+      background-size: 220px 220px;
+    }
+  </style>
+
+  <div id="root" data-composition-id="05-aujourdhui" data-width="1920" data-height="1080" data-duration="3.6">
+    <div id="f05-ground" class="clip" data-start="0" data-duration="3.6" data-track-index="0" data-layout-ignore>
+      <div id="f05-ground-warm" data-layout-ignore></div>
+    </div>
+
+    <div id="f05-scene" class="clip" data-start="0" data-duration="3.6" data-track-index="1">
+      <!-- Scene 1 (0.00 to 1.05): giant word -->
+      <div id="f05-s1">
+        <div id="f05-giant-wrap">
+          <div id="f05-giant">Aujourd’hui,</div>
+        </div>
+      </div>
+
+      <!-- Scene 2 (1.05 to 3.10): code-window decoding into French -->
+      <div id="f05-win">
+        <div id="f05-bar">
+          <span class="f05-dot" style="left: 24px"></span>
+          <span class="f05-dot" style="left: 44px"></span>
+          <span class="f05-dot" style="left: 64px"></span>
+          <div id="f05-title-code" class="f05-title"></div>
+          <div id="f05-title-fr" class="f05-title"></div>
+        </div>
+        <div id="f05-code">
+          <div id="f05-cl-0" class="f05-cl"></div>
+          <div id="f05-cl-1" class="f05-cl"></div>
+        </div>
+        <div id="f05-sent"></div>
+      </div>
+
+      <div id="f05-phrase">
+        <span id="f05-w0" class="f05-w">l’ordinateur</span>
+        <span id="f05-w1" class="f05-w">parle</span>
+        <span id="f05-pill">
+          <span id="f05-pill-bg"></span>
+          <span id="f05-pill-txt"><span class="f05-ch">t</span><span class="f05-ch">a</span><span class="f05-ch">&nbsp;</span><span class="f05-ch">l</span><span class="f05-ch">a</span><span class="f05-ch">n</span><span class="f05-ch">g</span><span class="f05-ch">u</span><span class="f05-ch">e</span><span class="f05-ch">.</span></span>
+        </span>
+      </div>
+    </div>
+
+    <div id="f05-grain" class="clip" data-start="0" data-duration="3.6" data-track-index="2" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      // Frame-local cues (voice: Aujourd'hui@0.30 l'ordinateur@1.17 parle@1.84 ta@2.12 langue@2.30)
+      var T_GIANT = 0.3; // giant lands on "Aujourd'hui"
+      var T_CUT = 1.05; // hard-cut swap to the code-window
+      var T_DEC = 1.2; // decode wave starts
+      var T_W = [1.17, 1.84]; // l'ordinateur, parle
+      var T_PILL = 2.06; // pill traces 2 frames before "ta" @2.12
+      var T_CHARS = 2.16; // then "ta langue." writes inside
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ================= Scene 1 (0.00 to 1.05): giant « Aujourd'hui, » ================= */
+
+      // giant-word tracking via per-letter x transforms (never tween letterSpacing)
+      var trackChars = function (root) {
+        var t = root.textContent;
+        root.textContent = "";
+        var out = [];
+        for (var i = 0; i < t.length; i++) {
+          var s = document.createElement("span");
+          s.style.display = "inline-block";
+          s.style.whiteSpace = "pre";
+          s.textContent = t[i];
+          root.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      };
+      var trackIn = function (chars, spread, dur, ease, at) {
+        var n = chars.length;
+        chars.forEach(function (c, i) {
+          tl.fromTo(c, { x: (i - (n - 1) / 2) * spread }, { x: 0, duration: dur, ease: ease, immediateRender: false }, at);
+        });
+      };
+      // tracking 0.35em -> -0.05em (0.4em at 260px = 104px per letter step), opacity + blur 12 -> 0, 0.5s expo.out
+      tl.fromTo(
+        $("f05-giant"),
+        { opacity: 0, filter: "blur(12px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false },
+        T_GIANT,
+      );
+      trackIn(trackChars($("f05-giant")), 104, 0.5, "expo.out", T_GIANT);
+
+      /* ================= Seam: instant hard cut at full opacity ================= */
+      tl.set($("f05-s1"), { opacity: 0 }, T_CUT);
+      var win = $("f05-win");
+      tl.set(win, { opacity: 1 }, T_CUT);
+      tl.fromTo(win, { scale: 1.02 }, { scale: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, T_CUT);
+
+      /* ================= Scene 2 (1.05 to 3.10): hacker-flip-3d decode ================= */
+
+      var CODE = [
+        [
+          ["const", 1],
+          [" page = ", 0],
+          ["await", 1],
+          [" build(site.routes);", 0],
+        ],
+        [
+          ["if", 1],
+          [" (!page.ok) ", 0],
+          ["return", 1],
+          [" retry(site);", 0],
+        ],
+      ];
+      var SENT = "Ajoute un bouton de réservation sur ma page d’accueil.";
+      var TITLE_CODE = "CODE";
+      var TITLE_FR = "FRANÇAIS";
+
+      // glyph pool = the characters of the code itself
+      var POOL = "";
+      var POOL_UP = "";
+      CODE.forEach(function (line) {
+        line.forEach(function (tok) {
+          for (var k = 0; k < tok[0].length; k++) {
+            var c = tok[0].charAt(k);
+            if (c !== " " && POOL.indexOf(c) < 0) POOL += c;
+            var u = c.toUpperCase();
+            if (/[A-Z]/.test(u) && POOL_UP.indexOf(u) < 0) POOL_UP += u;
+          }
+        });
+      });
+
+      // index-seeded hash: the same char + the same quantized time always yields the same glyph
+      function glyph(pool, seed) {
+        var h = ((seed * 9301 + 49297) % 233280) / 233280;
+        return pool.charAt(Math.floor(h * pool.length));
+      }
+
+      // seek-safe proxy: GSAP tweens `p`, the setter writes the DOM (no onUpdate)
+      function makeProxy(render) {
+        var v = 0;
+        var o = {};
+        Object.defineProperty(o, "p", {
+          get: function () {
+            return v;
+          },
+          set: function (n) {
+            v = n;
+            render(n);
+          },
+          enumerable: true,
+          configurable: true,
+        });
+        return o;
+      }
+
+      var STEP = 0.1; // one glyph swap every 3 frames at 30 fps
+      var PERSP = 420;
+      var HINGE = "50% 85%";
+
+      // wave: a left-to-right front across the window body (window-local x, px/s)
+      var X0 = 56;
+      var V = 1900;
+      var LAG = 0.12; // the French flap rises as the code flap falls
+      function waveT(x) {
+        return T_DEC + Math.max(0, x - X0) / V;
+      }
+
+      // --- outgoing flap: scramble in place, then fall away (code chars, line numbers, title CODE) ---
+      var C_DUR = 0.28;
+      function flapOut(el, orig, seed, pool, t0, scramble, fallAt, fallDur) {
+        gsap.set(el, { transformPerspective: PERSP, transformOrigin: HINGE });
+        if (scramble) {
+          var px = makeProxy(function (n) {
+            el.textContent = n <= 0 ? orig : glyph(pool, seed + Math.floor((n * C_DUR) / STEP) * 977);
+          });
+          tl.fromTo(px, { p: 0 }, { p: 1, duration: C_DUR, ease: "none", immediateRender: false }, t0);
+        }
+        tl.fromTo(
+          el,
+          { rotationX: 0, opacity: 1 },
+          { rotationX: -90, opacity: 0, duration: fallDur, ease: "power2.in", immediateRender: false },
+          fallAt,
+        );
+      }
+
+      // --- incoming flap: rise from 90deg while cycling code glyphs, then click onto the target ---
+      function flapIn(slot, live, target, seed, pool, t0, dur, reveal) {
+        gsap.set(slot, { transformPerspective: PERSP, transformOrigin: HINGE });
+        var px = makeProxy(function (n) {
+          var t = n * dur;
+          live.textContent = t < reveal ? glyph(pool, seed + Math.floor(t / STEP) * 977) : target;
+        });
+        tl.fromTo(px, { p: 0 }, { p: 1, duration: dur, ease: "none", immediateRender: false }, t0);
+        tl.fromTo(slot, { rotationX: 90 }, { rotationX: 0, duration: dur, ease: "power3.out", immediateRender: false }, t0);
+        tl.fromTo(slot, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "none", immediateRender: false }, t0);
+      }
+
+      // build the two canonical code lines (Space Mono, keywords in accent-light)
+      var CODE_X = 56 + 60; // body padding + gutter
+      var ADV = 15.91; // Space Mono advance at 26px
+      var seedBase = 11;
+      for (var L = 0; L < CODE.length; L++) {
+        var lineEl = $("f05-cl-" + L);
+        var ln = document.createElement("span");
+        ln.className = "f05-ln";
+        ln.textContent = String(L + 1);
+        lineEl.appendChild(ln);
+        var lnT = waveT(72) + L * 0.04;
+        gsap.set(ln, { transformPerspective: PERSP, transformOrigin: HINGE });
+        tl.fromTo(
+          ln,
+          { rotationX: 0, opacity: 1 },
+          { rotationX: -90, opacity: 0, duration: 0.16, ease: "power2.in", immediateRender: false },
+          lnT + 0.06,
+        );
+
+        var j = 0;
+        CODE[L].forEach(function (tok) {
+          for (var k = 0; k < tok[0].length; k++) {
+            var ch = tok[0].charAt(k);
+            var cs = document.createElement("span");
+            cs.className = tok[1] ? "f05-cc f05-kw" : "f05-cc";
+            cs.textContent = ch;
+            lineEl.appendChild(cs);
+            if (ch !== " ") {
+              var t = waveT(CODE_X + (j + 0.5) * ADV) + L * 0.04;
+              flapOut(cs, ch, seedBase + (L * 64 + j) * 131, POOL, t, true, t + LAG, 0.16);
+            }
+            j++;
+          }
+        });
+      }
+
+      // build the French sentence: fixed-width slots (hidden ghost) + an absolutely centered live glyph
+      var sentEl = $("f05-sent");
+      var SENT_W = 1005; // measured: Instrument Sans 500 at 40px
+      var SENT_X = 1198 / 2 - SENT_W / 2;
+      var S_DUR = 0.42;
+      var S_REVEAL = 0.26; // ~0.62 of the flip: the right letter clicks in as the flap settles
+      for (var i = 0; i < SENT.length; i++) {
+        var sc = SENT.charAt(i);
+        if (sc === " ") {
+          sentEl.appendChild(document.createTextNode(" "));
+          continue;
+        }
+        var slot = document.createElement("span");
+        slot.className = "f05-s";
+        var g = document.createElement("span");
+        g.className = "f05-sg";
+        g.textContent = sc;
+        var live = document.createElement("span");
+        live.className = "f05-sl";
+        live.textContent = sc;
+        slot.appendChild(g);
+        slot.appendChild(live);
+        sentEl.appendChild(slot);
+        var sx = SENT_X + ((i + 0.5) / SENT.length) * SENT_W;
+        flapIn(slot, live, sc, 7 + (i + 1) * 173, POOL, waveT(sx) + LAG, S_DUR, S_REVEAL);
+      }
+
+      // micro title: « CODE » flips away, « FRANÇAIS » flips in as the decode lands
+      function buildTitle(el, text) {
+        var out = [];
+        for (var q = 0; q < text.length; q++) {
+          var s = document.createElement("span");
+          s.className = "f05-tc";
+          s.textContent = text.charAt(q);
+          el.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      }
+      var tCode = buildTitle($("f05-title-code"), TITLE_CODE);
+      tCode.forEach(function (el, q) {
+        var t0 = 1.8 + q * 0.02;
+        flapOut(el, TITLE_CODE.charAt(q), 503 + q * 211, POOL_UP, t0, true, t0 + 0.1, 0.12);
+      });
+      var tFr = buildTitle($("f05-title-fr"), TITLE_FR);
+      tFr.forEach(function (el, q) {
+        flapIn(el, el, TITLE_FR.charAt(q), 907 + q * 257, POOL_UP, 1.96 + q * 0.015, 0.26, 0.16);
+      });
+
+      /* ================= Phrase, word by word on the voice + accent pill ================= */
+      for (var w = 0; w < T_W.length; w++) {
+        tl.fromTo(
+          $("f05-w" + w),
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+          T_W[w],
+        );
+      }
+
+      // accent-pill: traces first (scaleX from the left + rotation settle), THEN the letters write inside
+      tl.fromTo(
+        $("f05-pill-bg"),
+        { scaleX: 0, opacity: 1 },
+        { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out", immediateRender: false },
+        T_PILL,
+      );
+      tl.fromTo(
+        $("f05-pill"),
+        { rotation: -8 },
+        { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false },
+        T_PILL,
+      );
+      var chars = document.querySelectorAll("#f05-pill-txt .f05-ch");
+      for (var c = 0; c < chars.length; c++) {
+        tl.fromTo(
+          chars[c],
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.2, ease: "power3.out", immediateRender: false },
+          T_CHARS + c * 0.02,
+        );
+      }
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["05-aujourdhui"] = tl;
+    })();
+  </script>
+</template>

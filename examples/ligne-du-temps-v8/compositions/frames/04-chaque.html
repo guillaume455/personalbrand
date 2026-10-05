@@ -1,0 +1,864 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); font-weight: 800; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; -webkit-font-smoothing: antialiased;
+      font-family: "Instrument Sans", sans-serif; color: #1a1612; }
+
+    /* ===================== LIGNE v8 : début du bloc CSS à copier ===================== */
+    .fx-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    .fx-q { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+    .fx-q svg { display: block; overflow: visible; }
+    /* sols : papier chaud (monde clair) et scène sombre de la marque (pivot, carte de fin) */
+    .fx-paper { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+      background: radial-gradient(ellipse 1500px 900px at 50% 42%, #f9f5ee 0%, #f6f1e9 55%, #efe7dc 100%); }
+    .fx-dark { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #0d0b0a; }
+    .fx-vignette { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none;
+      background: radial-gradient(ellipse 1320px 820px at 50% 46%, rgba(239,231,220,0) 62%, rgba(214,200,182,.38) 100%); }
+    .fx-grain { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; opacity: .035; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .fx-grain.dark { opacity: .055; mix-blend-mode: screen; }
+    .fx-floorcv { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    /* ombre de contact sous une station posée sur la frise (placée par fxShadow) */
+    .fx-contact { position: absolute; left: 0; top: 0; width: 400px; height: 60px; border-radius: 50%; transform-origin: 0 0;
+      background: radial-gradient(closest-side, rgba(60,40,20,.20), rgba(60,40,20,.08) 55%, rgba(60,40,20,0)); }
+    /* barres d'attente (voies de la frise, quads) : hachures d'encre, se tendent par scaleX (origine à gauche) */
+    .fx-wait { position: absolute; left: 0; top: 0; height: 70px; border-radius: 12px; overflow: hidden; transform-origin: 0 50%;
+      box-shadow: inset 0 0 0 2.5px rgba(26,22,18,.42); background: rgba(26,22,18,.05); }
+    .fx-wait::before { content: ""; position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(135deg, rgba(26,22,18,.30) 0 5px, rgba(26,22,18,0) 5px 22px); }
+    .fx-wait-l { position: absolute; left: 20px; top: 16px; padding: 2px 10px; border-radius: 6px; background: #f6f1e9; font: 700 30px/34px "Space Mono", monospace; letter-spacing: .1em; color: rgba(26,22,18,.78); white-space: nowrap; }
+    /* cartes (monde clair) : blanc chaud, ombres douces, angles 16 px */
+    .fx-card { position: absolute; left: 0; top: 0; background: #fffdf9; border-radius: 16px;
+      box-shadow: 0 30px 80px rgba(60,40,20,.14), 0 2px 6px rgba(60,40,20,.07), 0 0 0 1px rgba(26,22,18,.05); }
+    .fx-micro { font: 400 16px/1 "Space Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: rgba(26,22,18,.55); white-space: nowrap; }
+    /* sous-titre : la phrase de la voix, bas centre (zone y 890 à 980), mot par mot, gris puis encre */
+    .fx-sub { position: absolute; left: 0; top: 896px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #1a1612; white-space: nowrap; text-shadow: 0 2px 16px rgba(246,241,233,.95), 0 0 2px rgba(246,241,233,.9); }
+    .fx-sub.dark { color: #f5efe7; text-shadow: 0 2px 16px rgba(13,11,10,.9); }
+    .fx-sw { display: inline-block; opacity: 0; }
+    /* la boîte d'encre (mot clé) : se trace sous le mot, angles nets, le texte passe en papier */
+    .fx-ink { position: relative; display: inline-block; }
+    .fx-ink-bg { position: absolute; left: -0.14em; right: -0.14em; top: 0.02em; bottom: -0.02em; border-radius: 3px; background: #1a1612;
+      transform-origin: 0 50%; transform: scaleX(0); }
+    .fx-ink-tx { position: relative; text-shadow: none; }
+    .fx-sub.dark .fx-ink-bg { background: #f5efe7; }
+    /* le trait fin terracotta (mot-pic) : se dessine de gauche à droite sous le mot */
+    .fx-stroke { position: relative; display: inline-block; }
+    .fx-stroke-l { position: absolute; left: 0; right: 0; bottom: -0.06em; height: 4px; border-radius: 2px; background: #c25b28; transform-origin: 0 50%; transform: scaleX(0); }
+    /* texte posé (moments typographiques, séquences 3, 5, 8) : centré, 84 px, jamais énorme */
+    .fx-type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans", sans-serif; letter-spacing: -0.025em; color: #1a1612; white-space: nowrap; }
+    .fx-type.dark { color: #f5efe7; }
+    /* le point de lumière (aujourd'hui) */
+    .fx-pt-glow { position: absolute; border-radius: 50%; transform: translate(-50%, -50%);
+      background: radial-gradient(closest-side, rgba(224,138,92,.55) 0%, rgba(212,112,63,.22) 32%, rgba(194,91,40,.07) 62%, rgba(194,91,40,0) 100%); }
+    .fx-pt-core { position: absolute; border-radius: 50%; transform: translate(-50%, -50%);
+      background: radial-gradient(closest-side, #ffffff 0%, #fffaf4 45%, #f7c7a4 70%, rgba(224,138,92,.6) 88%, rgba(212,112,63,0) 100%);
+      box-shadow: 0 0 26px rgba(255,236,220,.9), 0 0 70px rgba(224,138,92,.55), 0 0 140px rgba(212,112,63,.3); }
+    /* le devis (gabarit fx-devis, 520 × 640) */
+    .fx-devis { width: 520px; height: 640px; }
+    .fx-dv-head { position: absolute; left: 36px; top: 34px; right: 36px; height: 60px; }
+    .fx-dv-mark { position: absolute; left: 0; top: 4px; width: 44px; height: 44px; border-radius: 8px; background: #1a1612; }
+    .fx-dv-name { position: absolute; left: 58px; top: 2px; font: 600 24px/28px "Instrument Sans", sans-serif; color: #1a1612; }
+    .fx-dv-sub { position: absolute; left: 58px; top: 32px; }
+    .fx-dv-kind { position: absolute; right: 0; top: 4px; text-align: right; font: 700 16px/22px "Space Mono", monospace; letter-spacing: .2em; color: #1a1612; }
+    .fx-dv-rule { position: absolute; left: 36px; right: 36px; height: 2px; background: #1a1612; }
+    .fx-dv-row { position: absolute; left: 36px; right: 36px; top: 176px; }
+    .fx-dv-lab { font: 500 26px/32px "Instrument Sans", sans-serif; color: #1a1612; }
+    .fx-dv-desc { margin-top: 6px; font: 400 17px/22px "Instrument Sans", sans-serif; color: rgba(26,22,18,.55); }
+    .fx-dv-qty { position: absolute; right: 0; top: 2px; font: 400 18px/28px "Space Mono", monospace; color: rgba(26,22,18,.7); }
+    .fx-dv-lines { position: absolute; left: 36px; right: 36px; top: 300px; }
+    .fx-dv-lines i { display: block; height: 10px; margin-bottom: 18px; border-radius: 5px; background: rgba(26,22,18,.06); }
+    .fx-dv-tot { position: absolute; left: 36px; right: 36px; bottom: 40px; height: 96px; border-radius: 12px; box-shadow: inset 0 0 0 2px #1a1612; }
+    .fx-dv-tot .fx-micro { position: absolute; left: 22px; top: 40px; color: #1a1612; }
+    .fx-dv-cell { position: absolute; right: 18px; top: 16px; width: 250px; height: 64px; border-radius: 8px; box-shadow: inset 0 0 0 2px rgba(26,22,18,.3); }
+    .fx-dv-price { position: absolute; right: 18px; top: 16px; width: 250px; height: 64px; text-align: center; font: 700 40px/64px "Space Mono", monospace; color: #1a1612; opacity: 0; }
+    .fx-dv-strike { position: absolute; left: 20px; right: 20px; top: 318px; height: 3px; border-radius: 2px; background: #1a1612; transform-origin: 0 50%; transform: scaleX(0); }
+    /* la timeline de montage vidéo (gabarit fx-video, 1000 × 520) */
+    .fx-video { width: 1000px; height: 520px; overflow: hidden; }
+    .fx-vd-bar { position: absolute; left: 0; top: 0; right: 0; height: 64px; border-bottom: 1px solid rgba(26,22,18,.08); }
+    .fx-vd-title { position: absolute; left: 28px; top: 20px; font: 600 22px/24px "Instrument Sans", sans-serif; color: #1a1612; }
+    .fx-vd-file { position: absolute; left: 132px; top: 22px; font: 400 16px/22px "Space Mono", monospace; color: rgba(26,22,18,.55); }
+    .fx-vd-state { position: absolute; right: 22px; top: 16px; height: 32px; padding: 0 14px; border-radius: 8px; font: 700 14px/32px "Space Mono", monospace; letter-spacing: .14em;
+      color: rgba(26,22,18,.7); background: repeating-linear-gradient(135deg, rgba(26,22,18,.12) 0 3px, rgba(26,22,18,.03) 3px 12px); }
+    .fx-vd-bin { position: absolute; left: 24px; top: 88px; width: 220px; }
+    .fx-vd-bin .fx-micro { font-size: 13px; }
+    .fx-vd-rush { position: absolute; width: 100px; height: 58px; border-radius: 6px; background-image: url("assets/img/site-hero.png"); background-size: 360px 205px;
+      box-shadow: 0 6px 16px rgba(60,40,20,.18); }
+    .fx-vd-ruler { position: absolute; left: 272px; right: 24px; top: 92px; height: 30px; border-bottom: 1px solid rgba(26,22,18,.2); font: 400 13px/20px "Space Mono", monospace; color: rgba(26,22,18,.5); }
+    .fx-vd-ruler span { position: absolute; top: 0; }
+    .fx-vd-track { position: absolute; left: 272px; right: 24px; height: 70px; border-radius: 8px; box-shadow: inset 0 0 0 2px rgba(26,22,18,.12);
+      background: repeating-linear-gradient(90deg, rgba(26,22,18,.03) 0 1px, rgba(26,22,18,0) 1px 70px); }
+    .fx-vd-tl { position: absolute; left: -44px; top: 24px; font: 700 14px/20px "Space Mono", monospace; color: rgba(26,22,18,.5); }
+    .fx-vd-clip { position: absolute; top: 6px; height: 58px; border-radius: 6px; background-image: url("assets/img/site-hero.png"); background-size: 360px 205px;
+      box-shadow: inset 0 0 0 2px rgba(26,22,18,.25); opacity: 0; }
+    .fx-vd-wave { position: absolute; left: 6px; top: 6px; right: 6px; height: 58px; opacity: 0; }
+    .fx-vd-head { position: absolute; top: 84px; width: 2px; height: 380px; background: #c25b28; opacity: 0; }
+    /* la notification claire (iOS, gabarit fx-nt, 520 × 92) et la facture (fx-bill, 380 × 210) */
+    .fx-nt { width: 520px; height: 92px; border-radius: 24px; background: rgba(255,253,249,.97);
+      box-shadow: 0 18px 48px rgba(60,40,20,.14), 0 1px 3px rgba(60,40,20,.08), 0 0 0 1px rgba(26,22,18,.05); }
+    .fx-nt-ic { position: absolute; left: 16px; top: 22px; width: 48px; height: 48px; border-radius: 11px; display: flex; align-items: center; justify-content: center; }
+    .fx-nt-ic svg { width: 28px; height: 28px; display: block; }
+    .fx-nt-t { position: absolute; left: 78px; top: 17px; font: 600 22px/28px "Instrument Sans", sans-serif; color: #1a1612; white-space: nowrap; }
+    .fx-nt-b { position: absolute; left: 78px; top: 46px; right: 18px; font: 400 21px/28px "Instrument Sans", sans-serif; color: rgba(26,22,18,.78); white-space: nowrap; overflow: hidden; }
+    .fx-nt-time { position: absolute; right: 20px; top: 19px; font: 400 17px/24px "Instrument Sans", sans-serif; color: rgba(26,22,18,.45); }
+    .fx-bill { width: 380px; height: 210px; }
+    .fx-bill .fx-micro { position: absolute; left: 26px; top: 26px; }
+    .fx-bill-n { position: absolute; right: 26px; top: 24px; font: 400 15px/20px "Space Mono", monospace; color: rgba(26,22,18,.5); }
+    .fx-bill-l { position: absolute; left: 26px; top: 70px; font: 500 22px/28px "Instrument Sans", sans-serif; color: #1a1612; white-space: nowrap; }
+    .fx-bill-a { position: absolute; left: 26px; bottom: 26px; font: 700 34px/40px "Space Mono", monospace; color: #1a1612; white-space: nowrap; }
+    .fx-bill-s { position: absolute; right: 26px; bottom: 32px; font: 700 14px/20px "Space Mono", monospace; letter-spacing: .16em; color: rgba(26,22,18,.6); }
+    /* la pastille d'idée (nuée de la séquence 7) : texte seul, jamais d'icône */
+    .fx-idea { position: absolute; left: 0; top: 0; padding: 18px 30px 18px 28px; border-radius: 18px; background: #fffdf9; white-space: nowrap;
+      font: 600 34px/40px "Instrument Sans", sans-serif; letter-spacing: -0.01em; color: #1a1612;
+      box-shadow: 0 24px 60px rgba(60,40,20,.14), 0 2px 5px rgba(60,40,20,.07), 0 0 0 1px rgba(26,22,18,.05); }
+    .fx-idea b { font: 700 14px/20px "Space Mono", monospace; letter-spacing: .16em; color: rgba(26,22,18,.45); margin-right: 14px; vertical-align: 6px; }
+    /* la carte « méthode » et la puce de contact « Prestataire web » */
+    .fx-method { width: 340px; height: 230px; }
+    .fx-method .fx-micro { position: absolute; left: 26px; top: 26px; color: #1a1612; }
+    .fx-method p { position: absolute; left: 26px; margin: 0; font: 500 22px/28px "Instrument Sans", sans-serif; color: #1a1612; white-space: nowrap; }
+    .fx-method p b { font: 700 16px/28px "Space Mono", monospace; color: rgba(26,22,18,.45); margin-right: 12px; }
+    .fx-chip { height: 76px; padding-right: 26px; border-radius: 38px; display: inline-flex; align-items: center; }
+    .fx-chip-av { width: 52px; height: 52px; margin: 0 16px 0 12px; border-radius: 50%; background: #dfe5e7; overflow: hidden; }
+    .fx-chip-t { font: 600 24px/28px "Instrument Sans", sans-serif; color: #1a1612; }
+    .fx-chip-s { font: 400 15px/20px "Space Mono", monospace; letter-spacing: .1em; color: rgba(26,22,18,.5); }
+    /* la colonne AUJOURD'HUI et l'axe du tableau (monde B, 2D) */
+    .fx-col-band { position: absolute; top: 110px; height: 2000px; background: #fffdf9; box-shadow: 0 0 0 1px rgba(26,22,18,.06), 0 40px 120px rgba(60,40,20,.10); }
+    .fx-col-edge { position: absolute; top: 110px; width: 2px; height: 2000px; background: rgba(26,22,18,.5); }
+    .fx-col-rail { position: absolute; font: 400 20px/1 "Space Mono", monospace; letter-spacing: .08em; color: rgba(26,22,18,.55); white-space: nowrap; text-align: right; width: 90px; }
+    .fx-col-tick { position: absolute; height: 2px; width: 26px; background: rgba(26,22,18,.4); }
+    /* espaces des montants en Space Mono (chasse fixe : une espace y est aussi large qu'un chiffre) : on les dessine étroites */
+    .fx-sp { display: inline-block; width: .28em; }
+    /* ===================== LIGNE v8 : fin du bloc CSS ===================== */
+
+    /* ===================== séquence 04 « chaque » ===================== */
+    .p04-box { overflow: hidden; }
+    .p04-fade { opacity: 0; }
+    .p04-st { position: absolute; left: 0; top: 0; transform-origin: 0 0; opacity: 0; }
+    .p04-sh { opacity: 0; }
+    /* le vrai site dans Safari (reference/v6-05-demande.html, #f05-win) */
+    .p04-win { position: absolute; left: 0; top: 0; width: 1128px; height: 692px; border-radius: 14px; overflow: hidden; background: #1f1d1b;
+      box-shadow: 0 40px 110px rgba(40,24,14,.36), 0 12px 32px rgba(40,24,14,.22); }
+    .p04-chrome { position: absolute; left: 0; top: 0; width: 1128px; height: 44px; background: linear-gradient(180deg, #242220 0%, #1f1d1b 100%);
+      border-bottom: 1px solid rgba(0,0,0,.55); box-sizing: border-box; }
+    .p04-tl { position: absolute; top: 16px; width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,.28); }
+    .p04-chromeicons { position: absolute; left: 0; top: 0; }
+    .p04-addr { position: absolute; left: 354px; top: 8px; width: 420px; height: 28px; border-radius: 8px; background: #2c2a28;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04); display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .p04-lock { display: block; flex: none; }
+    .p04-url { font: 400 15px/28px "Space Mono", monospace; color: #e4ddd5; white-space: nowrap; }
+    .p04-reload { position: absolute; right: 10px; top: 7px; }
+    .p04-view { position: absolute; left: 0; top: 44px; width: 1128px; height: 648px; overflow: hidden; background: #0f0c0a; }
+    .p04-shot { position: absolute; left: -6px; top: 0; width: 1140px; height: 648px; display: block; }
+    .p04-winedge { position: absolute; left: 0; top: 0; width: 1128px; height: 692px; border-radius: 14px; pointer-events: none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.11), inset 0 1px 0 rgba(255,255,255,.07); }
+    /* le post-it « Modif demandée » collé au coin haut droit du site (px du site : ×0,38 environ à l'écran) */
+    .p04-postit { position: absolute; left: 700px; top: -52px; height: 104px; padding: 0 34px 0 44px; border-radius: 12px; background: #fffdf9;
+      font: 700 44px/104px "Space Mono", monospace; letter-spacing: .01em; color: #1a1612; white-space: nowrap; opacity: 0; transform-origin: 50% 50%;
+      box-shadow: 0 26px 64px rgba(60,40,20,.24), 0 3px 8px rgba(60,40,20,.14), 0 0 0 1px rgba(26,22,18,.06); }
+    .p04-postit::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 12px; border-radius: 12px 0 0 12px; background: #1a1612; }
+    /* tuiles d'outils (reference/v6-02-attente.html .f02-*, recolorées en encre) : rangée de 4 tuiles, pas de 230 u à base 1.8 */
+    .p04-tile { position: absolute; top: 0; width: 88px; height: 88px; border-radius: 20px; background: #ffffff; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 18px 40px rgba(60,40,20,.2), 0 2px 6px rgba(60,40,20,.1); transform-origin: 44px 88px; opacity: 0; }
+    .p04-tile svg, .p04-dead svg { width: 50px; height: 50px; display: block; }
+    .p04-dead { position: absolute; left: 0; top: 0; width: 88px; height: 88px; border-radius: 20px; background: #5b544d; display: flex; align-items: center; justify-content: center; opacity: 0; }
+    .p04-badge { position: absolute; left: 24px; top: -26px; padding: 7px 12px 6px 14px; border-radius: 6px; background: #1a1612; color: #f6f1e9; white-space: nowrap;
+      font: 700 15px/1 "Space Mono", monospace; letter-spacing: .14em; box-shadow: 0 6px 16px rgba(26,22,18,.22); transform-origin: 0% 100%; opacity: 0; }
+    .p04-links { position: absolute; left: 0; top: 0; overflow: visible; }
+    .p04-links path { fill: none; stroke: #1a1612; stroke-width: 3.5; stroke-linecap: round; }
+    .p04-links path.p04-dash { stroke-dasharray: 5 5; stroke-linecap: butt; opacity: 0; }
+    .p04-dot { position: absolute; left: -7px; top: 37px; width: 14px; height: 14px; border-radius: 50%; background: #1a1612; opacity: 0;
+      box-shadow: 0 0 0 3px rgba(255,253,249,.9); }
+    /* la timeline de montage : états d'attente de la séquence (le gabarit reste mot pour mot) */
+    #p04-video .fx-vd-state { clip-path: inset(0 100% 0 0); }
+    #p04-video .fx-vd-rush { opacity: 0; }
+    /* la puce : point de statut ajouté sur l'avatar */
+    .p04-cdot { position: absolute; left: 49px; top: 49px; width: 16px; height: 16px; border-radius: 50%; background: #25D366; box-shadow: 0 0 0 3px #fffdf9; }
+    /* sous-titre : les mots arrivent gris (encre 35 %), ceux de la boîte d'encre en papier pâle */
+    .p04-sub .fx-sw { color: rgba(26,22,18,.35); }
+    .p04-sub .p04-inb { color: rgba(246,241,233,.4); }
+  
+  /* r3 (Colin, 2026-09-30) : les mots clés passent en boîte terracotta (texte papier), plus en boîte d'encre */
+  .fx-ink-bg, .fx-sub.dark .fx-ink-bg { background: #c25b28 !important; }
+</style>
+
+  <div id="root" data-composition-id="04-chaque" data-width="1920" data-height="1080" data-duration="6.28">
+    <template id="p04-fx-video">
+      <div class="fx-card fx-video">
+        <div class="fx-vd-bar"><span class="fx-vd-title">Montage</span><span class="fx-vd-file">video-lancement.mp4</span><span class="fx-vd-state">EN ATTENTE DU MONTEUR</span></div>
+        <div class="fx-vd-bin"><div class="fx-micro">Rushs · 4</div>
+          <i class="fx-vd-rush" style="left:0;top:36px;background-position:-40px -60px"></i><i class="fx-vd-rush" style="left:112px;top:36px;background-position:-170px -70px"></i>
+          <i class="fx-vd-rush" style="left:0;top:106px;background-position:-250px -20px"></i><i class="fx-vd-rush" style="left:112px;top:106px;background-position:-90px -120px"></i></div>
+        <div class="fx-vd-ruler"><span style="left:0">00:00</span><span style="left:25%">00:15</span><span style="left:50%">00:30</span><span style="left:75%">00:45</span></div>
+        <div class="fx-vd-track" style="top:150px"><span class="fx-vd-tl">V1</span>
+          <i class="fx-vd-clip" style="left:6px;width:150px;background-position:-40px -60px"></i><i class="fx-vd-clip" style="left:162px;width:190px;background-position:-170px -70px"></i>
+          <i class="fx-vd-clip" style="left:358px;width:140px;background-position:-250px -20px"></i><i class="fx-vd-clip" style="left:504px;width:190px;background-position:-90px -120px"></i></div>
+        <div class="fx-vd-track" style="top:236px"><span class="fx-vd-tl">A1</span>
+          <svg class="fx-vd-wave" viewBox="0 0 692 58" preserveAspectRatio="none"><path fill="rgba(26,22,18,.35)" d=""/></svg></div>
+        <div class="fx-vd-track" style="top:322px;height:50px"><span class="fx-vd-tl" style="top:14px">T1</span></div>
+        <i class="fx-vd-head" style="left:272px"></i>
+      </div>
+    </template>
+    <template id="p04-fx-chip">
+      <div class="fx-card fx-chip"><div class="fx-chip-av"><svg viewBox="0 0 46 46" width="52" height="52"><circle cx="23" cy="18" r="8.6" fill="#fff"/><path d="M6.5 46c1.2-9.6 8-15.2 16.5-15.2S38.3 36.4 39.5 46z" fill="#fff"/></svg></div>
+        <div><div class="fx-chip-t">Prestataire web</div><div class="fx-chip-s">HORS LIGNE</div></div></div>
+    </template>
+    <svg id="p04-svgdefs" width="0" height="0" style="position: absolute"><defs id="p04-defs"></defs></svg>
+
+    <!-- papier -->
+    <div id="p04-ground" class="clip fx-paper" data-start="0" data-duration="6.28" data-track-index="0"></div>
+
+    <!-- le monde A : la frise des jours sous la caméra 3D (sol, ruban, voies d'attente, ombres, stations) -->
+    <div id="p04-world" class="clip fx-layer" data-start="0" data-duration="6.28" data-track-index="1" data-layout-allow-overflow>
+      <div id="p04-cam" class="fx-layer" data-layout-allow-overflow>
+        <div id="p04-box" class="fx-layer p04-box" data-layout-allow-overflow>
+          <div id="p04-floorwrap" class="fx-layer p04-fade"><canvas id="p04-floor" class="fx-floorcv" width="1920" height="1080"></canvas></div>
+          <div id="p04-ribbon" class="fx-layer" data-layout-allow-overflow></div>
+          <div id="p04-lanes" class="fx-layer" data-layout-allow-overflow></div>
+          <div id="p04-shadows" class="fx-layer" data-layout-allow-overflow>
+            <div id="p04-sh-site" class="fx-contact p04-sh"></div>
+            <div id="p04-sh-t0" class="fx-contact p04-sh"></div>
+            <div id="p04-sh-t1" class="fx-contact p04-sh"></div>
+            <div id="p04-sh-t2" class="fx-contact p04-sh"></div>
+            <div id="p04-sh-t3" class="fx-contact p04-sh"></div>
+            <div id="p04-sh-video" class="fx-contact p04-sh"></div>
+            <div id="p04-sh-chip" class="fx-contact p04-sh"></div>
+          </div>
+          <div id="p04-stations" class="fx-layer" data-layout-allow-overflow>
+            <!-- LUN 19 : le vrai site (capture avec le bouton) et son post-it -->
+            <div id="p04-site" class="p04-st" style="width: 1128px; height: 692px">
+              <div class="p04-win">
+                <div class="p04-chrome">
+                  <span class="p04-tl" style="left: 16px; background: #ff5f57"></span>
+                  <span class="p04-tl" style="left: 36px; background: #febc2e"></span>
+                  <span class="p04-tl" style="left: 56px; background: #28c840"></span>
+                  <svg class="p04-chromeicons" width="1128" height="44" viewBox="0 0 1128 44" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="90.75" y="15.75" width="18.5" height="13.5" rx="3" stroke="#8f8983" stroke-width="1.5"></rect>
+                    <path d="M96.5 16 V29" stroke="#8f8983" stroke-width="1.5"></path>
+                    <path d="M137 16 L131 22 L137 28" stroke="#a39d97" stroke-width="1.8"></path>
+                    <path d="M157 16 L163 22 L157 28" stroke="#5d5853" stroke-width="1.8"></path>
+                    <path d="M1024 20.5 H1022 V30.5 H1034 V20.5 H1032 M1028 13.5 V25 M1024.5 17 L1028 13.5 L1031.5 17" stroke="#8f8983" stroke-width="1.5"></path>
+                    <path d="M1062 16 V28 M1056 22 H1068" stroke="#8f8983" stroke-width="1.6"></path>
+                    <rect x="1091.75" y="18.75" width="10.5" height="10.5" rx="2" stroke="#8f8983" stroke-width="1.5"></rect>
+                    <path d="M1095 15.75 H1103 A2 2 0 0 1 1105.25 17.75 V25.5" stroke="#8f8983" stroke-width="1.5"></path>
+                  </svg>
+                  <div class="p04-addr">
+                    <svg class="p04-lock" width="10" height="13" viewBox="0 0 10 13">
+                      <path d="M2.6 6 V4.1 A2.4 2.4 0 0 1 7.4 4.1 V6" fill="none" stroke="#b8b0a8" stroke-width="1.4"></path>
+                      <rect x="0.8" y="5.6" width="8.4" height="6.8" rx="1.5" fill="#b8b0a8"></rect>
+                    </svg>
+                    <span class="p04-url">entrepreneurs2-0.com</span>
+                    <svg class="p04-reload" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#8f8983" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11.6 7.4 A4.6 4.6 0 1 1 10.1 3.6"></path>
+                      <path d="M10.6 1.2 V3.9 H7.9"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="p04-view"><img class="p04-shot" src="assets/img/site-hero.png" width="1140" height="648" alt="" /></div>
+                <div class="p04-winedge"></div>
+              </div>
+              <div id="p04-postit" class="p04-postit">Modif demandée</div>
+            </div>
+
+            <!-- MAR 20 : les quatre tuiles de l'automatisation (Forms, Gmail, HubSpot, Stripe), le maillon HubSpot vers Stripe casse -->
+            <div id="p04-tiles" class="p04-st" style="width: 472px; height: 88px">
+              <svg class="p04-links" width="472" height="88" viewBox="0 0 472 88" xmlns="http://www.w3.org/2000/svg">
+                <path id="p04-l1" d="M 92 44 L 123.78 44" />
+                <path id="p04-l2" d="M 219.78 44 L 251.56 44" />
+                <path id="p04-l3" d="M 347.56 44 L 379.33 44" />
+                <path id="p04-l3a" class="p04-dash" d="M 347.56 44 L 361.5 44" />
+                <path id="p04-l3b" class="p04-dash" d="M 365.5 44 L 379.33 44" />
+              </svg>
+              <div id="p04-t0" class="p04-tile" style="left: 0px"></div>
+              <div id="p04-t1" class="p04-tile" style="left: 127.78px"></div>
+              <div id="p04-t2" class="p04-tile" style="left: 255.56px"><div id="p04-dead" class="p04-dead"></div><div id="p04-badge" class="p04-badge">ERREUR</div></div>
+              <div id="p04-t3" class="p04-tile" style="left: 383.33px"></div>
+              <i id="p04-dot" class="p04-dot"></i>
+            </div>
+
+            <!-- MER 21 : la timeline de montage en attente du monteur (gabarit fx-video) -->
+            <div id="p04-video" class="p04-st" style="width: 1000px; height: 520px"></div>
+
+            <!-- VEN 23 : la puce « Prestataire web · HORS LIGNE » (gabarit fx-chip) -->
+            <div id="p04-chip" class="p04-st" style="width: 300px; height: 76px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- la phrase de la voix, en bas au centre, en trois morceaux -->
+    <div id="p04-over" class="clip fx-layer" data-start="0" data-duration="6.28" data-track-index="2">
+      <div id="p04-sub1" class="fx-sub p04-sub"><span class="fx-sw" data-cue="0.00">C’est</span> <span class="fx-ink"><i class="fx-ink-bg" data-trace="0.12"></i><span class="fx-ink-tx" style="color: #f6f1e9"><span class="fx-sw p04-inb" data-cue="0.14">d’attendre</span> <span class="fx-sw p04-inb" data-cue="0.44">quelqu’un</span></span></span><span class="fx-sw" data-cue="0.44">…</span></div>
+      <div id="p04-sub2" class="fx-sub p04-sub"><span class="fx-sw" data-cue="1.18">…pour</span> <span class="fx-sw" data-cue="1.46">chaque</span> <span class="fx-sw" data-cue="1.78">modif</span> <span class="fx-sw" data-cue="2.24">sur</span> <span class="fx-sw" data-cue="2.42">ton</span> <span class="fx-sw" data-cue="2.60">site,</span></div>
+      <div id="p04-sub3" class="fx-sub p04-sub"><span class="fx-sw" data-cue="3.14">chaque</span> <span class="fx-sw" data-cue="3.40">automatisation,</span> <span class="fx-sw" data-cue="4.56">chaque</span> <span class="fx-sw" data-cue="4.86">vidéo</span> <span class="fx-sw" data-cue="5.28">à</span> <span class="fx-sw" data-cue="5.52">monter.</span></div>
+    </div>
+
+    <div id="p04-vig" class="clip fx-vignette" data-start="0" data-duration="6.28" data-track-index="3"></div>
+    <!-- grain 3,5 % -->
+    <div id="p04-grain" class="clip fx-grain" data-start="0" data-duration="6.28" data-track-index="4"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "04-chaque";
+      var DUR = 6.28;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(n) { return root.querySelector("#p04-" + n); }
+      function qa(sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
+
+/* ===================== kit ligne v8 (à copier) ===================== */
+// Caméra 3D : c = { x, y, z, yaw, pitch, roll } (u et degrés) ; focale fixe 1000 px, centre du cadre (960, 540).
+// Monde : X vers la droite (le temps), Y vers le haut, Z vers le fond. yaw > 0 regarde vers +X ; pitch > 0 regarde vers
+// le haut ; roll > 0 tourne l'image dans le sens horaire.
+var FX_F = 1000;
+function fxRad(d) { return d * Math.PI / 180; }
+function fxToCam(c, p) {
+  var x = p[0] - c.x, y = p[1] - c.y, z = p[2] - c.z;
+  var cy = Math.cos(fxRad(c.yaw)), sy = Math.sin(fxRad(c.yaw));
+  var x1 = cy * x - sy * z, z1 = sy * x + cy * z;
+  var cp = Math.cos(fxRad(c.pitch)), sp = Math.sin(fxRad(c.pitch));
+  return [x1, cp * y - sp * z1, sp * y + cp * z1];
+}
+function fxProject(c, p) {                      // point du monde vers l'écran ; k = px écran par u à cette profondeur
+  var q = fxToCam(c, p), u = FX_F * q[0] / q[2], v = -FX_F * q[1] / q[2];
+  var cr = Math.cos(fxRad(c.roll)), sr = Math.sin(fxRad(c.roll));
+  return { x: 960 + cr * u - sr * v, y: 540 + sr * u + cr * v, z: q[2], k: FX_F / q[2] };
+}
+function fxFromCam(c, q) {                      // espace caméra (sans roulis) vers le monde
+  var cp = Math.cos(fxRad(c.pitch)), sp = Math.sin(fxRad(c.pitch)), cy = Math.cos(fxRad(c.yaw)), sy = Math.sin(fxRad(c.yaw));
+  var y = cp * q[1] + sp * q[2], z1 = -sp * q[1] + cp * q[2];
+  return [cy * q[0] + sy * z1 + c.x, y + c.y, -sy * q[0] + cy * z1 + c.z];
+}
+function fxAdj(m) { return [m[4]*m[8]-m[5]*m[7], m[2]*m[7]-m[1]*m[8], m[1]*m[5]-m[2]*m[4], m[5]*m[6]-m[3]*m[8], m[0]*m[8]-m[2]*m[6], m[2]*m[3]-m[0]*m[5], m[3]*m[7]-m[4]*m[6], m[1]*m[6]-m[0]*m[7], m[0]*m[4]-m[1]*m[3]]; }
+function fxMm(a, b) { var c = [], i, j, k, s; for (i = 0; i < 3; i++) for (j = 0; j < 3; j++) { s = 0; for (k = 0; k < 3; k++) s += a[3*i+k] * b[3*k+j]; c[3*i+j] = s; } return c; }
+function fxMv(m, v) { return [m[0]*v[0]+m[1]*v[1]+m[2]*v[2], m[3]*v[0]+m[4]*v[1]+m[5]*v[2], m[6]*v[0]+m[7]*v[1]+m[8]*v[2]]; }
+function fxBasis(p) { var m = [p[0], p[2], p[4], p[1], p[3], p[5], 1, 1, 1]; var v = fxMv(fxAdj(m), [p[6], p[7], 1]); return fxMm(m, [v[0], 0, 0, 0, v[1], 0, 0, 0, v[2]]); }
+// Pose un élément plat (w × h px) sur le quadrilatère du monde O + U·x·s + V·y·s (matrix3d). Renvoie la profondeur
+// moyenne ; -1 et display none si un coin passe à moins de minZ de la caméra (défaut 60) ou si la projection dépasse
+// maxPx (défaut 6000) : un calque géant flouté fait tomber le rendu. Unique écrivain de transform pour cet élément.
+function fxPlace(el, c, w, h, O, U, V, s, minZ, maxPx) {
+  s = s || 1; minZ = minZ || 60; maxPx = maxPx || 6000;
+  function P(a, b) { return fxProject(c, [O[0] + (U[0]*a + V[0]*b) * s, O[1] + (U[1]*a + V[1]*b) * s, O[2] + (U[2]*a + V[2]*b) * s]); }
+  var q = [P(0, 0), P(w, 0), P(0, h), P(w, h)];
+  var bw = Math.max(q[0].x, q[1].x, q[2].x, q[3].x) - Math.min(q[0].x, q[1].x, q[2].x, q[3].x);
+  var bh = Math.max(q[0].y, q[1].y, q[2].y, q[3].y) - Math.min(q[0].y, q[1].y, q[2].y, q[3].y);
+  if (q[0].z < minZ || q[1].z < minZ || q[2].z < minZ || q[3].z < minZ || bw > maxPx || bh > maxPx) { el.style.display = "none"; return -1; }
+  el.style.display = "";
+  var t = fxMm(fxBasis([q[0].x, q[0].y, q[1].x, q[1].y, q[2].x, q[2].y, q[3].x, q[3].y]), fxAdj(fxBasis([0, 0, w, 0, 0, h, w, h])));
+  for (var i = 0; i < 9; i++) t[i] /= t[8];
+  el.style.width = w + "px"; el.style.height = h + "px";
+  el.style.transform = "matrix3d(" + t[0] + "," + t[3] + ",0," + t[6] + "," + t[1] + "," + t[4] + ",0," + t[7] + ",0,0,1,0," + t[2] + "," + t[5] + ",0," + t[8] + ")";
+  return (q[0].z + q[1].z + q[2].z + q[3].z) / 4;
+}
+// Objet debout face caméra : son point d'ancrage (ax, ay) en px tombe sur la projection du point du monde P, à
+// l'échelle base × k ; rot (degrés) s'ajoute au roulis. Renvoie la profondeur (-1 si derrière la caméra).
+function fxStand(el, c, P, base, ax, ay, rot) {
+  var p = fxProject(c, P);
+  if (p.z < 60) { el.style.display = "none"; return -1; }
+  el.style.display = "";
+  var sc = base * p.k;
+  el.style.transformOrigin = "0 0";
+  el.style.transform = "translate(" + p.x.toFixed(2) + "px," + p.y.toFixed(2) + "px) rotate(" + (c.roll + (rot || 0)).toFixed(2) + "deg) scale(" + sc.toFixed(4) + ") translate(" + (-ax) + "px," + (-ay) + "px)";
+  return p.z;
+}
+// Ombre de contact d'une station posée sur la frise : ellipse douce, centrée sous le point P, de largeur w u.
+function fxShadow(el, c, P, w) {
+  var p = fxProject(c, P);
+  if (p.z < 60) { el.style.display = "none"; return; }
+  el.style.display = "";
+  var sx = w * p.k / 400, sy = sx * 0.9;
+  el.style.transform = "translate(" + (p.x - 200 * sx).toFixed(2) + "px," + (p.y - 30 * sy).toFixed(2) + "px) rotate(" + c.roll + "deg) scale(" + sx.toFixed(4) + "," + sy.toFixed(4) + ")";
+}
+// Profondeur de champ : d = { zf, k, max } ; renvoie le flou (px) d'un objet à la profondeur z.
+function fxCoc(z, d) { return Math.min(d.max, d.k * Math.abs(z - d.zf) / z); }
+function fxBlur(el, px, extra) { var f = (px > 0.25 ? "blur(" + px.toFixed(1) + "px)" : "") + (extra ? " " + extra : ""); el.style.filter = f || "none"; }
+
+/* ---- temps : 1 jour = 1300 u ; t = 0 le DIM 11 juin 2023 à 00:00 ---- */
+var FX_DAY = 1300;
+function fxX(t) { return -1400 + t * FX_DAY; }        // abscisse monde d'un instant t (jours)
+var FX_WD = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
+var FX_MO = ["JANV.", "FÉVR.", "MARS", "AVR.", "MAI", "JUIN", "JUIL.", "AOÛT", "SEPT.", "OCT.", "NOV.", "DÉC."];
+function fxDate(i) { var d = new Date(Date.UTC(2023, 5, 11 + i)); return { wd: FX_WD[d.getUTCDay()], d: d.getUTCDate(), m: d.getUTCMonth(), y: d.getUTCFullYear() }; }
+
+/* ---- LA FRISE DES JOURS (claire) : une règle, graduations qui PENDENT sous la ligne ----
+   Un jour = quad de 1300 × 620 u, plan Z = 0 : la ligne (Y 600) en y local 20 ; heures 22 u, 06:00, 12:00, 18:00 en 48 u
+   avec leur heure ; minuit en 170 u ; « LUN 12 » (Space Mono 700 44 u) sous la graduation ; mois dessous ; trois voies
+   (hachures d'attente) de 70 u en y local 330, 420, 510 (Y 290, 200, 110), dessinées seulement si o.lanes. Les stations
+   se POSENT sur la ligne (pied en Y 600). */
+var FX_RH = 620, FX_LINE = 600;
+function fxDaySVG(i, o) {
+  var W = FX_DAY, B = 20, ink = "rgba(26,22,18,", s = [], dt = fxDate(i);
+  s.push('<svg width="' + W + '" height="' + FX_RH + '" viewBox="0 0 ' + W + ' ' + FX_RH + '" xmlns="http://www.w3.org/2000/svg">');
+  s.push('<line x1="0" y1="' + B + '" x2="' + W + '" y2="' + B + '" stroke="' + ink + '0.78)" stroke-width="3"/>');
+  for (var h = 0; h < 24; h++) {
+    var x = h * W / 24, big = h === 0, mid = h % 6 === 0, len = big ? 170 : mid ? 48 : 22;
+    s.push('<line x1="' + x + '" y1="' + B + '" x2="' + x + '" y2="' + (B + len) + '" stroke="' + ink + (big ? "0.9" : mid ? "0.5" : "0.28") + ')" stroke-width="' + (big ? 2.6 : mid ? 2 : 1.6) + '"/>');
+    if (mid && !big) s.push('<text x="' + (x + 8) + '" y="' + (B + 72) + '" font-family="Space Mono" font-size="20" letter-spacing="2" fill="' + ink + '0.42)">' + (h < 10 ? "0" : "") + h + ':00</text>');
+  }
+  s.push('<text x="18" y="' + (B + 158) + '" font-family="Space Mono" font-weight="700" font-size="44" letter-spacing="4" fill="' + ink + '0.92)">' + dt.wd + " " + dt.d + '</text>');
+  if ((o && o.month === i) || dt.d === 1) s.push('<text x="20" y="' + (B + 198) + '" font-family="Space Mono" font-size="22" letter-spacing="7" fill="' + ink + '0.5)">' + FX_MO[dt.m].replace(".", "") + " " + dt.y + '</text>');
+  if (o && o.lanes) for (var l = 0; l < 3; l++) s.push('<rect x="4" y="' + (330 + l * 90) + '" width="' + (W - 8) + '" height="70" rx="12" fill="none" stroke="' + ink + '0.07)" stroke-width="1.6"/>');
+  s.push('</svg>');
+  return s.join("");
+}
+/* ---- LA FRISE DES ANNÉES (claire, séquence 5) : un an = 1200 u, de juin à juin, plan Z = 400 ; ligne en Y 600 ;
+   années « 2024 » (Space Mono 700 300 u) posées AU-DESSUS de la ligne (on longe les années), mois pendus dessous ---- */
+var FX_YEAR = 1200, FX_YRH = 760, FX_YLINE = 420;         // quad 1200 × 760 u, la ligne en y local 420
+function fxYearSVG(y) {
+  var W = FX_YEAR, B = FX_YLINE, ink = "rgba(26,22,18,", s = [];
+  s.push('<svg width="' + W + '" height="' + FX_YRH + '" viewBox="0 0 ' + W + ' ' + FX_YRH + '" xmlns="http://www.w3.org/2000/svg">');
+  s.push('<line x1="0" y1="' + B + '" x2="' + W + '" y2="' + B + '" stroke="' + ink + '0.78)" stroke-width="3"/>');
+  for (var wk = 0; wk < 52; wk++) { var xw = wk * W / 52; s.push('<line x1="' + xw + '" y1="' + B + '" x2="' + xw + '" y2="' + (B + 16) + '" stroke="' + ink + '0.26)" stroke-width="1.6"/>'); }
+  for (var m = 0; m < 12; m++) {
+    var x = m * W / 12, big = m === 0;
+    s.push('<line x1="' + x + '" y1="' + (big ? B - 380 : B) + '" x2="' + x + '" y2="' + (B + (big ? 120 : 44)) + '" stroke="' + ink + (big ? .9 : .5) + ')" stroke-width="' + (big ? 3.2 : 2.2) + '"/>');
+    if (!big) s.push('<text x="' + (x + 8) + '" y="' + (B + 76) + '" font-family="Space Mono" font-size="24" letter-spacing="1" fill="' + ink + '0.5)">' + FX_MO[(m + 5) % 12] + '</text>');
+  }
+  if (y >= 2023) s.push('<text x="14" y="' + (B - 40) + '" font-family="Space Mono" font-weight="700" font-size="300" letter-spacing="-6" fill="' + ink + '0.92)">' + y + '</text>');
+  s.push('</svg>');
+  return s.join("");
+}
+// Construit un ruban : o = { kind: "day"|"year", first, last, lanes, month } ; renvoie { segs } à poser à chaque image.
+function fxBuildRibbon(host, o) {
+  var rb = { o: o, segs: [] };
+  for (var i = o.first; i <= o.last; i++) {
+    var el = document.createElement("div"); el.className = "fx-q";
+    el.innerHTML = o.kind === "year" ? fxYearSVG(i) : fxDaySVG(i, o);
+    host.appendChild(el); rb.segs.push({ el: el, i: i });
+  }
+  return rb;
+}
+// Pose le ruban pour la caméra c ; d = profondeur de champ ; extraBlur(seg, z) optionnel (flou de mouvement, px).
+// Jours : quad de Y 620 à Y 0 (ligne en Y 600), Z 0. Années : quad de Y 600 + 420 = 1020 à Y 260 (ligne en Y 600), Z 400.
+function fxUpdateRibbon(rb, c, d, extraBlur) {
+  var yr = rb.o.kind === "year", W = yr ? FX_YEAR : FX_DAY, H = yr ? FX_YRH : FX_RH, Z = yr ? 400 : 0;
+  var top = yr ? 600 + FX_YLINE : FX_RH;                 // le haut du quad, pour que la ligne tombe en Y 600 dans les deux cas
+  rb.segs.forEach(function (sg) {
+    var X = yr ? -1500 + (sg.i - 2023) * FX_YEAR : fxX(sg.i);
+    var z = fxPlace(sg.el, c, W, H, [X, top, Z], [1, 0, 0], [0, -1, 0]);
+    if (z < 0) return;
+    fxBlur(sg.el, fxCoc(z, d) + (extraBlur ? extraBlur(sg, z) : 0));
+  });
+}
+// Barre d'attente hachurée sur une voie (0, 1, 2) de la frise des jours, de t0 à t1 (jours) ; renvoie la poignée.
+function fxMakeWait(host, lane, t0, t1, label) {
+  var el = document.createElement("div"); el.className = "fx-q";
+  var w = (t1 - t0) * FX_DAY;
+  el.innerHTML = '<div class="fx-wait" style="width:' + w + 'px"><span class="fx-wait-l">' + (label || "EN ATTENTE") + '</span></div>';
+  host.appendChild(el);
+  return { el: el, bar: el.firstChild, lane: lane, t0: t0, w: w };
+}
+function fxUpdateWait(wt, c, d) {
+  var z = fxPlace(wt.el, c, wt.w, 70, [fxX(wt.t0), 290 - wt.lane * 90, -2], [1, 0, 0], [0, -1, 0]);
+  if (z > 0) fxBlur(wt.el, fxCoc(z, d));
+  return z;
+}
+// Sol pointillé (Y 0) : dessiné point par point dans UN canvas écran (aucun calque GPU géant). o = { x0, x1, z0, z1, step }.
+function fxDrawFloor(canvas, c, d, o) {
+  var ctx = canvas.getContext("2d"), step = o.step || 100;
+  ctx.clearRect(0, 0, 1920, 1080);
+  var xa = Math.max(o.x0, Math.floor((c.x - 5000) / step) * step), xb = Math.min(o.x1, c.x + 12000);
+  for (var X = xa; X <= xb; X += step) for (var Z = o.z0; Z <= o.z1; Z += step) {
+    var p = fxProject(c, [X, 0, Z]);
+    if (p.z < 250 || p.x < -40 || p.x > 1960 || p.y < -40 || p.y > 1120) continue;
+    var r = Math.max(0.6, Math.min(6, 2.4 * p.k)), b = Math.min(10, fxCoc(p.z, d)) * 0.6, R = r + b;
+    var fade = Math.max(0, Math.min(1, (p.z - 250) / 500) * (1 - (p.z - 600) / 4200));
+    var a = 0.14 * fade * (r * r) / (R * R);
+    if (a < 0.004) continue;
+    ctx.fillStyle = "rgba(26,22,18," + a.toFixed(3) + ")";
+    ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, 6.2832); ctx.fill();
+  }
+}
+
+/* ---- LE PLI (séquence 5, sur la scène sombre) : un filet gradué qui se replie en un point ----
+   Graduation k (k = 0 la plus lointaine, 900 px) à la distance fxFoldD(k, p) du point : p = 0 règle droite, p = 1 les
+   graduations se resserrent vers le point, p = 2 tout est avalé. fxFoldSVG(p, {px, py, ink}) renvoie le SVG plein cadre. */
+function fxFoldD(k, p) {
+  var uni = 900 * (1 - k / 150), comp = 900 * Math.pow(0.965, k), a = Math.min(1, p);
+  var dd = uni + (comp - uni) * a;
+  return p > 1 ? dd * Math.max(0, 2 - p) : dd;
+}
+function fxFoldSVG(p, o) {
+  var PX = o.px, PY = o.py, ink = o.ink || "245,239,231", s = ['<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">'];
+  var ext = fxFoldD(0, p);
+  s.push('<line x1="' + (PX - ext) + '" y1="' + PY + '" x2="' + (PX + ext) + '" y2="' + PY + '" stroke="rgba(' + ink + ',.7)" stroke-width="2"/>');
+  for (var k = 0; k < 150; k++) {
+    var d = fxFoldD(k, p), step = d - fxFoldD(k + 1, p);
+    if (step < 0.7 || d < 3) continue;
+    var month = k % 30 === 0, week = k % 7 === 0, near = Math.min(1, step / 12);
+    var len = (month ? 44 : week ? 22 : 11) * (.3 + .7 * near);
+    var a = (month ? .7 : week ? .5 : .3) * (.55 + .45 * (1 - near));
+    for (var sg = -1; sg <= 1; sg += 2) s.push('<line x1="' + (PX + sg * d).toFixed(2) + '" y1="' + PY + '" x2="' + (PX + sg * d).toFixed(2) + '" y2="' + (PY + len).toFixed(1) + '" stroke="rgba(' + ink + ',' + a.toFixed(3) + ')" stroke-width="' + (month ? 2 : 1.3) + '"/>');
+  }
+  s.push('</svg>');
+  return s.join("");
+}
+
+/* ---- MONDE B (2D, papier) : caméra 2D cam2 = { x, y, s } ; le point (x, y) du monde est au centre du cadre ---- */
+function fxApplyCam2(worldEl, c2) {
+  worldEl.style.transformOrigin = "0 0";
+  worldEl.style.transform = "translate(" + (960 - c2.x * c2.s).toFixed(2) + "px," + (540 - c2.y * c2.s).toFixed(2) + "px) scale(" + c2.s.toFixed(4) + ")";
+}
+// L'axe du tableau (monde B) : SVG de x0 à x1 (px du monde), ligne en y 70 ; graduations pendues ; années ; AUJOURD'HUI.
+function fxAxisSVG(x0, x1, today) {
+  var W = x1 - x0, ink = "rgba(26,22,18,", s = ['<svg width="' + W + '" height="140" viewBox="0 0 ' + W + ' 140" xmlns="http://www.w3.org/2000/svg">'];
+  s.push('<line x1="0" y1="20" x2="' + W + '" y2="20" stroke="' + ink + '0.78)" stroke-width="3"/>');
+  for (var X = x0 + 20; X < today; X += 38.3) { var yr = Math.abs(((X - x0 - 20) / 38.3) % 12) < 0.01; s.push('<line x1="' + (X - x0) + '" y1="20" x2="' + (X - x0) + '" y2="' + (yr ? 88 : 38) + '" stroke="' + ink + (yr ? .85 : .35) + ')" stroke-width="' + (yr ? 2.6 : 1.6) + '"/>'); }
+  [["JUIN 2023", 20], ["JUIN 2024", 20 + 38.3 * 12], ["JUIN 2025", 20 + 38.3 * 24]].forEach(function (L) { s.push('<text x="' + (L[1] + 10) + '" y="80" font-family="Space Mono" font-weight="700" font-size="24" letter-spacing="3" fill="' + ink + '0.8)">' + L[0] + '</text>'); });
+  s.push('</svg>');
+  return s.join("");
+}
+
+/* ---- LE MONDE B (séquences 6 et 7) : construit le tableau clair en une fois, positions de frame.md ----
+   Renvoie les poignées à animer. La séquence monte la VRAIE fenêtre Claude (reference/v6-04/05) dans B.claude
+   (boîte de 1100 × 620 déjà posée en (1579, 150) à l'échelle 0.62) et la vraie capture du site dans B.lines[0].thumb. */
+var FX_B = { col: [1540, 2300], lines: [580, 690, 800], lanes: [590, 700, 810], labels: ["Modifier le titre du site", "Réparer l’automatisation des factures", "Monter la vidéo"],
+  laneLabels: ["MODIF DU SITE", "AUTOMATISATION", "VIDÉO À MONTER"], rails: [["09:41", 200], ["09:42", 420], ["09:43", 690]] };
+function fxBuildWorldB(host, tplDevis) {
+  var B = { el: host }, h = [];
+  function add(html) { host.insertAdjacentHTML("beforeend", html); return host.lastElementChild; }
+  B.axis = add('<div class="fx-q" style="left:0;top:50px">' + fxAxisSVG(40, 2400, 1540) + '</div>');
+  B.band = add('<div class="fx-col-band" style="left:1540px;width:760px;transform-origin:50% 0"></div>');
+  B.edges = [add('<div class="fx-col-edge" style="left:1539px"></div>'), add('<div class="fx-col-edge" style="left:2299px"></div>')];
+  B.header = add('<div class="fx-micro" style="position:absolute;left:1570px;top:80px;color:#1a1612;font-weight:700;font-size:22px">Aujourd’hui</div>');
+  B.rails = FX_B.rails.map(function (r) { return [add('<div class="fx-col-rail" style="left:1420px;top:' + (r[1] - 9) + 'px">' + r[0] + '</div>'), add('<div class="fx-col-tick" style="left:1526px;top:' + r[1] + 'px"></div>')]; });
+  B.lanes = FX_B.lanes.map(function (y, i) { var e = add('<div class="fx-wait" style="left:80px;top:' + y + 'px;width:1440px;transform-origin:100% 50%"><span class="fx-wait-l">' + FX_B.laneLabels[i] + '</span></div>'); return e; });
+  B.devis = add('<div class="fx-q" style="left:260px;top:170px;transform:rotate(-4deg) scale(.42);transform-origin:0 0"></div>');
+  B.devis.appendChild(document.getElementById(tplDevis).content.cloneNode(true)); B.devis.firstElementChild.style.position = "relative";
+  B.claude = add('<div class="fx-q" style="left:1579px;top:150px;width:1100px;height:620px;transform:scale(.62);transform-origin:0 0"></div>');
+  B.lines = FX_B.lines.map(function (y, i) {
+    var card = add('<div class="fx-card" style="left:1570px;top:' + y + 'px;width:700px;height:90px"></div>');
+    var thumb = document.createElement("div"); thumb.style.cssText = "position:absolute;left:14px;top:12px;width:112px;height:66px;border-radius:6px;overflow:hidden;background:#1f1d1b"; card.appendChild(thumb);
+    if (i === 1) { thumb.style.background = "#fffdf9"; thumb.innerHTML = ["#7248B9", "#EA4335", "#6D00CC", "#635BFF"].map(function (c, k) { return '<i style="position:absolute;left:' + (4 + k * 27) + 'px;top:21px;width:24px;height:24px;border-radius:6px;background:' + c + ';box-shadow:0 2px 5px rgba(60,40,20,.2)"></i>'; }).join(""); }
+    if (i === 2) { thumb.style.background = "#fffdf9"; thumb.style.boxShadow = "inset 0 0 0 1px rgba(26,22,18,.12)"; thumb.innerHTML = '<i style="position:absolute;left:8px;right:8px;top:22px;height:12px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(26,22,18,.2)"></i><i style="position:absolute;left:8px;right:8px;top:40px;height:12px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(26,22,18,.2)"></i>'; }
+    var lab = document.createElement("div"); lab.style.cssText = "position:absolute;left:146px;top:30px;font:500 24px/30px 'Instrument Sans',sans-serif;color:#1a1612;white-space:nowrap"; lab.textContent = FX_B.labels[i]; card.appendChild(lab);
+    var wait = document.createElement("div"); wait.className = "fx-vd-state"; wait.style.cssText = "position:absolute;right:18px;top:29px"; wait.textContent = "EN ATTENTE"; card.appendChild(wait);
+    var done = document.createElement("div"); done.style.cssText = "position:absolute;right:18px;top:26px;height:38px;display:flex;align-items:center;gap:10px;opacity:0";
+    done.innerHTML = '<i style="width:34px;height:34px;border-radius:50%;background:#D97757;display:block;position:relative"><svg viewBox="0 0 36 36" width="34" height="34" style="position:absolute;left:0;top:0"><path d="M11 18.8 L15.9 23.5 L25.2 13.6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i><span style="padding:4px 12px;border-radius:8px;background:#efebe3;font:500 20px/1.2 Instrument Sans;color:#5a5348">Fait</span>';
+    card.appendChild(done);
+    return { card: card, thumb: thumb, label: lab, wait: wait, done: done };
+  });
+  B.method = add('<div class="fx-q" style="left:2140px;top:380px;transform:rotate(3deg);transform-origin:0 0"></div>');
+  B.method.appendChild(document.getElementById("fx-method").content.cloneNode(true)); B.method.firstElementChild.style.position = "relative";
+  return B;
+}
+
+/* ---- icônes de marque (Simple Icons CC0, chemins de assets/icons/*.svg, viewBox 0 0 24 24) ---- */
+var FX_ICON = {"hubspot": "M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z", "gmail": "M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z", "whatsapp": "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z", "stripe": "M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z", "googlecalendar": "M18.316 5.684H24v12.632h-5.684V5.684zM5.684 24h12.632v-5.684H5.684V24zM18.316 5.684V0H1.895A1.894 1.894 0 0 0 0 1.895v16.421h5.684V5.684h12.632zm-7.207 6.25v-.065c.272-.144.5-.349.687-.617s.279-.595.279-.982c0-.379-.099-.72-.3-1.025a2.05 2.05 0 0 0-.832-.714 2.703 2.703 0 0 0-1.197-.257c-.6 0-1.094.156-1.481.467-.386.311-.65.671-.793 1.078l1.085.452c.086-.249.224-.461.413-.633.189-.172.445-.257.767-.257.33 0 .602.088.816.264a.86.86 0 0 1 .322.703c0 .33-.12.589-.36.778-.24.19-.535.284-.886.284h-.567v1.085h.633c.407 0 .748.109 1.02.327.272.218.407.499.407.843 0 .336-.129.614-.387.832s-.565.327-.924.327c-.351 0-.651-.103-.897-.311-.248-.208-.422-.502-.521-.881l-1.096.452c.178.616.505 1.082.977 1.401.472.319.984.478 1.538.477a2.84 2.84 0 0 0 1.293-.291c.382-.193.684-.458.902-.794.218-.336.327-.72.327-1.149 0-.429-.115-.797-.344-1.105a2.067 2.067 0 0 0-.881-.689zm2.093-1.931l.602.913L15 10.045v5.744h1.187V8.446h-.827l-2.158 1.557zM22.105 0h-3.289v5.184H24V1.895A1.894 1.894 0 0 0 22.105 0zm-3.289 23.5l4.684-4.684h-4.684V23.5zM0 22.105C0 23.152.848 24 1.895 24h3.289v-5.184H0v3.289z", "make": "M13.38 3.498c-.27 0-.511.19-.566.465L9.85 18.986a.578.578 0 0 0 .453.678l4.095.826a.58.58 0 0 0 .682-.455l2.963-15.021a.578.578 0 0 0-.453-.678l-4.096-.826a.589.589 0 0 0-.113-.012zm-5.876.098a.576.576 0 0 0-.516.318L.062 17.697a.575.575 0 0 0 .256.774l3.733 1.877a.578.578 0 0 0 .775-.258l6.926-13.781a.577.577 0 0 0-.256-.776L7.762 3.658a.571.571 0 0 0-.258-.062zm11.74.115a.576.576 0 0 0-.576.576v15.426c0 .318.258.578.576.578h4.178a.58.58 0 0 0 .578-.578V4.287a.578.578 0 0 0-.578-.576Z", "googleforms": "M14.727 6h6l-6-6v6zm0 .727H14V0H4.91c-.905 0-1.637.732-1.637 1.636v20.728c0 .904.732 1.636 1.636 1.636h14.182c.904 0 1.636-.732 1.636-1.636V6.727h-6zM7.91 17.318a.819.819 0 1 1 .001-1.638.819.819 0 0 1 0 1.638zm0-3.273a.819.819 0 1 1 .001-1.637.819.819 0 0 1 0 1.637zm0-3.272a.819.819 0 1 1 .001-1.638.819.819 0 0 1 0 1.638zm9 6.409h-6.818v-1.364h6.818v1.364zm0-3.273h-6.818v-1.364h6.818v1.364zm0-3.273h-6.818V9.273h6.818v1.363z", "wordpress": "M21.469 6.825c.84 1.537 1.318 3.3 1.318 5.175 0 3.979-2.156 7.456-5.363 9.325l3.295-9.527c.615-1.54.82-2.771.82-3.864 0-.405-.026-.78-.07-1.11m-7.981.105c.647-.03 1.232-.105 1.232-.105.582-.075.514-.93-.067-.899 0 0-1.755.135-2.88.135-1.064 0-2.85-.15-2.85-.15-.585-.03-.661.855-.075.885 0 0 .54.061 1.125.09l1.68 4.605-2.37 7.08L5.354 6.9c.649-.03 1.234-.1 1.234-.1.585-.075.516-.93-.065-.896 0 0-1.746.138-2.874.138-.2 0-.438-.008-.69-.015C4.911 3.15 8.235 1.215 12 1.215c2.809 0 5.365 1.072 7.286 2.833-.046-.003-.091-.009-.141-.009-1.06 0-1.812.923-1.812 1.914 0 .89.513 1.643 1.06 2.531.411.72.89 1.643.89 2.977 0 .915-.354 1.994-.821 3.479l-1.075 3.585-3.9-11.61.001.014zM12 22.784c-1.059 0-2.081-.153-3.048-.437l3.237-9.406 3.315 9.087c.024.053.05.101.078.149-1.12.393-2.325.609-3.582.609M1.211 12c0-1.564.336-3.05.935-4.39L7.29 21.709C3.694 19.96 1.212 16.271 1.211 12M12 0C5.385 0 0 5.385 0 12s5.385 12 12 12 12-5.385 12-12S18.615 0 12 0", "claude": "m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"};
+var FX_BRAND = { hubspot: "#FF7A59", gmail: "#EA4335", whatsapp: "#25D366", stripe: "#635BFF", googlecalendar: "#4285F4", make: "#6D00CC", googleforms: "#7248B9", wordpress: "#21759B", claude: "#D97757" };
+// Icône en SVG : fill = couleur (défaut : couleur de marque). Pour une notification : fond de marque, logo blanc.
+function fxIconSVG(name, fill) { return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="' + (fill || FX_BRAND[name]) + '" d="' + FX_ICON[name] + '"/></svg>'; }
+
+/* ---- flous directionnels : fx-mb1 … fx-mb40 (stdDeviation « n 0 », horizontal) ; ids préfixés ---- */
+function fxMbDefs(defs, prefix) {
+  for (var n = 1; n <= 40; n++) {
+    var f = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+    f.setAttribute("id", prefix + "mb" + n); f.setAttribute("x", "-30%"); f.setAttribute("y", "-10%"); f.setAttribute("width", "160%"); f.setAttribute("height", "120%");
+    f.innerHTML = '<feGaussianBlur stdDeviation="' + n + ' ' + (n > 8 ? 0.6 : 0) + '"/>';
+    defs.appendChild(f);
+  }
+}
+// Onde audio de la timeline vidéo : chemin SVG déterministe (692 × 58).
+function fxWavePath() {
+  var s = "M0 29", i, a;
+  for (i = 0; i <= 692; i += 4) { a = 6 + 20 * Math.abs(Math.sin(i * 0.037) * Math.cos(i * 0.011)) + 6 * Math.abs(Math.sin(i * 0.21)); s += " L" + i + " " + (29 - a).toFixed(1); }
+  for (i = 692; i >= 0; i -= 4) { a = 6 + 20 * Math.abs(Math.sin(i * 0.037) * Math.cos(i * 0.011)) + 6 * Math.abs(Math.sin(i * 0.21)); s += " L" + i + " " + (29 + a).toFixed(1); }
+  return s + "Z";
+}
+/* ===================== fin du kit ligne v8 ===================== */
+
+      /* ===================== construction du monde (frame.md, LA FRISE) ===================== */
+      var NS = "http://www.w3.org/2000/svg";
+      fxMbDefs($("defs"), "p04-");
+      var camEl = $("cam"), floorWrap = $("floorwrap"), floorCv = $("floor");
+      var FLOOR = { x0: -4000, x1: 24000, z0: -1500, z1: 4000 };
+
+      // la frise de la semaine suivante (SAM 17 à DIM 25), trois voies en rails pâles ; « JUIN 2023 » sous LUN 19
+      var rb = fxBuildRibbon($("ribbon"), { kind: "day", first: 6, last: 14, lanes: true, month: 8 });
+      rb.segs.forEach(function (sg) {                       // la ligne seule d'abord : tout le reste dans un groupe à opacité 0
+        var svg = sg.el.firstChild, g = document.createElementNS(NS, "g");
+        Array.prototype.slice.call(svg.childNodes, 1).forEach(function (k) { g.appendChild(k); });
+        g.setAttribute("opacity", "0"); svg.appendChild(g); sg.rest = g; sg.op = 0; sg.z = -1;
+      });
+
+      // les trois barres d'attente (voie 0 sous le site, voie 1 sous les tuiles, voie 2 sous la vidéo), jusqu'à t 12.0 au plus
+      var LBL_W = 234;                                      // largeur de l'étiquette « EN ATTENTE » (px du quad)
+      var LANES = [
+        { t0: 8.5, born: 1.78, end: 11.95 },
+        { t0: 9.5, born: 3.90, end: 11.85 },
+        { t0: 10.5, born: 5.28, end: 11.75 }
+      ];
+      LANES.forEach(function (L, i) {
+        L.wt = fxMakeWait($("lanes"), i, L.t0, 12.0);
+        L.lab = L.wt.bar.querySelector(".fx-wait-l");
+        L.wt.el.appendChild(L.lab);                         // l'étiquette ne s'écrase pas avec la barre : elle s'imprime quand la barre passe
+        L.wt.el.style.opacity = "0";
+        L.max = 12.0 - L.t0;
+      });
+
+      // les tuiles : vrais logos (FX_ICON, couleurs de marque) ; HubSpot a son double gris (maillon cassé)
+      var TILE_ICONS = ["googleforms", "gmail", "hubspot", "stripe"];
+      var tiles = [0, 1, 2, 3].map(function (i) { return $("t" + i); });
+      tiles.forEach(function (t, i) { t.insertAdjacentHTML("afterbegin", fxIconSVG(TILE_ICONS[i])); });
+      $("dead").innerHTML = fxIconSVG("hubspot", "#2b2622");
+      [$("l1"), $("l2"), $("l3")].forEach(function (p) { var len = p.getTotalLength() || 32; p.style.strokeDasharray = len + " " + len; p.style.strokeDashoffset = len; p.__len = len; });
+
+      // la timeline de montage (gabarit p04-fx-video) : pistes vides, rushs cachés jusqu'à « vidéo »
+      $("video").appendChild(root.querySelector("#p04-fx-video").content.cloneNode(true));
+      var waveP = root.querySelector("#p04-video .fx-vd-wave path"); if (waveP) waveP.setAttribute("d", fxWavePath());
+      var vdState = root.querySelector("#p04-video .fx-vd-state");
+      var rushes = qa("#p04-video .fx-vd-rush");
+
+      // la puce « Prestataire web · HORS LIGNE » (gabarit p04-fx-chip) + son point de statut
+      $("chip").appendChild(root.querySelector("#p04-fx-chip").content.cloneNode(true));
+      var chipCard = root.querySelector("#p04-chip .fx-chip");
+      chipCard.style.width = "274px";
+      chipCard.insertAdjacentHTML("beforeend", '<i id="p04-cdot" class="p04-cdot"></i>');
+
+      var CHIP_BASE = 1.9;                                  // frame.md dit 1.2 : illisible au loin (texte 8 px) ; 1.9 garde « Prestataire web » lisible
+      var siteEl = $("site"), tilesEl = $("tiles"), videoEl = $("video"), chipEl = $("chip");
+      var shSite = $("sh-site"), shVideo = $("sh-video"), shChip = $("sh-chip"), shT = [0, 1, 2, 3].map(function (i) { return $("sh-t" + i); });
+
+      /* ===================== proxies ===================== */
+      function K(x, y, z, yaw, pitch, roll, zf, k, max) { return { x: x, y: y, z: z, yaw: yaw, pitch: pitch, roll: roll, zf: zf, k: k, max: max }; }
+      var K0 = K(9650, 600, -700, 0, 0, 0, 700, 6, 12);           // handoff_in : le filet de « la technique. » EST la ligne, à hauteur d'œil
+      var K1 = K(10000, 780, -1480, 4, -4, -1, 1480, 8, 16);      // la semaine qui commence : LUN 19 et MAR 20 lisibles (ligne en y 590), le site se pose
+      var K3 = K(11080, 700, -1450, 5, -4, -1, 1450, 8, 16);      // MAR 20
+      var K4 = K(12380, 640, -1450, 5, -4, -1, 1450, 8, 16);      // MER 21 (y 640 : la voie 2 reste au-dessus de la zone du sous-titre)
+      var K5 = K(11500, 800, -3300, 3, -4, -1, 3300, 6, 12);      // recul : les trois attentes ensemble
+      var C = { x: K0.x, y: K0.y, z: K0.z, yaw: 0, pitch: 0, roll: 0, zf: 700, k: 6, max: 12, b: 8, mb: 0 };
+      var V = { gone: 0 };
+      var E = { chip: { op: 0, sc: 1.15, b: 8, dy: 50 }, site: { op: 0, sc: 1.15, b: 8, dy: 70 }, video: { op: 0, sc: 1.15, b: 8, dy: 70 }, tiles: { op: 0 } };
+      var T = [0, 1, 2, 3].map(function () { return { op: 0, sc: 1.2, b: 6, dy: -36, x: 0 }; });
+
+      /* ===================== render : l'UNIQUE écrivain du monde (onUpdate de la timeline) ===================== */
+      function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+      function inOut2(q) { return q < 0.5 ? 2 * q * q : 1 - Math.pow(-2 * q + 2, 2) / 2; }
+      function mbStr(n) { n = Math.min(40, Math.round(n)); return n >= 1 ? "url(#p04-mb" + n + ")" : ""; }
+      // longueur d'une barre (jours) : 0,6 jour par seconde de film depuis sa naissance, puis les trois s'étirent ensemble au recul
+      function laneLen(L, t) {
+        if (t < L.born) return 0;
+        var dt = t - L.born, q = Math.min(1, dt / 0.12);
+        var len = 0.05 * (1 - Math.pow(1 - q, 3)) + 0.6 * dt;
+        if (t > 5.76) {
+          var base = 0.05 + 0.6 * (5.76 - L.born), extra = L.end - (base + 0.6 * 0.52);
+          len += extra * inOut2(clamp01((t - 5.76) / 0.40));
+        }
+        return Math.min(len, L.max - 0.01);
+      }
+      function stand(el, sh, P, base, ax, ay, o, shW, mb, vis) {
+        var op = o.op * vis;
+        if (op <= 0.002) { el.style.display = "none"; if (sh) sh.style.display = "none"; return -1; }
+        var z = fxStand(el, CC, [P[0], P[1] + (o.dy || 0), P[2]], base * (o.sc || 1), ax, ay, 0);
+        if (z < 0) { if (sh) sh.style.display = "none"; return -1; }
+        el.style.opacity = op.toFixed(3);
+        fxBlur(el, fxCoc(z, DD) + (o.b || 0), mb);
+        if (sh) { fxShadow(sh, CC, [P[0], P[1], P[2] + 1], shW); sh.style.opacity = (op * clamp01(1 - (o.dy || 0) / 90)).toFixed(3); }
+        return z;
+      }
+      var CC = {}, DD = {};
+      function render() {
+        var t = tl ? tl.time() : 0;
+        CC = { x: C.x, y: C.y, z: C.z, yaw: C.yaw, pitch: C.pitch, roll: C.roll };
+        DD = { zf: C.zf, k: C.k, max: C.max };
+        var c = CC, d = DD, vis = 1 - V.gone, mb = mbStr(C.mb);
+        camEl.style.filter = C.b > 0.05 ? "blur(" + C.b.toFixed(2) + "px)" : "none";
+
+        // sol de points (apparaît avec la frise, de 0.08 à 0.40)
+        var fo = clamp01((t - 0.08) / 0.32); fo = fo * fo * (3 - 2 * fo);
+        floorWrap.style.opacity = fo.toFixed(3);
+        if (fo > 0) fxDrawFloor(floorCv, c, d, FLOOR);
+
+        // la frise : la ligne toujours ; graduations, jours, mois et rails de gauche à droite de 0.08 à 0.40 ; filée pendant le whip
+        rb.segs.forEach(function (sg) { sg.z = -1; });
+        fxUpdateRibbon(rb, c, d, function (sg, z) { sg.z = z; return 0; });
+        rb.segs.forEach(function (sg) {
+          if (sg.el.style.display === "none" || sg.z < 0) return;
+          var X = fxX(sg.i), a = fxProject(c, [X, FX_LINE, 0]), b = fxProject(c, [X + FX_DAY, FX_LINE, 0]);
+          if (Math.max(a.x, b.x) < -120 || Math.min(a.x, b.x) > 2040) { sg.el.style.display = "none"; return; }
+          if (mb) fxBlur(sg.el, fxCoc(sg.z, d), mb);
+          var s0 = 0.08 + clamp01((sg.i - 7) / 5) * 0.16, ro = clamp01((t - s0) / 0.16);
+          ro = 1 - (1 - ro) * (1 - ro);
+          if (Math.abs(ro - sg.op) > 0.0005) { sg.rest.setAttribute("opacity", ro.toFixed(3)); sg.op = ro; }
+        });
+
+        // les barres d'attente : se tendent par scaleX (origine à gauche), l'étiquette s'imprime quand la barre la couvre
+        LANES.forEach(function (L, i) {
+          var len = laneLen(L, t), el = L.wt.el;
+          if (len <= 0.001 || vis <= 0.002) { el.style.display = "none"; return; }
+          var z = fxUpdateWait(L.wt, c, d);
+          if (z < 0) return;
+          L.wt.bar.style.transform = "scaleX(" + (len / L.max).toFixed(5) + ")";
+          var rev = len * FX_DAY - 20;
+          L.lab.style.clipPath = rev >= LBL_W ? "none" : "inset(0 " + (LBL_W - Math.max(0, rev)).toFixed(1) + "px 0 0)";
+          el.style.opacity = vis.toFixed(3);
+          var Y = 290 - i * 90, pa = fxProject(c, [fxX(L.t0), Y, -2]), pb = fxProject(c, [fxX(L.t0) + len * FX_DAY, Y, -2]);
+          fxBlur(el, Math.abs(pb.x - pa.x) > 1800 ? 0 : fxCoc(z, d), mb);
+        });
+
+        // les stations posées sur la ligne (pied en Y 600), face caméra, avec leur ombre de contact
+        stand(siteEl, shSite, [9650, FX_LINE, -4], 0.55, 564, 692, E.site, 558, mb, vis);
+        var zt = stand(tilesEl, null, [10950, FX_LINE, -4], 1.8, 235.67, 88, E.tiles, 0, mb, vis);
+        T.forEach(function (o, i) {
+          var el = tiles[i];
+          el.style.opacity = o.op.toFixed(3);
+          el.style.transform = "translate(" + o.x.toFixed(2) + "px," + o.dy.toFixed(2) + "px) scale(" + o.sc.toFixed(4) + ")";
+          el.style.filter = o.b > 0.25 ? "blur(" + o.b.toFixed(1) + "px)" : "none";
+          var op = o.op * vis * E.tiles.op;
+          if (zt < 0 || op <= 0.002) { shT[i].style.display = "none"; return; }
+          fxShadow(shT[i], c, [10605 + 230 * i, FX_LINE, -3], 143);
+          shT[i].style.opacity = (op * clamp01(1 + o.dy / 60)).toFixed(3);
+        });
+        stand(videoEl, shVideo, [12250, FX_LINE, -4], 0.65, 500, 520, E.video, 585, mb, vis);
+        stand(chipEl, shChip, [14700, FX_LINE, -4], CHIP_BASE, 150, 76, E.chip, 300 * CHIP_BASE * 0.9, mb, vis);
+      }
+
+      /* ===================== la timeline (une seule, en pause) ===================== */
+      var tl = null;
+      tl = gsap.timeline({ paused: true, onUpdate: render });
+      function ft(target, from, to, pos) {
+        if (pos > 0) to.immediateRender = false;
+        tl.fromTo(target, from, to, pos);
+      }
+      function sw(target, from, to, pos) {                  // bascule instantanée, écrite comme un fromTo de 1 ms (sûr au seek)
+        var o = {}; for (var k in to) o[k] = to[k];
+        o.duration = 0.001; o.ease = "none";
+        ft(target, from, o, pos);
+      }
+      function cp(o, keys, extra) {
+        var r = {}, i; keys = keys || Object.keys(o);
+        for (i = 0; i < keys.length; i++) r[keys[i]] = o[keys[i]];
+        if (extra) for (var k in extra) r[k] = extra[k];
+        return r;
+      }
+      var CAMK = ["x", "y", "z", "yaw", "pitch", "roll", "zf", "k", "max"];
+      function move(a, b, t0, dur, ease, keys) { keys = keys || CAMK; ft(C, cp(a, keys), cp(b, keys, { duration: dur, ease: ease }), t0); }
+      function drift(a, vx, t0, t1) { var b = cp(a); b.x = a.x + vx * (t1 - t0); ft(C, { x: a.x }, { x: b.x, duration: t1 - t0, ease: "none" }, t0); return b; }
+      function cran(a, b, t0, dur) {
+        move(a, b, t0, dur, "expo.inOut");
+        ft(C, { b: 0 }, { b: 8, duration: dur / 2, ease: "power2.in" }, t0);
+        ft(C, { b: 8 }, { b: 0, duration: dur / 2, ease: "power2.out" }, t0 + dur / 2);
+      }
+      // whip : départ arrêté (accélération en p²) et vitesse de sortie EXACTE du handoff : 2000 u en 0,18 s, +12 000 u/s à 6.28
+      function WHIP(p) { return 1.92 * p * p - 0.92 * p * p * p; }
+
+      // ---------- PISTE CAMÉRA ----------
+      // 0.00 à 0.60 recul : x, z, cap et mise au point en expo.out ; hauteur, tangage, roulis en power2.inOut (la ligne reste sur y 540 puis descend à 590, sans rebond)
+      move(K0, K1, 0, 0.60, "expo.out", ["x", "z", "yaw", "zf", "k", "max"]);
+      move(K0, K1, 0, 0.60, "power2.inOut", ["y", "pitch", "roll"]);
+      ft(C, { b: 8 }, { b: 0, duration: 0.60, ease: "expo.out" }, 0);
+      // r6 (Colin, 2026-09-30) : le zoom sur le site est voulu, l'aller-retour non. Plan fixe qui respire (pas de dérive
+      // latérale), puis UN zoom franc sur le site à « chaque » (sommet 1.37, whoosh 15.02), puis la caméra suit la barre
+      // d'attente vers la droite jusqu'au cran vers MAR 20
+      var K1h = K(10000, 776, -1440, 4, -4, -1, 1440, 8, 16);
+      var K2z = K(9835, 600, -1090, 4.5, -4, -1, 1090, 8, 16);     // zoom ×1,33 : le site, la ligne et la barre d'attente tiennent au-dessus des sous-titres
+      var K2d = K(9935, 600, -1090, 4.5, -4, -1, 1090, 8, 16);
+      move(K1, K1h, 0.60, 0.62, "sine.inOut");
+      cran(K1h, K2z, 1.22, 0.30);                            // zoom sur le site (flou 8 au sommet 1.37)
+      move(K2z, K2d, 1.52, 1.42, "sine.in");                 // la caméra suit la barre qui se tend vers la droite
+      cran(K2d, K3, 2.94, 0.24);                             // cran vers MAR 20 (sommet 3.06)
+      var D3 = drift(K3, 40, 3.18, 4.34);
+      cran(D3, K4, 4.34, 0.24);                              // cran vers MER 21 (sommet 4.46)
+      var D4 = drift(K4, 30, 4.58, 5.76);
+      move(D4, K5, 5.76, 0.34, "expo.out");                  // recul sur les trois attentes
+      ft(C, { x: K5.x }, { x: 13500, duration: 0.18, ease: WHIP }, 6.10);
+      ft(C, { b: 0 }, { b: 16, duration: 0.18, ease: "power2.in" }, 6.10);
+      ft(C, { mb: 0 }, { mb: 30, duration: 0.18, ease: "power2.in" }, 6.10);
+      // les stations, leurs barres et la puce filent et sortent dans le whip (rien d'autre que la frise à la couture)
+      ft(V, { gone: 0 }, { gone: 1, duration: 0.12, ease: "power2.in" }, 6.10);
+
+      // ---------- STATIONS ----------
+      function land(o, t0, sc, b, dy) {
+        ft(o, { op: 0 }, { op: 1, duration: 0.08, ease: "power1.out" }, t0);
+        ft(o, { sc: sc, b: b, dy: dy }, { sc: 1, b: 0, dy: 0, duration: 0.2, ease: "expo.out" }, t0);
+      }
+      // la puce est posée tout au bout (VEN 23), hors du plan d'ouverture : elle entre dans le cadre au recul final, au bout des trois barres
+      land(E.chip, 0.44, 1.15, 8, 50);
+      var cdot = root.querySelector("#p04-cdot");
+      ft(cdot, { backgroundColor: "#25D366" }, { backgroundColor: "#b9b1a7", duration: 0.08, ease: "power1.inOut" }, 0.80);
+      ft(cdot, { scale: 1 }, { scale: 0.8, duration: 0.04, ease: "power2.out" }, 0.80);
+      ft(cdot, { scale: 0.8 }, { scale: 1, duration: 0.08, ease: "power2.out" }, 0.84);
+
+      // 0.62 le vrai site arrive en volant et se pose sur LUN 19 (plan d'ouverture) ; 1.46 « chaque » : le cran se pose sur lui ; 1.62 le post-it se colle au coin haut droit
+      land(E.site, 0.62, 1.15, 8, 70);
+      var postit = $("postit");
+      ft(postit, { opacity: 0 }, { opacity: 1, duration: 0.06, ease: "power1.out" }, 1.62);
+      ft(postit, { scale: 1.35, rotation: 14, y: -40, filter: "blur(8px)" }, { scale: 1, rotation: 4, y: 0, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 1.62);
+
+      // 3.14 « chaque » : les quatre tuiles se posent une par une (0,08 s) sur MAR 20
+      sw(E.tiles, { op: 0 }, { op: 1 }, 3.14);
+      T.forEach(function (o, i) {
+        var t0 = 3.14 + 0.08 * i;
+        ft(o, { op: 0 }, { op: 1, duration: 0.06, ease: "power1.out" }, t0);
+        ft(o, { sc: 1.2, b: 6, dy: -36 }, { sc: 1, b: 0, dy: 0, duration: 0.18, ease: "expo.out" }, t0);
+      });
+      // 3.40, 3.46, 3.52 : les liens d'encre se tracent (0,1 s chacun)
+      [$("l1"), $("l2"), $("l3")].forEach(function (p, i) {
+        ft(p, { strokeDashoffset: p.__len }, { strokeDashoffset: 0, duration: 0.1, ease: "power2.out" }, 3.40 + 0.06 * i);
+      });
+      // 3.58 un point d'encre part de Forms, passe Gmail à 3.66, arrive sur HubSpot à 3.74
+      var dot = $("dot");
+      ft(dot, { opacity: 0 }, { opacity: 1, duration: 0.03, ease: "none" }, 3.58);
+      ft(dot, { x: 88 }, { x: 248.5, duration: 0.16, ease: "none" }, 3.58);
+      ft(dot, { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.3, duration: 0.05, ease: "power2.in" }, 3.74);
+      // 3.74 le maillon HubSpot vers Stripe casse : pointillé, il s'écarte de 6 px ; HubSpot grise, secousse ; badge « ERREUR »
+      sw($("l3"), { opacity: 1 }, { opacity: 0 }, 3.74);
+      sw([$("l3a"), $("l3b")], { opacity: 0 }, { opacity: 1 }, 3.74);
+      ft($("l3a"), { x: 0 }, { x: -3, duration: 0.14, ease: "power2.out" }, 3.74);
+      ft($("l3b"), { x: 0 }, { x: 3, duration: 0.14, ease: "power2.out" }, 3.74);
+      ft($("dead"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, 3.74);
+      [[-5, 0.025], [5, 0.025], [-3, 0.025], [0, 0.025]].reduce(function (acc, s) {
+        ft(T[2], { x: acc.x }, { x: s[0], duration: s[1], ease: "sine.inOut" }, acc.t);
+        return { x: s[0], t: acc.t + s[1] };
+      }, { x: 0, t: 3.74 });
+      ft($("badge"), { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "power1.out" }, 3.76);
+      ft($("badge"), { scale: 0.6 }, { scale: 1, duration: 0.18, ease: "expo.out" }, 3.76);
+
+      // 4.56 « chaque » : la timeline de montage se pose sur MER 21 ; 4.86 « vidéo » : l'état s'imprime, les rushs arrivent ; 5.52 ils frémissent
+      land(E.video, 4.56, 1.15, 8, 70);
+      ft(vdState, { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.3, ease: "steps(11)" }, 4.86);
+      rushes.forEach(function (r, i) {
+        var t0 = 4.86 + 0.05 * i;
+        ft(r, { opacity: 0 }, { opacity: 1, duration: 0.06, ease: "power1.out" }, t0);
+        ft(r, { scale: 0.8, y: -14 }, { scale: 1, y: 0, duration: 0.18, ease: "expo.out" }, t0);
+        var s = 5.52 + 0.02 * i;
+        ft(r, { y: 0 }, { y: -7, duration: 0.05, ease: "sine.out" }, s);
+        ft(r, { y: -7 }, { y: 6, duration: 0.08, ease: "sine.inOut" }, s + 0.05);
+        ft(r, { y: 6 }, { y: 0, duration: 0.07, ease: "sine.in" }, s + 0.13);
+      });
+
+      // ---------- LA PHRASE (temps locaux), trois morceaux qui se remplacent ----------
+      qa(".p04-sub .fx-sw").forEach(function (w) {
+        var t0 = parseFloat(w.getAttribute("data-cue")), inb = w.classList.contains("p04-inb");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, t0);
+        ft(w, { color: inb ? "rgba(246,241,233,0.4)" : "rgba(26,22,18,0.35)" }, { color: inb ? "rgba(246,241,233,1)" : "rgba(26,22,18,1)", duration: 0.2, ease: "power1.out" }, t0 + 0.08);
+      });
+      var inkBg = root.querySelector("#p04-sub1 .fx-ink-bg");
+      ft(inkBg, { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 0.12);
+      function subOut(id, t0) {
+        var els = qa("#p04-" + id + " .fx-sw").concat(qa("#p04-" + id + " .fx-ink-bg"));
+        ft(els, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.12, ease: "power2.in" }, t0);
+      }
+      subOut("sub1", 1.02);
+      subOut("sub2", 2.96);
+      subOut("sub3", 5.80);
+
+      // longueur exacte de la séquence
+      tl.set({}, {}, DUR);
+
+      // première image = handoff_in, avant tout seek
+      render();
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

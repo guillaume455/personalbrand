@@ -1,0 +1,1000 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==================== desk-day (copied from 04, wood + light + tone inside a camera wrapper) ==================== */
+    .f07-desk {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #e7dccd;
+    }
+    .f07-desk-cam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: #e7dccd;
+    }
+    .f07-desk-layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f07-desk-wood {
+      background-size: 1920px 1080px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'><filter id='v' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.0006 0.004' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.30 0 0 0 0 0.16 0.5 0 0 0 -0.22'/></filter><filter id='g' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.001 0.011' numOctaves='3' seed='23'/><feColorMatrix values='0 0 0 0 0.40 0 0 0 0 0.26 0 0 0 0 0.14 1 0 0 0 0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0'/></feComponentTransfer></filter><filter id='p' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='turbulence' baseFrequency='0.0008 0.03' numOctaves='2' seed='31'/><feColorMatrix values='0 0 0 0 0.40 0 0 0 0 0.26 0 0 0 0 0.14 -0.7 0 0 0 0.1'/></filter><rect width='1920' height='1080' filter='url(%23v)'/><rect width='1920' height='1080' filter='url(%23g)'/><rect width='1920' height='1080' filter='url(%23p)'/></svg>");
+    }
+    .f07-desk-light {
+      background: linear-gradient(
+        45deg,
+        rgba(243, 236, 226, 0.000) 170px,
+        rgba(243, 236, 226, 0.103) 205px,
+        rgba(243, 236, 226, 0.330) 240px,
+        rgba(243, 236, 226, 0.557) 275px,
+        rgba(243, 236, 226, 0.660) 310px,
+        rgba(243, 236, 226, 0.660) 380px,
+        rgba(243, 236, 226, 0.557) 415px,
+        rgba(243, 236, 226, 0.330) 450px,
+        rgba(243, 236, 226, 0.103) 485px,
+        rgba(243, 236, 226, 0.000) 520px,
+        rgba(243, 236, 226, 0.000) 475px,
+        rgba(243, 236, 226, 0.103) 510px,
+        rgba(243, 236, 226, 0.330) 545px,
+        rgba(243, 236, 226, 0.557) 580px,
+        rgba(243, 236, 226, 0.660) 615px,
+        rgba(243, 236, 226, 0.660) 650px,
+        rgba(243, 236, 226, 0.557) 685px,
+        rgba(243, 236, 226, 0.330) 720px,
+        rgba(243, 236, 226, 0.103) 755px,
+        rgba(243, 236, 226, 0.000) 790px,
+        rgba(243, 236, 226, 0.000) 1160px,
+        rgba(243, 236, 226, 0.103) 1195px,
+        rgba(243, 236, 226, 0.330) 1230px,
+        rgba(243, 236, 226, 0.557) 1265px,
+        rgba(243, 236, 226, 0.660) 1300px,
+        rgba(243, 236, 226, 0.660) 1410px,
+        rgba(243, 236, 226, 0.557) 1445px,
+        rgba(243, 236, 226, 0.330) 1480px,
+        rgba(243, 236, 226, 0.103) 1515px,
+        rgba(243, 236, 226, 0.000) 1550px,
+        rgba(243, 236, 226, 0.000) 1505px,
+        rgba(243, 236, 226, 0.103) 1540px,
+        rgba(243, 236, 226, 0.330) 1575px,
+        rgba(243, 236, 226, 0.557) 1610px,
+        rgba(243, 236, 226, 0.660) 1645px,
+        rgba(243, 236, 226, 0.660) 1700px,
+        rgba(243, 236, 226, 0.557) 1735px,
+        rgba(243, 236, 226, 0.330) 1770px,
+        rgba(243, 236, 226, 0.103) 1805px,
+        rgba(243, 236, 226, 0.000) 1840px
+      );
+    }
+    .f07-desk-tone {
+      background:
+        radial-gradient(ellipse 1500px 1100px at 16% 6%, rgba(250, 245, 237, 0.42), rgba(250, 245, 237, 0) 70%),
+        radial-gradient(ellipse 1250px 860px at 52% 44%, rgba(90, 60, 30, 0) 58%, rgba(90, 60, 30, 0.11) 100%);
+    }
+    .f07-desk-grain {
+      opacity: 0.03;
+      background-size: 240px 240px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+    }
+    /* ==================== /desk-day ==================== */
+
+    /* world camera: one wrapper, transform-origin on the zoom target (set at build), same tweens as the desk camera */
+    .f07-world {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f07-cam,
+    .f07-fly {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f07-defs {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    /* ==================== quote-sheet (copied from 01, relit for the day desk) ====================
+       A4 sheet, 700 x 990 paper px; .f07-sheet-place carries the prop scale (0.68: 476 x 673 on screen).
+       Short soft window shadow: screen +8 +12 blur 24 at scale 0.68 = paper +12 +18, sigma 17.6. */
+    .f07-sheet-place {
+      position: absolute;
+      left: 722px;
+      top: 205px;
+      width: 700px;
+      height: 990px;
+      transform: scale(0.68);
+      transform-origin: 0 0;
+    }
+    .f07-sheet {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+    }
+    .f07-sheet-shadow {
+      position: absolute;
+      left: 12px;
+      top: 18px;
+      width: 700px;
+      height: 990px;
+      border-radius: 3px;
+      background: rgba(60, 40, 20, 0.22);
+      filter: blur(17.6px);
+    }
+    .f07-paper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      overflow: hidden;
+      border: 1px solid #d9cfc1;
+      border-radius: 3px;
+      background: #fbf8f2;
+      box-shadow: 0 1px 3px rgba(60, 40, 20, 0.2);
+    }
+    .f07-paper-tex {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      opacity: 0.3;
+      mix-blend-mode: multiply;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .42 0 0 0 0 .36 0 0 0 0 .3 1.4 0 0 0 -.6'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23p)'/%3E%3C/svg%3E");
+    }
+    .f07-paper-light {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      mix-blend-mode: multiply;
+      background: linear-gradient(150deg, rgba(255, 250, 240, 0) 35%, rgba(150, 110, 70, 0.06) 100%);
+    }
+    .f07-q-micro {
+      position: absolute;
+      font: 400 18px/1.2 "Space Mono", monospace;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #5a5348;
+      white-space: nowrap;
+    }
+    .f07-q-title {
+      position: absolute;
+      left: 54px;
+      top: 88px;
+      font: 600 40px/1.1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.01em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f07-q-rule {
+      position: absolute;
+      left: 54px;
+      width: 592px;
+      height: 1px;
+      background: #d9cfc1;
+    }
+    .f07-q-rule-strong {
+      height: 2px;
+      background: #1a1612;
+    }
+    .f07-q-label {
+      position: absolute;
+      left: 54px;
+      font: 500 28px/1.3 "Instrument Sans", sans-serif;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f07-q-price {
+      position: absolute;
+      right: 54px;
+      font: 700 30px/1 "Space Mono", monospace;
+      font-variant-numeric: tabular-nums;
+      word-spacing: -0.3em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f07-q-big {
+      position: absolute;
+      left: 396px;
+      top: 210px;
+      width: 250px;
+      height: 70px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font: 700 64px/1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.05em;
+      font-variant-numeric: tabular-nums;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f07-q-bigeuro {
+      display: inline-block;
+      margin-left: 0.16em;
+    }
+    .f07-q-total {
+      position: absolute;
+      left: 346px;
+      top: 652px;
+      width: 300px;
+      height: 80px;
+      border: 2px solid #1a1612;
+      border-radius: 4px;
+      opacity: 0.3;
+    }
+    .f07-q-totval {
+      position: absolute;
+      right: 20px;
+      top: 23px;
+      font: 700 30px/1 "Space Mono", monospace;
+      font-variant-numeric: tabular-nums;
+      word-spacing: -0.3em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    /* pen ink on the paper: strikes (already there), the slot line (drawn by the pen) */
+    .f07-ink {
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+      mix-blend-mode: multiply;
+    }
+    #f07-slotink {
+      opacity: 0;
+    }
+    /* handwritten corrections next to the struck prices (left by frame 06) */
+    .f07-fix {
+      position: absolute;
+      right: 60px;
+      font: 600 28px/1 "Instrument Sans", sans-serif;
+      letter-spacing: -0.01em;
+      color: #c25b28;
+      white-space: nowrap;
+      mix-blend-mode: multiply;
+      transform: rotate(-4deg);
+      transform-origin: 100% 100%;
+    }
+    .f07-tch {
+      opacity: 0;
+      white-space: pre;
+    }
+    /* the last line, written by the pen in the slot (paper-line style, ink = accent) */
+    .f07-line {
+      position: absolute;
+      left: 64px;
+      top: 826px;
+      font: 500 28px/1 "Instrument Sans", sans-serif;
+      color: #c25b28;
+      white-space: nowrap;
+      mix-blend-mode: multiply;
+      opacity: 0;
+    }
+    /* motion-blur-streak: the terracotta comet that underlines the written line */
+    .f07-comet {
+      position: absolute;
+      left: 54px;
+      top: 856px;
+      width: 320px;
+      height: 20px;
+      filter: url(#f07-streak);
+    }
+    .f07-comet-tail {
+      position: absolute;
+      left: 0;
+      top: 6px;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, rgba(194, 91, 40, 0) 0%, rgba(194, 91, 40, 0.85) 22%, #c25b28 80%, #d4703f 100%);
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f07-comet-head {
+      position: absolute;
+      right: -8px;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #e08a5c 0%, #d4703f 34%, rgba(212, 112, 63, 0.45) 54%, rgba(224, 138, 92, 0) 74%);
+      opacity: 0;
+    }
+    /* ==================== /quote-sheet ==================== */
+
+    /* ==================== pen (copied from 01, relit for the day desk) ====================
+       Terracotta ballpoint seen from above, 562 paper px long (382 px on screen at 0.68). The tip is the
+       local origin; a single state setter writes .f07-pen (tip), .f07-pen-rot (angle) and .f07-pen-shade
+       (short soft window shadow that meets the paper at the tip and falls down-right along the body). */
+    .f07-pen {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+    }
+    .f07-pen-rot,
+    .f07-pen-shade {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      transform-origin: 0 0;
+    }
+    .f07-pen-shade {
+      opacity: 0.34;
+      filter: blur(3.5px);
+    }
+    .f07-pen-svg {
+      position: absolute;
+      left: -1px;
+      top: -15px;
+      overflow: visible;
+    }
+    /* ==================== /pen ==================== */
+
+    /* phrase = the voice, small, word by word, top band (frame.md "phrase", ink-dark on the day desk) */
+    .f07-type {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f07-phfx {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 960px 130px;
+    }
+    #f07-ph2fx,
+    #f07-ph3fx {
+      opacity: 0;
+    }
+    .f07-row {
+      position: absolute;
+      left: 0;
+      top: 98px;
+      width: 1920px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      white-space: nowrap;
+      font: 600 54px/1.18 "Instrument Sans", sans-serif;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+    }
+    .f07-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    /* traced accent pill: the only emphasis of the phrase */
+    .f07-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.04em 0.3em 0.08em;
+    }
+    .f07-pillbg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f07-pilltx {
+      position: relative;
+      display: inline-flex;
+      color: #ffffff;
+    }
+    .f07-ch {
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+
+    /* giant-pill « libre. » (frame.md), dead center on the clean desk, short soft desk shadow */
+    .f07-libre-row {
+      position: absolute;
+      left: 0;
+      top: 412px;
+      width: 1920px;
+      height: 256px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .f07-gpill {
+      position: relative;
+      display: inline-block;
+      padding: 0.04em 0.285em 0.04em 0.238em;
+      font-size: 260px;
+      font-weight: 700;
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+    .f07-gpill-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 28px;
+      background: #c25b28;
+      box-shadow:
+        8px 12px 24px rgba(60, 40, 20, 0.22),
+        1px 2px 3px rgba(60, 40, 20, 0.16);
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f07-gpill-txt {
+      position: relative;
+      display: inline-block;
+      clip-path: inset(-0.04em -0.285em -0.04em -0.238em round 28px);
+    }
+  </style>
+
+  <div id="root" data-composition-id="07-ligne" data-width="1920" data-height="1080" data-duration="6.52">
+    <!-- ==================== desk-day ==================== -->
+    <div id="f07-desk" class="clip f07-desk" data-start="0" data-duration="6.52" data-track-index="0" data-layout-ignore>
+      <div id="f07-deskcam" class="f07-desk-cam">
+        <div class="f07-desk-layer f07-desk-wood"></div>
+        <div class="f07-desk-layer f07-desk-light"></div>
+        <div class="f07-desk-layer f07-desk-tone"></div>
+      </div>
+      <div class="f07-desk-layer f07-desk-grain"></div>
+    </div>
+    <!-- ==================== /desk-day ==================== -->
+
+    <div id="f07-world" class="clip f07-world" data-start="0" data-duration="6.52" data-track-index="1" data-layout-allow-overflow>
+      <svg class="f07-defs" width="0" height="0" aria-hidden="true" focusable="false">
+        <filter id="f07-streak" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+          <feGaussianBlur id="f07-streakblur" in="SourceGraphic" stdDeviation="12 0" />
+        </filter>
+        <filter id="f07-flyf" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+          <feGaussianBlur id="f07-flyblur" in="SourceGraphic" stdDeviation="0 0" />
+        </filter>
+      </svg>
+
+      <div id="f07-cam" class="f07-cam">
+        <div id="f07-fly" class="f07-fly">
+          <div class="f07-sheet-place">
+            <!-- ==================== quote-sheet ==================== -->
+            <div id="f07-sheet" class="f07-sheet">
+              <div id="f07-sheetshadow" class="f07-sheet-shadow"></div>
+              <div class="f07-paper">
+                <div class="f07-paper-tex"></div>
+                <div class="f07-q-micro" style="left: 54px; top: 58px">DEVIS N°&nbsp;0147</div>
+                <div class="f07-q-title">Prestations web</div>
+                <div class="f07-q-rule f07-q-rule-strong" style="top: 168px"></div>
+                <!-- row 1: label + qty + the big price -->
+                <div class="f07-q-label" style="top: 204px">Modification sur ton site</div>
+                <div class="f07-q-micro" style="left: 54px; top: 250px">1 jour</div>
+                <div class="f07-q-big">1&nbsp;000<span class="f07-q-bigeuro">€</span></div>
+                <div class="f07-q-rule" style="top: 320px"></div>
+                <!-- row 2 -->
+                <div class="f07-q-label" style="top: 350px">Nouvelle page</div>
+                <div class="f07-q-price" style="top: 353px">600&nbsp;€</div>
+                <div class="f07-q-rule" style="top: 416px"></div>
+                <!-- row 3 -->
+                <div class="f07-q-label" style="top: 446px">Réparer l’automatisation</div>
+                <div class="f07-q-price" style="top: 449px">sur devis</div>
+                <div class="f07-q-rule" style="top: 512px"></div>
+                <!-- row 4 -->
+                <div class="f07-q-label" style="top: 542px">Délai</div>
+                <div class="f07-q-price" style="top: 545px">quand il aura le temps</div>
+                <div class="f07-q-rule" style="top: 608px"></div>
+                <!-- total box (muted by frame 06, gives way to the last line) -->
+                <div id="f07-total" class="f07-q-total">
+                  <div class="f07-q-micro" style="left: 20px; top: 27px">Total</div>
+                  <div class="f07-q-totval">1&nbsp;600&nbsp;€</div>
+                </div>
+                <div class="f07-q-rule" style="top: 920px"></div>
+
+                <!-- the four row strikes (pen, accent 5px, hand-made) -->
+                <svg id="f07-strikes" class="f07-ink" width="700" height="990" viewBox="0 0 700 990">
+                  <path id="f07-st1" d="M0 0" fill="none" stroke="#c25b28" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path id="f07-st2" d="M0 0" fill="none" stroke="#c25b28" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path id="f07-st3" d="M0 0" fill="none" stroke="#c25b28" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path id="f07-st4" d="M0 0" fill="none" stroke="#c25b28" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <div class="f07-fix" style="top: 178px; font-size: 32px">toi</div>
+                <div class="f07-fix" style="top: 324px">toi</div>
+                <div class="f07-fix" style="top: 420px">toi</div>
+                <div class="f07-fix" style="top: 511px">maintenant</div>
+
+                <!-- the last line: printed micro label + the slot the pen draws + the line it writes -->
+                <div id="f07-slotlabel" class="f07-q-micro" style="left: 54px; top: 790px">La seule ligne qui reste</div>
+                <svg id="f07-slotink" class="f07-ink" width="700" height="990" viewBox="0 0 700 990">
+                  <path id="f07-slotpath" d="M0 0" fill="none" stroke="#c25b28" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <div id="f07-comet" class="f07-comet">
+                  <div id="f07-comettail" class="f07-comet-tail"></div>
+                  <div id="f07-comethead" class="f07-comet-head"></div>
+                </div>
+                <div id="f07-line" class="f07-line"><span id="f07-lw0">Apprendre</span> <span id="f07-lw1">à</span> <span id="f07-lw2">t’en</span> <span id="f07-lw3">servir</span></div>
+
+                <div class="f07-paper-light"></div>
+              </div>
+
+              <!-- ==================== pen ==================== -->
+              <div id="f07-pen" class="f07-pen">
+                <div id="f07-penshade" class="f07-pen-shade">
+                  <svg class="f07-pen-svg" width="562" height="30" viewBox="0 0 562 30">
+                    <path d="M1 15 L9 12.6 L42 6 L154 6 L154 2.5 L540 1.5 Q552 1.5 552 15 Q552 28.5 540 28.5 L154 27.5 L154 24 L42 24 L9 17.4 Z" fill="#3c2814"></path>
+                  </svg>
+                </div>
+                <div id="f07-penrot" class="f07-pen-rot">
+                  <svg class="f07-pen-svg" width="562" height="30" viewBox="0 0 562 30">
+                    <defs>
+                      <linearGradient id="f07-pen-body" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#6e2f12"></stop>
+                        <stop offset="0.16" stop-color="#a84d22"></stop>
+                        <stop offset="0.32" stop-color="#d4703f"></stop>
+                        <stop offset="0.42" stop-color="#e08a5c"></stop>
+                        <stop offset="0.54" stop-color="#bf5a29"></stop>
+                        <stop offset="0.82" stop-color="#8f4019"></stop>
+                        <stop offset="1" stop-color="#5e270e"></stop>
+                      </linearGradient>
+                      <linearGradient id="f07-pen-grip" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#5a260d"></stop>
+                        <stop offset="0.35" stop-color="#a84d22"></stop>
+                        <stop offset="0.5" stop-color="#c25b28"></stop>
+                        <stop offset="1" stop-color="#4f210b"></stop>
+                      </linearGradient>
+                      <linearGradient id="f07-pen-metal" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#7d7a75"></stop>
+                        <stop offset="0.34" stop-color="#f4f2ee"></stop>
+                        <stop offset="0.6" stop-color="#c3c0ba"></stop>
+                        <stop offset="1" stop-color="#65625d"></stop>
+                      </linearGradient>
+                    </defs>
+                    <!-- metal tip cone + ball -->
+                    <path d="M1 15 L9 12.6 L42 7.5 L42 22.5 L9 17.4 Z" fill="url(#f07-pen-metal)"></path>
+                    <circle cx="2" cy="15" r="1.8" fill="#2a2724"></circle>
+                    <!-- grip with ribs -->
+                    <rect x="42" y="6" width="112" height="18" rx="3" fill="url(#f07-pen-grip)"></rect>
+                    <path d="M52 7 V23 M62 7 V23 M72 7 V23 M82 7 V23 M92 7 V23 M102 7 V23 M112 7 V23 M122 7 V23 M132 7 V23 M142 7 V23" stroke="#3d1a08" stroke-opacity="0.35" stroke-width="1.4"></path>
+                    <!-- collar -->
+                    <rect x="154" y="2.5" width="12" height="25" rx="2" fill="url(#f07-pen-metal)"></rect>
+                    <!-- barrel -->
+                    <rect x="166" y="1.5" width="360" height="27" rx="3" fill="url(#f07-pen-body)"></rect>
+                    <rect x="172" y="8.5" width="346" height="1.6" rx="0.8" fill="#ffffff" fill-opacity="0.32"></rect>
+                    <!-- end cap + click button -->
+                    <path d="M526 1.5 H540 Q552 1.5 552 15 Q552 28.5 540 28.5 H526 Z" fill="url(#f07-pen-body)"></path>
+                    <rect x="550" y="9" width="11" height="12" rx="3" fill="url(#f07-pen-metal)"></rect>
+                    <!-- pocket clip on top of the barrel -->
+                    <path d="M384 15 Q384 11.2 388 11.2 H536 V18.8 H388 Q384 18.8 384 15 Z" fill="#3a1807" fill-opacity="0.3" transform="translate(1.5 2)"></path>
+                    <path d="M384 15 Q384 11.2 388 11.2 H536 V18.8 H388 Q384 18.8 384 15 Z" fill="url(#f07-pen-metal)"></path>
+                    <circle cx="389" cy="15" r="3.4" fill="url(#f07-pen-metal)" stroke="#6f6c67" stroke-width="0.6"></circle>
+                  </svg>
+                </div>
+              </div>
+              <!-- ==================== /pen ==================== -->
+            </div>
+            <!-- ==================== /quote-sheet ==================== -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="f07-type" class="clip f07-type" data-start="0" data-duration="6.52" data-track-index="2">
+      <!-- Scene 1: "Il ne reste [qu’une ligne] sur le devis." -->
+      <div id="f07-ph1fx" class="f07-phfx">
+        <div class="f07-row">
+          <span id="f07-a1" class="f07-w">Il</span>
+          <span id="f07-a2" class="f07-w">ne</span>
+          <span id="f07-a3" class="f07-w">reste</span>
+          <span id="f07-pill1" class="f07-pill"><span id="f07-pill1bg" class="f07-pillbg"></span><span class="f07-pilltx f07-split">qu’une ligne</span></span>
+          <span id="f07-a4" class="f07-w">sur</span>
+          <span id="f07-a5" class="f07-w">le</span>
+          <span id="f07-a6" class="f07-w">devis.</span>
+        </div>
+      </div>
+      <!-- Scene 2: "Apprendre à [t’en servir]" -->
+      <div id="f07-ph2fx" class="f07-phfx">
+        <div class="f07-row">
+          <span id="f07-b1" class="f07-w">Apprendre</span>
+          <span id="f07-b2" class="f07-w">à</span>
+          <span id="f07-pill2" class="f07-pill"><span id="f07-pill2bg" class="f07-pillbg"></span><span class="f07-pilltx f07-split">t’en servir</span></span>
+        </div>
+      </div>
+      <!-- Scene 3: "C’est la seule qui te rend" -->
+      <div id="f07-ph3fx" class="f07-phfx">
+        <div class="f07-row">
+          <span id="f07-c1" class="f07-w">C’est</span>
+          <span id="f07-c2" class="f07-w">la</span>
+          <span id="f07-c3" class="f07-w">seule</span>
+          <span id="f07-c4" class="f07-w">qui</span>
+          <span id="f07-c5" class="f07-w">te</span>
+          <span id="f07-c6" class="f07-w">rend</span>
+        </div>
+      </div>
+      <!-- giant-pill « libre. » -->
+      <div class="f07-libre-row">
+        <div id="f07-gpill" class="f07-gpill"><span id="f07-gpillbg" class="f07-gpill-bg"></span><span id="f07-gpilltx" class="f07-gpill-txt">libre.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var $ = function (id) {
+        return document.getElementById("f07-" + id);
+      };
+      var TAU = Math.PI * 2;
+
+      // ---------- baked layout (measured once in headless Chrome with the shipped fonts) ----------
+      var LINE_X = 64; // left edge of the written line (paper px), matches .f07-line left
+      var BASE = 850; // its baseline (paper px)
+      var LINE_W = 294; // width of "Apprendre à t’en servir" at 500 28px
+      var WORDS = [
+        [0, 141],
+        [147, 162],
+        [168, 216],
+        [221, 294],
+      ]; // [start, end] of each written word, line-local px
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ---------- helpers ----------
+      var split = function (el, cls) {
+        var txt = el.textContent;
+        el.textContent = "";
+        var out = [];
+        for (var i = 0; i < txt.length; i++) {
+          var s = document.createElement("span");
+          s.className = cls;
+          s.textContent = txt[i];
+          el.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      };
+      // word by word on the voice timestamp
+      var word = function (el, at) {
+        tl.fromTo(el, { opacity: 0, y: 10, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false }, at);
+      };
+      // traced accent pill: the fill traces from the left, then the letters write inside on their word cues
+      var pill = function (id, at, groups) {
+        var bg = $(id + "bg");
+        tl.set(bg, { opacity: 1, immediateRender: false }, at);
+        tl.fromTo(bg, { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, at);
+        var chars = document.querySelectorAll("#f07-" + id + " .f07-ch");
+        groups.forEach(function (g) {
+          for (var i = g[0]; i < g[1]; i++) {
+            tl.fromTo(chars[i], { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out", immediateRender: false }, g[2] + (i - g[0]) * 0.02);
+          }
+        });
+      };
+      // printed text types itself, one character at a time (discrete)
+      var type = function (chars, at, step) {
+        for (var i = 0; i < chars.length; i++) tl.set(chars[i], { opacity: 1, immediateRender: false }, at + i * step);
+      };
+      // seek-safe proxy property: every write goes straight to the DOM
+      var prop = function (obj, key, write) {
+        Object.defineProperty(obj, key, {
+          get: function () {
+            return this["_" + key];
+          },
+          set: function (v) {
+            this["_" + key] = v;
+            write();
+          },
+        });
+      };
+      // hand-made pen stroke (deterministic wobble)
+      var hand = function (x0, y0, x1, y1, n, amp, ph) {
+        var pts = [];
+        for (var k = 0; k <= n; k++) {
+          var u = k / n;
+          var w = amp * Math.sin(u * TAU * 1.3 + ph) + amp * 0.45 * Math.sin(u * TAU * 3.7 + ph * 2.1);
+          pts.push([x0 + (x1 - x0) * u, y0 + (y1 - y0) * u + w]);
+        }
+        return pts;
+      };
+      var pathD = function (pts) {
+        var d = "M" + pts[0][0].toFixed(2) + " " + pts[0][1].toFixed(2);
+        for (var k = 1; k < pts.length; k++) d += " L" + pts[k][0].toFixed(2) + " " + pts[k][1].toFixed(2);
+        return d;
+      };
+      var lengths = function (pts) {
+        var cum = [0];
+        for (var k = 1; k < pts.length; k++) cum.push(cum[k - 1] + Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]));
+        return cum;
+      };
+      var pointAt = function (pts, cum, s) {
+        var lo = 0,
+          hi = cum.length - 1;
+        while (hi - lo > 1) {
+          var mid = (lo + hi) >> 1;
+          if (cum[mid] <= s) lo = mid;
+          else hi = mid;
+        }
+        var seg = cum[hi] - cum[lo] || 1,
+          f = Math.min(1, Math.max(0, (s - cum[lo]) / seg));
+        return [pts[lo][0] + (pts[hi][0] - pts[lo][0]) * f, pts[lo][1] + (pts[hi][1] - pts[lo][1]) * f];
+      };
+
+      // phrase pills: split into letters (build time)
+      var splits = document.querySelectorAll("#f07-type .f07-split");
+      for (var si = 0; si < splits.length; si++) split(splits[si], "f07-ch");
+
+      // ---------- world geometry (paper px -> world px) ----------
+      var PROP = 0.68,
+        PLACE_X = 722,
+        PLACE_Y = 205,
+        SW = 700,
+        SH = 990,
+        SHEET_ROT = -1.2;
+      var paperToWorld = function (px, py) {
+        var a = (SHEET_ROT * Math.PI) / 180;
+        var dx = px - SW / 2,
+          dy = py - SH / 2;
+        return [PLACE_X + PROP * (SW / 2 + dx * Math.cos(a) - dy * Math.sin(a)), PLACE_Y + PROP * (SH / 2 + dx * Math.sin(a) + dy * Math.cos(a))];
+      };
+      var SC = paperToWorld(SW / 2, SH / 2); // sheet centre (lift / fly pivot)
+
+      // ---------- the sheet as left by frame 06: four rows struck ----------
+      $("st1").setAttribute("d", pathD(hand(44, 223, 658, 246, 60, 1.8, 0.3)));
+      $("st2").setAttribute("d", pathD(hand(44, 367, 658, 368, 60, 1.6, 1.4)));
+      $("st3").setAttribute("d", pathD(hand(44, 462, 658, 466, 60, 1.7, 2.2)));
+      $("st4").setAttribute("d", pathD(hand(44, 558, 658, 561, 60, 1.5, 0.9)));
+      gsap.set($("sheet"), { rotation: SHEET_ROT });
+      gsap.set($("fly"), { transformOrigin: SC[0].toFixed(2) + "px " + SC[1].toFixed(2) + "px" });
+
+      // ---------- pen: one state, one writer (tip, angle, lift) ----------
+      var penEl = $("pen"),
+        penRot = $("penrot"),
+        penShade = $("penshade");
+      var pen = { _px: 752, _py: 400, _pr: 62, _pl: 0 };
+      var drawPen = function () {
+        penEl.style.transform = "translate(" + pen._px.toFixed(2) + "px," + pen._py.toFixed(2) + "px)";
+        penRot.style.transform = "rotate(" + pen._pr.toFixed(3) + "deg) scale(" + (1 + 0.035 * pen._pl).toFixed(4) + ")";
+        penShade.style.transform = "translate(" + (2 + 18 * pen._pl).toFixed(2) + "px," + (3 + 26 * pen._pl).toFixed(2) + "px) rotate(" + (pen._pr + 2.2).toFixed(3) + "deg)";
+        penShade.style.filter = "blur(" + (3.5 + 7 * pen._pl).toFixed(2) + "px)";
+        penShade.style.opacity = (0.34 - 0.12 * pen._pl).toFixed(3);
+      };
+      ["px", "py", "pr", "pl"].forEach(function (k) {
+        prop(pen, k, drawPen);
+      });
+      drawPen();
+      var P_REST = [752, 400, 62];
+      var lift = function (at, d) {
+        tl.fromTo(pen, { pl: 0 }, { pl: 1, duration: d / 2, ease: "power2.out", immediateRender: false, lazy: false }, at);
+        tl.fromTo(pen, { pl: 1 }, { pl: 0, duration: d / 2, ease: "power2.in", immediateRender: false, lazy: false }, at + d / 2);
+      };
+
+      // the empty slot line (svg-path-draw, dash offset and pen tip in sync)
+      var slotPts = hand(54, 866, 646, 865, 90, 1.1, 0.4);
+      var slotCum = lengths(slotPts);
+      var SLOT_L = slotCum[slotCum.length - 1];
+      var slotPath = $("slotpath");
+      slotPath.setAttribute("d", pathD(slotPts));
+      slotPath.setAttribute("stroke-dasharray", SLOT_L.toFixed(2) + " " + (SLOT_L + 20).toFixed(2));
+      slotPath.setAttribute("stroke-dashoffset", SLOT_L.toFixed(2));
+      var ul = { _u: 0 };
+      prop(ul, "u", function () {
+        slotPath.setAttribute("stroke-dashoffset", (SLOT_L * (1 - ul._u)).toFixed(2));
+        var q = pointAt(slotPts, slotCum, SLOT_L * ul._u);
+        pen.px = q[0];
+        pen.py = q[1];
+      });
+
+      // the written line: text revealed exactly behind the moving tip, the tip bobs like a hand
+      var line = $("line");
+      var clipLine = function (p) {
+        line.style.clipPath = "inset(-16px " + (LINE_W - p + 0.5).toFixed(2) + "px -16px -12px)";
+      };
+      clipLine(0);
+      var R_W = 9,
+        WAVE = 34; // paper px per bob cycle: keeps the bob under ~10 Hz at the writing speed
+      var wState = function (p) {
+        var ph = (p / WAVE) * TAU;
+        return [LINE_X + p, BASE - (3 + 8 * (0.5 - 0.5 * Math.cos(ph))), R_W + 0.6 * Math.sin(ph + 1)];
+      };
+      var wr = { _p: 0 };
+      prop(wr, "p", function () {
+        var s = wState(wr._p);
+        clipLine(wr._p);
+        pen.px = s[0];
+        pen.py = s[1];
+        pen.pr = s[2];
+      });
+
+      // ---------- camera: coordinate-target zoom on the written line (desk + world, same tweens) ----------
+      var CAMS = [$("deskcam"), $("cam")];
+      var PT = paperToWorld(250, 842); // zoom target on the paper
+      var S = 3.36; // paper-line 28px -> 64px on screen
+      var F = [960, 555]; // where the target lands (paper bottom stays above y 900)
+      gsap.set(CAMS, { transformOrigin: PT[0].toFixed(2) + "px " + PT[1].toFixed(2) + "px" });
+      var ZX = F[0] - PT[0],
+        ZY = F[1] - PT[1],
+        ZR = -SHEET_ROT; // roll so the written line reads level
+      tl.fromTo(CAMS, { scale: 1 }, { scale: 1.012, duration: 2.1, ease: "none" }, 0);
+      tl.fromTo(CAMS, { x: 0, y: 0, scale: 1.012, rotation: 0 }, { x: ZX, y: ZY, scale: S, rotation: ZR, duration: 0.64, ease: "power3.inOut", immediateRender: false }, 2.1);
+      tl.fromTo(CAMS, { scale: S }, { scale: S * 1.012, duration: 0.86, ease: "none", immediateRender: false }, 2.74);
+      tl.fromTo(CAMS, { x: ZX, y: ZY, scale: S * 1.012, rotation: ZR }, { x: 0, y: 0, scale: 1, rotation: 0, duration: 0.5, ease: "power3.inOut", immediateRender: false }, 3.6);
+
+      // ---------- SCENE 1 (0.00-2.10): the struck quote, phrase at the top, the pen draws the empty slot ----------
+      word($("a1"), 0.08); // Il
+      word($("a2"), 0.24); // ne
+      word($("a3"), 0.44); // reste
+      pill("pill1", 0.56, [
+        [0, 6, 0.66], // qu’une@0.64
+        [6, 12, 0.96], // ligne@0.96
+      ]);
+      word($("a4"), 1.14); // sur
+      word($("a5"), 1.36); // le
+      word($("a6"), 1.52); // devis
+      // the muted total gives way to the last line
+      tl.fromTo($("total"), { opacity: 0.3 }, { opacity: 0, duration: 0.3, ease: "power1.out", immediateRender: false }, 1.0);
+      // pen: lifted from the desk to the slot start, draws the slot left to right, then back to the line start
+      var S0 = slotPts[0],
+        S1 = slotPts[slotPts.length - 1],
+        W0 = wState(0);
+      tl.fromTo(pen, { px: P_REST[0], py: P_REST[1], pr: P_REST[2] }, { px: S0[0], py: S0[1], pr: 8, duration: 0.3, ease: "power2.inOut", immediateRender: false, lazy: false }, 0.9);
+      lift(0.9, 0.3);
+      tl.set($("slotink"), { opacity: 1, immediateRender: false }, 1.2);
+      tl.fromTo(ul, { u: 0 }, { u: 1, duration: 0.42, ease: "power1.inOut", immediateRender: false, lazy: false }, 1.2);
+      tl.fromTo(pen, { pr: 8 }, { pr: 10, duration: 0.42, ease: "none", immediateRender: false, lazy: false }, 1.2);
+      type(split($("slotlabel"), "f07-tch"), 1.24, 0.018);
+      tl.fromTo(pen, { px: S1[0], py: S1[1], pr: 10 }, { px: W0[0], py: W0[1], pr: W0[2], duration: 0.54, ease: "power2.inOut", immediateRender: false, lazy: false }, 1.66);
+      lift(1.66, 0.54);
+
+      // ---------- SCENE 2 (2.10-3.60): push-in on the slot, the pen writes the line on the voice ----------
+      // text-to-text zoom-through (forward): phrase 1 accelerates toward the viewer, hard cut, phrase 2 grows in
+      tl.fromTo($("ph1fx"), { scale: 1, filter: "blur(0px)" }, { scale: 1.2, filter: "blur(10px)", duration: 0.2, ease: "power3.in", immediateRender: false }, 1.98);
+      tl.fromTo($("ph1fx"), { opacity: 1 }, { opacity: 0.15, duration: 0.2, ease: "none", immediateRender: false }, 1.98);
+      tl.set($("ph1fx"), { opacity: 0, immediateRender: false }, 2.18);
+      tl.fromTo($("ph2fx"), { opacity: 0.15, scale: 0.75, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false }, 2.18);
+      word($("b1"), 2.26); // Apprendre
+      word($("b2"), 2.6); // à
+      pill("pill2", 2.64, [
+        [0, 4, 2.72], // t’en@2.72
+        [4, 11, 2.92], // servir@2.92
+      ]);
+      // each word is written on its own cue; short hops over the spaces
+      var WT = [
+        [2.26, 2.56],
+        [2.6, 2.69],
+        [2.72, 2.9],
+        [2.92, 3.2],
+      ];
+      tl.set(line, { opacity: 1, immediateRender: false }, 2.26);
+      for (var k = 0; k < WT.length; k++) {
+        tl.fromTo(wr, { p: WORDS[k][0] }, { p: WORDS[k][1], duration: WT[k][1] - WT[k][0], ease: "power1.inOut", immediateRender: false, lazy: false }, WT[k][0]);
+        if (k < WT.length - 1) {
+          tl.fromTo(wr, { p: WORDS[k][1] }, { p: WORDS[k + 1][0], duration: WT[k + 1][0] - WT[k][1], ease: "power1.inOut", immediateRender: false, lazy: false }, WT[k][1]);
+        }
+      }
+      // the pen lifts away to the right once the line is written
+      var WE = wState(LINE_W);
+      tl.fromTo(pen, { px: WE[0], py: WE[1], pr: WE[2] }, { px: WE[0] + 950, py: WE[1] - 110, pr: R_W - 5, duration: 0.34, ease: "power3.in", immediateRender: false, lazy: false }, 3.22);
+      tl.fromTo(pen, { pl: 0 }, { pl: 1, duration: 0.2, ease: "power2.out", immediateRender: false, lazy: false }, 3.22);
+      tl.set(penEl, { opacity: 0, immediateRender: false }, 3.58);
+      // motion-blur-streak (path A): the comet underlines the line; X-only blur rides the move's window + ease
+      var streakNode = $("streakblur");
+      var PEAK_BLUR = 12;
+      var sb = { _v: PEAK_BLUR };
+      prop(sb, "v", function () {
+        streakNode.setAttribute("stdDeviation", sb._v.toFixed(2) + " 0");
+      });
+      sb.v = PEAK_BLUR; // seed: a seek to the streak start shows the smeared state
+      var COMET = 3.18,
+        COMET_D = 0.42,
+        COMET_W = LINE_X + LINE_W + 16 - 54;
+      tl.fromTo($("comethead"), { x: -COMET_W, opacity: 0 }, { x: 0, opacity: 1, duration: COMET_D, ease: "expo.out", immediateRender: false }, COMET);
+      tl.fromTo($("comettail"), { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: COMET_D, ease: "expo.out", immediateRender: false }, COMET);
+      tl.fromTo(sb, { v: PEAK_BLUR }, { v: 0, duration: COMET_D, ease: "expo.out", immediateRender: false, lazy: false }, COMET);
+      tl.fromTo($("comethead"), { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power1.out", immediateRender: false }, COMET + COMET_D + 0.04);
+
+      // ---------- SCENE 3 (3.60-6.52): pull back, "C’est la seule qui te rend", the sheet flies, « libre. » ----------
+      // text-to-text inverse zoom-through: phrase 2 recedes, hard cut, phrase 3 arrives oversized
+      tl.fromTo($("ph2fx"), { scale: 1, filter: "blur(0px)" }, { scale: 0.8, filter: "blur(10px)", duration: 0.2, ease: "power3.in", immediateRender: false }, 3.6);
+      tl.fromTo($("ph2fx"), { opacity: 1 }, { opacity: 0.15, duration: 0.2, ease: "none", immediateRender: false }, 3.6);
+      tl.set($("ph2fx"), { opacity: 0, immediateRender: false }, 3.8);
+      tl.fromTo($("ph3fx"), { opacity: 0.15, scale: 1.25, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false }, 3.8);
+      word($("c1"), 3.86); // C’est
+      word($("c2"), 4.06); // la
+      word($("c3"), 4.28); // seule
+      word($("c4"), 4.46); // qui
+      word($("c5"), 4.64); // te
+      word($("c6"), 4.82); // rend
+
+      // the sheet lifts off the desk (shadow grows and softens), rolls to -14deg, flies out top-right
+      var FLY = 4.7,
+        FLY_D = 0.4;
+      var fly = $("fly");
+      tl.fromTo(fly, { scale: 1 }, { scale: 1.06, duration: 0.22, ease: "power2.out", immediateRender: false }, FLY);
+      tl.fromTo(fly, { x: 0, y: 0 }, { x: 1300, y: -1050, duration: FLY_D, ease: "power3.in", immediateRender: false }, FLY);
+      tl.fromTo(fly, { rotation: 0 }, { rotation: -14 - SHEET_ROT, duration: FLY_D, ease: "power2.in", immediateRender: false }, FLY);
+      tl.fromTo($("sheetshadow"), { x: 0, y: 0, opacity: 1, filter: "blur(17.6px)" }, { x: 40, y: 58, opacity: 0.7, filter: "blur(44px)", duration: 0.24, ease: "power2.out", immediateRender: false }, FLY);
+      // slight motion blur riding the flight (same window + ease, peaks at peak speed)
+      var flyNode = $("flyblur");
+      var fb = { _v: 0 };
+      prop(fb, "v", function () {
+        flyNode.setAttribute("stdDeviation", fb._v.toFixed(2) + " " + (fb._v * 0.45).toFixed(2));
+      });
+      fb.v = 0;
+      tl.set($("sheet"), { filter: "url(#f07-flyf)", immediateRender: false }, FLY);
+      tl.fromTo(fb, { v: 0 }, { v: 16, duration: FLY_D, ease: "power3.in", immediateRender: false, lazy: false }, FLY);
+      tl.set(fly, { opacity: 0, immediateRender: false }, FLY + FLY_D);
+
+      // giant-pill « libre. »: the pill traces from the left with a -6deg settle, then the letters land
+      // inside with the tracking tighten (split letters, per-letter x only)
+      var GP = 4.96,
+        GL = 5.06,
+        GP_EM = 260;
+      tl.set($("gpillbg"), { opacity: 1, immediateRender: false }, GP);
+      tl.fromTo($("gpillbg"), { scaleX: 0 }, { scaleX: 1, duration: 0.36, ease: "power3.out", immediateRender: false }, GP);
+      tl.fromTo($("gpillbg"), { rotation: -6 }, { rotation: 0, duration: 0.5, ease: "power3.out", immediateRender: false }, GP);
+      var gl = split($("gpilltx"), "f07-ch");
+      gl.forEach(function (c, i) {
+        tl.fromTo(
+          c,
+          { opacity: 0, x: (i - (gl.length - 1) / 2) * 0.4 * GP_EM, filter: "blur(12px)" },
+          { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false },
+          GL + i * 0.02,
+        );
+      });
+
+      // perfectly still hold to the end of the frame (scene clips run 6.52 s for the transition overlap)
+      tl.set({}, {}, 6.52);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["07-ligne"] = tl;
+    })();
+  </script>
+</template>

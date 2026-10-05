@@ -1,0 +1,246 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: block; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+    /* ===================== LIGNE v8 : extrait du bloc CSS (mot pour mot) ===================== */
+    .fx-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    .fx-paper { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+      background: radial-gradient(ellipse 1500px 900px at 50% 42%, #f9f5ee 0%, #f6f1e9 55%, #efe7dc 100%); }
+    .fx-vignette { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none;
+      background: radial-gradient(ellipse 1320px 820px at 50% 46%, rgba(239,231,220,0) 62%, rgba(214,200,182,.38) 100%); }
+    .fx-grain { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; opacity: .035; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .fx-ink { position: relative; display: inline-block; }
+    .fx-ink-bg { position: absolute; left: -0.14em; right: -0.14em; top: 0.02em; bottom: -0.02em; border-radius: 3px; background: #1a1612;
+      transform-origin: 0 50%; transform: scaleX(0); }
+    .fx-ink-tx { position: relative; text-shadow: none; }
+    .fx-type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans", sans-serif; letter-spacing: -0.025em; color: #1a1612; white-space: nowrap; }
+    /* ===================== fin de l'extrait ===================== */
+
+    /* ---- séquence 8 : la ligne (qui se replie dès l'arrivée), la phrase sur papier nu, le coup de pinceau terracotta ----
+       r4 (Colin, 2026-09-30) : plus de barre noire qui traverse la phrase ; « correctement » souligné d'un coup de pinceau */
+    #p08-ground, #p08-stage, #p08-grainclip { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    /* le filet d'encre du raccord (profil vertical peint par dégradé) : un seul segment [inkA, inkB] qui se replie au centre */
+    .p08-ink { position: absolute; left: -40px; top: 520px; width: 2000px; height: 80px; transform-origin: 0 50%; }
+    #p08-svg { position: absolute; left: 0; top: 500px; width: 1920px; height: 120px; overflow: hidden; }
+    #p08-terra, #p08-sheen { opacity: 0; }
+    /* la lumière qui court une fois le long du trait (4.00) : halo chaud en dégradé, sans filtre */
+    #p08-glow { position: absolute; left: 0; top: 530px; width: 260px; height: 60px; opacity: 0;
+      background: radial-gradient(closest-side, rgba(224,138,92,.5) 0%, rgba(224,138,92,.2) 45%, rgba(224,138,92,0) 100%); }
+    /* mots posés sur la ligne, un par un */
+    .p08-w { display: inline-block; opacity: 0; }
+    .p08-base { display: inline-block; width: 0; height: 0; vertical-align: baseline; }
+    #p08-box { margin-left: 0.1em; transform-origin: 12% 100%; }
+  
+  /* r3 (Colin, 2026-09-30) : les mots clés passent en boîte terracotta (texte papier), plus en boîte d'encre */
+  .fx-ink-bg, .fx-sub.dark .fx-ink-bg { background: #c25b28 !important; }
+</style>
+
+  <div id="root" data-composition-id="08-servir" data-width="1920" data-height="1080" data-duration="4.70">
+    <div id="p08-ground" class="clip" data-start="0" data-duration="4.70" data-track-index="0" data-layout-ignore>
+      <div class="fx-paper"></div>
+      <div class="fx-vignette"></div>
+    </div>
+
+    <div id="p08-stage" class="clip" data-start="0" data-duration="4.70" data-track-index="1">
+      <!-- écran : la ligne de la frise (y 560) -->
+      <div id="p08-lines" class="fx-layer">
+        <div id="p08-ink" class="p08-ink"></div>
+        <div id="p08-glow"></div>
+        <svg id="p08-svg" viewBox="0 500 1920 120" width="1920" height="120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="p08-sheen-g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="180" y2="0">
+              <stop offset="0" stop-color="#e08a5c" stop-opacity="0" />
+              <stop offset="0.5" stop-color="#f4ae84" stop-opacity="1" />
+              <stop offset="1" stop-color="#e08a5c" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <path id="p08-terra" d="M0 560 L1 560 Z" fill="#c25b28" />
+          <path id="p08-sheen" d="M0 560 L1 560 Z" fill="url(#p08-sheen-g)" />
+        </svg>
+      </div>
+
+      <!-- monde (cam2) : les phrases -->
+      <div id="p08-world" class="fx-layer">
+        <div id="p08-l1" class="fx-type" style="top:470px"><span class="p08-w" data-cue="0.26">Et</span> <span class="p08-w" data-cue="0.36">pas</span> <span class="p08-w" data-cue="0.56">besoin</span> <span class="p08-w" data-cue="0.90">d’être</span> <span id="p08-box" class="fx-ink"><i id="p08-box-bg" class="fx-ink-bg"></i><span class="fx-ink-tx p08-w" data-cue="1.12" style="color:#f6f1e9">technique.</span></span><i class="p08-base"></i></div>
+        <div id="p08-l2a" class="fx-type" style="top:358px"><span class="p08-w" data-cue="2.00">Il</span> <span class="p08-w" data-cue="2.10">suffit</span> <span class="p08-w" data-cue="2.50">d’apprendre</span><i class="p08-base"></i></div>
+        <div id="p08-l2b" class="fx-type" style="top:470px"><span class="p08-w" data-cue="2.92">à</span> <span class="p08-w" data-cue="3.08">t’en</span> <span class="p08-w" data-cue="3.20">servir</span> <span class="p08-w" data-cue="3.48"><span id="p08-key">correctement</span>.</span><i class="p08-base"></i></div>
+      </div>
+    </div>
+
+    <div id="p08-grainclip" class="clip" data-start="0" data-duration="4.70" data-track-index="2" data-layout-ignore>
+      <div class="fx-grain"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "08-servir";
+      function byId(id) { return document.getElementById(id); }
+
+      /* ===================== kit ligne v8 : extrait (mot pour mot) ===================== */
+      function fxBlur(el, px, extra) { var f = (px > 0.25 ? "blur(" + px.toFixed(1) + "px)" : "") + (extra ? " " + extra : ""); el.style.filter = f || "none"; }
+      function fxApplyCam2(worldEl, c2) {
+        worldEl.style.transformOrigin = "0 0";
+        worldEl.style.transform = "translate(" + (960 - c2.x * c2.s).toFixed(2) + "px," + (540 - c2.y * c2.s).toFixed(2) + "px) scale(" + c2.s.toFixed(4) + ")";
+      }
+      /* ===================== fin de l'extrait ===================== */
+
+      var LINE = 560;                 // la ligne de la frise, à l'écran (handoff_in et handoff_out)
+      var GAP = 18;                   // ligne de base 18 px au-dessus du filet
+      var WAVE = 240;                 // longueur d'onde de l'ondulation finale (px)
+      var world = byId("p08-world");
+      var ink = byId("p08-ink");
+      var terra = byId("p08-terra"), sheen = byId("p08-sheen"), sheenG = byId("p08-sheen-g");
+      var glow = byId("p08-glow");
+      var l1 = byId("p08-l1"), l2a = byId("p08-l2a"), l2b = byId("p08-l2b");
+      var box = byId("p08-box"), boxBg = byId("p08-box-bg");
+      var key = byId("p08-key");
+
+      /* ---- mesures (une fois, puis à nouveau quand les polices sont prêtes) ---- */
+      var KEY = { x0: 1050, x1: 1480 };
+      var LINES = [[l1, LINE - GAP], [l2a, 430], [l2b, LINE - GAP]];
+      function measure() {
+        LINES.forEach(function (L) {
+          var m = L[0].querySelector(".p08-base");
+          L[0].style.top = (L[1] - m.offsetTop).toFixed(2) + "px";
+        });
+        // position du mot dans le monde, indépendante de toute mise à l'échelle de l'aperçu
+        var lr = l2b.getBoundingClientRect(), kr = key.getBoundingClientRect(), k = lr.width / 1920 || 1;
+        KEY.x0 = (kr.left - lr.left) / k;
+        KEY.x1 = (kr.right - lr.left) / k;
+      }
+
+      /* ---- profil vertical du filet (3 px, #1a1612) flouté par une gaussienne sigma : dégradé peint au pixel ---- */
+      function erf(x) {
+        var sg = x < 0 ? -1 : 1; x = Math.abs(x);
+        var t = 1 / (1 + 0.3275911 * x);
+        var y = 1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+        return sg * y;
+      }
+      function inkDensity(u, sg) {
+        if (sg < 0.05) return Math.abs(u) <= 1.5 ? 1 : 0;
+        var k = sg * Math.SQRT2;
+        return 0.5 * (erf((u + 1.5) / k) - erf((u - 1.5) / k));
+      }
+      function inkProfile(sg) {
+        var st = [];
+        for (var i = 0; i < 80; i++) {
+          var a = 0;
+          for (var j = 0; j < 4; j++) a += inkDensity(i + 0.125 + j * 0.25 - 40, sg);
+          a /= 4;
+          st.push("rgba(26,22,18," + a.toFixed(4) + ") " + (i + 0.5) + "px");
+        }
+        return "linear-gradient(to bottom," + st.join(",") + ")";
+      }
+
+      /* ---- le coup de pinceau sous « correctement » : forme pleine, attaque épaisse, sortie effilée, légère courbe montante.
+         ext > 0 : il s'étire d'un bord à l'autre et s'aplatit en un trait uniforme de 4 px (bords atteints à ext 0.39),
+         puis ondule (amp, ph) : c'est l'état exact du handoff_out vers la séquence 9. ---- */
+      function smooth(e0, e1, x) { var t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); }
+      function hwAt(t) { return (2.4 - t) + 4.0 * smooth(0, 0.04, t) * (1 - 0.8 * Math.pow(t, 1.7)); }   // demi-épaisseur
+      function bowAt(t) { return 3 - 8 * t + 3 * Math.sin(Math.PI * t); }                          // décalage sous LINE
+      function brushPath(SX0, SX1, draw, ext, amp, ph) {
+        var f = Math.min(1, ext / 0.39), xa, xb, up = [], dn = [], hw0 = 0, hw1 = 0;
+        if (ext > 0) { xa = SX0 - (ext * SX0) / 0.39; xb = SX1 + (ext * (1920 - SX1)) / 0.39; }
+        else { xa = SX0; xb = SX0 + draw * (SX1 - SX0); }
+        function pt(x) {
+          var t = Math.min(1, Math.max(0, (x - SX0) / (SX1 - SX0)));
+          var hw = hwAt(t) * (1 - f) + 2 * f;
+          var yc = LINE + bowAt(t) * (1 - f) + (amp > 0.01 ? amp * Math.sin((2 * Math.PI * (x + ph)) / WAVE) : 0);
+          up.push(x.toFixed(2) + " " + (yc - hw).toFixed(2)); dn.push(x.toFixed(2) + " " + (yc + hw).toFixed(2));
+          return hw;
+        }
+        hw0 = pt(xa);
+        for (var x = Math.ceil(xa / 4) * 4; x < xb; x += 4) if (x > xa) pt(x);
+        hw1 = pt(xb);
+        dn.reverse();
+        return "M" + up.join(" L") + " A" + hw1.toFixed(2) + " " + hw1.toFixed(2) + " 0 0 1 " + dn[0] +
+          " L" + dn.join(" L") + " A" + hw0.toFixed(2) + " " + hw0.toFixed(2) + " 0 0 1 " + up[0] + " Z";
+      }
+
+      /* ---- le proxy : caméra, flou du whip, trait terracotta ; UN seul écrivain (render) ---- */
+      var P = { camx: 960, s: 1, blur: 10, inkA: -40, inkB: 1960, draw: 0, ext: 0, amp: 0, ph: -4.2, sh: 0 };
+      var lastBlur = -1;
+      function render() {
+        var s = P.s, cx = P.camx;
+        // cam2 : dérive en x ; l'échelle garde la ligne (monde y 560) en y 560 à l'écran
+        fxApplyCam2(world, { x: cx, y: LINE - 20 / s, s: s });
+
+        if (Math.abs(P.blur - lastBlur) > 0.004) {
+          ink.style.backgroundImage = inkProfile(P.blur);
+          lastBlur = P.blur;
+        }
+
+        // le filet d'encre du raccord : segment [inkA, inkB] à l'écran, replié au centre dès 0.44
+        ink.style.transform = "translateX(" + (P.inkA + 40).toFixed(2) + "px) scaleX(" + (Math.max(0, P.inkB - P.inkA) / 2000).toFixed(5) + ")";
+
+        // le coup de pinceau sous « correctement » (coordonnées écran ; il déborde un peu du mot)
+        var SX0 = 960 + (KEY.x0 - cx) * s - 4, SX1 = 960 + (KEY.x1 - cx) * s + 12;
+        var on = P.draw > 0.0005;
+        terra.style.opacity = on ? 1 : 0;
+        if (on) terra.setAttribute("d", brushPath(SX0, SX1, P.draw, P.ext, P.amp, P.ph));
+
+        // il luit une fois : un reflet court de gauche à droite dans la même forme, un halo doux
+        var sa = Math.sin(Math.PI * P.sh), c = SX0 - 60 + P.sh * (SX1 - SX0 + 120);
+        sheen.style.opacity = sa > 0.002 ? (0.95 * sa).toFixed(3) : 0;
+        glow.style.opacity = sa > 0.002 ? (0.85 * sa).toFixed(3) : 0;
+        if (sa > 0.002) {
+          sheenG.setAttribute("x1", (c - 110).toFixed(1)); sheenG.setAttribute("x2", (c + 110).toFixed(1));
+          sheen.setAttribute("d", brushPath(SX0, SX1, 1, 0, 0, 0));
+          glow.style.transform = "translateX(" + (c - 130).toFixed(2) + "px)";
+        }
+      }
+
+      measure();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measure(); lastBlur = -1; render(); });
+
+      var tl = gsap.timeline({ paused: true, onUpdate: render });
+
+      /* ===== caméra : dérive x +12 px/s (repart de 0 à la couture) ; recul 1 → 0.97 à la fin ===== */
+      tl.fromTo(P, { camx: 960 }, { camx: 962.4, duration: 0.4, ease: "power1.in", immediateRender: false }, 0);
+      tl.fromTo(P, { camx: 962.4 }, { camx: 962.4 + 12 * 4.3, duration: 4.3, ease: "none", immediateRender: false }, 0.4);
+      tl.fromTo(P, { s: 1 }, { s: 0.97, duration: 0.3, ease: "power2.in", immediateRender: false }, 4.4);
+
+      /* ===== Scene 1 (0.00 à 1.96) : fin du whip, « Et pas besoin d’être [technique.] » posé sur la ligne ===== */
+      tl.fromTo(P, { blur: 10 }, { blur: 0, duration: 0.2, ease: "expo.out", immediateRender: false }, 0);
+      // un seul geste : le filet du raccord se replie vers le centre et disparaît sous la phrase qui arrive (plus de barre au milieu)
+      tl.fromTo(P, { inkA: -40, inkB: 1960 }, { inkA: 960, inkB: 960, duration: 0.34, ease: "power3.inOut", immediateRender: false }, 0.1);
+
+      function land(el) {
+        var cue = parseFloat(el.getAttribute("data-cue"));
+        tl.fromTo(el, { opacity: 0, y: -16, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.34, ease: "power3.out", immediateRender: false }, cue - 0.03);
+      }
+      Array.prototype.forEach.call(document.querySelectorAll("#p08-world .p08-w"), land);
+
+      // la boîte d'encre se trace 1 image avant « technique. »
+      tl.fromTo(boxBg, { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out", immediateRender: false }, 1.09);
+      // elle se décroche de la ligne (petit décollement) puis tombe : pas besoin
+      tl.fromTo(box, { y: 0, rotation: 0 }, { y: -4, rotation: -1.2, duration: 0.12, ease: "power2.out", immediateRender: false }, 1.48);
+      tl.fromTo(box, { y: -4, rotation: -1.2, opacity: 1 }, { y: 140, rotation: 8, opacity: 0, duration: 0.2, ease: "power2.in", immediateRender: false }, 1.6);
+      // le reste de la phrase s'efface
+      tl.fromTo(l1, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power1.in", immediateRender: false }, 1.8);
+
+      /* ===== Scene 2 (1.96 à 4.70) : « Il suffit d’apprendre » / « à t’en servir correctement. » ===== */
+      // le coup de pinceau terracotta se trace sous « correctement », de gauche à droite, attaque sur le carillon (3.50)
+      tl.fromTo(P, { draw: 0 }, { draw: 1, duration: 0.36, ease: "power3.out", immediateRender: false }, 3.44);
+      // tenue vivante : il luit une fois
+      tl.fromTo(P, { sh: 0 }, { sh: 1, duration: 0.48, ease: "power1.inOut", immediateRender: false }, 3.86);
+      // la phrase s'efface
+      tl.fromTo([l2a, l2b], { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.2, ease: "power1.in", immediateRender: false }, 4.34);
+      // le coup de pinceau s'étire d'un bord à l'autre, s'aplatit en trait de 4 px et commence à onduler (handoff_out)
+      tl.fromTo(P, { ext: 0 }, { ext: 1, duration: 0.3, ease: "power2.in", immediateRender: false }, 4.4);
+      tl.fromTo(P, { ph: -4.2 }, { ph: 0, duration: 0.3, ease: "none", immediateRender: false }, 4.4);
+      tl.fromTo(P, { amp: 0 }, { amp: 6, duration: 0.25, ease: "power2.in", immediateRender: false }, 4.45);
+
+      render();
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

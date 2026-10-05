@@ -1,0 +1,1168 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* desk-day (solution ground: light oak, window light bands, grain) */
+    .f08-desk {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #e7dccd;
+    }
+    .f08-deskcam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 1400px 450px;
+    }
+    .f08-desk-layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f08-desk-wood {
+      background-size: 1920px 1080px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'><filter id='v' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.0006 0.004' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.30 0 0 0 0 0.16 0.5 0 0 0 -0.22'/></filter><filter id='g' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.001 0.011' numOctaves='3' seed='23'/><feColorMatrix values='0 0 0 0 0.40 0 0 0 0 0.26 0 0 0 0 0.14 1 0 0 0 0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0 0.065 0'/></feComponentTransfer></filter><filter id='p' filterUnits='userSpaceOnUse' x='0' y='0' width='1920' height='1080' color-interpolation-filters='sRGB'><feTurbulence type='turbulence' baseFrequency='0.0008 0.03' numOctaves='2' seed='31'/><feColorMatrix values='0 0 0 0 0.40 0 0 0 0 0.26 0 0 0 0 0.14 -0.7 0 0 0 0.1'/></filter><rect width='1920' height='1080' filter='url(%23v)'/><rect width='1920' height='1080' filter='url(%23g)'/><rect width='1920' height='1080' filter='url(%23p)'/></svg>");
+    }
+    .f08-desk-light {
+      background: linear-gradient(
+        45deg,
+        rgba(243, 236, 226, 0.000) 170px,
+        rgba(243, 236, 226, 0.103) 205px,
+        rgba(243, 236, 226, 0.330) 240px,
+        rgba(243, 236, 226, 0.557) 275px,
+        rgba(243, 236, 226, 0.660) 310px,
+        rgba(243, 236, 226, 0.660) 380px,
+        rgba(243, 236, 226, 0.557) 415px,
+        rgba(243, 236, 226, 0.330) 450px,
+        rgba(243, 236, 226, 0.103) 485px,
+        rgba(243, 236, 226, 0.000) 520px,
+        rgba(243, 236, 226, 0.000) 475px,
+        rgba(243, 236, 226, 0.103) 510px,
+        rgba(243, 236, 226, 0.330) 545px,
+        rgba(243, 236, 226, 0.557) 580px,
+        rgba(243, 236, 226, 0.660) 615px,
+        rgba(243, 236, 226, 0.660) 650px,
+        rgba(243, 236, 226, 0.557) 685px,
+        rgba(243, 236, 226, 0.330) 720px,
+        rgba(243, 236, 226, 0.103) 755px,
+        rgba(243, 236, 226, 0.000) 790px,
+        rgba(243, 236, 226, 0.000) 1160px,
+        rgba(243, 236, 226, 0.103) 1195px,
+        rgba(243, 236, 226, 0.330) 1230px,
+        rgba(243, 236, 226, 0.557) 1265px,
+        rgba(243, 236, 226, 0.660) 1300px,
+        rgba(243, 236, 226, 0.660) 1410px,
+        rgba(243, 236, 226, 0.557) 1445px,
+        rgba(243, 236, 226, 0.330) 1480px,
+        rgba(243, 236, 226, 0.103) 1515px,
+        rgba(243, 236, 226, 0.000) 1550px,
+        rgba(243, 236, 226, 0.000) 1505px,
+        rgba(243, 236, 226, 0.103) 1540px,
+        rgba(243, 236, 226, 0.330) 1575px,
+        rgba(243, 236, 226, 0.557) 1610px,
+        rgba(243, 236, 226, 0.660) 1645px,
+        rgba(243, 236, 226, 0.660) 1700px,
+        rgba(243, 236, 226, 0.557) 1735px,
+        rgba(243, 236, 226, 0.330) 1770px,
+        rgba(243, 236, 226, 0.103) 1805px,
+        rgba(243, 236, 226, 0.000) 1840px
+      );
+    }
+    .f08-desk-tone {
+      background:
+        radial-gradient(ellipse 1500px 1100px at 16% 6%, rgba(250, 245, 237, 0.42), rgba(250, 245, 237, 0) 70%),
+        radial-gradient(ellipse 1250px 860px at 52% 44%, rgba(90, 60, 30, 0) 58%, rgba(90, 60, 30, 0.11) 100%);
+    }
+    /* /desk-day (its 3% grain rides on the top grain clip) */
+
+    /* film grain 3%, top track, screen-space */
+    .f08-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.03;
+      pointer-events: none;
+      background-size: 240px 240px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+    }
+
+    /* scene layer + object camera (same origin as the desk camera: the zero's centre) */
+    .f08-scene {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #f08-cam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 1400px 450px;
+    }
+
+    /* ==================== code sheet (quote-sheet paper look, relit for the day desk) ====================
+       A4 sheet in paper px (700 x 990), prop scale 0.68 on the place wrapper (476 x 673 on screen,
+       centre at 960, 533). The day shadow is a drop-shadow on the unscaled-by-GSAP place wrapper so it
+       follows the crumpled silhouette (values are / 0.68: screen +8 +12 blur 24). */
+    .f08-sheet-place {
+      position: absolute;
+      left: 722px;
+      top: 196.4px;
+      width: 700px;
+      height: 990px;
+      transform: scale(0.68);
+      transform-origin: 0 0;
+      filter: drop-shadow(12px 18px 17px rgba(60, 40, 20, 0.24));
+    }
+    .f08-sheet {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      transform-origin: 350px 495px;
+    }
+    .f08-paper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      overflow: hidden;
+      box-sizing: border-box;
+      border: 1px solid #d9cfc1;
+      border-radius: 3px;
+      background: #fbf8f2;
+    }
+    .f08-paper-tex {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      opacity: 0.4;
+      mix-blend-mode: multiply;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .42 0 0 0 0 .36 0 0 0 0 .3 1.4 0 0 0 -.6'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23p)'/%3E%3C/svg%3E");
+    }
+    .f08-paper-light {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      background:
+        radial-gradient(ellipse 110% 80% at 12% 6%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 62%),
+        radial-gradient(ellipse 120% 100% at 88% 96%, rgba(150, 110, 70, 0.07) 0%, rgba(150, 110, 70, 0) 70%);
+    }
+    .f08-code {
+      position: absolute;
+      left: 40px;
+      top: 96px;
+      width: 640px;
+      transform-origin: 310px 240px;
+      font: 400 24px/58px "Space Mono", monospace;
+      color: #1a1612;
+    }
+    .f08-cl {
+      display: flex;
+      align-items: baseline;
+      height: 58px;
+      white-space: pre;
+    }
+    .f08-cn {
+      flex: 0 0 34px;
+      margin-right: 22px;
+      text-align: right;
+      font-size: 18px;
+      color: rgba(90, 83, 72, 0.5);
+    }
+    .f08-k { color: #c25b28; }
+    .f08-f { color: #1a1612; }
+    .f08-v { color: #5a5348; }
+    .f08-p { color: rgba(90, 83, 72, 0.72); }
+    .f08-crease {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      overflow: visible;
+      opacity: 0;
+    }
+    .f08-crush {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 700px;
+      height: 990px;
+      background: radial-gradient(ellipse 52% 50% at 50% 50%, rgba(92, 66, 40, 0) 35%, rgba(92, 66, 40, 0.34) 100%);
+      opacity: 0;
+    }
+    /* ==================== /code sheet ==================== */
+
+    /* paper ball (the crumpled sheet), screen px, centre at (960, 533) */
+    .f08-ballpos {
+      position: absolute;
+      left: 860px;
+      top: 433px;
+      width: 200px;
+      height: 200px;
+      opacity: 0;
+      filter: drop-shadow(8px 12px 9px rgba(60, 40, 20, 0.28));
+    }
+    .f08-ball {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 200px;
+      height: 200px;
+      transform-origin: 100px 100px;
+    }
+    .f08-ballsvg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+    }
+
+    /* ==================== notebook (open, two lined pages, top-down) ====================
+       Right page centred exactly on (1400, 450); the notebook turns around that point. */
+    .f08-nb {
+      position: absolute;
+      left: 818px;
+      top: 118px;
+      width: 784px;
+      height: 664px;
+      transform-origin: 582px 332px;
+      opacity: 0;
+      filter: drop-shadow(8px 12px 12px rgba(60, 40, 20, 0.22));
+    }
+    .f08-nb-cover {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 784px;
+      height: 664px;
+      border-radius: 12px;
+      background: linear-gradient(160deg, #3a342e 0%, #2e2924 45%, #29241f 100%);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 246, 236, 0.12);
+    }
+    .f08-nb-page {
+      position: absolute;
+      top: 12px;
+      width: 380px;
+      height: 640px;
+      overflow: hidden;
+      background: #fbf8f2;
+    }
+    .f08-nb-left {
+      left: 12px;
+      border-radius: 3px 0 0 3px;
+      box-shadow: -2px 0 0 #efe7dc, -4px 0 0 #e2d8ca, -5px 0 0 #d9cfc1;
+    }
+    .f08-nb-right {
+      left: 392px;
+      border-radius: 0 3px 3px 0;
+      box-shadow: 2px 0 0 #efe7dc, 4px 0 0 #e2d8ca, 5px 0 0 #d9cfc1;
+    }
+    .f08-nb-lines {
+      position: absolute;
+      left: 0;
+      top: 86px;
+      width: 380px;
+      height: 522px;
+      background: repeating-linear-gradient(180deg, rgba(217, 207, 193, 0.95) 0px, rgba(217, 207, 193, 0.95) 1.5px, rgba(217, 207, 193, 0) 1.5px, rgba(217, 207, 193, 0) 32px);
+    }
+    .f08-nb-tex {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 380px;
+      height: 640px;
+      opacity: 0.35;
+      mix-blend-mode: multiply;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .42 0 0 0 0 .36 0 0 0 0 .3 1.4 0 0 0 -.6'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23p)'/%3E%3C/svg%3E");
+    }
+    .f08-nb-gutter-l {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 380px;
+      height: 640px;
+      background:
+        linear-gradient(90deg, rgba(92, 66, 40, 0) 72%, rgba(92, 66, 40, 0.07) 90%, rgba(92, 66, 40, 0.2) 100%),
+        radial-gradient(ellipse 90% 70% at 10% 0%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 70%);
+    }
+    .f08-nb-gutter-r {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 380px;
+      height: 640px;
+      background:
+        linear-gradient(90deg, rgba(92, 66, 40, 0.22) 0%, rgba(92, 66, 40, 0.07) 9%, rgba(92, 66, 40, 0) 26%),
+        radial-gradient(ellipse 90% 70% at 20% 0%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 70%);
+    }
+    .f08-nb-spine {
+      position: absolute;
+      left: 390px;
+      top: 12px;
+      width: 4px;
+      height: 640px;
+      background: linear-gradient(90deg, rgba(60, 40, 20, 0), rgba(60, 40, 20, 0.28), rgba(60, 40, 20, 0));
+    }
+    /* ==================== /notebook ==================== */
+
+    /* ink on the page (screen px): the hand-drawn zero + its terracotta fill, multiplied on paper */
+    .f08-inkfill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      clip-path: inset(672px 0px 0px 0px);
+      mix-blend-mode: multiply;
+      opacity: 0;
+    }
+    .f08-ink {
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+      mix-blend-mode: multiply;
+      opacity: 0;
+    }
+    .f08-full {
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+    }
+    .f08-heat {
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+      opacity: 0;
+    }
+    .f08-bloom {
+      position: absolute;
+      left: 1020px;
+      top: 70px;
+      width: 760px;
+      height: 760px;
+      border-radius: 50%;
+      transform-origin: 380px 380px;
+      opacity: 0;
+      background: radial-gradient(closest-side, rgba(255, 252, 248, 1) 0%, rgba(255, 244, 234, 1) 16%, rgba(255, 222, 196, 0.94) 30%, rgba(240, 164, 120, 0.76) 46%, rgba(224, 138, 92, 0.44) 63%, rgba(212, 112, 63, 0.15) 82%, rgba(194, 91, 40, 0) 100%);
+    }
+
+    /* ==================== pen (CSS) ====================
+       Terracotta ballpoint seen from above, 562 px svg at scale 0.75 (~420 px on screen).
+       The tip is the local origin: .f08-pen = approach offset (x / y), .f08-pen-trace = tip
+       position written by the stroke setter, .f08-pen-rot = pen angle + scale (around the tip).
+       Day light: short soft shadow on the un-rotated outer, longer while the pen is lifted. */
+    .f08-pen {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      opacity: 0;
+      filter: drop-shadow(7px 10px 6px rgba(60, 40, 20, 0.3));
+    }
+    .f08-pen-trace,
+    .f08-pen-rot {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      transform-origin: 0 0;
+    }
+    .f08-pen-svg {
+      position: absolute;
+      left: -1px;
+      top: -15px;
+      overflow: visible;
+    }
+    /* ==================== /pen ==================== */
+
+    /* phrase = the voice, small, word by word (frame.md "phrase"), ink-dark on the day desk */
+    .f08-phfx {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #f08-ph1fx { transform-origin: 960px 130px; }
+    .f08-row {
+      position: absolute;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      white-space: nowrap;
+      font: 600 54px/1.18 "Instrument Sans", sans-serif;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+    }
+    .f08-row-top {
+      left: 0;
+      top: 98px;
+      width: 1920px;
+      justify-content: center;
+    }
+    .f08-row-left {
+      left: 128px;
+      justify-content: flex-start;
+    }
+    .f08-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    /* traced accent pill: the only emphasis of the phrase */
+    .f08-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.04em 0.3em 0.08em;
+      transform-origin: 0% 50%;
+    }
+    .f08-pillbg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f08-pilltx {
+      position: relative;
+      display: inline-flex;
+      color: #ffffff;
+    }
+    .f08-ch {
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="08-zero" data-width="1920" data-height="1080" data-duration="4.25">
+    <!-- desk-day -->
+    <div id="f08-desk" class="clip f08-desk" data-start="0" data-duration="5.0" data-track-index="0" data-layout-ignore>
+      <div id="f08-deskcam" class="f08-deskcam">
+        <div class="f08-desk-layer f08-desk-wood"></div>
+        <div class="f08-desk-layer f08-desk-light"></div>
+        <div class="f08-desk-layer f08-desk-tone"></div>
+      </div>
+    </div>
+    <!-- /desk-day -->
+
+    <div id="f08-scene" class="clip f08-scene" data-start="0" data-duration="5.0" data-track-index="1">
+      <div id="f08-cam" data-layout-allow-overflow>
+        <!-- Scene 2: open notebook on the right half -->
+        <div id="f08-nb" class="f08-nb">
+          <div class="f08-nb-cover"></div>
+          <div class="f08-nb-page f08-nb-left">
+            <div class="f08-nb-lines"></div>
+            <div class="f08-nb-tex"></div>
+            <div class="f08-nb-gutter-l"></div>
+          </div>
+          <div class="f08-nb-page f08-nb-right">
+            <div class="f08-nb-lines"></div>
+            <div class="f08-nb-tex"></div>
+            <div class="f08-nb-gutter-r"></div>
+          </div>
+          <div class="f08-nb-spine"></div>
+        </div>
+
+        <!-- ink: terracotta fill (bottom-up wipe) under the hand-drawn stroke -->
+        <div id="f08-inkfill" class="f08-inkfill">
+          <svg class="f08-full" width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="f08-fillgrad" gradientUnits="userSpaceOnUse" cx="1386" cy="418" r="236">
+                <stop offset="0" stop-color="#d4703f"></stop>
+                <stop offset="0.62" stop-color="#c25b28"></stop>
+                <stop offset="1" stop-color="#a84d22"></stop>
+              </radialGradient>
+            </defs>
+            <path id="f08-fillpath" d="M0 0" fill="url(#f08-fillgrad)"></path>
+          </svg>
+        </div>
+        <svg id="f08-ink" class="f08-ink" width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+          <path id="f08-inkpath" d="M0 0" fill="none" stroke="#c25b28" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+
+        <!-- Scene 3: the zero's centre heats up, then blooms (iris origin 1400, 450) -->
+        <svg id="f08-heat" class="f08-heat" width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="f08-heatgrad" gradientUnits="userSpaceOnUse" cx="1400" cy="450" r="215">
+              <stop offset="0" stop-color="#fffaf5" stop-opacity="1"></stop>
+              <stop offset="0.3" stop-color="#ffe6d2" stop-opacity="0.96"></stop>
+              <stop offset="0.66" stop-color="#e08a5c" stop-opacity="0.55"></stop>
+              <stop offset="1" stop-color="#d4703f" stop-opacity="0"></stop>
+            </radialGradient>
+          </defs>
+          <path id="f08-heatpath" d="M0 0" fill="url(#f08-heatgrad)"></path>
+        </svg>
+        <div id="f08-bloom" class="f08-bloom" data-layout-ignore></div>
+
+        <!-- Scene 1: the printed code sheet (crumples into a ball) -->
+        <div class="f08-sheet-place" data-layout-ignore>
+          <div id="f08-sheet" class="f08-sheet">
+            <div id="f08-paper" class="f08-paper">
+              <div class="f08-paper-tex"></div>
+              <div id="f08-code" class="f08-code">
+                <div class="f08-cl"><span class="f08-cn">1</span><span><span class="f08-k">export</span> <span class="f08-k">async</span> <span class="f08-k">function</span> <span class="f08-f">publish</span><span class="f08-p">(</span><span class="f08-v">site</span><span class="f08-p">) {</span></span></div>
+                <div class="f08-cl"><span class="f08-cn">2</span><span>  <span class="f08-k">const</span> <span class="f08-v">pages</span> <span class="f08-p">=</span> <span class="f08-k">await</span> <span class="f08-f">build</span><span class="f08-p">(</span><span class="f08-v">site</span><span class="f08-p">);</span></span></div>
+                <div class="f08-cl"><span class="f08-cn">3</span><span>  <span class="f08-k">if</span> <span class="f08-p">(!</span><span class="f08-v">pages</span><span class="f08-p">.</span><span class="f08-v">length</span><span class="f08-p">)</span> <span class="f08-k">return</span> <span class="f08-f">retry</span><span class="f08-p">();</span></span></div>
+                <div class="f08-cl"><span class="f08-cn">4</span><span>  <span class="f08-k">for</span> <span class="f08-p">(</span><span class="f08-k">const</span> <span class="f08-v">page</span> <span class="f08-k">of</span> <span class="f08-v">pages</span><span class="f08-p">) {</span></span></div>
+                <div class="f08-cl"><span class="f08-cn">5</span><span>    <span class="f08-k">await</span> <span class="f08-f">deploy</span><span class="f08-p">(</span><span class="f08-v">page</span><span class="f08-p">, {</span> <span class="f08-v">cache</span> <span class="f08-p">});</span></span></div>
+                <div class="f08-cl"><span class="f08-cn">6</span><span>  <span class="f08-p">}</span></span></div>
+                <div class="f08-cl"><span class="f08-cn">7</span><span>  <span class="f08-k">return</span> <span class="f08-v">site</span><span class="f08-p">.</span><span class="f08-v">url</span><span class="f08-p">;</span></span></div>
+                <div class="f08-cl"><span class="f08-cn">8</span><span><span class="f08-p">}</span></span></div>
+              </div>
+              <svg id="f08-crease1" class="f08-crease" width="700" height="990" viewBox="0 0 700 990" xmlns="http://www.w3.org/2000/svg"></svg>
+              <svg id="f08-crease2" class="f08-crease" width="700" height="990" viewBox="0 0 700 990" xmlns="http://www.w3.org/2000/svg"></svg>
+              <svg id="f08-crease3" class="f08-crease" width="700" height="990" viewBox="0 0 700 990" xmlns="http://www.w3.org/2000/svg"></svg>
+              <div id="f08-crush" class="f08-crush"></div>
+              <div class="f08-paper-light"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- the paper ball, tossed off to the bottom-left -->
+        <div id="f08-ballpos" class="f08-ballpos" data-layout-ignore>
+          <div id="f08-ball" class="f08-ball">
+            <svg id="f08-ballsvg" class="f08-ballsvg" width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <clipPath id="f08-ballclip"><path id="f08-ballclippath" d="M0 0"></path></clipPath>
+                <radialGradient id="f08-ballrim" cx="0.44" cy="0.42" r="0.6">
+                  <stop offset="0.55" stop-color="#5c4228" stop-opacity="0"></stop>
+                  <stop offset="1" stop-color="#5c4228" stop-opacity="0.22"></stop>
+                </radialGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        <!-- ==================== pen ==================== -->
+        <div class="f08-pen" id="f08-pen">
+          <div class="f08-pen-trace" id="f08-pentrace">
+            <div class="f08-pen-rot" id="f08-penrot">
+              <svg class="f08-pen-svg" width="562" height="30" viewBox="0 0 562 30" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="f08-pen-body" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#6e2f12"></stop>
+                    <stop offset="0.16" stop-color="#a84d22"></stop>
+                    <stop offset="0.32" stop-color="#d4703f"></stop>
+                    <stop offset="0.42" stop-color="#e08a5c"></stop>
+                    <stop offset="0.54" stop-color="#bf5a29"></stop>
+                    <stop offset="0.82" stop-color="#8f4019"></stop>
+                    <stop offset="1" stop-color="#5e270e"></stop>
+                  </linearGradient>
+                  <linearGradient id="f08-pen-grip" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#5a260d"></stop>
+                    <stop offset="0.35" stop-color="#a84d22"></stop>
+                    <stop offset="0.5" stop-color="#c25b28"></stop>
+                    <stop offset="1" stop-color="#4f210b"></stop>
+                  </linearGradient>
+                  <linearGradient id="f08-pen-metal" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#7d7a75"></stop>
+                    <stop offset="0.34" stop-color="#f4f2ee"></stop>
+                    <stop offset="0.6" stop-color="#c3c0ba"></stop>
+                    <stop offset="1" stop-color="#65625d"></stop>
+                  </linearGradient>
+                </defs>
+                <!-- metal tip cone + ball -->
+                <path d="M1 15 L9 12.6 L42 7.5 L42 22.5 L9 17.4 Z" fill="url(#f08-pen-metal)"></path>
+                <circle cx="2" cy="15" r="1.8" fill="#2a2724"></circle>
+                <!-- grip with ribs -->
+                <rect x="42" y="6" width="112" height="18" rx="3" fill="url(#f08-pen-grip)"></rect>
+                <path d="M52 7 V23 M62 7 V23 M72 7 V23 M82 7 V23 M92 7 V23 M102 7 V23 M112 7 V23 M122 7 V23 M132 7 V23 M142 7 V23" stroke="#3d1a08" stroke-opacity="0.35" stroke-width="1.4"></path>
+                <!-- collar -->
+                <rect x="154" y="2.5" width="12" height="25" rx="2" fill="url(#f08-pen-metal)"></rect>
+                <!-- barrel -->
+                <rect x="166" y="1.5" width="360" height="27" rx="3" fill="url(#f08-pen-body)"></rect>
+                <rect x="172" y="8.5" width="346" height="1.6" rx="0.8" fill="#ffffff" fill-opacity="0.32"></rect>
+                <!-- end cap + click button -->
+                <path d="M526 1.5 H540 Q552 1.5 552 15 Q552 28.5 540 28.5 H526 Z" fill="url(#f08-pen-body)"></path>
+                <rect x="550" y="9" width="11" height="12" rx="3" fill="url(#f08-pen-metal)"></rect>
+                <!-- pocket clip on top of the barrel -->
+                <path d="M384 15 Q384 11.2 388 11.2 H536 V18.8 H388 Q384 18.8 384 15 Z" fill="#3a1807" fill-opacity="0.3" transform="translate(1.5 2)"></path>
+                <path d="M384 15 Q384 11.2 388 11.2 H536 V18.8 H388 Q384 18.8 384 15 Z" fill="url(#f08-pen-metal)"></path>
+                <circle cx="389" cy="15" r="3.4" fill="url(#f08-pen-metal)" stroke="#6f6c67" stroke-width="0.6"></circle>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <!-- ==================== /pen ==================== -->
+      </div>
+
+      <!-- phrase 1 (Scene 1), top band: « Pas besoin d’être [technique.] » -->
+      <div id="f08-ph1fx" class="f08-phfx">
+        <div class="f08-row f08-row-top">
+          <span class="f08-w" id="f08-a1">Pas</span>
+          <span class="f08-w" id="f08-a2">besoin</span>
+          <span class="f08-w" id="f08-a3">d’être</span>
+          <span class="f08-pill" id="f08-pill1"><span class="f08-pillbg" id="f08-pill1bg"></span><span class="f08-pilltx"><span id="f08-pt1">technique.</span></span></span>
+        </div>
+      </div>
+
+      <!-- phrase 2 (Scene 2), left half: « C’est pensé pour ceux qui partent [de zéro.] » -->
+      <div id="f08-ph2fx" class="f08-phfx">
+        <div class="f08-row f08-row-left" style="top: 383px">
+          <span class="f08-w" id="f08-b1">C’est</span>
+          <span class="f08-w" id="f08-b2">pensé</span>
+          <span class="f08-w" id="f08-b3">pour</span>
+          <span class="f08-w" id="f08-b4">ceux</span>
+        </div>
+        <div class="f08-row f08-row-left" style="top: 453px">
+          <span class="f08-w" id="f08-b5">qui</span>
+          <span class="f08-w" id="f08-b6">partent</span>
+          <span class="f08-pill" id="f08-pill2"><span class="f08-pillbg" id="f08-pill2bg"></span><span class="f08-pilltx"><span id="f08-pt2">de</span><span id="f08-pt3"> zéro.</span></span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- film grain 3%, on top -->
+    <div id="f08-grain" class="clip f08-grain" data-start="0" data-duration="5.0" data-track-index="2" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var $ = function (id) {
+        return document.getElementById("f08-" + id);
+      };
+      var NS = "http://www.w3.org/2000/svg";
+      var D2R = Math.PI / 180;
+      var mk = function (tag, attrs, parent) {
+        var e = document.createElementNS(NS, tag);
+        for (var k in attrs) e.setAttribute(k, attrs[k]);
+        if (parent) parent.appendChild(e);
+        return e;
+      };
+      // seeded PRNG: every fold, facet and speck is identical on every render
+      var seed = 80808;
+      var rnd = function () {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        return seed / 4294967296;
+      };
+      var sr = function () {
+        return rnd() * 2 - 1;
+      };
+      var f1 = function (v) {
+        return v.toFixed(1);
+      };
+      var pathOf = function (pts, close) {
+        var d = "M" + f1(pts[0][0]) + " " + f1(pts[0][1]);
+        for (var i = 1; i < pts.length; i++) d += " L" + f1(pts[i][0]) + " " + f1(pts[i][1]);
+        return close ? d + " Z" : d;
+      };
+      var polyOf = function (pts) {
+        return (
+          "polygon(" +
+          pts
+            .map(function (p) {
+              return f1(p[0]) + "px " + f1(p[1]) + "px";
+            })
+            .join(", ") +
+          ")"
+        );
+      };
+      var split = function (el) {
+        var t = el.textContent;
+        el.textContent = "";
+        var out = [];
+        for (var i = 0; i < t.length; i++) {
+          var s = document.createElement("span");
+          s.className = "f08-ch";
+          s.textContent = t[i];
+          el.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      };
+
+      var tl = gsap.timeline({ paused: true });
+
+      // word by word on the voice timestamp
+      var word = function (el, at) {
+        tl.fromTo(el, { opacity: 0, y: 10, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false }, at);
+      };
+      // traced accent pill: the fill traces from the left while the pill straightens
+      var pillTrace = function (id, at) {
+        tl.set($(id + "bg"), { opacity: 1, immediateRender: false }, at);
+        tl.fromTo($(id + "bg"), { scaleX: 0 }, { scaleX: 1, duration: 0.28, ease: "power3.out", immediateRender: false }, at);
+        tl.fromTo($(id), { rotation: -10 }, { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, at);
+      };
+      // then the letters write inside, on the spoken word
+      var letters = function (list, at) {
+        for (var i = 0; i < list.length; i++) {
+          tl.fromTo(list[i], { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.18, ease: "power3.out", immediateRender: false }, at + i * 0.02);
+        }
+      };
+
+      /* ======================= crumple geometry (paper px) ======================= */
+      var SW = 700,
+        SH = 990,
+        CX = 350,
+        CY = 495;
+      var rect = [];
+      var i, j;
+      for (i = 0; i < 7; i++) rect.push([(SW * i) / 7, 0]);
+      for (i = 0; i < 9; i++) rect.push([SW, (SH * i) / 9]);
+      for (i = 0; i < 7; i++) rect.push([SW - (SW * i) / 7, SH]);
+      for (i = 0; i < 9; i++) rect.push([0, SH - (SH * i) / 9]);
+      var N = rect.length; // 32 vertices, corners included
+
+      // three successive folds: morph toward a jagged ball, with one big dent (a folded corner) per fold
+      var STAGES = [
+        { m: 0.46, R: 330, a: 0.05, tw: 0.06, fold: 0.26, fc: 3 },
+        { m: 0.76, R: 330, a: 0.07, tw: 0.08, fold: 0.16, fc: 19 },
+        { m: 1.0, R: 330, a: 0.05, tw: 0.05, fold: 0.07, fc: 11 },
+      ];
+      var stagePoly = function (k) {
+        var S = STAGES[k];
+        var out = [];
+        for (var j = 0; j < N; j++) {
+          var dx = rect[j][0] - CX,
+            dy = rect[j][1] - CY;
+          var d = Math.hypot(dx, dy);
+          var ux = dx / d,
+            uy = dy / d;
+          var rr = d * (1 - S.m) + S.R * S.m;
+          var alt = (j * 7 + k * 3) % 5 < 2 ? 1 : -1; // irregular in/out rhythm, not a regular zigzag
+          rr *= 1 + S.a * (0.5 * alt + 0.7 * sr());
+          var cd = Math.min(Math.abs(j - S.fc), N - Math.abs(j - S.fc));
+          rr *= 1 - S.fold * Math.exp(-(cd * cd) / 5);
+          var tw = S.tw * sr();
+          var c = Math.cos(tw),
+            s = Math.sin(tw);
+          out.push([CX + rr * (ux * c - uy * s), CY + rr * (ux * s + uy * c)]);
+        }
+        return out;
+      };
+      var POLY = [rect, stagePoly(0), stagePoly(1), stagePoly(2)];
+      // fold proxy: v in [0, 3] walks rect -> fold 1 -> fold 2 -> fold 3; the setter interpolates the
+      // polygons itself and writes the clip-path (GSAP would swap a long polygon string discretely)
+      var paperEl = document.getElementById("f08-paper");
+      var fold = { _v: 0 };
+      Object.defineProperty(fold, "v", {
+        get: function () {
+          return this._v;
+        },
+        set: function (v) {
+          this._v = v;
+          var k = Math.min(2, Math.max(0, Math.floor(v)));
+          var u = Math.min(1, Math.max(0, v - k));
+          var A = POLY[k],
+            B = POLY[k + 1];
+          var pts = [];
+          for (var q = 0; q < A.length; q++) pts.push([A[q][0] + (B[q][0] - A[q][0]) * u, A[q][1] + (B[q][1] - A[q][1]) * u]);
+          paperEl.style.clipPath = polyOf(pts);
+        },
+      });
+
+      // faceted shading for one fold: fans of triangles from a few peaks, lit from the window (top-left)
+      var LIGHT = Math.atan2(-1, -1);
+      var facets = function (svg, poly, nPeaks, str, sw) {
+        var gx = 0,
+          gy = 0,
+          k;
+        for (k = 0; k < poly.length; k++) {
+          gx += poly[k][0];
+          gy += poly[k][1];
+        }
+        gx /= poly.length;
+        gy /= poly.length;
+        var avgR = 0;
+        for (k = 0; k < poly.length; k++) avgR += Math.hypot(poly[k][0] - gx, poly[k][1] - gy);
+        avgR /= poly.length;
+        var peaks = [];
+        for (k = 0; k < nPeaks; k++) {
+          var ang = (k / nPeaks) * 2 * Math.PI + 0.6 * sr();
+          var rad = avgR * (0.22 + 0.3 * rnd());
+          peaks.push([gx + rad * Math.cos(ang), gy + rad * Math.sin(ang)]);
+        }
+        // walk the outline in chunks of 2-4 edges: each chunk is ONE facet (peak + its run of vertices),
+        // so the folds read as a few broad planes rather than a fan of slivers
+        var nearest = function (x, y) {
+          var best = 0,
+            bd = 1e9;
+          for (var p = 0; p < peaks.length; p++) {
+            var dd = Math.hypot(peaks[p][0] - x, peaks[p][1] - y);
+            if (dd < bd) {
+              bd = dd;
+              best = p;
+            }
+          }
+          return best;
+        };
+        var faces = [];
+        var seq = [];
+        var prev = -1;
+        var n = poly.length;
+        k = 0;
+        while (k < n) {
+          var run = Math.min(n - k, 2 + Math.floor(rnd() * 3));
+          var mid = poly[(k + Math.floor(run / 2)) % n];
+          var own = nearest(mid[0], mid[1]);
+          var pts = [peaks[own]];
+          for (var q = 0; q <= run; q++) pts.push(poly[(k + q) % n]);
+          if (prev >= 0 && prev !== own) faces.push({ ap: peaks[own], pts: [peaks[prev], peaks[own], poly[k % n]] });
+          if (seq[seq.length - 1] !== own) seq.push(own);
+          faces.push({ ap: peaks[own], pts: pts });
+          prev = own;
+          k += run;
+        }
+        if (prev !== seq[0]) faces.push({ ap: peaks[seq[0]], pts: [peaks[prev], peaks[seq[0]], poly[0]] });
+        var G = [gx + 0.08 * avgR * sr(), gy + 0.08 * avgR * sr()];
+        for (k = 0; k < seq.length; k++) {
+          var s0 = seq[k],
+            s1 = seq[(k + 1) % seq.length];
+          if (s0 !== s1) faces.push({ ap: G, pts: [G, peaks[s0], peaks[s1]] });
+        }
+        for (k = 0; k < faces.length; k++) {
+          var f = faces[k];
+          var cx = 0,
+            cy = 0;
+          for (q = 0; q < f.pts.length; q++) {
+            cx += f.pts[q][0];
+            cy += f.pts[q][1];
+          }
+          cx /= f.pts.length;
+          cy /= f.pts.length;
+          var phi = Math.atan2(cy - f.ap[1], cx - f.ap[0]) + 0.6 * sr();
+          var sh = 0.85 * Math.cos(phi - LIGHT) + 0.25 * sr();
+          var fill = sh > 0 ? "rgba(255,254,250," + (0.62 * sh * str).toFixed(3) + ")" : "rgba(92,66,40," + (0.34 * -sh * str).toFixed(3) + ")";
+          mk("path", { d: pathOf(f.pts, true), fill: fill, stroke: "rgba(96,70,44," + ((0.12 + 0.14 * rnd()) * str).toFixed(3) + ")", "stroke-width": sw, "stroke-linejoin": "round" }, svg);
+        }
+      };
+      facets($("crease1"), POLY[1], 3, 0.55, 2.5);
+      facets($("crease2"), POLY[2], 5, 0.85, 3.5);
+      facets($("crease3"), POLY[3], 8, 1.0, 5);
+
+      /* ======================= paper ball (screen px, 200 x 200 box) ======================= */
+      (function () {
+        var svg = $("ballsvg");
+        var NB = 23;
+        var out = [];
+        for (var k = 0; k < NB; k++) {
+          var a = (k / NB) * 2 * Math.PI + 0.09 * sr();
+          var r = 85 * (1 + 0.075 * sr()) * (k % 6 === 2 ? 0.9 : 1) * (1 + 0.04 * Math.sin(a * 2 + 0.7));
+          out.push([100 + r * Math.cos(a), 100 + r * Math.sin(a)]);
+        }
+        var od = pathOf(out, true);
+        $("ballclippath").setAttribute("d", od);
+        mk("path", { d: od, fill: "#f3ede3" }, svg);
+        var g = mk("g", { "clip-path": "url(#f08-ballclip)" }, svg);
+        var NR = 6;
+        var ring = [];
+        for (k = 0; k < NR; k++) {
+          var ra = (k / NR) * 2 * Math.PI + 0.45 * sr();
+          var rr = 42 * (1 + 0.32 * sr());
+          ring.push([100 + rr * Math.cos(ra), 100 + rr * Math.sin(ra), ra]);
+        }
+        var C0 = [100 + 6 * sr(), 100 + 6 * sr()];
+        var tris = [];
+        for (k = 0; k < NR; k++) tris.push([C0, ring[k], ring[(k + 1) % NR]]);
+        var angOf = function (p) {
+          var v = Math.atan2(p[1] - 100, p[0] - 100);
+          return v < 0 ? v + 2 * Math.PI : v;
+        };
+        var nearestRing = function (ang) {
+          var best = 0,
+            bd = 1e9;
+          for (var q = 0; q < NR; q++) {
+            var ra2 = ring[q][2] % (2 * Math.PI);
+            if (ra2 < 0) ra2 += 2 * Math.PI;
+            var dd = Math.abs(ang - ra2);
+            dd = Math.min(dd, 2 * Math.PI - dd);
+            if (dd < bd) {
+              bd = dd;
+              best = q;
+            }
+          }
+          return best;
+        };
+        var prev = -1;
+        for (k = 0; k <= NB; k++) {
+          var a0 = out[k % NB],
+            a1 = out[(k + 1) % NB];
+          var owner = nearestRing(angOf([(a0[0] + a1[0]) / 2, (a0[1] + a1[1]) / 2]));
+          if (prev >= 0 && prev !== owner) tris.push([ring[prev], ring[owner], a0]);
+          if (k < NB) tris.push([ring[owner], a0, a1]);
+          prev = owner;
+        }
+        var L = [-0.45, -0.55, 0.7];
+        var ln = Math.hypot(L[0], L[1], L[2]);
+        L = [L[0] / ln, L[1] / ln, L[2] / ln];
+        for (k = 0; k < tris.length; k++) {
+          var t = tris[k];
+          var cx = (t[0][0] + t[1][0] + t[2][0]) / 3,
+            cy = (t[0][1] + t[1][1] + t[2][1]) / 3;
+          var nx = (cx - 100) / 92 + 0.5 * sr(),
+            ny = (cy - 100) / 92 + 0.5 * sr();
+          var nz = Math.sqrt(Math.max(0.05, 1 - Math.min(0.95, ((cx - 100) * (cx - 100) + (cy - 100) * (cy - 100)) / 8464)));
+          var nn = Math.hypot(nx, ny, nz);
+          var lam = Math.max(0, (nx * L[0] + ny * L[1] + nz * L[2]) / nn);
+          var sh = Math.min(1, 0.22 + 0.85 * lam);
+          var col = "rgb(" + Math.round(176 + (255 - 176) * sh) + "," + Math.round(160 + (253 - 160) * sh) + "," + Math.round(138 + (247 - 138) * sh) + ")";
+          mk("path", { d: pathOf([t[0], t[1], t[2]], true), fill: col, stroke: "rgba(110,82,56," + (0.14 + 0.2 * rnd()).toFixed(3) + ")", "stroke-width": 0.8, "stroke-linejoin": "round" }, g);
+        }
+        // printed fragments of the code on the crumpled surface: little groups of parallel lines
+        for (k = 0; k < 8; k++) {
+          var sa = rnd() * 2 * Math.PI,
+            srd = 62 * Math.sqrt(rnd());
+          var px = 100 + srd * Math.cos(sa),
+            py = 100 + srd * Math.sin(sa);
+          var la = rnd() * Math.PI;
+          var ca = Math.cos(la),
+            sa2 = Math.sin(la);
+          var nl = 2 + Math.floor(rnd() * 2);
+          for (var q = 0; q < nl; q++) {
+            var len = 6 + 11 * rnd(),
+              off = q * 4.6;
+            var x0 = px - sa2 * off,
+              y0 = py + ca * off;
+            mk("path", { d: "M" + f1(x0) + " " + f1(y0) + " L" + f1(x0 + len * ca) + " " + f1(y0 + len * sa2), stroke: (k + q) % 4 === 0 ? "#c25b28" : "#5a5348", "stroke-opacity": 0.42, "stroke-width": 1.7, "stroke-linecap": "round" }, g);
+          }
+        }
+        mk("path", { d: od, fill: "url(#f08-ballrim)" }, g);
+      })();
+
+      /* ======================= the hand-drawn zero (screen px) ======================= */
+      var ZX = 1400,
+        ZY = 450;
+      var loop = [];
+      var FULL = 0;
+      (function () {
+        var NL = 220,
+          RX = 146,
+          RY = 204,
+          th0 = -68 * D2R,
+          sweep = 382 * D2R,
+          tilt = 7 * D2R;
+        for (var k = 0; k <= NL; k++) {
+          var u = k / NL;
+          var th = th0 - u * sweep; // decreasing angle = counter-clockwise on screen, like a hand-written 0
+          var w = 1 + 0.016 * Math.sin(u * 2 * Math.PI * 2.3 + 0.6) + 0.009 * Math.sin(u * 2 * Math.PI * 5.1 + 1.3);
+          var g = 0.978 + 0.044 * u;
+          var ex = RX * w * g * Math.cos(th),
+            ey = RY * w * g * Math.sin(th);
+          loop.push([ex * Math.cos(tilt) - ey * Math.sin(tilt), ex * Math.sin(tilt) + ey * Math.cos(tilt)]);
+          if (u * sweep <= 2 * Math.PI) FULL = k;
+        }
+        // bounding box centred EXACTLY on (1400, 450)
+        var x0 = 1e9,
+          x1 = -1e9,
+          y0 = 1e9,
+          y1 = -1e9;
+        for (k = 0; k < loop.length; k++) {
+          x0 = Math.min(x0, loop[k][0]);
+          x1 = Math.max(x1, loop[k][0]);
+          y0 = Math.min(y0, loop[k][1]);
+          y1 = Math.max(y1, loop[k][1]);
+        }
+        var ox = ZX - (x0 + x1) / 2,
+          oy = ZY - (y0 + y1) / 2;
+        for (k = 0; k < loop.length; k++) loop[k] = [loop[k][0] + ox, loop[k][1] + oy];
+      })();
+      var cum = [0];
+      for (j = 1; j < loop.length; j++) cum.push(cum[j - 1] + Math.hypot(loop[j][0] - loop[j - 1][0], loop[j][1] - loop[j - 1][1]));
+      var LOOP_L = cum[cum.length - 1];
+      var inkPath = $("inkpath");
+      inkPath.setAttribute("d", pathOf(loop, false));
+      inkPath.setAttribute("stroke-dasharray", LOOP_L.toFixed(2) + " " + (LOOP_L + 20).toFixed(2));
+      var fillD = pathOf(loop.slice(0, FULL + 1), true);
+      $("fillpath").setAttribute("d", fillD);
+      $("heatpath").setAttribute("d", fillD);
+      var pointAt = function (s) {
+        var lo = 0,
+          hi = cum.length - 1;
+        while (hi - lo > 1) {
+          var mid = (lo + hi) >> 1;
+          if (cum[mid] <= s) lo = mid;
+          else hi = mid;
+        }
+        var seg = cum[hi] - cum[lo] || 1,
+          f = Math.min(1, Math.max(0, (s - cum[lo]) / seg));
+        return [loop[lo][0] + (loop[hi][0] - loop[lo][0]) * f, loop[lo][1] + (loop[hi][1] - loop[lo][1]) * f];
+      };
+      // stroke proxy: the setter writes the dash offset AND the pen tip position (always in sync, seek-safe)
+      var trace = $("pentrace");
+      var stroke = { _p: 0 };
+      Object.defineProperty(stroke, "p", {
+        get: function () {
+          return this._p;
+        },
+        set: function (v) {
+          this._p = v;
+          inkPath.setAttribute("stroke-dashoffset", (LOOP_L * (1 - v)).toFixed(2));
+          var q = pointAt(LOOP_L * v);
+          trace.style.transform = "translate(" + q[0].toFixed(2) + "px," + q[1].toFixed(2) + "px)";
+        },
+      });
+      stroke.p = 0;
+      var START = loop[0],
+        END = loop[loop.length - 1];
+      var REST0 = [1682, 232],
+        REST1 = [1694, 300]; // pen tip resting on the desk, right of the notebook
+      var OFF0 = [REST0[0] - START[0], REST0[1] - START[1]];
+      var OFF1 = [REST1[0] - END[0], REST1[1] - END[1]];
+      var SH_REST = "drop-shadow(7px 10px 6px rgba(60, 40, 20, 0.3))";
+      var SH_LIFT = "drop-shadow(18px 26px 12px rgba(60, 40, 20, 0.2))";
+
+      // ---------- build-time states ----------
+      fold.v = 0;
+      gsap.set($("penrot"), { rotation: 76, scale: 0.75 });
+      gsap.set($("pen"), { x: OFF0[0] + 560, y: OFF0[1] });
+      gsap.set($("nb"), { x: 1150, rotation: 4 });
+      var pill1 = split($("pt1"));
+      var pill2a = split($("pt2"));
+      var pill2b = split($("pt3"));
+
+      /* ---------- SCENE 1 (0.00-1.60): the code sheet lies on the desk, crumples, is tossed ---------- */
+      // the sheet has just been set down: tiny rotation settle (visible from the first frame)
+      tl.fromTo($("sheet"), { rotation: -2.8, y: 6 }, { rotation: -2, y: 0, duration: 0.8, ease: "power2.out" }, 0);
+      // « Pas besoin d’être » + [technique.]  (Pas@0.20 besoin@0.40 d’être@0.56 technique@0.82)
+      word($("a1"), 0.2);
+      word($("a2"), 0.4);
+      word($("a3"), 0.56);
+      pillTrace("pill1", 0.78);
+      letters(pill1, 0.84);
+
+      // crumple: three successive folds (clip-path polygon + scale-down + twist + shading), from 0.82
+      var FOLD_T = [0.82, 0.94, 1.06],
+        FOLD_D = 0.1;
+      var FOLD_SC = [0.8, 0.58, 0.4],
+        FOLD_ROT = [6, -7, 12];
+      var FOLD_CODE = [
+        { scaleX: 0.95, scaleY: 0.9, rotation: -3, skewX: 4 },
+        { scaleX: 0.86, scaleY: 0.78, rotation: 5, skewX: -6 },
+        { scaleX: 0.8, scaleY: 0.7, rotation: -4, skewX: 8 },
+      ];
+      var CRUSH = [0.35, 0.6, 0.8];
+      var codeFrom = { scaleX: 1, scaleY: 1, rotation: 0, skewX: 0 };
+      for (i = 0; i < 3; i++) {
+        var at = FOLD_T[i];
+        tl.fromTo(fold, { v: i }, { v: i + 1, duration: FOLD_D, ease: "power3.out", immediateRender: false }, at);
+        tl.fromTo($("sheet"), { scale: i ? FOLD_SC[i - 1] : 1, rotation: i ? FOLD_ROT[i - 1] : -2 }, { scale: FOLD_SC[i], rotation: FOLD_ROT[i], duration: FOLD_D, ease: "power3.out", immediateRender: false }, at);
+        var cf = i ? FOLD_CODE[i - 1] : codeFrom;
+        var ct = FOLD_CODE[i];
+        tl.fromTo($("code"), { scaleX: cf.scaleX, scaleY: cf.scaleY, rotation: cf.rotation, skewX: cf.skewX }, { scaleX: ct.scaleX, scaleY: ct.scaleY, rotation: ct.rotation, skewX: ct.skewX, duration: FOLD_D, ease: "power3.out", immediateRender: false }, at);
+        tl.fromTo($("crease" + (i + 1)), { opacity: 0 }, { opacity: 1, duration: FOLD_D * 0.8, ease: "power1.out", immediateRender: false }, at);
+        if (i) tl.fromTo($("crease" + i), { opacity: 1 }, { opacity: 0, duration: FOLD_D * 0.8, ease: "power1.in", immediateRender: false }, at);
+        tl.fromTo($("crush"), { opacity: i ? CRUSH[i - 1] : 0 }, { opacity: CRUSH[i], duration: FOLD_D, ease: "power1.out", immediateRender: false }, at);
+      }
+      // the crushed sheet becomes the paper ball (same size, same place), final squeeze
+      var T_BALL = 1.15;
+      tl.set($("ballpos"), { opacity: 1, immediateRender: false }, T_BALL);
+      tl.set($("sheet"), { opacity: 0, immediateRender: false }, T_BALL + 0.02);
+      tl.fromTo($("ball"), { scale: 1.06, rotation: 12 }, { scale: 1, rotation: 4, duration: 0.06, ease: "power2.out", immediateRender: false }, T_BALL);
+      // toss off to the bottom-left: tiny wind-up, then out of frame by 1.45 (lifts toward the camera, spins)
+      tl.fromTo($("ballpos"), { x: 0, y: 0 }, { x: 12, y: -16, duration: 0.06, ease: "power2.out", immediateRender: false }, 1.16);
+      // x leaves at speed, y drops later (power1 = quad): a curved throw that exits the left edge
+      tl.fromTo($("ballpos"), { x: 12 }, { x: -1200, duration: 0.23, ease: "none", immediateRender: false }, 1.22);
+      tl.fromTo($("ballpos"), { y: -16 }, { y: 470, duration: 0.23, ease: "power1.in", immediateRender: false }, 1.22);
+      tl.fromTo($("ball"), { scale: 1, rotation: 4 }, { scale: 1.14, rotation: -380, duration: 0.23, ease: "power1.out", immediateRender: false }, 1.22);
+
+      // the phrase clears its band before the notebook scene (per-word lift + blur, staggered)
+      var ph1 = [$("a1"), $("a2"), $("a3"), $("pill1")];
+      for (i = 0; i < ph1.length; i++) {
+        tl.fromTo(ph1[i], { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -16, filter: "blur(8px)", duration: 0.14, ease: "power2.in", immediateRender: false }, 1.46 + i * 0.02);
+      }
+
+      /* ---------- SCENE 2 (1.60-3.80): notebook, the pen draws the zero, it fills ---------- */
+      // the notebook slides in from the right and settles (fast in, soft landing, tiny rotation settle)
+      tl.set($("nb"), { opacity: 1, immediateRender: false }, 1.5);
+      tl.fromTo($("nb"), { x: 1150, rotation: 4 }, { x: 0, rotation: -1.5, duration: 0.6, ease: "power3.out", immediateRender: false }, 1.5);
+      // the pen slides in right behind it and lies on the desk
+      tl.set($("pen"), { opacity: 1, immediateRender: false }, 1.58);
+      tl.fromTo($("pen"), { x: OFF0[0] + 560 }, { x: OFF0[0], duration: 0.58, ease: "power3.out", immediateRender: false }, 1.58);
+
+      // « C’est pensé pour ceux qui partent » + [de zéro.]
+      word($("b1"), 1.76);
+      word($("b2"), 1.88);
+      word($("b3"), 2.12);
+      word($("b4"), 2.36);
+      word($("b5"), 2.46);
+      word($("b6"), 2.68);
+      pillTrace("pill2", 2.94);
+      letters(pill2a, 2.98);
+      letters(pill2b, 3.14);
+
+      // the pen lifts and comes to the top of the page
+      tl.fromTo($("pen"), { x: OFF0[0], y: OFF0[1] }, { x: 0, y: 0, duration: 0.36, ease: "power2.inOut", immediateRender: false }, 2.6);
+      tl.fromTo($("penrot"), { rotation: 76 }, { rotation: 36, duration: 0.36, ease: "power2.inOut", immediateRender: false }, 2.6);
+      tl.fromTo($("pen"), { filter: SH_REST }, { filter: SH_LIFT, duration: 0.2, ease: "power2.out", immediateRender: false }, 2.6);
+      tl.fromTo($("pen"), { filter: SH_LIFT }, { filter: SH_REST, duration: 0.1, ease: "power2.in", immediateRender: false }, 2.88);
+      // svg-path-draw: the zero is traced 2.98 -> 3.30 (tip and stroke in sync)
+      tl.set($("ink"), { opacity: 1, immediateRender: false }, 2.98);
+      tl.fromTo(stroke, { p: 0 }, { p: 1, duration: 0.32, ease: "power1.inOut", immediateRender: false }, 2.98);
+      tl.fromTo($("penrot"), { rotation: 36 }, { rotation: 42, duration: 0.32, ease: "none", immediateRender: false }, 2.98);
+      // then the pen is set down on the desk, out of the way
+      tl.fromTo($("pen"), { x: 0, y: 0 }, { x: OFF1[0], y: OFF1[1], duration: 0.52, ease: "power2.inOut", immediateRender: false }, 3.32);
+      tl.fromTo($("penrot"), { rotation: 42 }, { rotation: 72, duration: 0.52, ease: "power2.inOut", immediateRender: false }, 3.32);
+      tl.fromTo($("pen"), { filter: SH_REST }, { filter: SH_LIFT, duration: 0.16, ease: "power2.out", immediateRender: false }, 3.32);
+      tl.fromTo($("pen"), { filter: SH_LIFT }, { filter: SH_REST, duration: 0.14, ease: "power2.in", immediateRender: false }, 3.7);
+
+      // stat-bars-and-fills: the inside fills with terracotta from the bottom up at 3.30
+      tl.set($("inkfill"), { opacity: 1, immediateRender: false }, 3.3);
+      tl.fromTo($("inkfill"), { clipPath: "inset(672px 0px 0px 0px)" }, { clipPath: "inset(228px 0px 0px 0px)", duration: 0.5, ease: "power2.out", immediateRender: false }, 3.3);
+
+      /* ---------- SCENE 3 (3.80-4.25, held still to 5.00 under the iris) ---------- */
+      // the centre heats up, the ring warms, then a hot bloom opens from (1400, 450)
+      tl.fromTo($("heat"), { opacity: 0 }, { opacity: 1, duration: 0.34, ease: "power2.in", immediateRender: false }, 3.8);
+      tl.fromTo(inkPath, { stroke: "#c25b28" }, { stroke: "#e08a5c", duration: 0.45, ease: "power2.in", immediateRender: false }, 3.8);
+      tl.fromTo($("bloom"), { scale: 0.1 }, { scale: 1.15, duration: 0.56, ease: "power2.out", immediateRender: false }, 3.86);
+      tl.fromTo($("bloom"), { opacity: 0 }, { opacity: 1, duration: 0.26, ease: "power1.out", immediateRender: false }, 3.86);
+      // slow push toward the zero's centre (desk + objects together, centre stays on 1400, 450)
+      tl.fromTo([$("deskcam"), $("cam")], { scale: 1 }, { scale: 1.03, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 3.8);
+
+      // hold still to the end of the extended clips (5.0 s)
+      tl.set({}, {}, 5.0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["08-zero"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,756 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-500.woff2') format('woff2');
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-600.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url('assets/fonts/SpaceMono-400.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url('assets/fonts/SpaceMono-700.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #f5efe7;
+      font-family: "Instrument Sans";
+    }
+
+    /* ---------- ground-dark (full-duration clip) ---------- */
+    .f02-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0d0b0a;
+    }
+    /* Halo 1: spans the gap between you and the computer. */
+    .f02-halo-gap {
+      position: absolute;
+      left: 160px;
+      top: 330px;
+      width: 1600px;
+      height: 620px;
+      opacity: 0;
+      background: radial-gradient(ellipse closest-side, rgba(194, 91, 40, 0.2) 0%, rgba(194, 91, 40, 0.08) 50%, rgba(194, 91, 40, 0) 100%);
+    }
+    /* Halo 2: behind the translator once he steps in. */
+    .f02-halo-mid {
+      position: absolute;
+      left: 560px;
+      top: 290px;
+      width: 800px;
+      height: 640px;
+      opacity: 0;
+      background: radial-gradient(ellipse closest-side, rgba(194, 91, 40, 0.28) 0%, rgba(168, 77, 34, 0.12) 50%, rgba(168, 77, 34, 0) 100%);
+    }
+
+    .f02-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.05;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+    }
+
+    .f02-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .f02-cam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 960px 620px;
+    }
+
+    /* ---------- Phrase (3 centered lines, word by word) ---------- */
+    .f02-phrase {
+      position: absolute;
+      left: 0;
+      top: 56px;
+      width: 1920px;
+      font-family: "Instrument Sans";
+      font-weight: 600;
+      font-size: 54px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .f02-line {
+      display: block;
+      height: 70px;
+    }
+    .f02-w {
+      display: inline-block;
+      opacity: 0;
+      will-change: transform, opacity, filter;
+    }
+    .f02-pill {
+      position: relative;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      color: #ffffff;
+      transform-origin: 0% 50%;
+    }
+    .f02-pill-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      opacity: 0;
+      transform-origin: 0% 50%;
+    }
+    .f02-ch {
+      position: relative;
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+
+    /* ---------- Figures: motion wrappers (dark-world rim + tilt shadow live here, not on the figures) ---------- */
+    .f02-side-l {
+      position: absolute;
+      left: 270px;
+      top: 530px;
+      width: 300px;
+      height: 340px;
+      opacity: 0;
+      transform-origin: 50% 100%;
+    }
+    .f02-rim-l {
+      width: 300px;
+      height: 340px;
+      filter: drop-shadow(0 0 1.5px rgba(245, 239, 231, 0.32)) drop-shadow(16px 18px 34px rgba(0, 0, 0, 0.55));
+      -webkit-mask-image: linear-gradient(to bottom, #000 82%, rgba(0, 0, 0, 0) 100%);
+      mask-image: linear-gradient(to bottom, #000 82%, rgba(0, 0, 0, 0) 100%);
+    }
+    .f02-mid-clip {
+      position: absolute;
+      left: 760px;
+      top: 300px;
+      width: 400px;
+      height: 600px;
+      overflow: hidden;
+    }
+    .f02-mid {
+      position: absolute;
+      left: 50px;
+      top: 230px;
+      width: 300px;
+      height: 340px;
+      opacity: 0;
+    }
+    .f02-rim-m {
+      width: 300px;
+      height: 340px;
+      filter: drop-shadow(0 0 1.5px rgba(245, 239, 231, 0.32)) drop-shadow(0 18px 34px rgba(0, 0, 0, 0.55));
+      -webkit-mask-image: linear-gradient(to bottom, #000 86%, rgba(0, 0, 0, 0) 100%);
+      mask-image: linear-gradient(to bottom, #000 86%, rgba(0, 0, 0, 0) 100%);
+    }
+    .f02-side-r {
+      position: absolute;
+      left: 1335px;
+      top: 525px;
+      width: 330px;
+      height: 290px;
+      opacity: 0;
+      transform-origin: 50% 100%;
+    }
+    .f02-bloom {
+      position: absolute;
+      left: -110px;
+      top: -110px;
+      width: 550px;
+      height: 440px;
+      opacity: 0;
+      background: radial-gradient(ellipse closest-side, rgba(224, 138, 92, 0.34) 0%, rgba(194, 91, 40, 0.12) 50%, rgba(194, 91, 40, 0) 100%);
+    }
+    .f02-ping {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 330px;
+      height: 290px;
+      transform-origin: 50% 40%;
+    }
+    .f02-rim-r {
+      width: 330px;
+      height: 290px;
+      filter: drop-shadow(0 0 1.5px rgba(245, 239, 231, 0.3)) drop-shadow(-16px 18px 34px rgba(0, 0, 0, 0.6));
+    }
+    .f02-glow {
+      position: absolute;
+      left: 15px;
+      top: 15px;
+      width: 300px;
+      height: 200px;
+      border-radius: 10px;
+      opacity: 0;
+      background: radial-gradient(ellipse at 50% 60%, rgba(224, 138, 92, 0.24) 0%, rgba(194, 91, 40, 0.07) 60%, rgba(194, 91, 40, 0) 100%);
+    }
+    .f02-nope {
+      position: absolute;
+      left: 129px;
+      top: 79px;
+      width: 72px;
+      height: 72px;
+      opacity: 0;
+      filter: drop-shadow(0 0 14px rgba(194, 91, 40, 0.55));
+    }
+    .f02-nope svg {
+      display: block;
+    }
+
+    /* ---------- Self-contained figure blocks (lifted as is by frame 07) ---------- */
+    .f02-persona-toi,
+    .f02-persona-traducteur {
+      width: 300px;
+      height: 340px;
+    }
+    .f02-computer {
+      width: 330px;
+      height: 290px;
+    }
+    .f02-persona-toi svg,
+    .f02-persona-traducteur svg,
+    .f02-computer svg {
+      display: block;
+    }
+    .f02-computer text {
+      white-space: pre;
+    }
+    /* Line 4 arrives with the translated code line (frame-local state, not part of the block). */
+    .f02-side-r .f02-comp-l4,
+    .f02-side-r .f02-comp-hl {
+      opacity: 0;
+    }
+    .f02-speech-bubble {
+      position: relative;
+      box-sizing: border-box;
+      width: 500px;
+      height: 84px;
+      padding: 0 30px;
+      border-radius: 22px;
+      background: #fffdf9;
+      box-shadow: 0 2px 6px rgba(60, 40, 20, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Instrument Sans";
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 1.3;
+      letter-spacing: 0;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f02-speech-bubble svg {
+      position: absolute;
+      left: 66px;
+      top: 83px;
+      display: block;
+    }
+
+    /* ---------- Bubble mover (speech bubble, then the translated code line) ---------- */
+    .f02-bub {
+      position: absolute;
+      left: 318px;
+      top: 430px;
+      width: 500px;
+      height: 84px;
+      opacity: 0;
+      transform-origin: 50% 50%;
+    }
+    .f02-bub-face {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 500px;
+      height: 84px;
+      filter: drop-shadow(0 24px 44px rgba(0, 0, 0, 0.5));
+      transform-origin: 50% 50%;
+    }
+    .f02-chip {
+      position: absolute;
+      left: 30px;
+      top: 10px;
+      width: 440px;
+      height: 64px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: linear-gradient(160deg, rgba(40, 33, 28, 0.96), rgba(24, 20, 17, 0.95) 45%, rgba(20, 16, 14, 0.95) 80%, rgba(30, 24, 20, 0.96));
+      border: 1px solid rgba(245, 239, 231, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 30px 70px rgba(0, 0, 0, 0.65);
+      font-family: "Space Mono";
+      font-weight: 400;
+      font-size: 26px;
+      line-height: 1.5;
+      color: #f5efe7;
+      white-space: pre;
+      opacity: 0;
+      transform-origin: 50% 50%;
+    }
+    .f02-kw {
+      color: #d4703f;
+    }
+    .f02-str {
+      color: #cdbfb2;
+    }
+
+    /* ---------- « € » pill ---------- */
+    .f02-euro {
+      position: absolute;
+      left: 470px;
+      top: 758px;
+      width: 66px;
+      height: 48px;
+      box-sizing: border-box;
+      border-radius: 24px;
+      background: #2e2924;
+      border: 1px solid rgba(245, 239, 231, 0.14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 16px 40px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Space Mono";
+      font-weight: 700;
+      font-size: 26px;
+      line-height: 1;
+      color: #f5efe7;
+      opacity: 0;
+    }
+
+    /* ---------- id-card (glass-card-dark 420×150), content swaps on each beat ---------- */
+    .f02-idcard {
+      position: absolute;
+      left: 750px;
+      top: 356px;
+      width: 420px;
+      height: 150px;
+      box-sizing: border-box;
+      border-radius: 14px;
+      overflow: hidden;
+      background: linear-gradient(160deg, rgba(40, 33, 28, 0.92), rgba(24, 20, 17, 0.9) 45%, rgba(20, 16, 14, 0.9) 80%, rgba(30, 24, 20, 0.92));
+      border: 1px solid rgba(245, 239, 231, 0.1);
+      box-shadow: inset 0px 1px 0px 0px rgba(255, 255, 255, 0.14), 0px 50px 120px 0px rgba(0, 0, 0, 0.7), 0px 0px 0px 0px rgba(194, 91, 40, 0);
+      opacity: 0;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+    .f02-id-micro {
+      position: absolute;
+      left: 26px;
+      top: 16px;
+      font-family: "Space Mono";
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 22px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #9b9289;
+    }
+    .f02-role {
+      position: absolute;
+      left: 26px;
+      right: 26px;
+      top: 40px;
+      bottom: 14px;
+      opacity: 0;
+    }
+    .f02-id-title {
+      font-family: "Instrument Sans";
+      font-weight: 600;
+      font-size: 44px;
+      line-height: 48px;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+      white-space: nowrap;
+    }
+    .f02-id-price {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      font-family: "Space Mono";
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 34px;
+      font-variant-numeric: tabular-nums;
+      color: #f5efe7;
+      white-space: nowrap;
+      text-align: right;
+    }
+  </style>
+
+  <div id="root" data-composition-id="02-traducteur" data-width="1920" data-height="1080" data-duration="6.8">
+    <div id="f02-ground" class="clip f02-ground" data-start="0" data-duration="6.8" data-track-index="0">
+      <div id="f02-halo-gap" class="f02-halo-gap"></div>
+      <div id="f02-halo-mid" class="f02-halo-mid"></div>
+    </div>
+
+    <div id="f02-stage" class="clip f02-stage" data-start="0" data-duration="6.8" data-track-index="1">
+      <div id="f02-cam" class="f02-cam">
+
+        <!-- LEFT WING: motion wrapper (entry + tilt) > rim wrapper (dark-world rim, shadow, floor fade) > figure -->
+        <div id="f02-side-l" class="f02-side-l">
+          <div class="f02-rim-l">
+            <!-- persona-toi (the entrepreneur). Self-contained block, 300×340. Shirt #3a322c on dark, #2e2924 on paper. -->
+            <div class="f02-persona-toi">
+              <svg viewBox="0 0 300 340" width="300" height="340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20 340 L20 298 C20 256 58 230 110 224 L190 224 C242 230 280 256 280 298 L280 340 Z" fill="#3a322c" />
+                <path d="M130 170 L170 170 L170 224 L150 240 L130 224 Z" fill="#d9b294" />
+                <path d="M126 226 L150 252 L174 226" fill="none" stroke="rgba(245,239,231,0.14)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="88" cy="128" r="10" fill="#ddb597" />
+                <circle cx="212" cy="128" r="10" fill="#ddb597" />
+                <circle cx="150" cy="120" r="62" fill="#e8c4a8" />
+                <path d="M88 120 C84 72 114 48 152 48 C194 48 222 74 214 120 C204 98 184 86 160 84 C134 82 106 94 88 120 Z" fill="#2e2924" />
+                <circle cx="130" cy="132" r="5.5" fill="#1a1612" />
+                <circle cx="170" cy="132" r="5.5" fill="#1a1612" />
+              </svg>
+            </div>
+            <!-- /persona-toi -->
+          </div>
+        </div>
+
+        <!-- CENTER: the translator rises from the floor line (clip keeps everything above y 900) -->
+        <div id="f02-mid-clip" class="f02-mid-clip">
+          <div id="f02-mid" class="f02-mid">
+            <div class="f02-rim-m">
+              <!-- persona-traducteur (developer / agency / provider). Self-contained block, 300×340. Glasses, headset, laptop. -->
+              <div class="f02-persona-traducteur">
+                <svg viewBox="0 0 300 340" width="300" height="340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M20 340 L20 298 C20 256 58 230 110 224 L190 224 C242 230 280 256 280 298 L280 340 Z" fill="#4a3f36" />
+                  <path d="M54 262 C60 288 74 298 92 298" fill="none" stroke="#3f352d" stroke-width="30" stroke-linecap="round" />
+                  <path d="M246 262 C240 288 226 298 208 298" fill="none" stroke="#3f352d" stroke-width="30" stroke-linecap="round" />
+                  <path d="M130 170 L170 170 L170 224 L150 240 L130 224 Z" fill="#d9b294" />
+                  <circle cx="88" cy="128" r="10" fill="#ddb597" />
+                  <circle cx="212" cy="128" r="10" fill="#ddb597" />
+                  <circle cx="150" cy="120" r="62" fill="#e8c4a8" />
+                  <path d="M90 110 C88 72 116 52 150 52 C186 52 212 72 210 110 C204 94 188 86 168 84 C144 82 110 88 90 110 Z" fill="#6b5a4c" />
+                  <path d="M84 124 C80 36 220 36 216 124" fill="none" stroke="#2e2924" stroke-width="9" stroke-linecap="round" />
+                  <rect x="74" y="110" width="20" height="38" rx="9" fill="#2e2924" />
+                  <rect x="206" y="110" width="20" height="38" rx="9" fill="#2e2924" />
+                  <path d="M86 146 C90 172 106 182 124 182" fill="none" stroke="#2e2924" stroke-width="5" stroke-linecap="round" />
+                  <circle cx="127" cy="182" r="6" fill="#2e2924" />
+                  <circle cx="128" cy="130" r="15" fill="none" stroke="#1a1612" stroke-width="3" />
+                  <circle cx="172" cy="130" r="15" fill="none" stroke="#1a1612" stroke-width="3" />
+                  <path d="M143 128 Q150 123 157 128 M113 127 L99 123 M187 127 L201 123" fill="none" stroke="#1a1612" stroke-width="3" stroke-linecap="round" />
+                  <circle cx="128" cy="131" r="4.5" fill="#1a1612" />
+                  <circle cx="172" cy="131" r="4.5" fill="#1a1612" />
+                  <rect x="92" y="222" width="116" height="72" rx="7" fill="#2e2924" stroke="rgba(245,239,231,0.08)" stroke-width="1.5" />
+                  <circle cx="150" cy="258" r="6" fill="rgba(245,239,231,0.16)" />
+                  <rect x="82" y="292" width="136" height="9" rx="4" fill="#1f1a16" />
+                  <circle cx="92" cy="297" r="11" fill="#e8c4a8" />
+                  <circle cx="208" cy="297" r="11" fill="#e8c4a8" />
+                </svg>
+              </div>
+              <!-- /persona-traducteur -->
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT WING: motion wrapper > bloom + ping (impact jitter, light-up) > rim > figure, screen glow, ✕ -->
+        <div id="f02-side-r" class="f02-side-r">
+          <div id="f02-bloom" class="f02-bloom"></div>
+          <div id="f02-ping" class="f02-ping">
+            <div class="f02-rim-r">
+              <!-- computer. Self-contained block, 330×290: #2e2924 bezel, 300×200 screen, canonical code lines 1-4 (Space Mono). -->
+              <div class="f02-computer">
+                <svg viewBox="0 0 330 290" width="330" height="290" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M146 228 L184 228 L190 278 L140 278 Z" fill="#241f1b" />
+                  <rect x="96" y="274" width="138" height="12" rx="6" fill="#2e2924" />
+                  <rect x="0" y="0" width="330" height="230" rx="16" fill="#2e2924" />
+                  <rect x="15" y="15" width="300" height="200" rx="10" fill="#141010" />
+                  <circle cx="31" cy="31" r="3.5" fill="#5a5048" />
+                  <circle cx="43" cy="31" r="3.5" fill="#5a5048" />
+                  <circle cx="55" cy="31" r="3.5" fill="#5a5048" />
+                  <rect class="f02-comp-hl" x="19" y="129" width="292" height="21" rx="3" fill="rgba(194,91,40,0.24)" />
+                  <g font-family="Space Mono" font-size="11" fill="#f5efe7">
+                    <text x="24" y="78" fill="#9b9289">1</text>
+                    <text x="24" y="100" fill="#9b9289">2</text>
+                    <text x="24" y="122" fill="#9b9289">3</text>
+                    <text class="f02-comp-l4" x="24" y="144" fill="#9b9289">4</text>
+                    <text x="42" y="78"><tspan fill="#d4703f">const</tspan> page = <tspan fill="#d4703f">await</tspan> build(site.routes);</text>
+                    <text x="42" y="100"><tspan fill="#d4703f">if</tspan> (!page.ok) <tspan fill="#d4703f">return</tspan> retry(site);</text>
+                    <text x="42" y="122"><tspan fill="#d4703f">&lt;div</tspan> <tspan fill="#d4703f">class</tspan>=<tspan fill="#cdbfb2">"hero"</tspan><tspan fill="#d4703f">&gt;</tspan></text>
+                    <text class="f02-comp-l4" x="55" y="144"><tspan fill="#d4703f">&lt;button</tspan> onclick=<tspan fill="#cdbfb2">"book()"</tspan><tspan fill="#d4703f">&gt;</tspan></text>
+                  </g>
+                </svg>
+              </div>
+              <!-- /computer -->
+            </div>
+            <div id="f02-glow" class="f02-glow"></div>
+            <div id="f02-nope" class="f02-nope">
+              <svg viewBox="0 0 72 72" width="72" height="72" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20 20 L52 52 M52 20 L20 52" fill="none" stroke="#0d0b0a" stroke-width="17" stroke-linecap="round" />
+                <path d="M20 20 L52 52 M52 20 L20 52" fill="none" stroke="#d4703f" stroke-width="9" stroke-linecap="round" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- id-card above the translator's head: card-morph-anchor shell, content hard-swaps per beat -->
+        <div id="f02-idcard" class="f02-idcard">
+          <div class="f02-id-micro">R&Ocirc;LE</div>
+          <div id="f02-role-dev" class="f02-role">
+            <div class="f02-id-title">D&eacute;veloppeur</div>
+            <div class="f02-id-price">TJM 450&nbsp;&euro;</div>
+          </div>
+          <div id="f02-role-ag" class="f02-role">
+            <div class="f02-id-title">Agence</div>
+            <div class="f02-id-price">Devis 8&nbsp;400&nbsp;&euro;</div>
+          </div>
+          <div id="f02-role-pr" class="f02-role">
+            <div class="f02-id-title">Prestataire</div>
+            <div class="f02-id-price">Sur devis</div>
+          </div>
+        </div>
+
+        <div id="f02-euro" class="f02-euro">&euro;</div>
+
+        <!-- Bubble mover: the speech bubble travels, then turns into the translated code line -->
+        <div id="f02-bub" class="f02-bub">
+          <div id="f02-bub-face" class="f02-bub-face">
+            <!-- speech-bubble. Self-contained block, 500×84, card-light fill, tail toward the speaker (bottom left). -->
+            <div class="f02-speech-bubble">
+              Je veux un bouton &ldquo;R&eacute;server&rdquo;.
+              <svg viewBox="0 0 40 32" width="40" height="32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 0 L38 0 C30 12 20 24 4 32 C10 22 10 10 6 0 Z" fill="#fffdf9" /></svg>
+            </div>
+            <!-- /speech-bubble -->
+          </div>
+          <div id="f02-chip" class="f02-chip"><span class="f02-kw">&lt;button</span> onclick=<span class="f02-str">"book()"</span><span class="f02-kw">&gt;</span></div>
+        </div>
+      </div>
+
+      <!-- Phrase at the top: 3 lines, word by word on the voice, one traced accent pill -->
+      <div id="f02-phrase" class="f02-phrase">
+        <div class="f02-line"><span class="f02-w" data-t="0.04">Et</span> <span class="f02-w" data-t="0.22">comme</span> <span class="f02-w" data-t="0.44">tu</span> <span class="f02-w" data-t="0.56">ne</span> <span class="f02-w" data-t="0.72">la</span> <span class="f02-w" data-t="0.88">parlais</span> <span class="f02-w" data-t="1.02">pas,</span></div>
+        <div class="f02-line"><span class="f02-w" data-t="1.69">tu</span> <span class="f02-w" data-t="1.86">payais</span> <span id="f02-pill" class="f02-pill"><span id="f02-pill-bg" class="f02-pill-bg"></span><span class="f02-ch">u</span><span class="f02-ch">n</span><span class="f02-ch"> </span><span class="f02-ch">t</span><span class="f02-ch">r</span><span class="f02-ch">a</span><span class="f02-ch">d</span><span class="f02-ch">u</span><span class="f02-ch">c</span><span class="f02-ch">t</span><span class="f02-ch">e</span><span class="f02-ch">u</span><span class="f02-ch">r</span><span class="f02-ch">,</span></span></div>
+        <div class="f02-line"><span class="f02-w" data-t="3.28">un</span> <span class="f02-w" data-t="3.56">d&eacute;veloppeur,</span> <span class="f02-w" data-t="4.47">une</span> <span class="f02-w" data-t="4.68">agence,</span> <span class="f02-w" data-t="5.38">un</span> <span class="f02-w" data-t="5.62">prestataire.</span></div>
+      </div>
+    </div>
+
+    <div id="f02-grain" class="clip f02-grain" data-start="0" data-duration="6.8" data-track-index="2"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var byId = function (name) {
+        return document.getElementById("f02-" + name);
+      };
+      var all = function (scope, sel) {
+        return Array.prototype.slice.call(scope.querySelectorAll(sel));
+      };
+
+      var DURATION = 6.3;
+      // Voice word cues: the single timing spine every reveal reads from.
+      var CUE = {
+        pas: 1.02,
+        payais: 1.86,
+        un1: 2.04,
+        un2: 3.28,
+        une: 4.47,
+        un3: 5.38
+      };
+
+      var tl = gsap.timeline({ paused: true });
+      // Every tween is an explicit fromTo that never renders before its own start.
+      var ft = function (el, from, to, at) {
+        to.immediateRender = false;
+        tl.fromTo(el, from, to, at);
+      };
+
+      // ---------- Ground ----------
+      ft(byId("halo-gap"), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0);
+
+      // ---------- Scene 1 (0.00-1.55): split stage, you | computer ----------
+      // comparison-split signature: opposite-wing entry, mirrored book-open rotateY, left first, right 0.18s behind.
+      ft(
+        byId("side-l"),
+        { x: -240, rotationY: 36, scale: 0.85, transformPerspective: 1400 },
+        { x: 0, rotationY: 8, scale: 1, transformPerspective: 1400, duration: 0.8, ease: "expo.out" },
+        0.02
+      );
+      ft(byId("side-l"), { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "none" }, 0.02);
+      ft(
+        byId("side-r"),
+        { x: 240, rotationY: -36, scale: 0.85, transformPerspective: 1400 },
+        { x: 0, rotationY: -8, scale: 1, transformPerspective: 1400, duration: 0.8, ease: "expo.out" },
+        0.2
+      );
+      ft(byId("side-r"), { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "none" }, 0.2);
+
+      // word-by-word: each word ON its voice timestamp.
+      all(byId("phrase"), ".f02-w").forEach(function (w) {
+        ft(
+          w,
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" },
+          Math.max(0, Number(w.dataset.t) - 0.02)
+        );
+      });
+
+      // Speech bubble pops above you, then flies at the screen and bounces off.
+      var BUB = byId("bub");
+      ft(BUB, { opacity: 0, scale: 0.7, y: 18 }, { opacity: 1, scale: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.34);
+      var HOME = { x: 0, y: 0, scale: 1, rotation: 0 };
+      var HIT = { x: 882, y: 156, scale: 0.5, rotation: 7 };
+      var BOUNCED = { x: 662, y: 228, scale: 0.46, rotation: -18 };
+      var AT_TRANSLATOR = { x: 392, y: -24, scale: 0.9, rotation: 0 };
+      var AT_SCREEN = { x: 932, y: 168, scale: 0.36, rotation: 0 };
+      var mv = function (from, to, dur, ease, at) {
+        var t = { x: to.x, y: to.y, scale: to.scale, rotation: to.rotation, duration: dur, ease: ease };
+        ft(BUB, { x: from.x, y: from.y, scale: from.scale, rotation: from.rotation }, t, at);
+      };
+      mv(HOME, HIT, 0.13, "power2.in", 0.9);
+      mv(HIT, BOUNCED, 0.33, "power3.out", 1.03);
+      ft(BUB, { opacity: 1 }, { opacity: 0.55, duration: 0.2, ease: "none" }, 1.03);
+      mv(BOUNCED, HOME, 0.3, "power3.inOut", 1.36);
+      ft(BUB, { opacity: 0.55 }, { opacity: 1, duration: 0.24, ease: "none" }, 1.4);
+
+      // Impact: the computer jolts, the SVG ✕ pops (it does not understand).
+      var PING = byId("ping");
+      ft(PING, { x: 0 }, { x: 9, duration: 0.05, ease: "power2.out" }, 1.03);
+      ft(PING, { x: 9 }, { x: -5, duration: 0.07, ease: "power2.inOut" }, 1.08);
+      ft(PING, { x: -5 }, { x: 0, duration: 0.14, ease: "power3.out" }, 1.15);
+      var NOPE = byId("nope");
+      ft(NOPE, { opacity: 0, scale: 0, rotation: -25 }, { opacity: 1, scale: 1.2, rotation: 0, duration: 0.12, ease: "power3.out" }, CUE.pas);
+      ft(NOPE, { scale: 1.2 }, { scale: 1, duration: 0.18, ease: "power2.out" }, CUE.pas + 0.12);
+      ft(NOPE, { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.7, duration: 0.2, ease: "power2.in" }, 1.55);
+
+      // ---------- Scene 2 (1.55-3.10): the translator steps in between ----------
+      ft(byId("mid"), { y: 250 }, { y: 0, duration: 0.75, ease: "expo.out" }, 1.6);
+      ft(byId("mid"), { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "none" }, 1.6);
+      ft(byId("halo-mid"), { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" }, 1.6);
+
+      // You -> translator; the bubble turns into a code line; translator -> computer.
+      mv(HOME, AT_TRANSLATOR, 0.3, "power3.inOut", 1.74);
+      ft(byId("bub-face"), { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.94, duration: 0.1, ease: "power1.in" }, 2.02);
+      ft(byId("chip"), { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.12, ease: "power1.out" }, 2.14);
+      mv(AT_TRANSLATOR, AT_SCREEN, 0.3, "power2.inOut", 2.28);
+      ft(BUB, { opacity: 1 }, { opacity: 0, duration: 0.1, ease: "power1.in" }, 2.5);
+
+      // The computer lights up: screen glow, bloom, line 4 lands with its highlight row.
+      var LIT = 2.56;
+      ft(byId("glow"), { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }, LIT);
+      ft(byId("bloom"), { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, LIT);
+      var sideR = byId("side-r");
+      var hl = sideR.querySelector(".f02-comp-hl");
+      gsap.set(hl, { transformOrigin: "0% 50%" });
+      ft(hl, { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.3, ease: "power3.out" }, LIT);
+      all(sideR, ".f02-comp-l4").forEach(function (el) {
+        ft(el, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "none" }, LIT + 0.04);
+      });
+      ft(PING, { scale: 1 }, { scale: 1.035, duration: 0.12, ease: "power2.out" }, LIT);
+      ft(PING, { scale: 1.035 }, { scale: 1, duration: 0.3, ease: "power3.out" }, LIT + 0.12);
+
+      // « € » pill: you -> translator on « payais », over a small arc.
+      var EURO = byId("euro");
+      ft(EURO, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.16, ease: "power3.out" }, CUE.payais);
+      ft(EURO, { x: 0 }, { x: 375, duration: 0.46, ease: "power2.inOut" }, CUE.payais + 0.08);
+      ft(EURO, { y: 0 }, { y: -110, duration: 0.23, ease: "power2.out" }, CUE.payais + 0.08);
+      ft(EURO, { y: -110 }, { y: 10, duration: 0.23, ease: "power2.in" }, CUE.payais + 0.31);
+
+      // accent-pill « un traducteur, »: traces first (scaleX from the left, -8deg -> 0), then the letters write inside.
+      var PILL_AT = CUE.un1 - 0.06;
+      ft(byId("pill"), { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out" }, PILL_AT);
+      ft(byId("pill-bg"), { scaleX: 0, opacity: 1 }, { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out" }, PILL_AT);
+      all(byId("pill"), ".f02-ch").forEach(function (c, i) {
+        ft(c, { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.16, ease: "power3.out" }, PILL_AT + 0.18 + i * 0.02);
+      });
+
+      // ---------- Scene 3 (3.10-6.30): the role card hard-swaps on each beat ----------
+      // kinetic-beat-slam: one beat array drives the card, its swaps and the camera kicks.
+      var BEATS = [CUE.un2, CUE.une, CUE.un3];
+      var CAM = byId("cam");
+      var KICK_ROT = [-0.4, 0.35, -0.3];
+      BEATS.forEach(function (b, k) {
+        ft(CAM, { scale: 1.014, y: -8, rotation: KICK_ROT[k] }, { scale: 1, y: 0, rotation: 0, duration: 0.34, ease: "power4.out" }, b);
+      });
+
+      var CARD = byId("idcard");
+      var DEV = byId("role-dev");
+      var AG = byId("role-ag");
+      var PR = byId("role-pr");
+      // Beat 1: the card slams in (scale + blur, power4.out) carrying « Développeur ».
+      ft(CARD, { scale: 1.28, y: -12, filter: "blur(12px)" }, { scale: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power4.out" }, BEATS[0]);
+      ft(CARD, { opacity: 0 }, { opacity: 1, duration: 0.16, ease: "none" }, BEATS[0]);
+      ft(DEV, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, BEATS[0] + 0.02);
+
+      // card-morph-anchor: one tween carries scale + borderRadius (pre-scale) + boxShadow; old content fades
+      // in the first 40%, the new content lands just after the beat with its own distinct entrance.
+      var SH_BASE = "inset 0px 1px 0px 0px rgba(255,255,255,0.14), 0px 50px 120px 0px rgba(0,0,0,0.7), 0px 0px 0px 0px rgba(194,91,40,0)";
+      var SH_DEEP = "inset 0px 1px 0px 0px rgba(255,255,255,0.14), 0px 64px 140px 0px rgba(0,0,0,0.8), 0px 0px 0px 0px rgba(194,91,40,0)";
+      var SH_GLOW = "inset 0px 1px 0px 0px rgba(255,255,255,0.14), 0px 50px 120px 0px rgba(0,0,0,0.7), 0px 0px 44px 0px rgba(194,91,40,0.3)";
+      var MORPH_DUR = 0.56;
+      var morph = function (beat, oldEl, fromScale, toScale, fromShadow, toShadow) {
+        var start = beat - 0.28;
+        ft(
+          CARD,
+          { scale: fromScale, borderRadius: 14 / fromScale, boxShadow: fromShadow },
+          { scale: toScale, borderRadius: 14 / toScale, boxShadow: toShadow, duration: MORPH_DUR, ease: "power2.inOut" },
+          start
+        );
+        ft(oldEl, { opacity: 1 }, { opacity: 0, duration: MORPH_DUR * 0.4, ease: "power1.in" }, start);
+      };
+
+      // Beat 2: « Agence », the card grows and deepens; content side-snaps in (expo.out).
+      morph(BEATS[1], DEV, 1, 1.08, SH_BASE, SH_DEEP);
+      ft(AG, { opacity: 0, x: 70 }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, BEATS[1] + 0.03);
+
+      // Beat 3: « Prestataire », the card settles smaller with a faint accent glow; content rises + rotates (circ.out).
+      morph(BEATS[2], AG, 1.08, 0.97, SH_DEEP, SH_GLOW);
+      ft(PR, { opacity: 0, y: 34, rotation: 5 }, { opacity: 1, y: 0, rotation: 0, duration: 0.5, ease: "circ.out" }, BEATS[2] + 0.03);
+
+      // Hold to the end (no exit, no breathing loop).
+      tl.set({}, {}, DURATION);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["02-traducteur"] = tl;
+    })();
+  </script>
+</template>

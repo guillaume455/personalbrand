@@ -1,0 +1,948 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #f5efe7;
+    }
+
+    /* ---------- ground-dark (track 0, full duration) ---------- */
+    #f05-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: #0d0b0a;
+      overflow: hidden;
+    }
+    #f05-ground-halo {
+      position: absolute;
+      left: 360px;
+      top: 40px;
+      width: 1200px;
+      height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.22), rgba(194, 91, 40, 0.09) 50%, rgba(194, 91, 40, 0) 100%);
+    }
+
+    /* ---------- scene (track 1, full duration) ---------- */
+    #f05-scene {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+
+    /* the one camera wrapper (viewport-change, PAN mode) */
+    #f05-world {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3200px;
+      height: 1080px;
+      will-change: transform, filter;
+    }
+    .f05-halo {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+    }
+    #f05-halo-a {
+      left: 460px;
+      top: 35px;
+      width: 1000px;
+      height: 800px;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.2), rgba(194, 91, 40, 0.08) 52%, rgba(194, 91, 40, 0) 100%);
+    }
+    #f05-halo-b {
+      left: 1630px;
+      top: 40px;
+      width: 900px;
+      height: 760px;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.26), rgba(194, 91, 40, 0.1) 50%, rgba(194, 91, 40, 0) 100%);
+    }
+
+    /* station A: opacity on the outer group, static scale on the inner one */
+    #f05-sa {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #f05-sa-scale {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform: scale(1.2);
+      transform-origin: 960px 435px;
+    }
+    .f05-glass {
+      background: linear-gradient(160deg, rgba(40, 33, 28, 0.92), rgba(24, 20, 17, 0.9) 45%, rgba(20, 16, 14, 0.9) 80%, rgba(30, 24, 20, 0.92));
+      border: 1px solid rgba(245, 239, 231, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 50px 120px rgba(0, 0, 0, 0.7);
+      border-radius: 14px;
+      box-sizing: border-box;
+    }
+    .f05-micro {
+      display: block;
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #9b9289;
+      white-space: nowrap;
+    }
+    #f05-role {
+      position: absolute;
+      left: 565px;
+      top: 210px;
+      width: 380px;
+      height: 120px;
+      padding: 20px 28px;
+      opacity: 0;
+    }
+    #f05-role-title {
+      display: block;
+      margin-top: 6px;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 44px;
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    #f05-quote {
+      position: absolute;
+      left: 795px;
+      top: 360px;
+      width: 560px;
+      height: 300px;
+      padding: 32px 36px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+    }
+    .f05-qhead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 24px;
+      flex: 0 0 auto;
+    }
+    .f05-qch {
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+    .f05-gbar {
+      display: block;
+      height: 10px;
+      border-radius: 5px;
+      background: rgba(245, 239, 231, 0.14);
+    }
+    .f05-rule {
+      display: block;
+      height: 1px;
+      background: rgba(245, 239, 231, 0.1);
+      flex: 0 0 auto;
+    }
+    #f05-qrule1 {
+      margin: 20px 0 22px 0;
+    }
+    #f05-qline {
+      display: block;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 28px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: #f5efe7;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    .f05-qbars {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    #f05-qbar1 {
+      width: 330px;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    #f05-qbar2 {
+      width: 230px;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    #f05-qrule2 {
+      margin-top: 22px;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f05-qfoot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      height: 36px;
+      flex: 0 0 auto;
+    }
+    #f05-price {
+      display: block;
+      font-family: "Space Mono", monospace;
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 36px;
+      font-variant-numeric: tabular-nums;
+      color: #f5efe7;
+      white-space: nowrap;
+      transform-origin: 100% 50%;
+      opacity: 0;
+    }
+
+    /* station B: the delivery counter */
+    #f05-counter {
+      position: absolute;
+      left: 1686px;
+      top: 250px;
+      width: 788px;
+      height: 340px;
+    }
+    #f05-clabel {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 788px;
+      padding-left: 0.2em;
+      box-sizing: border-box;
+      text-align: center;
+      opacity: 0;
+    }
+    #f05-num {
+      position: absolute;
+      left: 134px;
+      top: 40px;
+      width: 520px;
+      height: 230px;
+      display: flex;
+      align-items: flex-start;
+      font-family: "Space Mono", monospace;
+      font-size: 210px;
+      font-weight: 700;
+      line-height: 230px;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      color: #f5efe7;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    .f05-jp {
+      display: block;
+      height: 230px;
+      flex: 0 0 auto;
+    }
+    .f05-roll {
+      display: block;
+      height: 230px;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+    #f05-rollin {
+      display: flex;
+      flex-direction: column;
+      will-change: transform, filter;
+    }
+    .f05-d {
+      display: block;
+      height: 230px;
+    }
+    #f05-ticks {
+      position: absolute;
+      left: 0;
+      top: 300px;
+      width: 788px;
+      height: 40px;
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+    }
+    .f05-tick {
+      display: block;
+      flex: 0 0 11px;
+      width: 11px;
+      height: 40px;
+      border-radius: 3px;
+      background: rgba(245, 239, 231, 0.1);
+    }
+    .f05-tick.f05-wk {
+      margin-left: 16px;
+    }
+    .f05-tick.f05-on {
+      background: #cdbfb2;
+    }
+    .f05-tick.f05-now {
+      background: #c25b28;
+      box-shadow: 0 0 14px rgba(224, 138, 92, 0.5);
+    }
+
+    /* ---------- Scene 1: rewind mark + giant + small phrase ---------- */
+    #f05-s1 {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #f05-osd {
+      position: absolute;
+      left: 120px;
+      top: 104px;
+      width: 104px;
+      height: 56px;
+      display: grid;
+    }
+    .f05-osdcopy {
+      grid-area: 1 / 1;
+      display: block;
+      width: 104px;
+      height: 56px;
+      overflow: visible;
+    }
+    .f05-osdbase {
+      z-index: 2;
+    }
+    .f05-ghost {
+      z-index: 1;
+      opacity: 0;
+      mix-blend-mode: screen;
+      will-change: transform;
+    }
+    #f05-giant-wrap {
+      position: absolute;
+      left: 0;
+      top: 290px;
+      width: 1920px;
+      height: 234px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #f05-giant {
+      display: grid;
+      flex: 0 0 auto;
+      opacity: 0;
+    }
+    .f05-gcopy {
+      grid-area: 1 / 1;
+      display: block;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 260px;
+      font-weight: 700;
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      white-space: nowrap;
+    }
+    .f05-gbase {
+      z-index: 2;
+      color: #f5efe7;
+    }
+    .f05-gwarm {
+      color: #c25b28;
+    }
+    .f05-gcool {
+      color: #ffffff;
+    }
+
+    /* phrase (word by word) + the one traced accent pill */
+    .f05-phr {
+      position: absolute;
+      left: 0;
+      width: 1920px;
+      text-align: center;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+      white-space: nowrap;
+    }
+    #f05-p1 {
+      top: 560px;
+    }
+    #f05-phrase {
+      top: 786px;
+    }
+    .f05-w {
+      display: inline-block;
+      opacity: 0;
+    }
+    #f05-pill {
+      position: relative;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      transform-origin: 0% 50%;
+    }
+    #f05-pill-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    #f05-pill-txt {
+      position: relative;
+      display: inline-block;
+      color: #ffffff;
+    }
+    .f05-pw {
+      display: inline-block;
+    }
+    .f05-l {
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+
+    /* ---------- the rewind band (scanlines + accent/white chromatic split) ---------- */
+    #f05-band {
+      position: absolute;
+      left: -40px;
+      top: 760px;
+      width: 2000px;
+      height: 320px;
+      pointer-events: none;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 22%, rgba(0, 0, 0, 0.45) 62%, rgba(0, 0, 0, 0) 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 22%, rgba(0, 0, 0, 0.45) 62%, rgba(0, 0, 0, 0) 100%);
+    }
+    .f05-blayer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2000px;
+      height: 320px;
+    }
+    .f05-bbase {
+      z-index: 2;
+      background:
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.85) 0px, rgba(255, 255, 255, 0.85) 3px, rgba(255, 255, 255, 0) 3px),
+        repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.16) 0px, rgba(255, 255, 255, 0.16) 2px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0) 6px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+    }
+    .f05-bwarm {
+      background:
+        linear-gradient(to bottom, rgba(194, 91, 40, 1) 0px, rgba(194, 91, 40, 1) 5px, rgba(194, 91, 40, 0) 5px),
+        repeating-linear-gradient(to bottom, rgba(194, 91, 40, 0.75) 0px, rgba(194, 91, 40, 0.75) 2px, rgba(194, 91, 40, 0) 2px, rgba(194, 91, 40, 0) 6px);
+    }
+    .f05-bcool {
+      background:
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.9) 0px, rgba(255, 255, 255, 0.9) 4px, rgba(255, 255, 255, 0) 4px),
+        repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.45) 0px, rgba(255, 255, 255, 0.45) 2px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0) 6px);
+    }
+    #f05-tears {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2000px;
+      height: 320px;
+      z-index: 3;
+    }
+    .f05-tear {
+      position: absolute;
+      display: block;
+    }
+
+    /* ---------- static film grain (track 2, full duration) ---------- */
+    #f05-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px;
+    }
+  </style>
+
+  <div id="root" data-composition-id="05-avant" data-width="1920" data-height="1080" data-duration="4.1">
+    <div id="f05-ground" class="clip" data-start="0" data-duration="4.1" data-track-index="0">
+      <div id="f05-ground-halo" data-layout-ignore></div>
+    </div>
+
+    <div id="f05-scene" class="clip" data-start="0" data-duration="4.1" data-track-index="1">
+      <!-- Scene 2 world: two pre-placed stations under one camera -->
+      <div id="f05-world" data-layout-allow-overflow>
+        <div id="f05-halo-a" class="f05-halo" data-layout-ignore></div>
+        <div id="f05-halo-b" class="f05-halo" data-layout-ignore></div>
+
+        <!-- STATION A: the agency and its quote -->
+        <div id="f05-sa">
+          <div id="f05-sa-scale">
+            <div id="f05-role" class="f05-glass">
+              <span class="f05-micro">Rôle</span>
+              <span id="f05-role-title">Agence</span>
+            </div>
+
+            <div id="f05-quote" class="f05-glass">
+              <div class="f05-qhead">
+                <span id="f05-qnum" class="f05-micro">DEVIS N°&nbsp;0212</span>
+                <i class="f05-gbar" style="width: 90px;"></i>
+              </div>
+              <i id="f05-qrule1" class="f05-rule"></i>
+              <span id="f05-qline">Vidéo motion design 45&nbsp;s</span>
+              <div class="f05-qbars">
+                <i id="f05-qbar1" class="f05-gbar"></i>
+                <i id="f05-qbar2" class="f05-gbar"></i>
+              </div>
+              <i id="f05-qrule2" class="f05-rule"></i>
+              <div class="f05-qfoot">
+                <i class="f05-gbar" style="width: 120px;"></i>
+                <span id="f05-price">4&nbsp;800&nbsp;€</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STATION B: the wait -->
+        <div id="f05-counter">
+          <span id="f05-clabel" class="f05-micro">Livraison dans</span>
+          <div id="f05-num">
+            <span class="f05-jp">J+</span>
+            <span class="f05-roll">
+              <span id="f05-rollin">
+                <span id="f05-dcur" class="f05-d">1</span>
+                <span id="f05-dnext" class="f05-d">2</span>
+              </span>
+            </span>
+          </div>
+          <div id="f05-ticks"></div>
+        </div>
+      </div>
+
+      <!-- Scene 1: the rewind -->
+      <div id="f05-s1" data-layout-allow-overflow>
+        <div id="f05-osd">
+          <svg id="f05-osd-warm" class="f05-osdcopy f05-ghost" aria-hidden="true" viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 4 32 L 54 4 L 54 60 Z M 62 32 L 112 4 L 112 60 Z" fill="#c25b28" stroke="#c25b28" stroke-width="6" stroke-linejoin="round" />
+          </svg>
+          <svg id="f05-osd-cool" class="f05-osdcopy f05-ghost" aria-hidden="true" viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 4 32 L 54 4 L 54 60 Z M 62 32 L 112 4 L 112 60 Z" fill="#ffffff" stroke="#ffffff" stroke-width="6" stroke-linejoin="round" />
+          </svg>
+          <svg id="f05-osd-base" class="f05-osdcopy f05-osdbase" viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 4 32 L 54 4 L 54 60 Z M 62 32 L 112 4 L 112 60 Z" fill="#c25b28" stroke="#c25b28" stroke-width="6" stroke-linejoin="round" />
+          </svg>
+        </div>
+
+        <div id="f05-giant-wrap">
+          <div id="f05-giant">
+            <span id="f05-g-warm" class="f05-gcopy f05-gwarm f05-ghost" aria-hidden="true">Avant,</span>
+            <span id="f05-g-cool" class="f05-gcopy f05-gcool f05-ghost" aria-hidden="true">Avant,</span>
+            <span id="f05-g-base" class="f05-gcopy f05-gbase">Avant,</span>
+          </div>
+        </div>
+
+        <div id="f05-p1" class="f05-phr">
+          <span class="f05-w" data-cue="0.54">pour</span>
+          <span class="f05-w" data-cue="0.70">ça,</span>
+        </div>
+      </div>
+
+      <!-- Scene 2 phrase, screen space at the bottom -->
+      <div id="f05-phrase" class="f05-phr">
+        <span class="f05-w" data-cue="1.22">il</span>
+        <span class="f05-w" data-cue="1.38">fallait</span>
+        <span class="f05-w" data-cue="1.56">une</span>
+        <span class="f05-w" data-cue="1.76">agence,</span>
+        <span class="f05-w" data-cue="2.28">un</span>
+        <span class="f05-w" data-cue="2.42">devis,</span>
+        <span id="f05-pill"><span id="f05-pill-bg"></span><span id="f05-pill-txt"><span class="f05-pw" data-cue="2.90">et</span> <span class="f05-pw" data-cue="3.15">attendre.</span></span></span>
+      </div>
+
+      <!-- the rewind band sweeps up over everything -->
+      <div id="f05-band" data-layout-ignore>
+        <div id="f05-bwarm" class="f05-blayer f05-bwarm f05-ghost" aria-hidden="true"></div>
+        <div id="f05-bcool" class="f05-blayer f05-bcool f05-ghost" aria-hidden="true"></div>
+        <div class="f05-blayer f05-bbase"></div>
+        <div id="f05-tears"></div>
+      </div>
+    </div>
+
+    <div id="f05-grain" class="clip" data-start="0" data-duration="4.1" data-track-index="2" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "05-avant";
+      var DUR = 4.1;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]') || document;
+      function $(id) {
+        return root.querySelector("#f05-" + id) || document.getElementById("f05-" + id);
+      }
+      function $$(sel) {
+        return Array.prototype.slice.call(root.querySelectorAll(sel));
+      }
+      function clamp01(v) {
+        return v < 0 ? 0 : v > 1 ? 1 : v;
+      }
+      function splitChars(el, cls) {
+        var t = el.textContent;
+        el.textContent = "";
+        var out = [];
+        for (var i = 0; i < t.length; i++) {
+          var s = document.createElement("span");
+          s.className = cls;
+          s.textContent = t[i];
+          el.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      }
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ================= Scene 1 (0.00 to 1.15): the rewind ================= */
+
+      // chromatic-glitch (RGB-split form, accent + white only): quantized time, pure hash, finite envelope
+      var glitchHash = function (n) {
+        var x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+        return x - Math.floor(x);
+      };
+      var GL_START = 0;
+      var GL_DUR = 0.25;
+      var JITTER_STEP = 1 / 24;
+      var SPLIT_OPACITY = 0.8;
+      var TEAR_MAX = 90;
+
+      // VHS tracking tears inside the band: deterministic geometry from the hash
+      var tearsBox = $("tears");
+      var tears = [];
+      for (var ti = 0; ti < 12; ti++) {
+        var tear = document.createElement("i");
+        tear.className = "f05-tear";
+        tear.style.top = Math.round(6 + glitchHash(ti * 3 + 1) * 240) + "px";
+        tear.style.height = 2 + Math.round(glitchHash(ti * 3 + 2) * 5) + "px";
+        tear.style.left = Math.round(60 + glitchHash(ti * 5 + 4) * 1380) + "px";
+        tear.style.width = Math.round(160 + glitchHash(ti * 7 + 5) * 620) + "px";
+        tear.style.background =
+          glitchHash(ti * 11 + 6) > 0.55
+            ? "rgba(194, 91, 40, 0.85)"
+            : "rgba(255, 255, 255, " + (0.35 + glitchHash(ti * 13 + 7) * 0.45).toFixed(2) + ")";
+        tearsBox.appendChild(tear);
+        tears.push(tear);
+      }
+
+      var ghosts = [
+        { el: $("bwarm"), mx: 0, my: 11 },
+        { el: $("bcool"), mx: 0, my: 11 },
+        { el: $("osd-warm"), mx: 12, my: 4 },
+        { el: $("osd-cool"), mx: 12, my: 4 },
+        { el: $("g-warm"), mx: 14, my: 5 },
+        { el: $("g-cool"), mx: 14, my: 5 },
+      ];
+      var ghostEls = ghosts.map(function (g) {
+        return g.el;
+      });
+      var amp = { a: 1 };
+      function applyGlitch(time) {
+        var step = Math.floor(time / JITTER_STEP);
+        for (var k = 0; k < ghosts.length; k++) {
+          var g = ghosts[k];
+          gsap.set(g.el, {
+            x: (glitchHash(step * 13 + k * 7) * 2 - 1) * g.mx * amp.a,
+            y: (glitchHash(step * 29 + k * 11) * 2 - 1) * g.my * amp.a,
+          });
+        }
+        for (var j = 0; j < tears.length; j++) {
+          gsap.set(tears[j], { x: (glitchHash(step * 17 + j * 5 + 3) * 2 - 1) * TEAR_MAX * amp.a });
+        }
+      }
+      // frame-0 state (the glitch is live on the very first frame)
+      gsap.set(ghostEls, { opacity: SPLIT_OPACITY });
+      applyGlitch(0);
+      tl.fromTo(
+        amp,
+        { a: 1 },
+        {
+          a: 0,
+          duration: GL_DUR,
+          ease: "power3.in",
+          immediateRender: false,
+          onUpdate: function () {
+            applyGlitch(tl.time());
+          },
+        },
+        GL_START,
+      );
+      // the clean resolve: clamp ghosts to exact rest
+      tl.set(ghostEls, { x: 0, y: 0, opacity: 0 }, GL_START + GL_DUR);
+      tl.set(tears, { x: 0 }, GL_START + GL_DUR);
+
+      // the band sweeps up the stage (visible from frame 0 via CSS top: 760px)
+      var band = $("band");
+      tl.fromTo(band, { y: 0 }, { y: -1100, duration: 0.32, ease: "none", immediateRender: false }, 0);
+      tl.set(band, { opacity: 0 }, 0.32);
+
+      // giant-word « Avant, »: tracking 0.35em -> -0.05em via per-letter x transforms,
+      // opacity + blur 12 -> 0, 0.5 s expo.out. Same tracking on the two ghost copies.
+      var T_GIANT = 0.19;
+      var SPREAD = 104; // 0.4em at 260px
+      var gSets = [splitChars($("g-warm"), "f05-gl"), splitChars($("g-cool"), "f05-gl"), splitChars($("g-base"), "f05-gl")];
+      tl.fromTo(
+        $("giant"),
+        { opacity: 0, filter: "blur(12px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false },
+        T_GIANT,
+      );
+      var gn = gSets[2].length;
+      for (var gi = 0; gi < gn; gi++) {
+        gSets.forEach(function (set) {
+          set[gi].style.display = "inline-block";
+          set[gi].style.whiteSpace = "pre";
+        });
+        tl.fromTo(
+          [gSets[0][gi], gSets[1][gi], gSets[2][gi]],
+          { x: (gi - (gn - 1) / 2) * SPREAD },
+          { x: 0, duration: 0.5, ease: "expo.out", immediateRender: false },
+          T_GIANT,
+        );
+      }
+
+      // phrase words (both phrases): word by word on the voice
+      $$(".f05-w").forEach(function (w) {
+        tl.fromTo(
+          w,
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+          parseFloat(w.getAttribute("data-cue")),
+        );
+      });
+
+      /* ================= Seam 1.15: cut-the-curve, leftward (the camera is about to pan right) ================= */
+      var T_SEAM = 1.15;
+      var s1 = $("s1");
+      tl.fromTo(s1, { x: 0 }, { x: -230, duration: 0.3, ease: "power4.in", immediateRender: false }, T_SEAM - 0.3);
+      tl.fromTo(s1, { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power1.in", immediateRender: false }, T_SEAM - 0.32);
+      tl.set(s1, { opacity: 0 }, T_SEAM);
+      tl.fromTo($("ground-halo"), { opacity: 1 }, { opacity: 0.55, duration: 0.5, ease: "power1.out", immediateRender: false }, T_SEAM);
+
+      /* ================= Scene 2 (1.15 to 4.10): one camera, two stations ================= */
+
+      // camera + counter: one writer, pure function of time (viewport-change single source of truth)
+      var world = $("world");
+      var ENTRY_X = 230; // cut-the-curve entry distance, same as the exit
+      var ENTRY_DUR = 0.3;
+      var PAN_START = 2.44; // on « devis »
+      var PAN_DUR = 0.5;
+      var PAN_D = 1000; // camera pans right -> world translates left
+      var PAN_BLUR = 8;
+      var E_ENTRY = gsap.parseEase("power4.out");
+      var E_PAN = gsap.parseEase("power2.inOut");
+
+      // J+ counter: seek-safe proxy, integer days written to textContent, vertical roll, no overshoot
+      var ROLL_START = 3.02;
+      var ROLL_DUR = 0.58; // lands at 3.60
+      var DAYS = 42;
+      var ITEM_H = 230;
+      var rollin = $("rollin");
+      var dcur = $("dcur");
+      var dnext = $("dnext");
+      var ticksBox = $("ticks");
+      var ticks = [];
+      for (var k2 = 0; k2 < DAYS; k2++) {
+        var tk = document.createElement("i");
+        tk.className = "f05-tick";
+        ticksBox.appendChild(tk);
+        ticks.push(tk);
+      }
+      var lastN = -1;
+      function renderCounter(t) {
+        var p = clamp01((t - ROLL_START) / ROLL_DUR);
+        var e = 1 - Math.pow(1 - p, 3); // decelerating out-curve, lands exactly, never passes 42
+        var d = 1 + (DAYS - 1) * e;
+        var n = Math.floor(d + 1e-6);
+        var f = d - n;
+        if (n >= DAYS) {
+          n = DAYS;
+          f = 0;
+        }
+        if (f < 0) f = 0;
+        if (n !== lastN) {
+          dcur.textContent = String(n);
+          dnext.textContent = String(n + 1);
+          for (var i = 0; i < ticks.length; i++) {
+            var cls = "f05-tick";
+            if (i > 0 && i % 7 === 0) cls += " f05-wk";
+            if (i < n - 1) cls += " f05-on";
+            else if (i === n - 1) cls += " f05-now";
+            ticks[i].className = cls;
+          }
+          lastN = n;
+        }
+        rollin.style.transform = "translate3d(0px, " + (-f * ITEM_H).toFixed(2) + "px, 0px)";
+        var vel = p > 0 && p < 1 ? ((DAYS - 1) * 3 * Math.pow(1 - p, 2)) / ROLL_DUR : 0;
+        var bl = Math.min(4, vel * 0.02);
+        rollin.style.filter = bl > 0.05 ? "blur(" + bl.toFixed(2) + "px)" : "none";
+      }
+
+      function renderAt(t) {
+        var pe = clamp01((t - T_SEAM) / ENTRY_DUR);
+        var pp = clamp01((t - PAN_START) / PAN_DUR);
+        var x = ENTRY_X * (1 - E_ENTRY(pe)) - PAN_D * E_PAN(pp);
+        var b = pp > 0 && pp < 1 ? Math.sin(Math.PI * pp) * PAN_BLUR : 0;
+        world.style.transform = "translate3d(" + x.toFixed(2) + "px, 0px, 0px)";
+        world.style.filter = b > 0.05 ? "blur(" + b.toFixed(2) + "px)" : "none";
+        renderCounter(t);
+      }
+      renderAt(0);
+      var driver = { t: 0 };
+      tl.fromTo(
+        driver,
+        { t: 0 },
+        {
+          t: DUR,
+          duration: DUR,
+          ease: "none",
+          immediateRender: false,
+          onUpdate: function () {
+            renderAt(driver.t);
+          },
+        },
+        0,
+      );
+
+      // station A arrives with the world (cut-the-curve entry: opacity 0.35 -> 1 under the deceleration)
+      tl.fromTo($("halo-a"), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.out", immediateRender: false }, T_SEAM);
+      tl.fromTo($("role"), { opacity: 0.35 }, { opacity: 1, duration: 0.3, ease: "power4.out", immediateRender: false }, T_SEAM);
+      tl.fromTo(
+        $("role-title"),
+        { opacity: 0, y: 10, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+        1.76,
+      );
+
+      // the quote card builds up, price lands at 2.30
+      tl.fromTo(
+        $("quote"),
+        { opacity: 0, y: 36, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out", immediateRender: false },
+        1.4,
+      );
+      tl.fromTo(
+        splitChars($("qnum"), "f05-qch"),
+        { opacity: 0 },
+        { opacity: 1, duration: 0.06, ease: "none", stagger: 0.018, immediateRender: false },
+        1.58,
+      );
+      tl.fromTo(
+        $("qline"),
+        { opacity: 0, y: 10, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+        1.86,
+      );
+      tl.fromTo($("qbar1"), { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 1.96);
+      tl.fromTo($("qbar2"), { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 2.02);
+      tl.fromTo($("qrule2"), { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, 2.0);
+      tl.fromTo(
+        $("price"),
+        { opacity: 0, y: 14, scale: 1.1, filter: "blur(8px)" },
+        { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.26, ease: "power3.out", immediateRender: false },
+        2.04,
+      );
+
+      // the pan leaves station A behind (dimmed, never removed)
+      tl.fromTo($("sa"), { opacity: 1 }, { opacity: 0.45, duration: 0.45, ease: "power1.inOut", immediateRender: false }, 2.5);
+
+      // station B: the delivery counter, revealed as the camera lands
+      tl.fromTo($("halo-b"), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.out", immediateRender: false }, 2.6);
+      tl.fromTo(
+        $("clabel"),
+        { opacity: 0, y: 10, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+        2.76,
+      );
+      tl.fromTo(
+        $("num"),
+        { opacity: 0, y: 14, filter: "blur(10px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "power3.out", immediateRender: false },
+        2.82,
+      );
+      tl.fromTo($("ticks"), { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out", immediateRender: false }, 2.88);
+
+      // accent pill « et attendre. »: traces first (2 frames before « et »), then the letters write inside
+      var T_PILL = 2.84;
+      tl.fromTo($("pill-bg"), { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.28, ease: "power3.out", immediateRender: false }, T_PILL);
+      tl.fromTo($("pill"), { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, T_PILL);
+      $$(".f05-pw").forEach(function (pw) {
+        tl.fromTo(
+          splitChars(pw, "f05-l"),
+          { opacity: 0, x: -6 },
+          { opacity: 1, x: 0, duration: 0.16, ease: "power3.out", stagger: 0.02, immediateRender: false },
+          parseFloat(pw.getAttribute("data-cue")),
+        );
+      });
+
+      // hold to the exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

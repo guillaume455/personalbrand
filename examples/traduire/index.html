@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js" integrity="sha384-sG0Hv1tP1lZCk9KQmrIbY/XNwi+OY84GQqhMscbnsoBFqAz8KNCil1kvfL3Hbbk2" crossorigin="anonymous"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0d0b0a;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="50.4"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="paperbed" class="clip" data-start="19.85" data-duration="24.25" data-track-index="12" style="position:absolute;inset:0;background:#f6f1e9"></div>
+
+      <div
+        id="el-01-decennies"
+        class="scene"
+        data-composition-id="01-decennies"
+        data-composition-src="compositions/frames/01-decennies.html"
+        data-start="0"
+        data-duration="4.5"
+        data-track-index="0"
+      ></div>
+
+      <div
+        id="el-02-traducteur"
+        class="scene"
+        data-composition-id="02-traducteur"
+        data-composition-src="compositions/frames/02-traducteur.html"
+        data-start="4.1"
+        data-duration="6.8"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-03-boucle"
+        class="scene"
+        data-composition-id="03-boucle"
+        data-composition-src="compositions/frames/03-boucle.html"
+        data-start="10.399999999999999"
+        data-duration="5.4"
+        data-track-index="0"
+      ></div>
+
+      <div
+        id="el-04-casse"
+        class="scene"
+        data-composition-id="04-casse"
+        data-composition-src="compositions/frames/04-casse.html"
+        data-start="15.799999999999999"
+        data-duration="4.1"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-05-aujourdhui"
+        class="scene"
+        data-composition-id="05-aujourdhui"
+        data-composition-src="compositions/frames/05-aujourdhui.html"
+        data-start="19.9"
+        data-duration="3.6"
+        data-track-index="0"
+      ></div>
+
+      <div
+        id="el-06-construit"
+        class="scene"
+        data-composition-id="06-construit"
+        data-composition-src="compositions/frames/06-construit.html"
+        data-start="23"
+        data-duration="4.8"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-07-indispensable"
+        class="scene"
+        data-composition-id="07-indispensable"
+        data-composition-src="compositions/frames/07-indispensable.html"
+        data-start="27.3"
+        data-duration="3.3"
+        data-track-index="0"
+      ></div>
+
+      <div
+        id="el-08-quoi-dire"
+        class="scene"
+        data-composition-id="08-quoi-dire"
+        data-composition-src="compositions/frames/08-quoi-dire.html"
+        data-start="30.2"
+        data-duration="7.7"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-09-apprend"
+        class="scene"
+        data-composition-id="09-apprend"
+        data-composition-src="compositions/frames/09-apprend.html"
+        data-start="37.3"
+        data-duration="6.8"
+        data-track-index="0"
+      ></div>
+
+      <div
+        id="el-10-fin"
+        class="scene"
+        data-composition-id="10-fin"
+        data-composition-src="compositions/frames/10-fin.html"
+        data-start="43.349999999999994"
+        data-duration="7.05"
+        data-track-index="1"
+      ></div>
+      <audio id="mix" data-start="0" data-duration="50.4" data-track-index="11" src="assets/audio/mix-B.wav" data-volume="1"></audio>
+      <div id="fxleak" class="clip" data-start="19.65" data-duration="0.9" data-track-index="30" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:60">
+        <div id="fxleak-sweep" style="position:absolute;left:0;top:-200px;width:1400px;height:1480px;opacity:0;mix-blend-mode:screen;background:radial-gradient(ellipse at 50% 50%,rgba(255,176,120,.85) 0%,rgba(212,112,63,.5) 35%,rgba(194,91,40,0) 70%)"></div>
+        <div id="fxleak-core" style="position:absolute;left:960px;top:540px;width:600px;height:600px;margin:-300px 0 0 -300px;border-radius:50%;opacity:0;background:radial-gradient(circle,#fffaf4 0%,#f6f1e9 30%,rgba(240,169,127,.9) 50%,rgba(194,91,40,.5) 64%,rgba(194,91,40,0) 76%)"></div>
+        <div id="fxleak-streak" style="position:absolute;left:-240px;top:537px;width:2400px;height:6px;border-radius:3px;opacity:0;background:linear-gradient(90deg,rgba(255,220,196,0),#fff1e6 50%,rgba(255,220,196,0));box-shadow:0 0 34px 12px rgba(224,138,92,.7)"></div>
+        <div id="fxleak-flash" style="position:absolute;inset:0;opacity:0;background:#f6f1e9"></div>
+      </div>
+      <div id="fxiris" class="clip" data-start="43.3" data-duration="0.95" data-track-index="31" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:61">
+        <svg width="1920" height="1080" viewBox="0 0 1920 1080" style="position:absolute;inset:0"><circle id="fxiris-ring" cx="560" cy="600" r="0" fill="none" stroke="#d4703f" stroke-width="6" style="filter:drop-shadow(0 0 16px #e08a5c) drop-shadow(0 0 40px rgba(194,91,40,.8))"/></svg>
+      </div>
+
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+      // ── frame transitions (injected by transitions.mjs) ──
+      (function () { var tl = window.__timelines["main"];
+        tl.to("#el-01-decennies", { scale: 2.5, opacity: 0, filter: "blur(8px)", duration: 0.4, ease: "power3.in" }, 4.1);
+        tl.fromTo("#el-02-traducteur", { scale: 0.5, opacity: 0, filter: "blur(8px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, 4.1);
+        tl.to("#el-02-traducteur", { x: -1920, duration: 0.5, ease: "power3.inOut" }, 10.4);
+        tl.fromTo("#el-03-boucle", { x: 1920, opacity: 1 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.inOut" }, 10.4);
+        tl.to("#el-05-aujourdhui", { y: -1080, duration: 0.5, ease: "power3.inOut" }, 23);
+        tl.fromTo("#el-06-construit", { y: 1080, opacity: 1 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.inOut" }, 23);
+        tl.to("#el-06-construit", { x: -1920, duration: 0.5, ease: "power3.inOut" }, 27.3);
+        tl.fromTo("#el-07-indispensable", { x: 1920, opacity: 1 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.inOut" }, 27.3);
+        tl.to("#el-07-indispensable", { scale: 2.5, opacity: 0, filter: "blur(8px)", duration: 0.4, ease: "power3.in" }, 30.2);
+        tl.fromTo("#el-08-quoi-dire", { scale: 0.5, opacity: 0, filter: "blur(8px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, 30.2);
+        tl.to("#el-08-quoi-dire", { filter: "blur(10px)", scale: 1.03, opacity: 0, duration: 0.6, ease: "power2.inOut" }, 37.3);
+        tl.fromTo("#el-09-apprend", { filter: "blur(10px)", scale: 0.97, opacity: 0 }, { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.6, ease: "power2.inOut" }, 37.3);
+        // ── orchestrator layer: light flood from the caret (4→5), iris from station 0 (9→10) ──
+        tl.fromTo("#fxleak-core", { scale: 0.02, opacity: 0 }, { scale: 4.6, opacity: 1, duration: 0.22, ease: "expo.in", immediateRender: false }, 19.68);
+        tl.fromTo("#fxleak-streak", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.16, ease: "power3.in", immediateRender: false }, 19.7);
+        tl.fromTo("#fxleak-sweep", { x: 1100, opacity: 0 }, { x: -700, opacity: 1, duration: 0.5, ease: "power2.inOut", immediateRender: false }, 19.68);
+        tl.fromTo("#fxleak-flash", { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power2.in", immediateRender: false }, 19.8);
+        tl.to("#fxleak-flash", { opacity: 0, duration: 0.5, ease: "power2.out" }, 19.95);
+        tl.to(["#fxleak-core", "#fxleak-streak", "#fxleak-sweep"], { opacity: 0, duration: 0.4, ease: "power2.out" }, 19.92);
+        tl.fromTo("#el-10-fin", { clipPath: "circle(0% at 560px 600px)" }, { clipPath: "circle(160% at 560px 600px)", duration: 0.75, ease: "power2.inOut", immediateRender: false }, 43.35);
+        tl.fromTo("#fxiris-ring", { attr: { r: 0 } }, { attr: { r: 2492 }, duration: 0.75, ease: "power2.inOut", immediateRender: false }, 43.35);
+        tl.fromTo("#fxiris-ring", { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "none", immediateRender: false }, 43.35);
+        tl.to("#fxiris-ring", { opacity: 0, duration: 0.15 }, 44.0);
+        tl.to({}, { duration: 50.4 }, 0); // full-span anchor, main.duration() == composition total (Studio master duration)
+      })();
+    </script>
+  </body>
+</html>

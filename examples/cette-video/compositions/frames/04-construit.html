@@ -1,0 +1,789 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ground-light: paper + one soft warm radial behind the focal (full-duration clip) */
+    .f04-ground {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: #f6f1e9;
+    }
+    .f04-halo {
+      position: absolute;
+      left: 210px;
+      top: 70px;
+      width: 1500px;
+      height: 900px;
+      border-radius: 50%;
+      background: radial-gradient(
+        closest-side,
+        rgba(194, 91, 40, 0.09),
+        rgba(194, 91, 40, 0.045) 45%,
+        rgba(194, 91, 40, 0.012) 75%,
+        rgba(194, 91, 40, 0)
+      );
+    }
+
+    /* static grain 3% (full-duration clip, on top) */
+    .f04-grain {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0.03;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    }
+
+    /* phrase: small, centered, top; word by word */
+    .f04-phrase {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 104px;
+      z-index: 5;
+      text-align: center;
+      white-space: nowrap;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+    }
+    .f04-w {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* accent-pill: traces first, then the letters write inside */
+    .f04-pill {
+      display: inline-block;
+      position: relative;
+      padding: 0.06em 0.32em;
+      transform-origin: 0% 50%;
+    }
+    .f04-pill-bg {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f04-pill-txt {
+      position: relative;
+      color: #ffffff;
+    }
+    .f04-ch {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* chat-input (card-light on paper) */
+    .f04-ask {
+      position: absolute;
+      left: 220px;
+      top: 350px;
+      width: 1480px;
+      height: 340px;
+      z-index: 3;
+      box-sizing: border-box;
+      border-radius: 14px;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      box-shadow:
+        0 30px 80px rgba(60, 40, 20, 0.14),
+        0 2px 6px rgba(60, 40, 20, 0.08);
+      opacity: 0;
+    }
+    .f04-label {
+      position: absolute;
+      left: 60px;
+      top: 46px;
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #5a5348;
+    }
+    .f04-prompt {
+      position: absolute;
+      left: 60px;
+      top: 98px;
+      width: 1300px;
+      white-space: pre;
+      font-size: 52px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      color: #1a1612;
+    }
+    .f04-cara {
+      position: relative;
+    }
+    .f04-caret {
+      position: absolute;
+      left: 3px;
+      top: 0.02em;
+      width: 4px;
+      height: 58px;
+      border-radius: 2px;
+      background: #d4703f;
+      opacity: 0;
+    }
+
+    /* square accent send button + click actors */
+    .f04-send-wrap {
+      position: absolute;
+      right: 40px;
+      bottom: 40px;
+      width: 92px;
+      height: 92px;
+    }
+    .f04-send {
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      background: linear-gradient(160deg, #d4703f, #c25b28 55%, #a84d22);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        0 12px 26px rgba(194, 91, 40, 0.3);
+      transform-origin: 50% 50%;
+    }
+    .f04-arrow {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 40px;
+      height: 40px;
+    }
+    .f04-ripple {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 100px;
+      height: 100px;
+      margin: -50px 0 0 -50px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      border: 3px solid #c25b28;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .f04-cursor {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 36px;
+      height: 52px;
+      margin: -3px 0 0 -3px;
+      transform-origin: 3px 3px;
+      filter: drop-shadow(0 6px 10px rgba(26, 22, 18, 0.35));
+      opacity: 0;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .f04-cursor svg {
+      display: block;
+    }
+
+    /* timeline-editor (card-light on paper) */
+    .f04-ed {
+      position: absolute;
+      left: 120px;
+      top: 304px;
+      width: 1680px;
+      height: 430px;
+      z-index: 3;
+      box-sizing: border-box;
+      border-radius: 14px;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      box-shadow:
+        0 30px 80px rgba(60, 40, 20, 0.14),
+        0 2px 6px rgba(60, 40, 20, 0.08);
+      opacity: 0;
+    }
+    .f04-tl {
+      position: absolute;
+      left: 36px;
+      width: 140px;
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #5a5348;
+    }
+    .f04-ruler {
+      position: absolute;
+      left: 192px;
+      top: 26px;
+      width: 1446px;
+      height: 40px;
+      border-bottom: 1px solid #e2d9cc;
+    }
+    .f04-tick {
+      position: absolute;
+      bottom: 0;
+      width: 2px;
+      height: 8px;
+      margin-left: -1px;
+      background: #d3c8b9;
+    }
+    .f04-tick-major {
+      height: 16px;
+      background: #9b9289;
+    }
+    .f04-rlab {
+      position: absolute;
+      top: 0;
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 0.2em;
+      white-space: nowrap;
+      color: #5a5348;
+    }
+    .f04-lane {
+      position: absolute;
+      left: 186px;
+      width: 1458px;
+      box-sizing: border-box;
+      border-radius: 10px;
+      background: #f6f1e9;
+      border: 1px solid #ebe3d8;
+    }
+    .f04-lane-img {
+      top: 80px;
+      height: 150px;
+    }
+    .f04-lane-vox {
+      top: 244px;
+      height: 76px;
+    }
+    .f04-lane-mus {
+      top: 334px;
+      height: 64px;
+    }
+    .f04-blocks {
+      position: absolute;
+      left: 5px;
+      top: 5px;
+      width: 1446px;
+      height: 138px;
+      display: flex;
+      gap: 8px;
+    }
+    .f04-blk {
+      position: relative;
+      flex: 1 1 0;
+      min-width: 0;
+      height: 100%;
+      box-sizing: border-box;
+      border-radius: 8px;
+      background: #efe7dc;
+      border: 1px solid #e2d9cc;
+      box-shadow: 0 1px 2px rgba(60, 40, 20, 0.08);
+      opacity: 0;
+    }
+    .f04-pic {
+      position: absolute;
+      left: 6px;
+      right: 6px;
+      top: 6px;
+      height: 84px;
+      box-sizing: border-box;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .f04-pic-dark {
+      background:
+        radial-gradient(circle at 50% 58%, rgba(194, 91, 40, 0.42) 0, rgba(194, 91, 40, 0) 44px),
+        #141010;
+    }
+    .f04-pic-light {
+      background: #f6f1e9;
+      border: 1px solid #e2d9cc;
+    }
+    .f04-pic-card {
+      position: absolute;
+      left: 22%;
+      right: 22%;
+      top: 25%;
+      bottom: 25%;
+      border-radius: 4px;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      box-shadow: 0 3px 8px rgba(60, 40, 20, 0.1);
+    }
+    .f04-bw {
+      position: absolute;
+      left: 10px;
+      right: 4px;
+      bottom: 13px;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -0.005em;
+      white-space: nowrap;
+      color: #1a1612;
+    }
+    .f04-wave {
+      position: absolute;
+      left: 5px;
+      top: 5px;
+      width: 1446px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .f04-bar {
+      flex: none;
+      width: 4px;
+      border-radius: 2px;
+      background: #1a1612;
+      opacity: 0;
+    }
+    .f04-mus-mask {
+      position: absolute;
+      left: 5px;
+      top: 5px;
+      width: 1446px;
+      height: 52px;
+      overflow: hidden;
+      border-radius: 8px;
+      opacity: 0;
+    }
+    .f04-mus {
+      position: absolute;
+      inset: 0;
+      box-sizing: border-box;
+      border-radius: 8px;
+      background: rgba(168, 77, 34, 0.3);
+      border: 1px solid rgba(168, 77, 34, 0.36);
+    }
+    .f04-ph {
+      position: absolute;
+      left: 183px;
+      top: 18px;
+      width: 18px;
+      height: 382px;
+      z-index: 6;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .f04-ph-head {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 18px;
+      height: 20px;
+      border-radius: 5px 5px 9px 9px;
+      background: #c25b28;
+    }
+    .f04-ph-line {
+      position: absolute;
+      left: 7.5px;
+      top: 16px;
+      bottom: 0;
+      width: 3px;
+      border-radius: 1.5px;
+      background: #c25b28;
+    }
+  </style>
+
+  <div id="root" data-composition-id="04-construit" data-width="1920" data-height="1080" data-duration="5.15">
+    <div id="f04-ground" class="clip f04-ground" data-start="0" data-duration="5.15" data-track-index="0">
+      <div class="f04-halo"></div>
+    </div>
+
+    <div id="f04-phrase-a" class="f04-phrase"><span id="f04-a1" class="f04-w">Tout</span> <span id="f04-a2" class="f04-w">a</span> <span id="f04-a3" class="f04-w">été</span> <span id="f04-a4" class="f04-w">expliqué</span> <span id="f04-a5" class="f04-w">à</span> <span id="f04-a6" class="f04-w">l’IA,</span> <span id="f04-a7" class="f04-w">avec</span> <span id="f04-pill1" class="f04-pill"><span id="f04-pill1-bg" class="f04-pill-bg"></span><span id="f04-pill1-txt" class="f04-pill-txt" data-text="des mots simples."></span></span></div>
+
+    <div id="f04-phrase-b" class="f04-phrase"><span id="f04-b1" class="f04-w">Et</span> <span id="f04-b2" class="f04-w">elle</span> <span id="f04-b3" class="f04-w">a</span> <span id="f04-pill2" class="f04-pill"><span id="f04-pill2-bg" class="f04-pill-bg"></span><span id="f04-pill2-txt" class="f04-pill-txt" data-text="tout construit."></span></span></div>
+
+    <div id="f04-ask" class="f04-ask">
+      <div class="f04-label">TA DEMANDE, EN FRANÇAIS</div>
+      <div class="f04-prompt"><span id="f04-typed"></span><span class="f04-cara"><span id="f04-caret" class="f04-caret"></span></span></div>
+      <div class="f04-send-wrap">
+        <div id="f04-send" class="f04-send">
+          <svg class="f04-arrow" viewBox="0 0 40 40" width="40" height="40">
+            <path d="M20 31 V10 M11 19 L20 10 L29 19" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div id="f04-ripple" class="f04-ripple"></div>
+        <div id="f04-cursor" class="f04-cursor">
+          <svg viewBox="0 0 36 52" width="36" height="52">
+            <path d="M3 3 L3 41 L12.5 32.2 L19 46.8 L25.6 44 L19.2 29.8 L31.6 29.8 Z" fill="#ffffff" stroke="#1a1612" stroke-width="2.2" stroke-linejoin="round" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div id="f04-ed" class="f04-ed">
+      <div id="f04-ruler" class="f04-ruler"></div>
+      <div class="f04-tl" style="top: 80px; height: 150px; line-height: 150px">IMAGE</div>
+      <div class="f04-tl" style="top: 244px; height: 76px; line-height: 76px">VOIX</div>
+      <div class="f04-tl" style="top: 334px; height: 64px; line-height: 64px">MUSIQUE</div>
+
+      <div class="f04-lane f04-lane-img">
+        <div class="f04-blocks">
+          <div class="f04-blk"><div class="f04-pic f04-pic-dark"></div><div class="f04-bw">Cette vidéo</div></div>
+          <div class="f04-blk"><div class="f04-pic f04-pic-dark"></div><div class="f04-bw">Générique</div></div>
+          <div class="f04-blk"><div class="f04-pic f04-pic-dark"></div><div class="f04-bw">Voix</div></div>
+          <div class="f04-blk"><div class="f04-pic f04-pic-light"><div class="f04-pic-card"></div></div><div class="f04-bw">Construit</div></div>
+          <div class="f04-blk"><div class="f04-pic f04-pic-dark"></div><div class="f04-bw">Avant</div></div>
+          <div class="f04-blk"><div class="f04-pic f04-pic-light"><div class="f04-pic-card"></div></div><div class="f04-bw">Pareil</div></div>
+          <div class="f04-blk"><div class="f04-pic f04-pic-light"><div class="f04-pic-card"></div></div><div class="f04-bw">Demander</div></div>
+          <div class="f04-blk"><div class="f04-pic f04-pic-light"><div class="f04-pic-card"></div></div><div class="f04-bw">S’apprend</div></div>
+          <div class="f04-blk"><div class="f04-pic f04-pic-light"><div class="f04-pic-card"></div></div><div class="f04-bw">Activité</div></div>
+          <div class="f04-blk"><div class="f04-pic f04-pic-light"><div class="f04-pic-card"></div></div><div class="f04-bw">Zéro</div></div>
+          <div class="f04-blk"><div class="f04-pic f04-pic-dark"></div><div class="f04-bw">Fin</div></div>
+        </div>
+      </div>
+
+      <div class="f04-lane f04-lane-vox">
+        <div id="f04-wave" class="f04-wave"></div>
+      </div>
+
+      <div class="f04-lane f04-lane-mus">
+        <div id="f04-mus-mask" class="f04-mus-mask">
+          <div id="f04-mus" class="f04-mus"></div>
+        </div>
+      </div>
+
+      <div id="f04-ph" class="f04-ph"><div class="f04-ph-head"></div><div class="f04-ph-line"></div></div>
+    </div>
+
+    <div id="f04-grain" class="clip f04-grain" data-start="0" data-duration="5.15" data-track-index="1"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var DURATION = 5.15;
+      window.__timelines = window.__timelines || {};
+
+      function el(name) {
+        return document.getElementById("f04-" + name);
+      }
+
+      /* ---------- build-time DOM (deterministic) ---------- */
+
+      /* pill letters */
+      function splitPill(node) {
+        var text = node.getAttribute("data-text");
+        for (var i = 0; i < text.length; i++) {
+          var c = document.createElement("span");
+          c.className = "f04-ch";
+          c.textContent = text.charAt(i) === " " ? " " : text.charAt(i);
+          node.appendChild(c);
+        }
+        return node.querySelectorAll(".f04-ch");
+      }
+      var pill1Ch = splitPill(el("pill1-txt"));
+      var pill2Ch = splitPill(el("pill2-txt"));
+
+      /* time ruler: 0:00 -> 0:44, minor tick every 2 s, label every 10 s */
+      var ruler = el("ruler");
+      var RW = 1446;
+      var SPAN = 44;
+      for (var s = 0; s <= SPAN; s += 2) {
+        var x = (s / SPAN) * RW;
+        var tick = document.createElement("div");
+        tick.className = s % 10 === 0 ? "f04-tick f04-tick-major" : "f04-tick";
+        tick.style.left = x.toFixed(1) + "px";
+        ruler.appendChild(tick);
+        if (s % 10 === 0) {
+          var lab = document.createElement("div");
+          lab.className = "f04-rlab";
+          lab.textContent = "0:" + (s < 10 ? "0" + s : String(s));
+          lab.style.left = (x + 14).toFixed(1) + "px";
+          ruler.appendChild(lab);
+        }
+      }
+
+      /* seeded PRNG (Park-Miller), fixed seed */
+      var seed = 20260928;
+      function rnd() {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+      }
+
+      /* VOIX waveform: speech-like envelope with three breath pauses */
+      var wave = el("wave");
+      var NB = 206;
+      for (var i = 0; i < NB; i++) {
+        var env = 0.42 + 0.58 * Math.abs(Math.sin(i * 0.23 + 0.4));
+        var phr = 0.6 + 0.4 * Math.sin(i * 0.047 + 1.1);
+        var h = 6 + 46 * env * phr * (0.55 + 0.45 * rnd());
+        if ((i >= 47 && i <= 51) || (i >= 101 && i <= 105) || (i >= 158 && i <= 161)) h = 4;
+        var bar = document.createElement("div");
+        bar.className = "f04-bar";
+        bar.style.height = Math.round(h) + "px";
+        wave.appendChild(bar);
+      }
+      var bars = wave.querySelectorAll(".f04-bar");
+
+      /* ---------- timeline ---------- */
+      var tl = gsap.timeline({ paused: true });
+
+      /* Every later element is opacity:0 in CSS and revealed here; every fromTo is
+         immediateRender:false and its from-state equals the previous end-state on the
+         same property, so any seek order lands on the right frame. */
+
+      function on(node, at) {
+        tl.fromTo(node, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none", immediateRender: false }, at);
+      }
+      function off(node, at) {
+        tl.fromTo(node, { opacity: 1 }, { opacity: 0, duration: 0.01, ease: "none", immediateRender: false }, at);
+      }
+
+      /* frame.md word-by-word */
+      function wordIn(node, at) {
+        tl.fromTo(
+          node,
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+          at,
+        );
+      }
+
+      /* frame.md accent-pill: trace from the left (rotation -8 -> 0), then letters write inside */
+      function pillIn(pill, bg, chars, at) {
+        tl.fromTo(
+          bg,
+          { scaleX: 0, opacity: 1 },
+          { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out", immediateRender: false },
+          at,
+        );
+        tl.fromTo(pill, { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, at);
+        tl.fromTo(
+          chars,
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.16, ease: "power2.out", stagger: 0.02, immediateRender: false },
+          at + 0.22,
+        );
+      }
+
+      var ask = el("ask");
+      var caret = el("caret");
+      var typed = el("typed");
+      var send = el("send");
+      var ripple = el("ripple");
+      var cursor = el("cursor");
+      var ed = el("ed");
+      var ph = el("ph");
+      var musMask = el("mus-mask");
+      var mus = el("mus");
+
+      /* Scene 1 (0.00-2.75): calm arrival under the light flood */
+      tl.fromTo(ask, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power2.out", immediateRender: false }, 0.06);
+      tl.fromTo(ask, { y: 22 }, { y: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, 0.06);
+      on(caret, 0.2);
+
+      /* phrase 1, word by word on its cues */
+      wordIn(el("a1"), 0.18); /* Tout 0.20 */
+      wordIn(el("a2"), 0.33); /* a 0.35 */
+      wordIn(el("a3"), 0.47); /* été 0.49 */
+      wordIn(el("a4"), 0.78); /* expliqué 0.80 */
+      wordIn(el("a5"), 1.18); /* à 1.20 */
+      wordIn(el("a6"), 1.35); /* l'IA 1.37 */
+      wordIn(el("a7"), 1.74); /* avec 1.76 */
+      pillIn(el("pill1"), el("pill1-bg"), pill1Ch, 1.98); /* des mots simples 2.01 */
+
+      /* typing, char by char, 0.40 -> 2.40. A proxy whose setter writes the visible
+         substring: the tweened value IS timeline time, mapped through a fixed keystroke
+         schedule (seeded rhythm, longer beats after spaces and punctuation). */
+      var PROMPT = "Fais-moi une vidéo de 40 secondes pour ma page\nd’accueil. Le message : plus besoin d’agence.";
+      var N = PROMPT.length;
+      var T0 = 0.4;
+      var T1 = 2.4;
+      var FIRST = T0 + 0.02;
+      var cum = [0];
+      var sum = 0;
+      for (var k = 1; k < N; k++) {
+        var prev = PROMPT.charAt(k - 1);
+        var ch = PROMPT.charAt(k);
+        var base = 1;
+        if (prev === " " || prev === " ") base = 1.5;
+        if (prev === "." || prev === "," || prev === ":") base = 2.3;
+        if (ch === "\n" || prev === "\n") base = Math.max(base, 1.3);
+        sum += base * (0.7 + 0.6 * rnd());
+        cum.push(sum);
+      }
+      var keyTimes = [];
+      for (k = 0; k < N; k++) keyTimes.push(FIRST + (T1 - FIRST) * (cum[k] / sum));
+
+      var shown = -1;
+      function paint(t) {
+        var n = 0;
+        while (n < N && keyTimes[n] <= t + 1e-6) n++;
+        if (n !== shown) {
+          shown = n;
+          typed.textContent = PROMPT.slice(0, n);
+        }
+      }
+      var typerT = T0;
+      var typer = {};
+      Object.defineProperty(typer, "t", {
+        get: function () {
+          return typerT;
+        },
+        set: function (v) {
+          typerT = v;
+          paint(v);
+        },
+        enumerable: true,
+        configurable: true,
+      });
+      paint(-1);
+      tl.fromTo(typer, { t: T0 }, { t: T1, duration: T1 - T0, ease: "none", immediateRender: false }, T0);
+
+      /* cursor-click-ripple on the send button: move 2.00-2.46, click 2.55 */
+      var MOVE_AT = 2.0;
+      var MOVE_DUR = 0.46;
+      var CLICK_AT = 2.55;
+      var PRESS = 0.07;
+      var RELEASE = 0.09;
+      var RIPPLE_AT = CLICK_AT + 0.01;
+      tl.fromTo(cursor, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out", immediateRender: false }, MOVE_AT);
+      tl.fromTo(
+        cursor,
+        { x: 240, y: 180 },
+        { x: 0, y: 0, duration: MOVE_DUR, ease: "power3.out", immediateRender: false },
+        MOVE_AT,
+      );
+      tl.fromTo(cursor, { scale: 1 }, { scale: 0.85, duration: PRESS, ease: "power2.in", immediateRender: false }, CLICK_AT);
+      tl.fromTo(
+        cursor,
+        { scale: 0.85 },
+        { scale: 1, duration: RELEASE, ease: "power2.out", immediateRender: false },
+        CLICK_AT + PRESS,
+      );
+      tl.fromTo(send, { scale: 1 }, { scale: 0.94, duration: PRESS, ease: "power2.in", immediateRender: false }, CLICK_AT);
+      tl.fromTo(
+        send,
+        { scale: 0.94 },
+        { scale: 1, duration: RELEASE, ease: "power2.out", immediateRender: false },
+        CLICK_AT + PRESS,
+      );
+      tl.fromTo(ripple, { scale: 0.8 }, { scale: 3.4, duration: 0.6, ease: "power2.out", immediateRender: false }, RIPPLE_AT);
+      tl.fromTo(ripple, { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none", immediateRender: false }, RIPPLE_AT);
+      tl.fromTo(
+        ripple,
+        { opacity: 1 },
+        { opacity: 0, duration: 0.5, ease: "power1.in", immediateRender: false },
+        RIPPLE_AT + 0.04,
+      );
+      off(caret, CLICK_AT + 0.01); /* sent */
+
+      /* Scene seam (cut catalog: cut-the-curve, upward). The input rips up on power4.in,
+         its fade dies at the cut (2.92); the editor picks up the same upward path on power4.out. */
+      var CUT_UI = 2.92;
+      tl.fromTo(ask, { y: 0 }, { y: -160, duration: 0.3, ease: "power4.in", immediateRender: false }, CUT_UI - 0.28);
+      tl.fromTo(ask, { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power1.in", immediateRender: false }, CUT_UI - 0.2);
+      tl.fromTo(ed, { opacity: 0.35 }, { opacity: 1, duration: 0.12, ease: "power1.out", immediateRender: false }, CUT_UI);
+      tl.fromTo(ed, { y: 160 }, { y: 0, duration: 0.36, ease: "power4.out", immediateRender: false }, CUT_UI);
+
+      /* Phrase seam: phrase 1 leaves upward word by word (same direction as the input),
+         the last fade dies at 3.03; phrase 2 rises on its own cues. */
+      var CUT_TXT = 3.03;
+      var EX_MOVE = 0.3;
+      var EX_FADE = 0.18;
+      var EX_LAG = 0.07;
+      var EX_STAG = 0.022;
+      var exitUnits = [el("a1"), el("a2"), el("a3"), el("a4"), el("a5"), el("a6"), el("a7"), el("pill1")];
+      var lastExit = CUT_TXT - EX_FADE - EX_LAG;
+      exitUnits.forEach(function (unit, idx) {
+        var st = lastExit - (exitUnits.length - 1 - idx) * EX_STAG;
+        tl.fromTo(unit, { y: 0 }, { y: -56, duration: EX_MOVE, ease: "power4.in", immediateRender: false }, st);
+        tl.fromTo(
+          unit,
+          { opacity: 1 },
+          { opacity: 0, duration: EX_FADE, ease: "power1.in", immediateRender: false },
+          st + EX_LAG,
+        );
+      });
+
+      wordIn(el("b1"), 3.05); /* Et 3.07 */
+      wordIn(el("b2"), 3.18); /* elle 3.20 */
+      wordIn(el("b3"), 3.33); /* a 3.35 */
+      pillIn(el("pill2"), el("pill2-bg"), pill2Ch, 3.44); /* tout construit 3.47 */
+
+      /* Scene 2: waterfall-entry, eleven blocks drop into IMAGE left to right, 2.95 -> 3.90.
+         Binary opacity, power4.out whip, gaps shrink (x0.9) so the wave accelerates. */
+      var blocks = ed.querySelectorAll(".f04-blk");
+      var bt = 2.95;
+      var gap = 0.1244;
+      for (var b = 0; b < blocks.length; b++) {
+        var dur = b === 0 ? 0.2 : Math.max(0.13, 0.16 - 0.003 * b);
+        var dy = b === 0 ? -72 : b < 8 ? -50 : -42;
+        on(blocks[b], bt);
+        tl.fromTo(blocks[b], { y: dy }, { y: 0, duration: dur, ease: "power4.out", immediateRender: false }, bt);
+        bt += gap;
+        gap *= 0.9;
+      }
+
+      /* VOIX waveform and MUSIQUE bar draw in at 3.60 */
+      tl.fromTo(
+        bars,
+        { opacity: 0, scaleY: 0.15 },
+        { opacity: 1, scaleY: 1, duration: 0.22, ease: "power3.out", stagger: 0.0022, immediateRender: false },
+        3.6,
+      );
+      on(musMask, 3.62);
+      tl.fromTo(musMask, { xPercent: -100 }, { xPercent: 0, duration: 0.62, ease: "power2.out", immediateRender: false }, 3.62);
+      tl.fromTo(mus, { xPercent: 100 }, { xPercent: 0, duration: 0.62, ease: "power2.out", immediateRender: false }, 3.62);
+
+      /* playhead: appears with the tracks, runs from 3.75 to the end (hold otherwise) */
+      tl.fromTo(ph, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power1.out", immediateRender: false }, 3.6);
+      tl.fromTo(ph, { x: 0 }, { x: 560, duration: DURATION - 3.75, ease: "none", immediateRender: false }, 3.75);
+
+      /* pin the timeline length to the frame duration (no exit: the root transition is the exit) */
+      tl.set({}, {}, DURATION);
+
+      window.__timelines["04-construit"] = tl;
+    })();
+  </script>
+</template>

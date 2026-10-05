@@ -1,0 +1,633 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-500.woff2') format('woff2');
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-600.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url('assets/fonts/SpaceMono-400.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #1a1612;
+      font-family: "Instrument Sans";
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground-light: paper + one soft warm radial behind the direct line (full-duration clip) ---------- */
+    .f07-ground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #f6f1e9;
+    }
+    .f07-halo {
+      position: absolute;
+      left: 420px;
+      top: 250px;
+      width: 1360px;
+      height: 640px;
+      opacity: 0.6;
+      background: radial-gradient(ellipse closest-side, rgba(194, 91, 40, 0.09) 0%, rgba(194, 91, 40, 0.045) 50%, rgba(194, 91, 40, 0) 100%);
+    }
+    .f07-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.03;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+    }
+
+    .f07-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* ---------- Phrase (one centered line, word by word, one traced accent pill) ---------- */
+    .f07-phrase {
+      position: absolute;
+      left: 0;
+      top: 190px;
+      width: 1920px;
+      font-family: "Instrument Sans";
+      font-weight: 600;
+      font-size: 54px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .f07-w {
+      display: inline-block;
+      opacity: 0;
+      will-change: transform, opacity, filter;
+    }
+    .f07-pill {
+      position: relative;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      color: #ffffff;
+      transform-origin: 0% 50%;
+    }
+    .f07-pill-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      opacity: 0;
+      transform-origin: 0% 50%;
+    }
+    .f07-ch {
+      position: relative;
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+    }
+
+    /* ---------- Figures: same positions as frame 02, static book-open tilt, paper shadows ---------- */
+    .f07-side-l {
+      position: absolute;
+      left: 270px;
+      top: 530px;
+      width: 300px;
+      height: 340px;
+      transform-origin: 50% 100%;
+      transform: perspective(1400px) rotateY(8deg);
+    }
+    /* Shadow on the outer wrapper, floor fade on the inner one: a mask on the filtered box would clip the shadow square. */
+    .f07-rim-l {
+      width: 300px;
+      height: 340px;
+      filter: drop-shadow(16px 18px 30px rgba(60, 40, 20, 0.16));
+    }
+    .f07-fade-l {
+      width: 300px;
+      height: 340px;
+      -webkit-mask-image: linear-gradient(to bottom, #000 82%, rgba(0, 0, 0, 0) 100%);
+      mask-image: linear-gradient(to bottom, #000 82%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    /* Translator mover: no clip, he leaves the frame downward (the only element allowed below y 900). */
+    .f07-mid {
+      position: absolute;
+      left: 810px;
+      top: 530px;
+      width: 300px;
+      height: 340px;
+    }
+    .f07-rim-m {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 300px;
+      height: 340px;
+      filter: drop-shadow(0 18px 30px rgba(60, 40, 20, 0.16));
+    }
+    .f07-fade-m {
+      width: 300px;
+      height: 340px;
+      -webkit-mask-image: linear-gradient(to bottom, #000 86%, rgba(0, 0, 0, 0) 100%);
+      mask-image: linear-gradient(to bottom, #000 86%, rgba(0, 0, 0, 0) 100%);
+    }
+    .f07-ghost {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 300px;
+      height: 340px;
+      opacity: 0;
+      -webkit-mask-image: linear-gradient(to bottom, #000 86%, rgba(0, 0, 0, 0) 100%);
+      mask-image: linear-gradient(to bottom, #000 86%, rgba(0, 0, 0, 0) 100%);
+    }
+    .f07-ghost svg {
+      display: block;
+    }
+    .f07-ghost path,
+    .f07-ghost circle,
+    .f07-ghost rect {
+      fill: none;
+      stroke: #1a1612;
+      stroke-width: 3.5;
+      stroke-dasharray: 10 8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .f07-side-r {
+      position: absolute;
+      left: 1335px;
+      top: 525px;
+      width: 330px;
+      height: 290px;
+      transform-origin: 50% 100%;
+      transform: perspective(1400px) rotateY(-8deg);
+    }
+    .f07-bloom {
+      position: absolute;
+      left: -110px;
+      top: -110px;
+      width: 550px;
+      height: 440px;
+      opacity: 0;
+      background: radial-gradient(ellipse closest-side, rgba(224, 138, 92, 0.22) 0%, rgba(194, 91, 40, 0.08) 50%, rgba(194, 91, 40, 0) 100%);
+    }
+    .f07-ping {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 330px;
+      height: 290px;
+      transform-origin: 50% 40%;
+    }
+    .f07-rim-r {
+      width: 330px;
+      height: 290px;
+      filter: drop-shadow(-16px 18px 30px rgba(60, 40, 20, 0.2));
+    }
+
+    /* Screen face overlay (frame-local): the French sentence + the accent check, over the computer's 300×200 screen */
+    .f07-screen {
+      position: absolute;
+      left: 15px;
+      top: 15px;
+      width: 300px;
+      height: 200px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .f07-glow {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 300px;
+      height: 200px;
+      opacity: 0;
+      background: radial-gradient(ellipse at 50% 60%, rgba(224, 138, 92, 0.22) 0%, rgba(194, 91, 40, 0.07) 60%, rgba(194, 91, 40, 0) 100%);
+    }
+    .f07-say {
+      position: absolute;
+      left: 0;
+      top: 55px;
+      width: 300px;
+      font-family: "Instrument Sans";
+      font-weight: 500;
+      font-size: 17px;
+      line-height: 22px;
+      letter-spacing: 0;
+      color: #f5efe7;
+      text-align: center;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    .f07-check {
+      position: absolute;
+      left: 128px;
+      top: 121px;
+      width: 44px;
+      height: 44px;
+    }
+    .f07-check svg {
+      display: block;
+    }
+    .f07-check path {
+      fill: none;
+      stroke: #d4703f;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+    }
+
+    /* ---------- Self-contained figure blocks (copied from frame 02, recolored for paper) ---------- */
+    .f07-persona-toi,
+    .f07-persona-traducteur {
+      width: 300px;
+      height: 340px;
+    }
+    .f07-computer {
+      width: 330px;
+      height: 290px;
+    }
+    .f07-persona-toi svg,
+    .f07-persona-traducteur svg,
+    .f07-computer svg {
+      display: block;
+    }
+    .f07-computer text {
+      white-space: pre;
+    }
+    /* No highlight row here: the screen shows the plain code before it switches to French. */
+    .f07-side-r .f07-comp-hl {
+      opacity: 0;
+    }
+    .f07-speech-bubble {
+      position: relative;
+      box-sizing: border-box;
+      width: 500px;
+      height: 84px;
+      padding: 0 30px;
+      border-radius: 22px;
+      background: #fffdf9;
+      box-shadow: 0 2px 6px rgba(60, 40, 20, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Instrument Sans";
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 1.3;
+      letter-spacing: 0;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f07-speech-bubble svg {
+      position: absolute;
+      left: 66px;
+      top: 83px;
+      display: block;
+    }
+
+    /* ---------- Speech bubble above you (same place as frame 02) ---------- */
+    .f07-bub {
+      position: absolute;
+      left: 318px;
+      top: 430px;
+      width: 500px;
+      height: 84px;
+      opacity: 0;
+      transform-origin: 50% 50%;
+    }
+    .f07-bub-face {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 500px;
+      height: 84px;
+      filter: drop-shadow(0 18px 32px rgba(60, 40, 20, 0.16)) drop-shadow(0 0 1px rgba(60, 40, 20, 0.28));
+      transform-origin: 50% 50%;
+    }
+
+    /* ---------- The direct line: bubble -> computer (svg-path-draw) ---------- */
+    .f07-link {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: visible;
+      pointer-events: none;
+    }
+    .f07-link path {
+      fill: none;
+      stroke: #c25b28;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+    }
+    .f07-link circle {
+      fill: #c25b28;
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="07-indispensable" data-width="1920" data-height="1080" data-duration="3.3">
+    <div id="f07-ground" class="clip f07-ground" data-start="0" data-duration="3.3" data-track-index="0">
+      <div id="f07-halo" class="f07-halo"></div>
+    </div>
+
+    <div id="f07-stage" class="clip f07-stage" data-start="0" data-duration="3.3" data-track-index="1">
+
+      <!-- LEFT WING: static book-open tilt > paper shadow + floor fade > figure -->
+      <div id="f07-side-l" class="f07-side-l">
+        <div class="f07-rim-l">
+          <div class="f07-fade-l">
+          <!-- persona-toi (the entrepreneur). Self-contained block, 300×340. Shirt #2e2924 on paper (ink-dark per frame.md). -->
+          <div class="f07-persona-toi">
+            <svg viewBox="0 0 300 340" width="300" height="340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M20 340 L20 298 C20 256 58 230 110 224 L190 224 C242 230 280 256 280 298 L280 340 Z" fill="#2e2924" />
+              <path d="M130 170 L170 170 L170 224 L150 240 L130 224 Z" fill="#d9b294" />
+              <path d="M126 226 L150 252 L174 226" fill="none" stroke="rgba(245,239,231,0.14)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="88" cy="128" r="10" fill="#ddb597" />
+              <circle cx="212" cy="128" r="10" fill="#ddb597" />
+              <circle cx="150" cy="120" r="62" fill="#e8c4a8" />
+              <path d="M88 120 C84 72 114 48 152 48 C194 48 222 74 214 120 C204 98 184 86 160 84 C134 82 106 94 88 120 Z" fill="#2e2924" />
+              <circle cx="130" cy="132" r="5.5" fill="#1a1612" />
+              <circle cx="170" cy="132" r="5.5" fill="#1a1612" />
+            </svg>
+          </div>
+          <!-- /persona-toi -->
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER: the translator (solid) crossfades to a dashed ink-dark outline, then glides down out of frame -->
+      <div id="f07-mid" class="f07-mid">
+        <div id="f07-mid-solid" class="f07-rim-m">
+          <div class="f07-fade-m">
+          <!-- persona-traducteur (developer / agency / provider). Self-contained block, 300×340. Glasses, headset, laptop. -->
+          <div class="f07-persona-traducteur">
+            <svg viewBox="0 0 300 340" width="300" height="340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M20 340 L20 298 C20 256 58 230 110 224 L190 224 C242 230 280 256 280 298 L280 340 Z" fill="#4a3f36" />
+              <path d="M54 262 C60 288 74 298 92 298" fill="none" stroke="#3f352d" stroke-width="30" stroke-linecap="round" />
+              <path d="M246 262 C240 288 226 298 208 298" fill="none" stroke="#3f352d" stroke-width="30" stroke-linecap="round" />
+              <path d="M130 170 L170 170 L170 224 L150 240 L130 224 Z" fill="#d9b294" />
+              <circle cx="88" cy="128" r="10" fill="#ddb597" />
+              <circle cx="212" cy="128" r="10" fill="#ddb597" />
+              <circle cx="150" cy="120" r="62" fill="#e8c4a8" />
+              <path d="M90 110 C88 72 116 52 150 52 C186 52 212 72 210 110 C204 94 188 86 168 84 C144 82 110 88 90 110 Z" fill="#6b5a4c" />
+              <path d="M84 124 C80 36 220 36 216 124" fill="none" stroke="#2e2924" stroke-width="9" stroke-linecap="round" />
+              <rect x="74" y="110" width="20" height="38" rx="9" fill="#2e2924" />
+              <rect x="206" y="110" width="20" height="38" rx="9" fill="#2e2924" />
+              <path d="M86 146 C90 172 106 182 124 182" fill="none" stroke="#2e2924" stroke-width="5" stroke-linecap="round" />
+              <circle cx="127" cy="182" r="6" fill="#2e2924" />
+              <circle cx="128" cy="130" r="15" fill="none" stroke="#1a1612" stroke-width="3" />
+              <circle cx="172" cy="130" r="15" fill="none" stroke="#1a1612" stroke-width="3" />
+              <path d="M143 128 Q150 123 157 128 M113 127 L99 123 M187 127 L201 123" fill="none" stroke="#1a1612" stroke-width="3" stroke-linecap="round" />
+              <circle cx="128" cy="131" r="4.5" fill="#1a1612" />
+              <circle cx="172" cy="131" r="4.5" fill="#1a1612" />
+              <rect x="92" y="222" width="116" height="72" rx="7" fill="#2e2924" stroke="rgba(245,239,231,0.08)" stroke-width="1.5" />
+              <circle cx="150" cy="258" r="6" fill="rgba(245,239,231,0.16)" />
+              <rect x="82" y="292" width="136" height="9" rx="4" fill="#1f1a16" />
+              <circle cx="92" cy="297" r="11" fill="#e8c4a8" />
+              <circle cx="208" cy="297" r="11" fill="#e8c4a8" />
+            </svg>
+          </div>
+          <!-- /persona-traducteur -->
+          </div>
+        </div>
+        <!-- The same translator as a dashed ink-dark outline (shown at 35%) -->
+        <div id="f07-ghost" class="f07-ghost">
+          <svg viewBox="0 0 300 340" width="300" height="340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20 336 L20 298 C20 256 58 230 110 224" />
+            <path d="M190 224 C242 230 280 256 280 298 L280 336" />
+            <path d="M132 182 L132 222 M168 182 L168 222" />
+            <circle cx="150" cy="120" r="62" />
+            <path d="M84 124 C80 36 220 36 216 124" />
+            <circle cx="128" cy="130" r="15" />
+            <circle cx="172" cy="130" r="15" />
+            <rect x="92" y="222" width="116" height="72" rx="7" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- RIGHT WING: static book-open tilt > bloom + ping (receive) > paper shadow > figure + screen face -->
+      <div id="f07-side-r" class="f07-side-r">
+        <div id="f07-bloom" class="f07-bloom"></div>
+        <div id="f07-ping" class="f07-ping">
+          <div class="f07-rim-r">
+            <!-- computer. Self-contained block, 330×290: #2e2924 bezel, 300×200 screen, canonical code lines 1-4 (Space Mono). -->
+            <div class="f07-computer">
+              <svg viewBox="0 0 330 290" width="330" height="290" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M146 228 L184 228 L190 278 L140 278 Z" fill="#241f1b" />
+                <rect x="96" y="274" width="138" height="12" rx="6" fill="#2e2924" />
+                <rect x="0" y="0" width="330" height="230" rx="16" fill="#2e2924" />
+                <rect x="15" y="15" width="300" height="200" rx="10" fill="#141010" />
+                <circle cx="31" cy="31" r="3.5" fill="#5a5048" />
+                <circle cx="43" cy="31" r="3.5" fill="#5a5048" />
+                <circle cx="55" cy="31" r="3.5" fill="#5a5048" />
+                <rect class="f07-comp-hl" x="19" y="129" width="292" height="21" rx="3" fill="rgba(194,91,40,0.24)" />
+                <g id="f07-code" font-family="Space Mono" font-size="11" fill="#f5efe7">
+                  <text x="24" y="78" fill="#9b9289">1</text>
+                  <text x="24" y="100" fill="#9b9289">2</text>
+                  <text x="24" y="122" fill="#9b9289">3</text>
+                  <text class="f07-comp-l4" x="24" y="144" fill="#9b9289">4</text>
+                  <text x="42" y="78"><tspan fill="#d4703f">const</tspan> page = <tspan fill="#d4703f">await</tspan> build(site.routes);</text>
+                  <text x="42" y="100"><tspan fill="#d4703f">if</tspan> (!page.ok) <tspan fill="#d4703f">return</tspan> retry(site);</text>
+                  <text x="42" y="122"><tspan fill="#d4703f">&lt;div</tspan> <tspan fill="#d4703f">class</tspan>=<tspan fill="#cdbfb2">"hero"</tspan><tspan fill="#d4703f">&gt;</tspan></text>
+                  <text class="f07-comp-l4" x="55" y="144"><tspan fill="#d4703f">&lt;button</tspan> onclick=<tspan fill="#cdbfb2">"book()"</tspan><tspan fill="#d4703f">&gt;</tspan></text>
+                </g>
+              </svg>
+            </div>
+            <!-- /computer -->
+          </div>
+          <div class="f07-screen">
+            <div id="f07-glow" class="f07-glow"></div>
+            <div id="f07-say" class="f07-say">Ajoute un bouton de r&eacute;servation<br>sur ma page d&rsquo;accueil.</div>
+            <div class="f07-check">
+              <svg viewBox="0 0 44 44" width="44" height="44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path id="f07-ring" d="M22 5 A17 17 0 1 1 21.99 5" stroke-width="3" />
+                <path id="f07-tick" d="M14 22.5 L19.5 28 L30.5 16.5" stroke-width="4" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bubble above you (same place as frame 02) -->
+      <div id="f07-bub" class="f07-bub">
+        <div id="f07-bub-face" class="f07-bub-face">
+          <!-- speech-bubble. Self-contained block, 500×84, card-light fill, tail toward the speaker (bottom left). -->
+          <div class="f07-speech-bubble">
+            Je veux un bouton &ldquo;R&eacute;server&rdquo;.
+            <svg viewBox="0 0 40 32" width="40" height="32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 0 L38 0 C30 12 20 24 4 32 C10 22 10 10 6 0 Z" fill="#fffdf9" /></svg>
+          </div>
+          <!-- /speech-bubble -->
+        </div>
+      </div>
+
+      <!-- The direct line: starts on the bubble's right edge, lands on the computer's bezel -->
+      <svg id="f07-link" class="f07-link" viewBox="0 0 1920 1080" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path id="f07-line" d="M818 472 C1010 452 1170 520 1334 598" />
+        <path id="f07-arrow" d="M1310 600 L1334 598 L1320 578" />
+        <circle id="f07-dot" cx="818" cy="472" r="7" />
+      </svg>
+
+      <!-- Phrase at the top: one line, word by word on the voice, one traced accent pill -->
+      <div id="f07-phrase" class="f07-phrase"><span class="f07-w" data-t="0.21">Le</span> <span class="f07-w" data-t="0.42">traducteur</span> <span class="f07-w" data-t="0.88">n&rsquo;est</span> <span id="f07-pill" class="f07-pill"><span id="f07-pill-bg" class="f07-pill-bg"></span><span class="f07-ch">p</span><span class="f07-ch">l</span><span class="f07-ch">u</span><span class="f07-ch">s</span><span class="f07-ch"> </span><span class="f07-ch">i</span><span class="f07-ch">n</span><span class="f07-ch">d</span><span class="f07-ch">i</span><span class="f07-ch">s</span><span class="f07-ch">p</span><span class="f07-ch">e</span><span class="f07-ch">n</span><span class="f07-ch">s</span><span class="f07-ch">a</span><span class="f07-ch">b</span><span class="f07-ch">l</span><span class="f07-ch">e</span><span class="f07-ch">.</span></span></div>
+    </div>
+
+    <div id="f07-grain" class="clip f07-grain" data-start="0" data-duration="3.3" data-track-index="2"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var byId = function (name) {
+        return document.getElementById("f07-" + name);
+      };
+      var all = function (scope, sel) {
+        return Array.prototype.slice.call(scope.querySelectorAll(sel));
+      };
+
+      var DURATION = 2.9;
+      // Voice word cues: the single timing spine every reveal reads from.
+      var CUE = {
+        le: 0.21,
+        traducteur: 0.42,
+        nest: 0.88,
+        plus: 1.14,
+        indispensable: 1.36
+      };
+
+      var tl = gsap.timeline({ paused: true });
+      // Every tween is an explicit fromTo that never renders before its own start (hidden states live in CSS).
+      var ft = function (el, from, to, at) {
+        to.immediateRender = false;
+        tl.fromTo(el, from, to, at);
+      };
+
+      // svg-path-draw setup: one dash as long as the measured path, shifted fully out of view.
+      var prep = function (el, fallback) {
+        var len = 0;
+        try {
+          len = el.getTotalLength();
+        } catch (e) {
+          len = 0;
+        }
+        if (!(len > 0)) len = fallback;
+        len = Math.ceil(len * 1.02);
+        el.style.strokeDasharray = len + " " + len;
+        el.style.strokeDashoffset = String(len);
+        return len;
+      };
+      var draw = function (el, len, dur, at) {
+        ft(el, { opacity: 0 }, { opacity: 1, duration: 0.02, ease: "none" }, at);
+        ft(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: dur, ease: "power2.out" }, at);
+      };
+
+      // ---------- Opening: the bubble pops above you (figures already on stage, same places as frame 02) ----------
+      ft(byId("bub"), { opacity: 0, scale: 0.7, y: 18 }, { opacity: 1, scale: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.1);
+
+      // word-by-word: each word ON its voice timestamp.
+      all(byId("phrase"), ".f07-w").forEach(function (w) {
+        ft(
+          w,
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" },
+          Math.max(0, Number(w.dataset.t) - 0.02)
+        );
+      });
+
+      // ---------- The translator steps aside: dashed outline at 35%, then glides down out of frame by 1.30 ----------
+      ft(byId("mid-solid"), { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power1.out" }, CUE.traducteur);
+      ft(byId("ghost"), { opacity: 0 }, { opacity: 0.35, duration: 0.3, ease: "power1.out" }, CUE.traducteur);
+      ft(byId("mid"), { y: 0 }, { y: 600, duration: 0.74, ease: "power3.in" }, 0.56);
+
+      // ---------- accent-pill « plus indispensable. »: traces first (scaleX from the left, -8deg -> 0), then the letters write inside ----------
+      var PILL_AT = CUE.plus - 0.06;
+      ft(byId("pill"), { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out" }, PILL_AT);
+      ft(byId("pill-bg"), { scaleX: 0, opacity: 1 }, { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out" }, PILL_AT);
+      all(byId("pill"), ".f07-ch").forEach(function (c, i) {
+        ft(c, { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.16, ease: "power3.out" }, PILL_AT + 0.18 + i * 0.02);
+      });
+
+      // ---------- The direct line: your words go straight to the computer (svg-path-draw) ----------
+      var LINE_AT = 1.12;
+      ft(byId("halo"), { opacity: 0.6 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, LINE_AT);
+      ft(byId("bub-face"), { scale: 1 }, { scale: 1.03, duration: 0.12, ease: "power2.out" }, LINE_AT - 0.02);
+      ft(byId("bub-face"), { scale: 1.03 }, { scale: 1, duration: 0.26, ease: "power3.out" }, LINE_AT + 0.1);
+      var dot = byId("dot");
+      ft(dot, { opacity: 0, attr: { r: 0 } }, { opacity: 1, attr: { r: 7 }, duration: 0.18, ease: "power3.out" }, LINE_AT - 0.02);
+      var line = byId("line");
+      var arrow = byId("arrow");
+      var lineLen = prep(line, 600);
+      var arrowLen = prep(arrow, 50);
+      draw(line, lineLen, 0.32, LINE_AT);
+      // The arrowhead starts at ~75% of the line's draw so the stroke reads as one continuous trace.
+      draw(arrow, arrowLen, 0.1, LINE_AT + 0.24);
+
+      // ---------- The computer receives: jolt + bloom, the code cuts out upward, the French sentence cuts in ----------
+      var LAND = 1.42;
+      var PING = byId("ping");
+      ft(PING, { scale: 1 }, { scale: 1.035, duration: 0.12, ease: "power2.out" }, LAND);
+      ft(PING, { scale: 1.035 }, { scale: 1, duration: 0.3, ease: "power3.out" }, LAND + 0.12);
+      ft(byId("bloom"), { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, LAND);
+      ft(byId("glow"), { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }, LAND);
+
+      // cut-the-curve (upward, screen scale): exit ramps on power4.in, fade dies right at the cut, entry picks up on power4.out.
+      var CUT = 1.44;
+      var code = byId("code");
+      ft(code, { y: 0 }, { y: -12, duration: 0.16, ease: "power4.in" }, CUT - 0.16);
+      ft(code, { opacity: 1 }, { opacity: 0, duration: 0.14, ease: "power1.in" }, CUT - 0.14);
+      ft(byId("say"), { opacity: 0.35, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power4.out" }, CUT);
+
+      // Accent check drawn on the screen at 1.50: ring from 12 o'clock, then the tick.
+      var ring = byId("ring");
+      var tick = byId("tick");
+      var ringLen = prep(ring, 107);
+      var tickLen = prep(tick, 24);
+      draw(ring, ringLen, 0.28, 1.5);
+      draw(tick, tickLen, 0.16, 1.5 + 0.2);
+
+      // Hold to the end (no exit, no idle loop).
+      tl.set({}, {}, DURATION);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["07-indispensable"] = tl;
+    })();
+  </script>
+</template>

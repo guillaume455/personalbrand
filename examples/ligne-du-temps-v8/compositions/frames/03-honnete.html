@@ -1,0 +1,196 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== kit ligne v8 (reference/frise.html, bloc CSS, copie mot pour mot des classes utilisées) ===== */
+    .fx-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    .fx-paper { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+      background: radial-gradient(ellipse 1500px 900px at 50% 42%, #f9f5ee 0%, #f6f1e9 55%, #efe7dc 100%); }
+    .fx-vignette { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none;
+      background: radial-gradient(ellipse 1320px 820px at 50% 46%, rgba(239,231,220,0) 62%, rgba(214,200,182,.38) 100%); }
+    .fx-grain { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; opacity: .035; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .fx-ink { position: relative; display: inline-block; }
+    .fx-ink-bg { position: absolute; left: -0.14em; right: -0.14em; top: 0.02em; bottom: -0.02em; border-radius: 3px; background: #1a1612;
+      transform-origin: 0 50%; transform: scaleX(0); }
+    .fx-ink-tx { position: relative; text-shadow: none; }
+    .fx-type { position: absolute; left: 0; width: 1920px; text-align: center; font: 600 84px/1.12 "Instrument Sans", sans-serif; letter-spacing: -0.025em; color: #1a1612; white-space: nowrap; }
+    /* ===== fin du kit ===== */
+
+    /* ---- fond : papier + vignette ; le voile #f6f1e9 plat = la bulle de la séquence 2 (handoff_in), il s'efface ---- */
+    #p03-ground { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
+    #p03-veil { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #f6f1e9; opacity: 1; }
+
+    /* ---- scène : caméra 2D (cam2) sur le monde, objectif (flou caméra) avec une fenêtre assez large pour que le
+       filet final dépasse les deux bords du cadre au recul (échelle 0,874), sans calque géant ---- */
+    #p03-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
+    #p03-lens { position: absolute; left: -300px; top: 300px; width: 2520px; height: 480px; overflow: hidden; }
+    #p03-set { position: absolute; left: 300px; top: -300px; width: 1920px; height: 1080px; }
+
+    /* les deux phrases prennent la même place : la boîte d'encre (hauteur 1,12 em, décalée de 0,02 em) est centrée
+       sur y 540 : 491.28 + 0.02 × 84 + 1.12 × 84 / 2 = 540 */
+    #p03-l1, #p03-l2 { top: 491.28px; }
+    .p03-w { display: inline-block; opacity: 0; color: rgba(26, 22, 18, 0.35); }
+    .p03-w.p03-in { color: rgba(246, 241, 233, 0.35); }
+    /* la boîte (et son texte) s'écrasent puis s'étirent autour du centre de la boîte : x 50 %, y 0.02 em + 1.12 em / 2 */
+    #p03-ink { margin-left: 0.16em; transform-origin: 50% 48.72px; }
+    #p03-box { opacity: 0; }
+
+    /* ---- grain : glisse de 240 px (un motif) sur toute la séquence : même phase à la première et à la dernière image ---- */
+    #p03-grainclip { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; pointer-events: none; }
+    #p03-grain { width: 2400px; }
+  
+  /* r3 (Colin, 2026-09-30) : les mots clés passent en boîte terracotta (texte papier), plus en boîte d'encre */
+  .fx-ink-bg, .fx-sub.dark .fx-ink-bg { background: #c25b28 !important; }
+</style>
+
+  <div id="root" data-composition-id="03-honnete" data-width="1920" data-height="1080" data-duration="3.32">
+    <div id="p03-ground" class="clip" data-start="0" data-duration="3.32" data-track-index="0" data-layout-ignore>
+      <div class="fx-paper"></div>
+      <div class="fx-vignette"></div>
+      <div id="p03-veil"></div>
+    </div>
+
+    <div id="p03-stage" class="clip" data-start="0" data-duration="3.32" data-track-index="1">
+      <div id="p03-world" class="fx-layer">
+        <div id="p03-lens">
+          <div id="p03-set">
+            <div id="p03-l1" class="fx-type"><span class="p03-w">Sois</span> <span class="p03-w">honnête.</span></div>
+            <div id="p03-l2" class="fx-type"><span id="p03-lead"><span class="p03-w">Ton</span> <span class="p03-w">problème,</span> <span class="p03-w">ce</span> <span class="p03-w">n’est</span> <span class="p03-w">pas</span></span> <span id="p03-ink" class="fx-ink"><i id="p03-box" class="fx-ink-bg"></i><span id="p03-inktx" class="fx-ink-tx"><span class="p03-w p03-in">la</span> <span class="p03-w p03-in">technique.</span></span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="p03-grainclip" class="clip" data-start="0" data-duration="3.32" data-track-index="2" data-layout-ignore>
+      <div id="p03-grain" class="fx-grain"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "03-honnete";
+      var T = 3.32;
+
+      /* ===== kit ligne v8 (reference/frise.html, copie mot pour mot des fonctions utilisées) ===== */
+      function fxBlur(el, px, extra) { var f = (px > 0.25 ? "blur(" + px.toFixed(1) + "px)" : "") + (extra ? " " + extra : ""); el.style.filter = f || "none"; }
+      function fxApplyCam2(worldEl, c2) {
+        worldEl.style.transformOrigin = "0 0";
+        worldEl.style.transform = "translate(" + (960 - c2.x * c2.s).toFixed(2) + "px," + (540 - c2.y * c2.s).toFixed(2) + "px) scale(" + c2.s.toFixed(4) + ")";
+      }
+      /* ===== fin du kit ===== */
+
+      var byId = function (id) { return document.getElementById(id); };
+      var toArr = function (list) { return Array.prototype.slice.call(list); };
+
+      var world = byId("p03-world");
+      var lens = byId("p03-lens");
+      var veil = byId("p03-veil");
+      var grain = byId("p03-grain");
+      var l1 = byId("p03-l1");
+      var lead = byId("p03-lead");
+      var box = byId("p03-box");
+      var inkTx = byId("p03-inktx");
+      var w1 = toArr(l1.getElementsByClassName("p03-w"));
+      var w2 = toArr(byId("p03-l2").getElementsByClassName("p03-w"));
+
+      var INK = "#1a1612";
+      var INK_GRAY = "rgba(26, 22, 18, 0.35)";
+      var PAPER = "#f6f1e9";
+      var PAPER_GRAY = "rgba(246, 241, 233, 0.35)";
+
+      /* caméra cam2 : dérive -1,5 %/s (d), recul final (r), flou caméra en px écran (b) ;
+         la boîte d'encre : écrasement (c, 0 → 1) puis étirement (k, 0 → 1), écrits par render() seul */
+      var cam = { d: 1, r: 1, b: 14, c: 0, k: 0 };
+      var ink = byId("p03-ink");
+      /* hauteur de la boîte : 1,12 em (84 px) ; écrasée, elle fait 3 px à l'ÉCRAN quelle que soit l'échelle caméra */
+      var BOX_H = 1.12 * 84;
+      /* étirement autour du centre de la boîte, assez pour dépasser les deux bords du cadre avant la dernière image ;
+         la fenêtre de l'objectif coupe le trait hors champ (pas de calque géant) */
+      var K = 16;
+
+      function render() {
+        var s = cam.d * cam.r;
+        fxApplyCam2(world, { x: 960, y: 540, s: s });
+        fxBlur(lens, cam.b / s);
+        var sy = 1 + (3 / (BOX_H * s) - 1) * cam.c;
+        var sx = 1 + (K - 1) * cam.k;
+        ink.style.transform = cam.c > 0 || cam.k > 0 ? "scale(" + sx.toFixed(4) + "," + sy.toFixed(5) + ")" : "none";
+      }
+
+      var tl = gsap.timeline({ paused: true, defaults: { lazy: false }, onUpdate: render });
+
+      /* ---- caméra ---- */
+      tl.fromTo(cam, { d: 1 }, { d: 1 - 0.015 * T, duration: T, ease: "none" }, 0);
+      tl.fromTo(cam, { b: 14 }, { b: 0, duration: 0.2, ease: "expo.out" }, 0);
+      tl.fromTo(cam, { r: 1 }, { r: 0.92, duration: 0.22, ease: "power2.in", immediateRender: false }, 3.1);
+      /* flou 0 → 8 px, au sommet dès 3.28 : la dernière image rendue (3.29 à 3.32) porte 8 px, en plein recul */
+      tl.fromTo(cam, { b: 0 }, { b: 8, duration: 0.18, ease: "power2.in", immediateRender: false }, 3.1);
+
+      /* ---- fond : le voile plat (la bulle devenue papier) laisse paraître le papier et sa vignette ---- */
+      tl.fromTo(veil, { opacity: 1 }, { opacity: 0, duration: 1.0, ease: "sine.inOut" }, 0);
+      /* ---- grain qui glisse, un motif entier (240 px) sur la séquence ---- */
+      tl.fromTo(grain, { x: 0 }, { x: -240, duration: T, ease: "none" }, 0);
+
+      /* ---- un mot arrive : gris (35 %), y +8, flou 6 → 0 en 0,14 s, puis passe à la couleur pleine en 0,2 s ---- */
+      function word(el, t, gray, full, colorDelay, colorDur) {
+        tl.fromTo(el,
+          { opacity: 0, y: 8, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out", immediateRender: t <= 0 },
+          t);
+        tl.fromTo(el, { color: gray }, { color: full, duration: colorDur || 0.2, ease: "power1.inOut", immediateRender: false }, t + (colorDelay || 0.1));
+      }
+
+      /* ===== Scene 1 (0.00 à 1.10) : « Sois honnête. » ===== */
+      word(w1[0], 0.06, INK_GRAY, INK);
+      word(w1[1], 0.32, INK_GRAY, INK);
+      /* tenue vivante : la phrase recule très lentement, sans arrêt jusqu'à sa sortie */
+      tl.fromTo(l1, { scale: 1 }, { scale: 0.982, duration: 0.68, ease: "none", immediateRender: false }, 0.4);
+      /* sortie vers le haut : la phrase suivante prend la même place */
+      tl.fromTo(l1,
+        { y: 0, opacity: 1, filter: "blur(0px)" },
+        { y: -30, opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in", immediateRender: false },
+        0.94);
+
+      /* ===== Scene 2 (1.10 à 3.32) : « Ton problème, ce n’est pas [la technique.] » ===== */
+      var CUES = [1.14, 1.24, 1.92, 2.08, 2.2];
+      for (var i = 0; i < 5; i++) word(w2[i], CUES[i], INK_GRAY, INK);
+      /* la boîte d'encre se trace de gauche à droite (0,16 s power3.out) ; le texte y arrive en papier */
+      tl.fromTo(box,
+        { opacity: 1, scaleX: 0 },
+        { opacity: 1, scaleX: 1, duration: 0.16, ease: "power3.out", immediateRender: false },
+        2.34);
+      /* dans la boîte, le texte passe en papier en 0,1 s (frame.md, boîte d'encre) */
+      word(w2[5], 2.36, PAPER_GRAY, PAPER, 0.02, 0.1);
+      word(w2[6], 2.5, PAPER_GRAY, PAPER, 0.02, 0.1);
+      /* 2.84 : il ne reste que la boîte */
+      tl.fromTo(lead, { opacity: 1 }, { opacity: 0, duration: 0.14, ease: "power1.in", immediateRender: false }, 2.84);
+      /* 3.00 : la boîte s'écrase en un filet de 3 px (écran) pendant que son texte s'éteint */
+      tl.fromTo(inkTx, { opacity: 1 }, { opacity: 0, duration: 0.08, ease: "power1.in", immediateRender: false }, 3.0);
+      tl.fromTo(cam, { c: 0 }, { c: 1, duration: 0.12, ease: "power2.in", immediateRender: false }, 3.0);
+      /* 3.12 : le filet s'étire jusqu'aux deux bords du cadre : c'est la ligne de la frise (séquence 4) */
+      tl.fromTo(cam, { k: 0 }, { k: 1, duration: 0.2, ease: "power2.in", immediateRender: false }, 3.12);
+
+      render();
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

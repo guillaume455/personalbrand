@@ -1,0 +1,987 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url("assets/fonts/SpaceMono-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground-light: paper + one soft warm radial behind the focal (full-duration clip) ---------- */
+    .f08-ground {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: #f6f1e9;
+    }
+    /* Scene 1 position: centered behind the site-mock (1310, 526); moved by x/y tweens afterwards */
+    .f08-halo {
+      position: absolute;
+      left: 610px;
+      top: 76px;
+      width: 1400px;
+      height: 900px;
+      border-radius: 50%;
+      background: radial-gradient(
+        closest-side,
+        rgba(194, 91, 40, 0.1),
+        rgba(194, 91, 40, 0.05) 45%,
+        rgba(194, 91, 40, 0.015) 75%,
+        rgba(194, 91, 40, 0)
+      );
+    }
+
+    /* static grain 3% on top (full-duration clip) */
+    .f08-grain {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0.03;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    }
+
+    /* content stage (full-duration clip) */
+    .f08-stage {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* ---------- phrase rows (small, centered), word by word ---------- */
+    .f08-phrase {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 56px;
+      z-index: 6;
+      text-align: center;
+      white-space: nowrap;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+    }
+    .f08-phrase-bottom {
+      top: 792px;
+    }
+    .f08-w {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* accent-pill: traces first, then the letters write inside */
+    .f08-pill {
+      display: inline-block;
+      position: relative;
+      padding: 0.06em 0.32em;
+      transform-origin: 0% 50%;
+    }
+    .f08-pill-bg {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      transform-origin: 0% 50%;
+      opacity: 0;
+    }
+    .f08-pill-txt {
+      position: relative;
+      color: #ffffff;
+    }
+    .f08-ch {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    /* ---------- scale-swap wrappers: both full-canvas, same transform-origin ---------- */
+    .f08-swap {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 46%;
+    }
+    .f08-s1 {
+      z-index: 2;
+    }
+    .f08-s2 {
+      z-index: 3;
+      opacity: 0;
+    }
+
+    /* ---------- chat-input (card-light) ---------- */
+    .f08-card {
+      position: absolute;
+      box-sizing: border-box;
+      border-radius: 14px;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      box-shadow:
+        0 30px 80px rgba(60, 40, 20, 0.14),
+        0 2px 6px rgba(60, 40, 20, 0.08);
+      transform-origin: 50% 50%;
+    }
+    .f08-label {
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #5a5348;
+    }
+
+    /* Scene 1: small input at the left */
+    .f08-ask1 {
+      left: 120px;
+      top: 410px;
+      width: 600px;
+      height: 230px;
+      padding: 34px 36px 0;
+      opacity: 0;
+    }
+    .f08-prompt1 {
+      margin-top: 26px;
+      font-size: 46px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      white-space: nowrap;
+      color: #1a1612;
+    }
+    .f08-k {
+      opacity: 0;
+    }
+    .f08-cara {
+      position: relative;
+    }
+    .f08-caret-s {
+      position: absolute;
+      left: 3px;
+      top: 0.08em;
+      width: 4px;
+      height: 1.08em;
+      border-radius: 2px;
+      background: #d4703f;
+      opacity: 0;
+    }
+
+    /* square accent send button */
+    .f08-send-wrap {
+      position: absolute;
+    }
+    .f08-send-wrap-s {
+      right: 30px;
+      bottom: 30px;
+      width: 72px;
+      height: 72px;
+    }
+    .f08-send-wrap-l {
+      right: 36px;
+      bottom: 36px;
+      width: 88px;
+      height: 88px;
+    }
+    .f08-send {
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      background: linear-gradient(160deg, #d4703f, #c25b28 55%, #a84d22);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        0 12px 26px rgba(194, 91, 40, 0.3);
+      transform-origin: 50% 50%;
+    }
+    .f08-arrow {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+    }
+    .f08-ripple {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 80px;
+      height: 80px;
+      margin: -40px 0 0 -40px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      border: 3px solid #c25b28;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Scene 2: large empty input, centered; shrinks up in Scene 3 */
+    .f08-ask2 {
+      left: 300px;
+      top: 345px;
+      width: 1320px;
+      height: 250px;
+      padding: 40px 48px 0 56px;
+    }
+    .f08-caret-l {
+      position: absolute;
+      left: 56px;
+      top: 92px;
+      width: 4px;
+      height: 58px;
+      border-radius: 2px;
+      background: #d4703f;
+      opacity: 0;
+    }
+
+    /* ---------- site-mock, bland on purpose: warm greys only, no accent ---------- */
+    .f08-site {
+      position: absolute;
+      left: 820px;
+      top: 236px;
+      width: 980px;
+      height: 580px;
+      box-sizing: border-box;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      box-shadow:
+        0 30px 80px rgba(60, 40, 20, 0.14),
+        0 2px 6px rgba(60, 40, 20, 0.08);
+      transform-origin: 50% 50%;
+      opacity: 0;
+    }
+    .f08-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 52px;
+      box-sizing: border-box;
+      background: #efe7dc;
+      border-bottom: 1px solid #e2d9cc;
+    }
+    .f08-dots {
+      position: absolute;
+      left: 22px;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .f08-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #d8cfc3;
+    }
+    .f08-url {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 10px;
+      margin: 0 auto;
+      width: 360px;
+      height: 31px;
+      box-sizing: border-box;
+      border-radius: 8px;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      font-family: "Space Mono", monospace;
+      font-size: 15px;
+      line-height: 29px;
+      letter-spacing: 0.02em;
+      text-align: center;
+      color: #9b9289;
+    }
+    .f08-body {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 52px;
+      bottom: 0;
+      box-sizing: border-box;
+      padding: 34px 56px;
+    }
+    .f08-sb {
+      opacity: 0;
+    }
+    .f08-nav {
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .f08-logo {
+      width: 110px;
+      height: 26px;
+      border-radius: 6px;
+      background: #e2d9cc;
+    }
+    .f08-navbars {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .f08-navbar {
+      height: 10px;
+      border-radius: 5px;
+      background: #e2d9cc;
+    }
+    .f08-title {
+      margin-top: 44px;
+      text-align: center;
+      font-size: 44px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      color: #5a5348;
+    }
+    .f08-lines {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .f08-line {
+      height: 12px;
+      border-radius: 6px;
+      background: #e2d9cc;
+    }
+    .f08-fakebtn {
+      margin: 28px auto 0;
+      width: 190px;
+      height: 48px;
+      border-radius: 10px;
+      background: #d8cfc3;
+    }
+    .f08-imgs {
+      margin-top: 34px;
+      height: 150px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+    }
+    .f08-img {
+      position: relative;
+      box-sizing: border-box;
+      border-radius: 10px;
+      background: #efe7dc;
+      border: 1px solid #e2d9cc;
+      overflow: hidden;
+    }
+    .f08-img svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ---------- Scene 3 deck: the scrambled column (perspective root for split-tilt) ---------- */
+    .f08-col {
+      position: absolute;
+      left: 660px;
+      top: 280px;
+      width: 600px;
+      height: 542px;
+      z-index: 4;
+      transform: scale(0.88);
+      transform-origin: 50% 0%;
+      perspective: 1600px;
+    }
+    .f08-hole {
+      position: absolute;
+      left: 0;
+      width: 600px;
+      height: 170px;
+      box-sizing: border-box;
+      border-radius: 14px;
+      border: 2px dashed #d8cfc3;
+      opacity: 0;
+    }
+    .f08-slot {
+      position: absolute;
+      left: 0;
+      width: 600px;
+      height: 170px;
+      transform-style: preserve-3d;
+      transform-origin: 50% 50%;
+      will-change: transform;
+      opacity: 0;
+    }
+    .f08-slot-1 {
+      top: 0px;
+      z-index: 3;
+    }
+    .f08-slot-2 {
+      top: 186px;
+      z-index: 1;
+    }
+    .f08-slot-3 {
+      top: 372px;
+      z-index: 2;
+    }
+
+    /* ===== prompt-card (self-contained, liftable as is: .f08-pcard and its children) ===== */
+    .f08-pcard {
+      position: relative;
+      width: 600px;
+      height: 170px;
+      box-sizing: border-box;
+      padding: 30px 34px 0;
+      border-radius: 14px;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      box-shadow:
+        0 30px 80px rgba(60, 40, 20, 0.14),
+        0 2px 6px rgba(60, 40, 20, 0.08);
+      font-family: "Instrument Sans", sans-serif;
+      color: #1a1612;
+      text-align: left;
+    }
+    .f08-pcard-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      height: 40px;
+    }
+    .f08-pcard-disc {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #c25b28;
+      color: #ffffff;
+      font-family: "Space Mono", monospace;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 40px;
+      text-align: center;
+    }
+    .f08-pcard-label {
+      font-family: "Space Mono", monospace;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #5a5348;
+    }
+    .f08-pcard-text {
+      margin-top: 26px;
+      font-size: 28px;
+      font-weight: 500;
+      line-height: 1.3;
+      letter-spacing: -0.005em;
+      white-space: nowrap;
+      color: #1a1612;
+    }
+    /* ===== /prompt-card ===== */
+  </style>
+
+  <div id="root" data-composition-id="08-quoi-dire" data-width="1920" data-height="1080" data-duration="7.7">
+    <div id="f08-ground" class="clip f08-ground" data-start="0" data-duration="7.7" data-track-index="0" data-layout-ignore>
+      <div id="f08-halo" class="f08-halo"></div>
+    </div>
+
+    <div id="f08-stage" class="clip f08-stage" data-start="0" data-duration="7.7" data-track-index="1">
+      <!-- phrase 1 (Scene 1) -->
+      <div id="f08-p1" class="f08-phrase"><span id="f08-a1" class="f08-w">Mais</span> <span id="f08-a2" class="f08-w">parler</span> <span id="f08-a3" class="f08-w">une</span> <span id="f08-a4" class="f08-w">langue,</span> <span id="f08-pill1" class="f08-pill"><span id="f08-pill1-bg" class="f08-pill-bg"></span><span id="f08-pill1-txt" class="f08-pill-txt">ça ne suffit pas.</span></span></div>
+
+      <!-- phrase 2 (Scenes 2 and 3) -->
+      <div id="f08-p2" class="f08-phrase"><span id="f08-b1" class="f08-w">Il</span> <span id="f08-b2" class="f08-w">faut</span> <span id="f08-b3" class="f08-w">savoir</span> <span id="f08-pill2" class="f08-pill"><span id="f08-pill2-bg" class="f08-pill-bg"></span><span id="f08-pill2-txt" class="f08-pill-txt">quoi dire,</span></span></div>
+
+      <!-- phrase 3 (Scene 3, bottom, no pill) -->
+      <div id="f08-p3" class="f08-phrase f08-phrase-bottom"><span id="f08-c1" class="f08-w">quoi</span> <span id="f08-c2" class="f08-w">demander,</span> <span id="f08-c3" class="f08-w">comment,</span> <span id="f08-c4" class="f08-w">dans</span> <span id="f08-c5" class="f08-w">quel</span> <span id="f08-c6" class="f08-w">ordre.</span></div>
+
+      <!-- Scene 1: vague request + bland site -->
+      <div id="f08-s1" class="f08-swap f08-s1">
+        <div id="f08-ask1" class="f08-card f08-ask1">
+          <div class="f08-label">TA DEMANDE, EN FRANÇAIS</div>
+          <div id="f08-prompt1" class="f08-prompt1"></div>
+          <div class="f08-send-wrap f08-send-wrap-s">
+            <div id="f08-send1" class="f08-send">
+              <svg class="f08-arrow" viewBox="0 0 40 40" width="32" height="32">
+                <path d="M20 31 V10 M11 19 L20 10 L29 19" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div id="f08-ripple1" class="f08-ripple"></div>
+          </div>
+        </div>
+
+        <div id="f08-site" class="f08-site">
+          <div class="f08-bar">
+            <div class="f08-dots">
+              <div class="f08-dot"></div>
+              <div class="f08-dot"></div>
+              <div class="f08-dot"></div>
+            </div>
+            <div class="f08-url">ton-site.fr</div>
+          </div>
+          <div class="f08-body">
+            <div class="f08-sb f08-nav">
+              <div class="f08-logo"></div>
+              <div class="f08-navbars">
+                <div class="f08-navbar" style="width: 64px"></div>
+                <div class="f08-navbar" style="width: 78px"></div>
+                <div class="f08-navbar" style="width: 56px"></div>
+                <div class="f08-navbar" style="width: 70px"></div>
+              </div>
+            </div>
+            <div class="f08-sb f08-title">Bienvenue sur mon site</div>
+            <div class="f08-sb f08-lines">
+              <div class="f08-line" style="width: 520px"></div>
+              <div class="f08-line" style="width: 380px"></div>
+            </div>
+            <div class="f08-sb f08-fakebtn"></div>
+            <div class="f08-sb f08-imgs">
+              <div class="f08-img">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 0 L100 100 M100 0 L0 100" stroke="#d8cfc3" stroke-width="1.2" vector-effect="non-scaling-stroke" fill="none" /></svg>
+              </div>
+              <div class="f08-img">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 0 L100 100 M100 0 L0 100" stroke="#d8cfc3" stroke-width="1.2" vector-effect="non-scaling-stroke" fill="none" /></svg>
+              </div>
+              <div class="f08-img">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 0 L100 100 M100 0 L0 100" stroke="#d8cfc3" stroke-width="1.2" vector-effect="non-scaling-stroke" fill="none" /></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 2: clean stage, empty large input with the caret only -->
+      <div id="f08-s2" class="f08-swap f08-s2">
+        <div id="f08-ask2" class="f08-card f08-ask2">
+          <div class="f08-label">TA DEMANDE, EN FRANÇAIS</div>
+          <div id="f08-caret-l" class="f08-caret-l"></div>
+          <div class="f08-send-wrap f08-send-wrap-l">
+            <div class="f08-send">
+              <svg class="f08-arrow" viewBox="0 0 40 40" width="40" height="40">
+                <path d="M20 31 V10 M11 19 L20 10 L29 19" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 3: the column (home slots top to bottom = 1, 2, 3) -->
+      <div id="f08-col" class="f08-col">
+        <div id="f08-hole-1" class="f08-hole" style="top: 0px"></div>
+        <div id="f08-hole-2" class="f08-hole" style="top: 186px"></div>
+        <div id="f08-hole-3" class="f08-hole" style="top: 372px"></div>
+
+        <div id="f08-slot-1" class="f08-slot f08-slot-1">
+          <!-- prompt-card 1 -->
+          <div id="f08-pcard-1" class="f08-pcard">
+            <div class="f08-pcard-head">
+              <div class="f08-pcard-disc">1</div>
+              <div class="f08-pcard-label">QUOI DEMANDER</div>
+            </div>
+            <div class="f08-pcard-text">Un bouton “Réserver” sur l’accueil</div>
+          </div>
+          <!-- /prompt-card 1 -->
+        </div>
+
+        <div id="f08-slot-2" class="f08-slot f08-slot-2">
+          <!-- prompt-card 2 -->
+          <div id="f08-pcard-2" class="f08-pcard">
+            <div class="f08-pcard-head">
+              <div class="f08-pcard-disc">2</div>
+              <div class="f08-pcard-label">COMMENT</div>
+            </div>
+            <div class="f08-pcard-text">Aux couleurs de ma marque, sous le titre</div>
+          </div>
+          <!-- /prompt-card 2 -->
+        </div>
+
+        <div id="f08-slot-3" class="f08-slot f08-slot-3">
+          <!-- prompt-card 3 -->
+          <div id="f08-pcard-3" class="f08-pcard">
+            <div class="f08-pcard-head">
+              <div class="f08-pcard-disc">3</div>
+              <div class="f08-pcard-label">DANS QUEL ORDRE</div>
+            </div>
+            <div class="f08-pcard-text">D’abord la page, ensuite le bouton</div>
+          </div>
+          <!-- /prompt-card 3 -->
+        </div>
+      </div>
+    </div>
+
+    <div id="f08-grain" class="clip f08-grain" data-start="0" data-duration="7.7" data-track-index="2" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "08-quoi-dire";
+      var DURATION = 7.1;
+      window.__timelines = window.__timelines || {};
+
+      function el(name) {
+        return document.getElementById("f08-" + name);
+      }
+
+      /* split a pill's text into letter spans (built synchronously, layout fixed from the start) */
+      function splitChars(node) {
+        var txt = node.textContent;
+        node.textContent = "";
+        var out = [];
+        for (var i = 0; i < txt.length; i++) {
+          var s = document.createElement("span");
+          s.className = "f08-ch";
+          var c = txt.charAt(i);
+          s.textContent = c === " " ? " " : c;
+          node.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      }
+
+      var halo = el("halo");
+      var a = [el("a1"), el("a2"), el("a3"), el("a4")];
+      var pill1 = el("pill1");
+      var pill1Bg = el("pill1-bg");
+      var pill1Ch = splitChars(el("pill1-txt"));
+      var b = [el("b1"), el("b2"), el("b3")];
+      var pill2 = el("pill2");
+      var pill2Bg = el("pill2-bg");
+      var pill2Ch = splitChars(el("pill2-txt"));
+      var c = [el("c1"), el("c2"), el("c3"), el("c4"), el("c5"), el("c6")];
+      var s1 = el("s1");
+      var s2 = el("s2");
+      var ask1 = el("ask1");
+      var prompt1 = el("prompt1");
+      var send1 = el("send1");
+      var ripple1 = el("ripple1");
+      var site = el("site");
+      var siteRows = site.querySelectorAll(".f08-sb");
+      var ask2 = el("ask2");
+      var caretL = el("caret-l");
+      var holes = [el("hole-1"), el("hole-2"), el("hole-3")];
+      var slot1 = el("slot-1");
+      var slot2 = el("slot-2");
+      var slot3 = el("slot-3");
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* Every element that appears after t=0 is hidden in CSS and revealed here; tweens placed
+         after t=0 use immediateRender:false, and each from-state equals the previous end-state
+         on the same property, so any seek order renders the right frame. */
+
+      /* frame.md word-by-word */
+      function wordIn(node, at) {
+        tl.fromTo(
+          node,
+          { opacity: 0, y: 10, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+          at,
+        );
+      }
+
+      /* frame.md accent-pill: trace from the left (rotation settles -8 -> 0), then the letters write inside */
+      function pillIn(pill, bg, chars, at) {
+        tl.fromTo(
+          bg,
+          { scaleX: 0, opacity: 1 },
+          { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out", immediateRender: false },
+          at,
+        );
+        tl.fromTo(pill, { rotation: -8 }, { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, at);
+        tl.fromTo(
+          chars,
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.16, ease: "power2.out", stagger: 0.02, immediateRender: false },
+          at + 0.18,
+        );
+      }
+
+      function on(node, at) {
+        tl.fromTo(node, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none", immediateRender: false }, at);
+      }
+      function off(node, at) {
+        tl.fromTo(node, { opacity: 1 }, { opacity: 0, duration: 0.01, ease: "none", immediateRender: false }, at);
+      }
+
+      /* ================= Scene 1 (0.00-2.20): vague request -> bland site ================= */
+
+      /* small chat-input at the left */
+      tl.fromTo(ask1, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "power1.out", immediateRender: false }, 0);
+      tl.fromTo(ask1, { y: 18 }, { y: 0, duration: 0.5, ease: "expo.out", immediateRender: false }, 0);
+
+      /* phrase 1, word by word on the voice */
+      wordIn(a[0], 0.15); /* Mais 0.18 */
+      wordIn(a[1], 0.37); /* parler 0.40 */
+      wordIn(a[2], 0.59); /* une 0.62 */
+      wordIn(a[3], 0.73); /* langue 0.76 */
+      pillIn(pill1, pill1Bg, pill1Ch, 1.14); /* ça 1.20 ... pas 1.78 */
+
+      /* typing « Fais-moi un site. » (0.10-0.60) in keystroke bursts behind an accent caret */
+      var PROMPT = "Fais-moi un site.";
+      var T_FIRST = 0.1;
+      var T_LAST = 0.6;
+      var BURSTS = [2, 3, 2, 2, 3, 2, 3];
+      var cuts = [];
+      var n = 0;
+      var k = 0;
+      while (n < PROMPT.length) {
+        n = Math.min(PROMPT.length, n + BURSTS[k % BURSTS.length]);
+        cuts.push(n);
+        k += 1;
+      }
+      var weights = cuts.map(function (cut, i) {
+        if (i === 0) return 0;
+        return PROMPT.charAt(cuts[i - 1] - 1) === " " ? 1.7 : 1;
+      });
+      var total = weights.reduce(function (acc, w) {
+        return acc + w;
+      }, 0);
+      var times = [];
+      var acc = 0;
+      cuts.forEach(function (cut, i) {
+        acc += weights[i];
+        times.push(T_FIRST + (T_LAST - T_FIRST) * (acc / total));
+      });
+
+      prompt1.textContent = "";
+      function makeCaret() {
+        var anchor = document.createElement("span");
+        anchor.className = "f08-cara";
+        var caret = document.createElement("span");
+        caret.className = "f08-caret-s";
+        anchor.appendChild(caret);
+        prompt1.appendChild(anchor);
+        return caret;
+      }
+      var carets = [makeCaret()];
+      var steps = [];
+      var prevCut = 0;
+      cuts.forEach(function (cut) {
+        var span = document.createElement("span");
+        span.className = "f08-k";
+        span.textContent = PROMPT.slice(prevCut, cut);
+        prompt1.appendChild(span);
+        steps.push(span);
+        carets.push(makeCaret());
+        prevCut = cut;
+      });
+      on(carets[0], 0);
+      off(carets[0], times[0]);
+      steps.forEach(function (span, i) {
+        on(span, times[i]);
+        on(carets[i + 1], times[i]);
+        if (i < steps.length - 1) off(carets[i + 1], times[i + 1]);
+      });
+      var SEND_AT = 0.63;
+      off(carets[carets.length - 1], SEND_AT + 0.05); /* sent: the caret leaves */
+
+      /* send: press + ripple */
+      tl.fromTo(send1, { scale: 1 }, { scale: 0.9, duration: 0.07, ease: "power2.in", immediateRender: false }, SEND_AT);
+      tl.fromTo(send1, { scale: 0.9 }, { scale: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, SEND_AT + 0.07);
+      tl.fromTo(ripple1, { scale: 0.8 }, { scale: 3.2, duration: 0.55, ease: "power2.out", immediateRender: false }, SEND_AT + 0.01);
+      tl.fromTo(ripple1, { opacity: 0 }, { opacity: 1, duration: 0.04, ease: "none", immediateRender: false }, SEND_AT + 0.01);
+      tl.fromTo(ripple1, { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "power1.in", immediateRender: false }, SEND_AT + 0.05);
+
+      /* the bland site lands at 0.80, slightly tilted, its grey rows fill in */
+      tl.fromTo(
+        site,
+        { opacity: 0, x: -50, scale: 0.92, rotation: 0 },
+        { opacity: 1, x: 0, scale: 1, rotation: -2, duration: 0.6, ease: "power3.out", immediateRender: false },
+        0.8,
+      );
+      tl.fromTo(
+        siteRows,
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out", stagger: 0.05, immediateRender: false },
+        0.88,
+      );
+      /* "suffit" (1.54): the empty site sags a little more (the joke) */
+      tl.fromTo(
+        site,
+        { rotation: -2, y: 0 },
+        { rotation: -5, y: 16, duration: 0.5, ease: "power2.inOut", immediateRender: false },
+        1.54,
+      );
+
+      /* ================= Seam 1 -> 2 ================= */
+
+      /* phrase: waterfall cut, phrase 1 rips leftward word by word, the last fade dies at CUT */
+      var CUT = 2.34;
+      var EX_MOVE = 0.34;
+      var EX_FADE = 0.18;
+      var EX_FADE_LAG = 0.07;
+      var EX_STAG = 0.022;
+      var exitUnits = [a[0], a[1], a[2], a[3], pill1];
+      var lastExit = CUT - EX_FADE - EX_FADE_LAG;
+      exitUnits.forEach(function (unit, i) {
+        var s = lastExit - (exitUnits.length - 1 - i) * EX_STAG;
+        tl.fromTo(unit, { x: 0 }, { x: -230, duration: EX_MOVE, ease: "power4.in", immediateRender: false }, s);
+        tl.fromTo(
+          unit,
+          { opacity: 1 },
+          { opacity: 0, duration: EX_FADE, ease: "power1.in", immediateRender: false },
+          s + EX_FADE_LAG,
+        );
+      });
+
+      /* scale-swap: Scene 1 rushes away (power2.in), the clean stage arrives (expo.out, frame.md bans back.out) */
+      var SWAP_OUT = 2.16;
+      var EXIT_DUR = 0.3;
+      var OVERLAP = 0.14;
+      var SWAP_IN = SWAP_OUT + EXIT_DUR - OVERLAP; /* 2.32 */
+      tl.fromTo(
+        s1,
+        { scale: 1, opacity: 1, filter: "blur(0px)" },
+        { scale: 0.72, opacity: 0, filter: "blur(18px)", duration: EXIT_DUR, ease: "power2.in", immediateRender: false },
+        SWAP_OUT,
+      );
+      tl.fromTo(
+        s2,
+        { opacity: 0, scale: 0.72, filter: "blur(18px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out", immediateRender: false },
+        SWAP_IN,
+      );
+      tl.fromTo(halo, { x: 0, y: 0 }, { x: -350, y: -56, duration: 0.8, ease: "expo.out", immediateRender: false }, 2.2);
+
+      /* ================= Scene 2 (2.20-3.90): « Il faut savoir [quoi dire,] » + lone caret ================= */
+
+      function slideIn(node, at) {
+        tl.fromTo(
+          node,
+          { x: 230, filter: "blur(8px)" },
+          { x: 0, filter: "blur(0px)", duration: 0.3, ease: "power4.out", immediateRender: false },
+          at,
+        );
+        tl.fromTo(node, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out", immediateRender: false }, at);
+      }
+      slideIn(b[0], 2.34); /* Il 2.37 */
+      slideIn(b[1], 2.47); /* faut 2.50 */
+      slideIn(b[2], 2.63); /* savoir 2.66 */
+      pillIn(pill2, pill2Bg, pill2Ch, 3.0); /* quoi 3.06, dire 3.34 */
+
+      /* the caret blinks in finite steps (0.5 s period), then stays on */
+      on(caretL, 2.5);
+      off(caretL, 2.75);
+      on(caretL, 3.0);
+      off(caretL, 3.25);
+      on(caretL, 3.5);
+      off(caretL, 3.75);
+      on(caretL, 4.0);
+
+      /* ================= Scene 3 (3.90-7.10): the input shrinks up, three prompt-cards ================= */
+
+      tl.fromTo(
+        ask2,
+        { scale: 1, y: 0 },
+        { scale: 0.44, y: -276, duration: 0.55, ease: "power3.inOut", immediateRender: false },
+        3.86,
+      );
+      tl.fromTo(halo, { x: -350, y: -56 }, { x: -350, y: -6, duration: 0.7, ease: "power2.inOut", immediateRender: false }, 3.9);
+
+      /* the empty column is established (dashed home slots 1, 2, 3) */
+      holes.forEach(function (hole, i) {
+        tl.fromTo(hole, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out", immediateRender: false }, 3.98 + i * 0.06);
+      });
+
+      /* split-tilt-cards: each card slides in from its own side and pivots into its tilt (overshoot settles).
+         Scrambled column, top to bottom = 2, 3, 1. Offsets are in the column's native px (column scale 0.88). */
+      var PITCH = 186;
+      var OVERSHOOT = 8;
+      var SLIDE = 320;
+      var CARDS = [
+        { slot: slot1, at: 4.06, dur: 0.6, x: 100, y: 2 * PITCH, tilt: -13, rot: 2 } /* 1 lands in the bottom slot */,
+        { slot: slot2, at: 5.06, dur: 0.6, x: 125, y: -PITCH, tilt: -14, rot: 3 } /* 2 lands in the top slot */,
+        { slot: slot3, at: 5.69, dur: 0.4, x: -135, y: -PITCH, tilt: 14, rot: -3 } /* 3 lands in the middle slot */,
+      ];
+      CARDS.forEach(function (cd) {
+        var side = cd.x > 0 ? 1 : -1;
+        tl.fromTo(
+          cd.slot,
+          { x: cd.x + side * SLIDE, y: cd.y, rotationY: cd.tilt - side * OVERSHOOT, rotation: cd.rot, opacity: 0 },
+          {
+            x: cd.x,
+            y: cd.y,
+            rotationY: cd.tilt,
+            rotation: cd.rot,
+            opacity: 1,
+            duration: cd.dur,
+            ease: "power3.out",
+            immediateRender: false,
+          },
+          cd.at,
+        );
+        /* copy fades up during the settle (from-state hidden, so the default immediate render is safe) */
+        tl.fromTo(
+          cd.slot.querySelectorAll(".f08-pcard-head, .f08-pcard-text"),
+          { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 0.3, ease: "power2.out", stagger: 0.06 },
+          cd.at + 0.14,
+        );
+      });
+
+      /* 6.12 "ordre": all three straighten and snap into the order 1, 2, 3 (power3.out, 0.5 s) */
+      var SNAP_AT = 6.12;
+      CARDS.forEach(function (cd) {
+        tl.fromTo(
+          cd.slot,
+          { x: cd.x, y: cd.y, rotationY: cd.tilt, rotation: cd.rot },
+          { x: 0, y: 0, rotationY: 0, rotation: 0, duration: 0.5, ease: "power3.out", immediateRender: false },
+          SNAP_AT,
+        );
+      });
+      /* card 1 is lifted over the others on its way to the top */
+      tl.fromTo(slot1, { scale: 1 }, { scale: 1.04, duration: 0.2, ease: "power2.out", immediateRender: false }, SNAP_AT);
+      tl.fromTo(slot1, { scale: 1.04 }, { scale: 1, duration: 0.3, ease: "power2.inOut", immediateRender: false }, SNAP_AT + 0.2);
+
+      /* phrase 3 at the bottom, word by word (no pill: the sentence already has one) */
+      wordIn(c[0], 4.07); /* quoi 4.10 */
+      wordIn(c[1], 4.27); /* demander 4.30 */
+      wordIn(c[2], 5.07); /* comment 5.10 */
+      wordIn(c[3], 5.7); /* dans 5.73 */
+      wordIn(c[4], 6.01); /* quel 6.04 */
+      wordIn(c[5], 6.09); /* ordre 6.12 */
+
+      /* hold to the end of the frame (no exit) */
+      tl.set({}, {}, DURATION);
+
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

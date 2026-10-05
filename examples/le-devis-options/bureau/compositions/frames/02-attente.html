@@ -1,0 +1,891 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: block; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); font-weight: 800; font-style: normal; font-display: block; }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      color: #f5efe7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- clip layers ---------- */
+    .f02-base { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: #1c1512; }
+    .f02-view { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
+    .f02-shake, .f02-mb { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    .f02-world { position: absolute; left: 0; top: 0; width: 10px; height: 10px; transform-origin: 0 0; }
+    .f02-hud { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    .f02-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+    /* ---------- desk-night ground (world space: pans with the camera) ---------- */
+    .f02-desk {
+      position: absolute;
+      left: -700px;
+      top: -500px;
+      width: 5200px;
+      height: 2080px;
+      background-color: #1c1512;
+      background-image:
+        radial-gradient(ellipse 1100px 900px at 1460px 920px, #3b2b21 0%, rgba(59, 43, 33, 0.74) 30%, rgba(59, 43, 33, 0.3) 62%, rgba(59, 43, 33, 0) 100%),
+        radial-gradient(ellipse 1050px 820px at 3380px 880px, rgba(55, 40, 30, 0.9) 0%, rgba(55, 40, 30, 0.42) 52%, rgba(55, 40, 30, 0) 100%);
+    }
+    .f02-wood {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 5200px;
+      height: 2080px;
+      opacity: 0.24;
+      background-size: 1600px 1040px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='1040'><filter id='w' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.0032 0.042' numOctaves='5' seed='8' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.02  0 0 0 0 0.01  0 0 0 0 0.004  -1.9 0 0 0 1.02'/></filter><filter id='v' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.0045 0.11' numOctaves='3' seed='19' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.93  0 0 0 0 0.74  0 0 0 0 0.56  1.2 0 0 0 -0.64'/></filter><filter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.0012 0.009' numOctaves='2' seed='44' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.4 0 0 0 0.78'/></filter><rect width='100%25' height='100%25' filter='url(%23f)'/><rect width='100%25' height='100%25' filter='url(%23w)'/><rect width='100%25' height='100%25' filter='url(%23v)'/></svg>");
+    }
+    .f02-seam {
+      position: absolute;
+      left: 0;
+      width: 5200px;
+      height: 3px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0px, rgba(0, 0, 0, 0.5) 1px, rgba(255, 226, 200, 0.05) 1px, rgba(255, 226, 200, 0.05) 2px, rgba(0, 0, 0, 0) 3px);
+    }
+
+    /* shared paper grain (deterministic, fixed seed) */
+    .f02-tex {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+      opacity: 0.5;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='p' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' seed='12' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42  0 0 0 0 0.33  0 0 0 0 0.24  1.4 0 0 0 -0.58'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>");
+    }
+
+    /* ---------- quote sheet corner (continuity from frame 1, no text) ---------- */
+    .f02-qsheet {
+      position: absolute;
+      left: -392px;
+      top: 104px;
+      width: 500px;
+      height: 700px;
+      transform: rotate(4deg);
+      border-radius: 3px;
+      background: linear-gradient(160deg, #fbf8f2 0%, #f6f1e9 70%, #efe8dd 100%);
+      box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.45), 22px 28px 40px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+    }
+    .f02-qb { position: absolute; border-radius: 3px; }
+    .f02-qline { position: absolute; left: 40px; width: 420px; height: 1px; background: #d9cfc1; }
+
+    /* ---------- sticky note (torn in two halves) ---------- */
+    .f02-note { position: absolute; left: 610px; top: 290px; width: 420px; height: 420px; }
+    .f02-notecast {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 420px;
+      height: 420px;
+      filter: drop-shadow(0 1px 1.2px rgba(0, 0, 0, 0.45)) drop-shadow(22px 28px 40px rgba(0, 0, 0, 0.55));
+    }
+    .f02-noterot { position: absolute; left: 0; top: 0; width: 420px; height: 420px; transform: rotate(-4deg); }
+    .f02-half { position: absolute; left: 0; top: 0; width: 420px; height: 420px; }
+    .f02-half-l { transform-origin: 105px 210px; }
+    .f02-half-r { transform-origin: 315px 210px; }
+    .f02-halfclip { position: absolute; left: 0; top: 0; width: 420px; height: 420px; }
+    .f02-paper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 420px;
+      height: 420px;
+      background: linear-gradient(180deg, #e6ddd0 0px, #ebe2d6 52px, #efe7dc 86px, #f1e9df 72%, #f3ece2 100%);
+    }
+    .f02-glue { position: absolute; left: 0; top: 0; width: 420px; height: 62px; background: linear-gradient(180deg, rgba(120, 95, 70, 0.07), rgba(120, 95, 70, 0)); }
+    .f02-tile {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 1px 1px rgba(50, 32, 18, 0.28), 2px 3px 6px rgba(50, 32, 18, 0.16);
+    }
+    .f02-tile svg { position: absolute; left: 16px; top: 16px; width: 40px; height: 40px; }
+    .f02-ink { position: absolute; left: 0; top: 0; width: 420px; height: 420px; overflow: visible; }
+    .f02-ink path {
+      fill: none;
+      stroke: #1a1612;
+      stroke-width: 3.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+    }
+    .f02-ink path.f02-scr { stroke: #c25b28; stroke-width: 5; }
+    .f02-tearedge { fill: none; stroke: #fdfbf7; stroke-width: 6; stroke-linejoin: round; opacity: 0; }
+    .f02-tearshade { fill: none; stroke: rgba(90, 70, 50, 0.22); stroke-width: 7; stroke-linejoin: round; opacity: 0; }
+    .f02-fold {
+      position: absolute;
+      left: 384px;
+      top: 384px;
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(to bottom right, #d6cab9 0%, #ece4d8 30%, #f6f0e7 49.4%, rgba(0, 0, 0, 0) 50.6%);
+      filter: drop-shadow(-1.5px -1.5px 2px rgba(60, 40, 25, 0.25));
+    }
+
+    /* ---------- coffee mug (top-down) ---------- */
+    .f02-mug { position: absolute; left: 1262px; top: 222px; width: 196px; height: 196px; }
+    .f02-mug-handle {
+      position: absolute;
+      left: 170px;
+      top: 118px;
+      width: 66px;
+      height: 40px;
+      border-radius: 20px;
+      border: 13px solid #2b2621;
+      box-sizing: border-box;
+      transform: rotate(32deg);
+      box-shadow: 16px 20px 26px rgba(0, 0, 0, 0.5), inset 1px 1px 0 rgba(255, 240, 225, 0.08);
+    }
+    .f02-mug-body {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 196px;
+      height: 196px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 34% 30%, #564c43 0%, #36302a 34%, #2a2521 62%, #1d1916 100%);
+      box-shadow: 22px 28px 40px rgba(0, 0, 0, 0.6), 0 1px 1.5px rgba(0, 0, 0, 0.5);
+    }
+    .f02-mug-wall {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      width: 168px;
+      height: 168px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 62% 66%, #3b332d 0%, #231e1a 70%, #1a1613 100%);
+      box-shadow: inset 5px 6px 10px rgba(0, 0, 0, 0.55);
+    }
+    .f02-coffee {
+      position: absolute;
+      left: 28px;
+      top: 28px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: radial-gradient(circle at 60% 64%, #2b170c 0%, #1a0d06 60%, #120804 100%);
+      box-shadow: inset 0 0 0 2px rgba(110, 68, 40, 0.35), inset 8px 10px 14px rgba(0, 0, 0, 0.5);
+    }
+    .f02-spec {
+      position: absolute;
+      left: 30px;
+      top: 26px;
+      width: 38px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at 50% 50%, rgba(255, 238, 220, 0.34), rgba(255, 238, 220, 0) 70%);
+      transform: rotate(-30deg);
+    }
+    .f02-ripple {
+      position: absolute;
+      left: 70px;
+      top: 70px;
+      width: 150px;
+      height: 150px;
+      margin: -75px 0 0 -75px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 232, 212, 0.3);
+      box-sizing: border-box;
+      opacity: 0;
+    }
+
+    /* ---------- ink pad (top-down tin) ---------- */
+    .f02-pad {
+      position: absolute;
+      left: 1182px;
+      top: 590px;
+      width: 250px;
+      height: 158px;
+      border-radius: 16px;
+      transform: rotate(8deg);
+      background: linear-gradient(155deg, #5a5048 0%, #3a332d 22%, #2b2621 60%, #1c1815 100%);
+      box-shadow: 22px 28px 40px rgba(0, 0, 0, 0.58), 0 1px 1.5px rgba(0, 0, 0, 0.5), inset 1.5px 1.5px 0 rgba(255, 240, 225, 0.14), inset -1px -1px 0 rgba(0, 0, 0, 0.4);
+    }
+    .f02-pad-felt {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      width: 218px;
+      height: 126px;
+      border-radius: 9px;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 40% 40%, #8e3d19 0%, #6f2f13 55%, #56240e 100%);
+      box-shadow: inset 3px 4px 8px rgba(0, 0, 0, 0.55);
+    }
+    .f02-pad-felt .f02-tex { opacity: 0.9; }
+
+    /* ---------- smartphone (top-down) ---------- */
+    .f02-phoneglow {
+      position: absolute;
+      left: 1930px;
+      top: -110px;
+      width: 600px;
+      height: 880px;
+      background: radial-gradient(ellipse at 50% 52%, rgba(236, 214, 192, 0.07) 0%, rgba(236, 214, 192, 0.03) 38%, rgba(236, 214, 192, 0) 64%);
+    }
+    .f02-phonewarm {
+      position: absolute;
+      left: 1990px;
+      top: -40px;
+      width: 480px;
+      height: 700px;
+      background: radial-gradient(ellipse at 56% 58%, rgba(194, 91, 40, 0.16) 0%, rgba(194, 91, 40, 0.05) 40%, rgba(194, 91, 40, 0) 66%);
+      opacity: 0;
+    }
+    .f02-phone { position: absolute; left: 2080px; top: 40px; width: 300px; height: 620px; transform: rotate(-6deg); }
+    .f02-phone-btn { position: absolute; width: 5px; border-radius: 2px; background: linear-gradient(90deg, #463e37, #2a2521); }
+    .f02-phone-body {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 300px;
+      height: 620px;
+      border-radius: 44px;
+      background: linear-gradient(135deg, #4d443c 0%, #2e2924 16%, #27221e 60%, #1b1714 100%);
+      box-shadow: 30px 24px 42px rgba(0, 0, 0, 0.6), 0 1px 1.5px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 240, 225, 0.1), inset 2px 2px 0 rgba(255, 240, 225, 0.08);
+    }
+    .f02-screen {
+      position: absolute;
+      left: 11px;
+      top: 11px;
+      width: 278px;
+      height: 598px;
+      border-radius: 34px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #14100e 0%, #0f0c0b 100%);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.8);
+    }
+    .f02-island { position: absolute; left: 97px; top: 11px; width: 84px; height: 24px; border-radius: 12px; background: #000000; }
+    .f02-sbar { position: absolute; background: rgba(245, 239, 231, 0.7); border-radius: 1px; }
+    .f02-batt { position: absolute; left: 226px; top: 18px; width: 22px; height: 11px; border-radius: 3px; border: 1.3px solid rgba(245, 239, 231, 0.55); box-sizing: border-box; }
+    .f02-batt i { position: absolute; left: 1.5px; top: 1.5px; width: 9px; height: 5px; border-radius: 1px; background: rgba(245, 239, 231, 0.7); }
+    .f02-avatar { position: absolute; left: 36px; top: 56px; width: 36px; height: 36px; border-radius: 50%; background: radial-gradient(circle at 36% 32%, #6a5a4d, #3a2f28 60%, #2a221d); }
+    .f02-hbar { position: absolute; border-radius: 5px; }
+    .f02-divider { position: absolute; left: 0; top: 104px; width: 278px; height: 1px; background: rgba(245, 239, 231, 0.07); }
+    .f02-threadview { position: absolute; left: 0; top: 105px; width: 278px; height: 425px; overflow: hidden; }
+    .f02-thread { position: absolute; left: 0; top: 0; width: 278px; height: 425px; }
+    .f02-bub { position: absolute; box-sizing: border-box; }
+    .f02-bub-oldin { background: #2a2421; border-radius: 17px 17px 17px 5px; }
+    .f02-bub-oldout { background: rgba(120, 62, 34, 0.42); border-radius: 17px 17px 5px 17px; }
+    .f02-bub i { position: absolute; left: 14px; height: 8px; border-radius: 4px; }
+    .f02-bub-oldin i { background: rgba(245, 239, 231, 0.26); }
+    .f02-bub-oldout i { background: rgba(255, 236, 224, 0.28); }
+    .f02-ask {
+      position: absolute;
+      right: 12px;
+      top: 266px;
+      width: 206px;
+      padding: 11px 15px 12px 15px;
+      box-sizing: border-box;
+      border-radius: 18px 18px 5px 18px;
+      background: #c25b28;
+      box-shadow: 0 0 22px rgba(194, 91, 40, 0.32);
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 1.28;
+      color: #ffffff;
+      transform-origin: 100% 100%;
+      opacity: 0;
+    }
+    .f02-ticks { position: absolute; right: 16px; top: 346px; width: 24px; height: 13px; opacity: 0; }
+    .f02-ticks path { fill: none; stroke: #8c8279; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .f02-typing {
+      position: absolute;
+      left: 12px;
+      top: 370px;
+      width: 76px;
+      height: 42px;
+      border-radius: 18px 18px 18px 5px;
+      background: #2b2522;
+      transform-origin: 0% 100%;
+      opacity: 0;
+    }
+    .f02-dot { position: absolute; top: 16px; width: 10px; height: 10px; border-radius: 50%; background: #cdbfb2; opacity: 0.35; }
+    .f02-input { position: absolute; left: 12px; top: 542px; width: 214px; height: 38px; border-radius: 19px; background: #1d1916; box-shadow: inset 0 0 0 1px rgba(245, 239, 231, 0.07); }
+    .f02-send { position: absolute; left: 234px; top: 542px; width: 38px; height: 38px; border-radius: 50%; background: #2a2420; }
+    .f02-home { position: absolute; left: 89px; top: 586px; width: 100px; height: 4px; border-radius: 2px; background: rgba(245, 239, 231, 0.3); }
+    .f02-glare {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 278px;
+      height: 598px;
+      pointer-events: none;
+      background: linear-gradient(118deg, rgba(255, 244, 232, 0.085) 0%, rgba(255, 244, 232, 0.03) 34%, rgba(255, 244, 232, 0) 34.4%, rgba(255, 244, 232, 0) 100%);
+    }
+
+    /* ---------- tear-off calendar (top-down) ---------- */
+    .f02-cal { position: absolute; left: 2660px; top: 128px; width: 400px; height: 500px; transform: rotate(3deg); }
+    .f02-cal-back {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 400px;
+      height: 500px;
+      border-radius: 7px;
+      background: linear-gradient(160deg, #3a322c 0%, #2a241f 50%, #211c18 100%);
+      box-shadow: 30px 24px 42px rgba(0, 0, 0, 0.58), 0 1px 1.5px rgba(0, 0, 0, 0.5), inset 1px 1px 0 rgba(255, 240, 225, 0.08);
+    }
+    .f02-cal-edge { position: absolute; left: 12px; top: 70px; width: 376px; height: 418px; border-radius: 0 0 3px 3px; }
+    .f02-sheetwrap { position: absolute; left: 12px; top: 70px; width: 376px; height: 418px; transform-origin: 50% 0%; filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.18)); }
+    .f02-sheet {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 376px;
+      height: 418px;
+      border-radius: 0 0 3px 3px;
+      overflow: hidden;
+      background: linear-gradient(105deg, rgba(255, 248, 238, 0) 0%, rgba(70, 48, 30, 0.1) 100%), linear-gradient(180deg, #f8f3eb 0%, #f3ede3 60%, #ebe4d8 100%);
+    }
+    .f02-perf {
+      position: absolute;
+      left: 8px;
+      top: 31px;
+      width: 360px;
+      height: 3px;
+      background-image: radial-gradient(circle at 1.5px 1.5px, rgba(150, 132, 112, 0.55) 0px, rgba(150, 132, 112, 0.55) 1.1px, rgba(150, 132, 112, 0) 1.6px);
+      background-size: 7px 3px;
+    }
+    .f02-frame { position: absolute; left: 22px; top: 52px; width: 332px; height: 342px; box-sizing: border-box; border: 1px solid #e3dacd; border-radius: 2px; }
+    .f02-day {
+      position: absolute;
+      left: 0;
+      top: 132px;
+      width: 376px;
+      text-align: center;
+      font-family: "Space Mono", monospace;
+      font-size: 148px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f02-stub { position: absolute; left: 12px; top: 70px; width: 376px; height: 36px; z-index: 2; }
+    .f02-stub-paper { position: absolute; left: 0; top: 0; width: 376px; height: 36px; background: linear-gradient(180deg, #f6f1e9, #fbf8f2); }
+    .f02-stub svg { position: absolute; left: 0; top: 0; width: 376px; height: 36px; overflow: visible; }
+    .f02-fringe { fill: none; stroke: #cfc4b4; stroke-width: 1.3; stroke-linejoin: round; opacity: 0; }
+    .f02-cal-head {
+      position: absolute;
+      z-index: 3;
+      left: 0;
+      top: 0;
+      width: 400px;
+      height: 78px;
+      border-radius: 7px 7px 3px 3px;
+      background: linear-gradient(180deg, #423a33 0%, #2e2924 55%, #25201c 100%);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35), inset 1px 1px 0 rgba(255, 240, 225, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+    }
+    .f02-rivet {
+      position: absolute;
+      top: 32px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 36% 34%, #e6dfd5 0%, #9d948a 45%, #4d463f 100%);
+      box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ---------- phrase (word by word, traced accent pill = the only emphasis) ---------- */
+    .f02-phrase {
+      position: absolute;
+      left: 0;
+      width: 1920px;
+      text-align: center;
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #f5efe7;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+      white-space: nowrap;
+    }
+    .f02-w { display: inline-block; opacity: 0; }
+    .f02-pill { display: inline-block; white-space: nowrap; text-shadow: none; }
+    .f02-seg { position: relative; display: inline-block; padding: 0.02em 0.13em 0.07em 0.13em; color: #ffffff; }
+    .f02-seg-first, .f02-seg-solo { padding-left: 0.3em; }
+    .f02-seg-last, .f02-seg-solo { padding-right: 0.3em; }
+    .f02-segbg { position: absolute; left: 0; top: 0; right: -1px; bottom: 0; background: #c25b28; transform-origin: 0% 50%; opacity: 0; }
+    .f02-seg-first .f02-segbg { border-radius: 14px 0 0 14px; }
+    .f02-seg-last .f02-segbg { border-radius: 0 14px 14px 0; right: 0; }
+    .f02-seg-solo .f02-segbg { border-radius: 14px; right: 0; }
+    .f02-segtx { position: relative; display: inline-block; }
+    .f02-l { display: inline-block; opacity: 0; }
+
+    /* rubber-stamp: self-contained, copy with its HTML block and stampSlam().
+       Place the stamp CENTER with left/top on .f02-stamp; size with --f02-stamp-scale (1 = frame.md 150px). */
+    .f02-stamp { position: absolute; width: 0; height: 0; mix-blend-mode: multiply; pointer-events: none; }
+    .f02-stamp-rot {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, -50%) rotate(-8deg) scale(var(--f02-stamp-scale, 1));
+      transform-origin: 50% 50%;
+    }
+    .f02-stamp-slam { opacity: 0; transform-origin: 50% 50%; }
+    .f02-stamp-ink {
+      display: block;
+      filter: url(#f02-stamp-ink);
+      padding: 20px 46px 6px 46px;
+      border: 7px solid #c25b28;
+      border-radius: 14px;
+      font-family: "Big Shoulders", sans-serif;
+      font-weight: 800;
+      font-size: 150px;
+      line-height: 1;
+      text-transform: uppercase;
+      word-spacing: 0.34em;
+      color: #c25b28;
+      white-space: nowrap;
+    }
+    /* /rubber-stamp */
+
+    /* ---------- lens: vignette + static film grain ---------- */
+    .f02-fx { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+    .f02-vignette { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 72% 78% at 50% 46%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.36) 100%); }
+    .f02-grain {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.05;
+      background-size: 240px 240px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+    }
+  </style>
+
+  <div id="root" data-composition-id="02-attente" data-width="1920" data-height="1080" data-duration="5.6">
+    <div id="f02-base" class="clip f02-base" data-start="0" data-duration="5.6" data-track-index="0"></div>
+
+    <div id="f02-view" class="clip f02-view" data-start="0" data-duration="5.6" data-track-index="1">
+      <svg class="f02-defs" width="0" height="0" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="f02-mblur" x="-4%" y="-4%" width="108%" height="108%" color-interpolation-filters="sRGB">
+            <feGaussianBlur id="f02-mblur-g" stdDeviation="0 0" />
+          </filter>
+          <symbol id="f02-ico-forms" viewBox="0 0 24 24"><path d="M14.727 6h6l-6-6v6zm0 .727H14V0H4.91c-.905 0-1.637.732-1.637 1.636v20.728c0 .904.732 1.636 1.636 1.636h14.182c.904 0 1.636-.732 1.636-1.636V6.727h-6zM7.91 17.318a.819.819 0 1 1 .001-1.638.819.819 0 0 1 0 1.638zm0-3.273a.819.819 0 1 1 .001-1.637.819.819 0 0 1 0 1.637zm0-3.272a.819.819 0 1 1 .001-1.638.819.819 0 0 1 0 1.638zm9 6.409h-6.818v-1.364h6.818v1.364zm0-3.273h-6.818v-1.364h6.818v1.364zm0-3.273h-6.818V9.273h6.818v1.363z" /></symbol>
+          <symbol id="f02-ico-gmail" viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" /></symbol>
+          <symbol id="f02-ico-make" viewBox="0 0 24 24"><path d="M13.38 3.498c-.27 0-.511.19-.566.465L9.85 18.986a.578.578 0 0 0 .453.678l4.095.826a.58.58 0 0 0 .682-.455l2.963-15.021a.578.578 0 0 0-.453-.678l-4.096-.826a.589.589 0 0 0-.113-.012zm-5.876.098a.576.576 0 0 0-.516.318L.062 17.697a.575.575 0 0 0 .256.774l3.733 1.877a.578.578 0 0 0 .775-.258l6.926-13.781a.577.577 0 0 0-.256-.776L7.762 3.658a.571.571 0 0 0-.258-.062zm11.74.115a.576.576 0 0 0-.576.576v15.426c0 .318.258.578.576.578h4.178a.58.58 0 0 0 .578-.578V4.287a.578.578 0 0 0-.578-.576Z" /></symbol>
+          <symbol id="f02-ico-stripe" viewBox="0 0 24 24"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z" /></symbol>
+        </defs>
+      </svg>
+
+      <div id="f02-shake" class="f02-shake">
+        <div id="f02-mb" class="f02-mb">
+          <div id="f02-world" class="f02-world">
+            <!-- desk-night ground -->
+            <div class="f02-desk"><div class="f02-wood"></div></div>
+            <div class="f02-seam" style="left: -700px; top: 196px;"></div>
+            <div class="f02-seam" style="left: -700px; top: 868px;"></div>
+
+            <!-- ===== STATION A ===== -->
+            <!-- the quote sheet from frame 1, cut by the left edge -->
+            <div class="f02-qsheet">
+              <div class="f02-tex"></div>
+              <div style="position: absolute; left: 0; top: 0; width: 500px; height: 700px; background: linear-gradient(90deg, rgba(40, 28, 20, 0.34), rgba(40, 28, 20, 0.14)); mix-blend-mode: multiply;"></div>
+              <i class="f02-qb" style="left: 40px; top: 58px; width: 150px; height: 11px; background: rgba(26, 22, 18, 0.55);"></i>
+              <i class="f02-qb" style="left: 40px; top: 86px; width: 250px; height: 22px; background: rgba(26, 22, 18, 0.82);"></i>
+              <i class="f02-qline" style="top: 140px;"></i>
+              <i class="f02-qb" style="left: 40px; top: 176px; width: 230px; height: 12px; background: rgba(90, 83, 72, 0.5);"></i>
+              <i class="f02-qb" style="left: 300px; top: 176px; width: 44px; height: 10px; background: rgba(90, 83, 72, 0.35);"></i>
+              <i class="f02-qb" style="left: 376px; top: 174px; width: 84px; height: 15px; background: rgba(26, 22, 18, 0.78);"></i>
+              <i class="f02-qline" style="top: 222px;"></i>
+              <i class="f02-qb" style="left: 40px; top: 256px; width: 180px; height: 12px; background: rgba(90, 83, 72, 0.5);"></i>
+              <i class="f02-qb" style="left: 392px; top: 254px; width: 68px; height: 15px; background: rgba(26, 22, 18, 0.78);"></i>
+              <i class="f02-qline" style="top: 302px;"></i>
+              <i class="f02-qb" style="left: 40px; top: 336px; width: 250px; height: 12px; background: rgba(90, 83, 72, 0.5);"></i>
+              <i class="f02-qb" style="left: 370px; top: 334px; width: 90px; height: 15px; background: rgba(26, 22, 18, 0.78);"></i>
+              <i class="f02-qline" style="top: 382px;"></i>
+              <i class="f02-qb" style="left: 40px; top: 416px; width: 120px; height: 12px; background: rgba(90, 83, 72, 0.5);"></i>
+              <i class="f02-qb" style="left: 380px; top: 414px; width: 80px; height: 15px; background: rgba(26, 22, 18, 0.78);"></i>
+              <i class="f02-qline" style="top: 462px;"></i>
+              <i class="f02-qb" style="left: 296px; top: 540px; width: 164px; height: 78px; background: rgba(0, 0, 0, 0); box-shadow: inset 0 0 0 1px #d9cfc1;"></i>
+              <i class="f02-qb" style="left: 314px; top: 556px; width: 56px; height: 9px; background: rgba(90, 83, 72, 0.45);"></i>
+              <i class="f02-qb" style="left: 314px; top: 580px; width: 126px; height: 18px; background: rgba(26, 22, 18, 0.82);"></i>
+            </div>
+
+            <!-- sticky note: two clipped halves of one note, torn on « planté » -->
+            <div id="f02-note" class="f02-note">
+              <div class="f02-notecast">
+                <div class="f02-noterot">
+                  <!-- right half first, left half on top (its edge overlaps 2px so no seam shows before the tear) -->
+                  <div id="f02-half-r" class="f02-half f02-half-r">
+                    <div class="f02-halfclip" style="clip-path: polygon(214px -4px, 424px -4px, 424px 380px, 384px 424px, 203px 424px, 206px 404px, 200px 382px, 207px 361px, 201px 340px, 209px 318px, 204px 296px, 210px 275px, 202px 253px, 207px 232px, 213px 210px, 205px 189px, 211px 168px, 204px 146px, 212px 124px, 206px 103px, 215px 81px, 209px 60px, 216px 38px, 208px 18px);">
+                      <div class="f02-paper"></div>
+                      <div class="f02-glue"></div>
+                      <div class="f02-tex"></div>
+                      <div class="f02-tile" style="left: 62px; top: 78px;"><svg viewBox="0 0 24 24" fill="#7248B9"><use href="#f02-ico-forms" /></svg></div>
+                      <div class="f02-tile" style="left: 286px; top: 78px;"><svg viewBox="0 0 24 24" fill="#EA4335"><use href="#f02-ico-gmail" /></svg></div>
+                      <div class="f02-tile" style="left: 62px; top: 272px;"><svg viewBox="0 0 24 24" fill="#6D00CC"><use href="#f02-ico-make" /></svg></div>
+                      <div class="f02-tile" style="left: 286px; top: 272px;"><svg viewBox="0 0 24 24" fill="#635BFF"><use href="#f02-ico-stripe" /></svg></div>
+                      <svg class="f02-ink" viewBox="0 0 420 420">
+                        <path class="f02-l1" d="M 144 116 C 178 108, 228 121, 276 111" />
+                        <path class="f02-a1" d="M 263 101 L 277 111 L 264 122" />
+                        <path class="f02-l2" d="M 304 160 C 286 204, 196 214, 136 264" />
+                        <path class="f02-a2" d="M 139 249 L 134 266 L 151 267" />
+                        <path class="f02-l3" d="M 144 309 C 182 318, 232 298, 276 307" />
+                        <path class="f02-a3" d="M 263 297 L 277 307 L 264 318" />
+                        <path class="f02-scr" d="M 48 290 L 150 276 Q 156 280 148 286 L 52 318 Q 46 324 54 326 L 152 306 Q 158 310 150 316 L 56 350 Q 50 355 58 357 L 148 340" />
+                        <polyline class="f02-tearshade" points="214,-4 208,18 216,38 209,60 215,81 206,103 212,124 204,146 211,168 205,189 213,210 207,232 202,253 210,275 204,296 209,318 201,340 207,361 200,382 206,404 203,424" />
+                        <polyline class="f02-tearedge" points="214,-4 208,18 216,38 209,60 215,81 206,103 212,124 204,146 211,168 205,189 213,210 207,232 202,253 210,275 204,296 209,318 201,340 207,361 200,382 206,404 203,424" />
+                      </svg>
+                      <div class="f02-fold"></div>
+                    </div>
+                  </div>
+                  <div id="f02-half-l" class="f02-half f02-half-l">
+                    <div class="f02-halfclip" style="clip-path: polygon(-4px -4px, 216px -4px, 210px 18px, 218px 38px, 211px 60px, 217px 81px, 208px 103px, 214px 124px, 206px 146px, 213px 168px, 207px 189px, 215px 210px, 209px 232px, 204px 253px, 212px 275px, 206px 296px, 211px 318px, 203px 340px, 209px 361px, 202px 382px, 208px 404px, 205px 424px, -4px 424px);">
+                      <div class="f02-paper"></div>
+                      <div class="f02-glue"></div>
+                      <div class="f02-tex"></div>
+                      <div class="f02-tile" style="left: 62px; top: 78px;"><svg viewBox="0 0 24 24" fill="#7248B9"><use href="#f02-ico-forms" /></svg></div>
+                      <div class="f02-tile" style="left: 286px; top: 78px;"><svg viewBox="0 0 24 24" fill="#EA4335"><use href="#f02-ico-gmail" /></svg></div>
+                      <div class="f02-tile" style="left: 62px; top: 272px;"><svg viewBox="0 0 24 24" fill="#6D00CC"><use href="#f02-ico-make" /></svg></div>
+                      <div class="f02-tile" style="left: 286px; top: 272px;"><svg viewBox="0 0 24 24" fill="#635BFF"><use href="#f02-ico-stripe" /></svg></div>
+                      <svg class="f02-ink" viewBox="0 0 420 420">
+                        <path class="f02-l1" d="M 144 116 C 178 108, 228 121, 276 111" />
+                        <path class="f02-a1" d="M 263 101 L 277 111 L 264 122" />
+                        <path class="f02-l2" d="M 304 160 C 286 204, 196 214, 136 264" />
+                        <path class="f02-a2" d="M 139 249 L 134 266 L 151 267" />
+                        <path class="f02-l3" d="M 144 309 C 182 318, 232 298, 276 307" />
+                        <path class="f02-a3" d="M 263 297 L 277 307 L 264 318" />
+                        <path class="f02-scr" d="M 48 290 L 150 276 Q 156 280 148 286 L 52 318 Q 46 324 54 326 L 152 306 Q 158 310 150 316 L 56 350 Q 50 355 58 357 L 148 340" />
+                        <polyline class="f02-tearshade" points="216,-4 210,18 218,38 211,60 217,81 208,103 214,124 206,146 213,168 207,189 215,210 209,232 204,253 212,275 206,296 211,318 203,340 209,361 202,382 208,404 205,424" />
+                        <polyline class="f02-tearedge" points="216,-4 210,18 218,38 211,60 217,81 208,103 214,124 206,146 213,168 207,189 215,210 209,232 204,253 212,275 206,296 211,318 203,340 209,361 202,382 208,404 205,424" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- rubber-stamp -->
+            <div id="f02-stamp" class="f02-stamp" style="left: 852px; top: 506px; --f02-stamp-scale: 0.56;">
+              <svg class="f02-stamp-defs" width="0" height="0" style="position: absolute;" aria-hidden="true" focusable="false">
+                <filter id="f02-stamp-ink" x="-4%" y="-10%" width="108%" height="120%" color-interpolation-filters="sRGB">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed="23" result="warp" />
+                  <feDisplacementMap in="SourceGraphic" in2="warp" scale="6" xChannelSelector="R" yChannelSelector="G" result="rough" />
+                  <feTurbulence type="fractalNoise" baseFrequency="0.02 0.045" numOctaves="2" seed="7" result="blot" />
+                  <feColorMatrix in="blot" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -6.2 0 0 0 4.6" result="blotA" />
+                  <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="1" seed="41" result="speck" />
+                  <feColorMatrix in="speck" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -10 0 0 0 6.9" result="speckA" />
+                  <feComposite in="blotA" in2="speckA" operator="in" result="mask" />
+                  <feComposite in="rough" in2="mask" operator="in" />
+                </filter>
+              </svg>
+              <div class="f02-stamp-rot">
+                <div id="f02-stamp-slam" class="f02-stamp-slam">
+                  <div class="f02-stamp-ink">Sur devis</div>
+                </div>
+              </div>
+            </div>
+            <!-- /rubber-stamp -->
+
+            <!-- coffee mug -->
+            <div class="f02-mug">
+              <div class="f02-mug-handle"></div>
+              <div class="f02-mug-body"></div>
+              <div class="f02-mug-wall"></div>
+              <div class="f02-coffee">
+                <div id="f02-ripple1" class="f02-ripple"></div>
+                <div id="f02-ripple2" class="f02-ripple"></div>
+                <div class="f02-spec"></div>
+              </div>
+            </div>
+
+            <!-- ink pad -->
+            <div class="f02-pad"><div class="f02-pad-felt"><div class="f02-tex"></div></div></div>
+
+            <!-- ===== STATION B ===== -->
+            <div class="f02-phoneglow"></div>
+            <div id="f02-phonewarm" class="f02-phonewarm"></div>
+            <div class="f02-phone">
+              <i class="f02-phone-btn" style="left: -4px; top: 126px; height: 40px;"></i>
+              <i class="f02-phone-btn" style="left: -4px; top: 180px; height: 62px;"></i>
+              <i class="f02-phone-btn" style="left: 299px; top: 168px; height: 84px;"></i>
+              <div class="f02-phone-body"></div>
+              <div class="f02-screen">
+                <div class="f02-island"></div>
+                <i class="f02-sbar" style="left: 196px; top: 24px; width: 3px; height: 5px;"></i>
+                <i class="f02-sbar" style="left: 201px; top: 22px; width: 3px; height: 7px;"></i>
+                <i class="f02-sbar" style="left: 206px; top: 20px; width: 3px; height: 9px;"></i>
+                <i class="f02-sbar" style="left: 211px; top: 18px; width: 3px; height: 11px;"></i>
+                <div class="f02-batt"><i></i></div>
+                <svg style="position: absolute; left: 12px; top: 64px; width: 14px; height: 22px;" viewBox="0 0 14 22"><path d="M 10 3 L 3 11 L 10 19" fill="none" stroke="#c25b28" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <div class="f02-avatar"></div>
+                <i class="f02-hbar" style="left: 82px; top: 62px; width: 96px; height: 10px; background: rgba(245, 239, 231, 0.55);"></i>
+                <i class="f02-hbar" style="left: 82px; top: 79px; width: 58px; height: 8px; background: rgba(245, 239, 231, 0.2);"></i>
+                <div class="f02-divider"></div>
+                <div class="f02-threadview">
+                  <div id="f02-thread" class="f02-thread">
+                    <div class="f02-bub f02-bub-oldin" style="left: 12px; top: 80px; width: 128px; height: 38px;"><i style="top: 15px; width: 96px;"></i></div>
+                    <div class="f02-bub f02-bub-oldin" style="left: 12px; top: 128px; width: 176px; height: 58px;"><i style="top: 16px; width: 146px;"></i><i style="top: 33px; width: 88px;"></i></div>
+                    <div class="f02-bub f02-bub-oldout" style="right: 12px; top: 204px; width: 150px; height: 40px;"><i style="top: 16px; width: 118px;"></i></div>
+                    <div id="f02-ask" class="f02-ask">Bonjour, où en est la modification&nbsp;?</div>
+                    <svg id="f02-ticks" class="f02-ticks" viewBox="0 0 24 13"><path d="M 1.5 7 L 5 10.5 L 12 2.5" /><path d="M 9.5 9.2 L 10.8 10.5 L 18 2.5" /></svg>
+                    <div id="f02-typing" class="f02-typing">
+                      <i class="f02-dot" style="left: 15px;"></i>
+                      <i class="f02-dot" style="left: 33px;"></i>
+                      <i class="f02-dot" style="left: 51px;"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="f02-input"></div>
+                <div class="f02-send"><svg style="position: absolute; left: 10px; top: 10px; width: 18px; height: 18px;" viewBox="0 0 18 18"><path d="M 9 14 L 9 4 M 4.5 8.5 L 9 4 L 13.5 8.5" fill="none" stroke="#8c8279" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></div>
+                <div class="f02-home"></div>
+                <div class="f02-glare"></div>
+              </div>
+            </div>
+
+            <div class="f02-cal">
+              <div class="f02-cal-back"></div>
+              <div class="f02-cal-edge" style="transform: translate(1px, 7px); background: #d2c7b8;"></div>
+              <div class="f02-cal-edge" style="transform: translate(0.5px, 4.5px); background: #e7dfd3;"></div>
+              <div class="f02-cal-edge" style="transform: translate(0px, 2px); background: #d9cfc1;"></div>
+              <div id="f02-sw3" class="f02-sheetwrap">
+                <div class="f02-sheet"><div class="f02-tex"></div><div class="f02-perf"></div><div class="f02-frame"></div><div class="f02-day">J+8</div></div>
+              </div>
+              <div id="f02-sw2" class="f02-sheetwrap">
+                <div id="f02-sh2" class="f02-sheet"><div class="f02-tex"></div><div class="f02-perf"></div><div class="f02-frame"></div><div class="f02-day">J+3</div></div>
+              </div>
+              <div id="f02-sw1" class="f02-sheetwrap">
+                <div id="f02-sh1" class="f02-sheet"><div class="f02-tex"></div><div class="f02-perf"></div><div class="f02-frame"></div><div class="f02-day">J+1</div></div>
+              </div>
+              <div class="f02-stub">
+                <div class="f02-stub-paper" style="clip-path: polygon(0px 0px, 376px 0px, 376px 30px, 362px 32px, 350px 29px, 338px 33px, 324px 30px, 311px 32px, 297px 29px, 284px 33px, 270px 30px, 256px 32px, 243px 29px, 229px 33px, 216px 30px, 202px 32px, 189px 29px, 175px 33px, 162px 30px, 148px 32px, 135px 29px, 121px 33px, 108px 30px, 94px 32px, 81px 29px, 67px 33px, 54px 30px, 40px 32px, 27px 29px, 13px 33px, 0px 30px);"></div>
+                <svg viewBox="0 0 376 36">
+                  <polyline id="f02-fringe1" class="f02-fringe" points="0,30 13,33 27,29 40,32 54,30 67,33 81,29 94,32 108,30 121,33 135,29 148,32 162,30 175,33 189,29 202,32 216,30 229,33 243,29 256,32 270,30 284,33 297,29 311,32 324,30 338,33 350,29 362,32 376,30" />
+                  <polyline id="f02-fringe2" class="f02-fringe" points="0,32 11,34 25,31 38,35 52,32 66,34 79,31 93,35 106,32 120,34 133,31 147,35 160,32 174,34 187,31 201,35 214,32 228,34 241,31 255,35 268,32 282,34 295,31 309,35 322,32 336,34 349,31 362,35 376,32" />
+                </svg>
+              </div>
+              <div class="f02-cal-head">
+                <i class="f02-rivet" style="left: 64px;"></i>
+                <i class="f02-rivet" style="left: 321px;"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- HUD: the phrase band, pans with the camera but never scales -->
+          <div id="f02-hud" class="f02-hud">
+            <div class="f02-phrase" style="left: 0px; top: 92px;"><span class="f02-w" data-cue="0.08">Réparer</span> <span class="f02-w" data-cue="0.42">une</span> <span class="f02-w" data-cue="0.58">automatisation</span> <span class="f02-w" data-cue="1.20">qui</span> <span class="f02-w" data-cue="1.40">a</span> <span class="f02-pill"><span class="f02-seg f02-seg-solo" data-cue="1.54"><span class="f02-segbg"></span><span class="f02-segtx"><span class="f02-l">p</span><span class="f02-l">l</span><span class="f02-l">a</span><span class="f02-l">n</span><span class="f02-l">t</span><span class="f02-l">é</span></span></span></span></div>
+            <div class="f02-phrase" style="left: 1775px; top: 792px;"><span class="f02-w" data-cue="3.20">Délai&nbsp;:</span> <span class="f02-pill"><span class="f02-seg f02-seg-first" data-cue="3.94"><span class="f02-segbg"></span><span class="f02-segtx"><span class="f02-l">q</span><span class="f02-l">u</span><span class="f02-l">a</span><span class="f02-l">n</span><span class="f02-l">d</span></span></span><span class="f02-seg" data-cue="4.16"><span class="f02-segbg"></span><span class="f02-segtx"><span class="f02-l">i</span><span class="f02-l">l</span></span></span><span class="f02-seg" data-cue="4.30"><span class="f02-segbg"></span><span class="f02-segtx"><span class="f02-l">a</span><span class="f02-l">u</span><span class="f02-l">r</span><span class="f02-l">a</span></span></span><span class="f02-seg" data-cue="4.46"><span class="f02-segbg"></span><span class="f02-segtx"><span class="f02-l">l</span><span class="f02-l">e</span></span></span><span class="f02-seg f02-seg-last" data-cue="4.64"><span class="f02-segbg"></span><span class="f02-segtx"><span class="f02-l">t</span><span class="f02-l">e</span><span class="f02-l">m</span><span class="f02-l">p</span><span class="f02-l">s</span><span class="f02-l">.</span></span></span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="f02-fx" class="clip f02-fx" data-start="0" data-duration="5.6" data-track-index="2">
+      <div class="f02-vignette"></div>
+      <div class="f02-grain"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "02-attente";
+      var TOTAL = 5.6;
+      var host = document.querySelector('[data-composition-id="' + FID + '"]') || document;
+      function q(id) { return host.querySelector("#" + id) || document.getElementById(id); }
+      function qa(sel) { return Array.prototype.slice.call(host.querySelectorAll(sel)); }
+      function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ---------- stampSlam: rubber-stamp impact (reusable) ----------
+      // slamEl = the .xxx-stamp-slam element (CSS opacity:0), t = start of the drop,
+      // shakeEl = optional full-frame wrapper that takes the 2-frame camera shake. Returns the impact time.
+      function stampSlam(timeline, slamEl, t, shakeEl) {
+        var DROP = 0.12;
+        var F = 1 / 30;
+        timeline.fromTo(slamEl,
+          { scale: 1.35, opacity: 0, filter: "blur(2px)" },
+          { scale: 1, opacity: 0.92, filter: "blur(2px)", duration: DROP, ease: "power4.in", immediateRender: false },
+          t);
+        timeline.fromTo(slamEl,
+          { filter: "blur(2px)" },
+          { filter: "blur(0px)", duration: 0.28, ease: "power2.out", immediateRender: false },
+          t + DROP);
+        if (shakeEl) {
+          timeline.fromTo(shakeEl, { x: 0, y: 0 }, {
+            keyframes: [
+              { x: 4, y: -3, duration: F, ease: "none" },
+              { x: -3, y: 2.5, duration: F, ease: "none" },
+              { x: 0, y: 0, duration: F, ease: "none" }
+            ],
+            immediateRender: false
+          }, t + DROP);
+        }
+        return t + DROP;
+      }
+
+      // ---------- svg-path-draw helper (measured lengths) ----------
+      function draw(sel, t, dur, ease) {
+        var els = qa(sel);
+        if (!els.length) return;
+        var len = 200;
+        try { len = els[0].getTotalLength() * 1.05 || 200; } catch (e) {}
+        els.forEach(function (p) {
+          p.style.strokeDasharray = len + " " + len;
+          p.style.strokeDashoffset = String(len);
+        });
+        tl.set(els, { opacity: 1 }, t);
+        tl.fromTo(els, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: dur, ease: ease || "power2.out", immediateRender: false }, t);
+      }
+
+      // ---------- phrase: words on their cues ----------
+      qa(".f02-w").forEach(function (w) {
+        var t = parseFloat(w.getAttribute("data-cue"));
+        tl.fromTo(w,
+          { opacity: 0, y: 12, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false },
+          t);
+      });
+      // traced accent pill: each segment traces from the left, then its letters land with the tracking tighten (x only)
+      qa(".f02-seg").forEach(function (sg) {
+        var t = parseFloat(sg.getAttribute("data-cue"));
+        var bg = sg.querySelector(".f02-segbg");
+        var solo = sg.classList.contains("f02-seg-solo");
+        var tt = t - (solo ? 0.05 : 0.03);
+        tl.set(bg, { opacity: 1 }, tt);
+        tl.fromTo(bg, { scaleX: 0 }, { scaleX: 1, duration: solo ? 0.26 : 0.2, ease: "power3.out", immediateRender: false }, tt);
+        var letters = Array.prototype.slice.call(sg.querySelectorAll(".f02-l"));
+        var mid = (letters.length - 1) / 2;
+        letters.forEach(function (l, i) {
+          tl.fromTo(l,
+            { opacity: 0, x: (i - mid) * 7 },
+            { opacity: 1, x: 0, duration: 0.26, ease: "power3.out", immediateRender: false },
+            t + i * 0.012);
+        });
+      });
+
+      // ---------- Scene 1 (0.0-1.95): the automation drawn on the sticky note, then it breaks ----------
+      draw(".f02-l1", 0.08, 0.34, "power2.out");
+      draw(".f02-a1", 0.38, 0.1, "power2.out");
+      draw(".f02-l2", 0.34, 0.36, "power2.out");
+      draw(".f02-a2", 0.66, 0.1, "power2.out");
+      draw(".f02-l3", 0.61, 0.34, "power2.out");
+      draw(".f02-a3", 0.91, 0.1, "power2.out");
+
+      // 1.54 « planté »: the pen scribble crosses out Make, the note tears in two
+      draw(".f02-scr", 1.54, 0.26, "none");
+      var TEAR = 1.6;
+      tl.set(qa(".f02-tearedge, .f02-tearshade"), { opacity: 1 }, TEAR);
+      tl.fromTo(q("f02-half-l"), { x: 0, y: 0, rotation: 0 }, { x: -14, y: 3, rotation: -2.4, duration: 0.42, ease: "power3.out", immediateRender: false }, TEAR);
+      tl.fromTo(q("f02-half-r"), { x: 0, y: 0, rotation: 0 }, { x: 16, y: -2, rotation: 2.0, duration: 0.42, ease: "power3.out", immediateRender: false }, TEAR);
+
+      // ---------- Scene 2 (1.95-2.90): SUR DEVIS slams onto the torn note ----------
+      var IMPACT = stampSlam(tl, q("f02-stamp-slam"), 2.04, q("f02-shake"));
+      tl.fromTo(q("f02-ripple1"), { scale: 0.12, opacity: 0.9 }, { scale: 1, opacity: 0, duration: 0.62, ease: "power2.out", immediateRender: false }, IMPACT);
+      tl.fromTo(q("f02-ripple2"), { scale: 0.12, opacity: 0.7 }, { scale: 0.8, opacity: 0, duration: 0.6, ease: "power2.out", immediateRender: false }, IMPACT + 0.12);
+
+      // ---------- Scene 3 (2.90-5.20): pan to the phone and the calendar ----------
+      // phone: the question lands (3.20), the thread scrolls, then the reply that never comes
+      var thread = q("f02-thread");
+      gsap.set(thread, { y: 162 });
+      tl.fromTo(thread, { y: 162 }, { y: 54, duration: 0.34, ease: "power3.out", immediateRender: false }, 3.2);
+      tl.fromTo(q("f02-ask"), { opacity: 0, scale: 0.86, y: 14 }, { opacity: 1, scale: 1, y: 0, duration: 0.32, ease: "power3.out", immediateRender: false }, 3.2);
+      tl.fromTo(q("f02-phonewarm"), { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out", immediateRender: false }, 3.2);
+      tl.fromTo(q("f02-ticks"), { opacity: 0 }, { opacity: 1, duration: 0.16, ease: "power1.out", immediateRender: false }, 3.44);
+      tl.fromTo(thread, { y: 54 }, { y: 0, duration: 0.3, ease: "power3.out", immediateRender: false }, 3.62);
+      tl.fromTo(q("f02-typing"), { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.28, ease: "power3.out", immediateRender: false }, 3.62);
+
+      // tear-off calendar: J+1 -> J+3 (4.30) -> J+8 (4.66)
+      function tearSheet(wrap, sheet, fringe, T, fx, fy, rot) {
+        tl.set(sheet, { clipPath: "polygon(0px 31px, 13px 34px, 27px 30px, 40px 33px, 54px 31px, 67px 34px, 81px 30px, 94px 33px, 108px 31px, 121px 34px, 135px 30px, 148px 33px, 162px 31px, 175px 34px, 189px 30px, 202px 33px, 216px 31px, 229px 34px, 243px 30px, 256px 33px, 270px 31px, 284px 34px, 297px 30px, 311px 33px, 324px 31px, 338px 34px, 350px 30px, 362px 33px, 376px 31px, 376px 418px, 0px 418px)" }, T - 0.2);
+        tl.set(fringe, { opacity: 1 }, T - 0.2);
+        tl.set(wrap, { zIndex: 5 }, T - 0.2);
+        tl.fromTo(wrap,
+          { x: 0, y: 0, rotation: 0, scale: 1, filter: "drop-shadow(0px 1px 1px rgba(0,0,0,0.18))" },
+          { x: 4, y: -8, rotation: rot * 0.06, scale: 1.02, filter: "drop-shadow(10px 16px 14px rgba(0,0,0,0.34))", duration: 0.08, ease: "power2.out", immediateRender: false },
+          T - 0.2);
+        tl.fromTo(wrap,
+          { x: 4, y: -8, rotation: rot * 0.06, scale: 1.02, filter: "drop-shadow(10px 16px 14px rgba(0,0,0,0.34))" },
+          { x: fx, y: fy, rotation: rot, scale: 1.14, filter: "drop-shadow(46px 64px 34px rgba(0,0,0,0.4))", duration: 0.26, ease: "power3.in", immediateRender: false },
+          T - 0.12);
+      }
+      tearSheet(q("f02-sw1"), q("f02-sh1"), q("f02-fringe1"), 4.3, 430, -900, 18);
+      tearSheet(q("f02-sw2"), q("f02-sh2"), q("f02-fringe2"), 4.66, 560, -840, 26);
+
+      // ---------- virtual camera + clock-driven details (pure functions of t) ----------
+      var world = q("f02-world");
+      var hud = q("f02-hud");
+      var mb = q("f02-mb");
+      var blurNode = q("f02-mblur-g");
+      var dots = qa(".f02-dot");
+      var E_SINE = gsap.parseEase("sine.inOut");
+      var E_PAN = gsap.parseEase("power2.inOut");
+      var PAN_T0 = 2.9, PAN_DUR = 0.5, PAN_T1 = PAN_T0 + PAN_DUR;
+      var A0 = { cx: 900, cy: 528, s: 1.0 }, A1 = { cx: 850, cy: 505, s: 1.07 };
+      var B0 = { cx: 2540, cy: 470, s: 1.04 }, B1 = { cx: 2610, cy: 470, s: 1.08 };
+      var HUD_D = 1775;
+      function lerp(a, b, k) { return a + (b - a) * k; }
+      function cam(t) {
+        var k, a, b, hx = 0;
+        if (t < PAN_T0) { k = E_SINE(clamp01(t / PAN_T0)); a = A0; b = A1; }
+        else if (t < PAN_T1) { k = E_PAN(clamp01((t - PAN_T0) / PAN_DUR)); a = A1; b = B0; hx = -HUD_D * k; }
+        else { k = E_SINE(clamp01((t - PAN_T1) / (TOTAL - PAN_T1))); a = B0; b = B1; hx = -HUD_D; }
+        return { cx: lerp(a.cx, b.cx, k), cy: lerp(a.cy, b.cy, k), s: lerp(a.s, b.s, k), hx: hx };
+      }
+      function render(t) {
+        var c = cam(t);
+        var tx = 960 - c.s * c.cx, ty = 540 - c.s * c.cy;
+        world.style.transform = "translate(" + tx.toFixed(2) + "px, " + ty.toFixed(2) + "px) scale(" + c.s.toFixed(5) + ")";
+        hud.style.transform = "translate(" + c.hx.toFixed(2) + "px, 0px)";
+        // horizontal motion blur from the camera's screen speed
+        var dt = 1 / 120;
+        var c0 = cam(Math.max(0, t - dt)), c1 = cam(Math.min(TOTAL, t + dt));
+        var v = Math.abs(c1.s * c1.cx - c0.s * c0.cx) / (2 * dt);
+        var sd = Math.min(16, (v / 30) * 0.07);
+        if (sd > 0.4) {
+          blurNode.setAttribute("stdDeviation", sd.toFixed(2) + " 0");
+          mb.style.filter = "url(#f02-mblur)";
+        } else {
+          blurNode.setAttribute("stdDeviation", "0 0");
+          mb.style.filter = "none";
+        }
+        // waiting dots: finite pulses inside the frame window
+        var DOT_T0 = 3.74, CYCLE = 0.84;
+        dots.forEach(function (d, i) {
+          var w = 0;
+          var u = t - DOT_T0 - i * 0.15;
+          if (u > 0) {
+            var ph = (u % CYCLE) / CYCLE;
+            w = ph < 0.4 ? Math.sin((ph / 0.4) * Math.PI) : 0;
+          }
+          d.style.opacity = (0.35 + 0.6 * w).toFixed(3);
+          d.style.transform = "translate(0px, " + (-4 * w).toFixed(2) + "px)";
+        });
+      }
+      var clock = { t: 0 };
+      render(0);
+      tl.fromTo(clock, { t: 0 }, { t: TOTAL, duration: TOTAL, ease: "none", onUpdate: function () { render(clock.t); } }, 0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

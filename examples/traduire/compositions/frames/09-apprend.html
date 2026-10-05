@@ -1,0 +1,755 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-500.woff2') format('woff2');
+      font-weight: 500;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-600.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Instrument Sans";
+      src: url('assets/fonts/InstrumentSans-700.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url('assets/fonts/SpaceMono-400.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Space Mono";
+      src: url('assets/fonts/SpaceMono-700.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      color: #1a1612;
+    }
+
+    /* ---------- ground-light: paper + one soft warm radial behind the focal element (full-bleed clip) ---------- */
+    #f09-ground {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #f6f1e9;
+    }
+    /* centered behind the giant (960, 520); glides behind station 0 (560, 600) in Scene 3 */
+    #f09-halo {
+      position: absolute;
+      left: 310px;
+      top: -130px;
+      width: 1300px;
+      height: 1300px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(194, 91, 40, 0.1) 0%, rgba(194, 91, 40, 0.05) 42%, rgba(194, 91, 40, 0) 100%);
+    }
+
+    #f09-stage {
+      position: absolute;
+      inset: 0;
+    }
+    #f09-s1,
+    #f09-s2,
+    #f09-s3 {
+      position: absolute;
+      inset: 0;
+    }
+    #f09-s1 {
+      transform-origin: 960px 540px;
+    }
+
+    /* ---------- phrase type (frame.md: phrase 54 / 600 / 1.18 / -0.02em) ---------- */
+    .f09-phrase {
+      position: absolute;
+      left: 0;
+      width: 1920px;
+      display: flex;
+      justify-content: center;
+    }
+    #f09-s1phrase { top: 188px; }
+    #f09-s2phrase { top: 418px; }
+    #f09-s3phrase { top: 290px; }
+    .f09-line {
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 600;
+      font-size: 54px;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #1a1612;
+      white-space: nowrap;
+    }
+    .f09-w {
+      display: inline-block;
+      --b: 8px;
+      opacity: 0;
+      filter: blur(var(--b));
+    }
+
+    /* accent-pill: traced bg, then letters write inside (the ONLY emphasis) */
+    .f09-pill {
+      position: relative;
+      display: inline-block;
+      padding: 0.06em 0.32em;
+      margin-left: 0.04em;
+      transform-origin: 0% 50%;
+    }
+    .f09-pillbg {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: #c25b28;
+      opacity: 0;
+      transform-origin: 0% 50%;
+      z-index: 0;
+    }
+    .f09-ch {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      color: #ffffff;
+      opacity: 0;
+    }
+
+    /* ---------- Scene 1: the three prompt-cards of frame 8, fanned BEHIND the giant ---------- */
+    #f09-deck {
+      position: absolute;
+      inset: 0;
+      transform-origin: 960px 455px;
+    }
+    .f09-card {
+      position: absolute;
+      box-sizing: border-box;
+      width: 520px;
+      height: 170px;
+      padding: 22px 30px;
+      overflow: hidden;
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      border-radius: 14px;
+      box-shadow: 0 30px 80px rgba(60, 40, 20, 0.14), 0 2px 6px rgba(60, 40, 20, 0.08);
+    }
+    #f09-card1 { left: 700px; top: 400px; z-index: 3; }
+    #f09-card2 { left: 490px; top: 300px; z-index: 1; }
+    #f09-card3 { left: 910px; top: 330px; z-index: 2; }
+    .f09-chead {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      height: 40px;
+    }
+    .f09-disc {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #c25b28;
+      color: #ffffff;
+      font-family: "Space Mono", monospace;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 40px;
+      text-align: center;
+    }
+    .f09-micro {
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 1;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #5a5348;
+    }
+    .f09-cui {
+      margin-top: 14px;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 1.2;
+      color: #1a1612;
+    }
+
+    /* giant (frame.md: 260 / 700 / 0.9 / -0.05em static; tracking tighten via per-letter x) */
+    #f09-giantwrap {
+      position: absolute;
+      left: 0;
+      top: 415px;
+      width: 1920px;
+      height: 234px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #f09-giant {
+      display: block;
+      flex: 0 0 auto;
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 700;
+      font-size: 260px;
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      white-space: nowrap;
+      color: #1a1612;
+      opacity: 0;
+    }
+
+    /* ---------- Scene 2: the code wall of frame 1 comes back (ink-dark, 50%) ---------- */
+    #f09-wallcam {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform-origin: 960px 450px;
+    }
+    /* keep-out: the wall fades out before y 900 */
+    #f09-wallfade {
+      position: absolute;
+      inset: 0;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, #000 36px, #000 800px, rgba(0, 0, 0, 0) 890px);
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, #000 36px, #000 800px, rgba(0, 0, 0, 0) 890px);
+    }
+    /* a clear ellipse behind the centered phrase so it stays legible */
+    #f09-wallhole {
+      position: absolute;
+      inset: 0;
+      -webkit-mask-image: radial-gradient(700px 150px at 960px 450px, rgba(0, 0, 0, 0) 60%, #000 100%);
+      mask-image: radial-gradient(700px 150px at 960px 450px, rgba(0, 0, 0, 0) 60%, #000 100%);
+    }
+    .f09-cl {
+      position: absolute;
+      white-space: pre;
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 26px;
+      line-height: 39px;
+      color: rgba(26, 22, 18, 0.5);
+    }
+    .f09-cs {
+      color: rgba(90, 83, 72, 0.5);
+    }
+
+    /* ---------- Scene 3: the learning path ---------- */
+    #f09-glow {
+      position: absolute;
+      left: 410px;
+      top: 450px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      opacity: 0;
+      background: radial-gradient(closest-side, rgba(224, 138, 92, 0.55) 0%, rgba(212, 112, 63, 0.26) 42%, rgba(194, 91, 40, 0) 100%);
+    }
+    /* light-point core, behind station 0 */
+    #f09-core {
+      position: absolute;
+      left: 490px;
+      top: 530px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      opacity: 0;
+      background: radial-gradient(closest-side, rgba(255, 243, 234, 1) 0%, rgba(255, 243, 234, 0.85) 30%, rgba(224, 138, 92, 0.7) 58%, rgba(224, 138, 92, 0) 100%);
+    }
+    #f09-pathsvg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: visible;
+    }
+    #f09-path {
+      fill: none;
+      stroke: #1a1612;
+      stroke-width: 4;
+      stroke-linecap: butt;
+      stroke-dasharray: 800;
+      stroke-dashoffset: 800;
+    }
+    /* thin accent progress fill: from station 0, stops just after it */
+    #f09-filltrack {
+      position: absolute;
+      left: 560px;
+      top: 597px;
+      width: 200px;
+      height: 6px;
+    }
+    #f09-fill {
+      width: 100%;
+      height: 100%;
+      border-radius: 3px;
+      background: #c25b28;
+      opacity: 0;
+      transform-origin: 0% 50%;
+    }
+    .f09-station {
+      position: absolute;
+      top: 576px;
+      box-sizing: border-box;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #fffdf9;
+      border: 3px solid #1a1612;
+      color: #1a1612;
+      font-family: "Space Mono", monospace;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 42px;
+      text-align: center;
+      opacity: 0;
+    }
+    /* station 0 center = (560, 600) exactly: the iris opens from there */
+    #f09-st0 { left: 536px; z-index: 2; }
+    #f09-st1 { left: 736px; }
+    #f09-st2 { left: 936px; }
+    #f09-st3 { left: 1136px; }
+    #f09-st4 { left: 1336px; }
+    #f09-lit {
+      position: absolute;
+      left: -3px;
+      top: -3px;
+      box-sizing: border-box;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #c25b28;
+      border: 3px solid #c25b28;
+      color: #ffffff;
+      line-height: 42px;
+      text-align: center;
+      opacity: 0;
+    }
+    #f09-tagwrap {
+      position: absolute;
+      left: 360px;
+      top: 500px;
+      width: 400px;
+      display: flex;
+      justify-content: center;
+    }
+    #f09-tag {
+      box-sizing: border-box;
+      height: 42px;
+      padding: 0 14px 0 calc(14px + 0.2em);
+      background: #fffdf9;
+      border: 1px solid #e2d9cc;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(60, 40, 20, 0.1);
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 40px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #1a1612;
+      opacity: 0;
+    }
+    #f09-stem {
+      position: absolute;
+      left: 559px;
+      top: 542px;
+      width: 2px;
+      height: 34px;
+      background: #1a1612;
+      opacity: 0;
+      transform-origin: 50% 0%;
+    }
+
+    /* grain 3% (top track) */
+    #f09-grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+      pointer-events: none;
+      background-size: 220px 220px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+  </style>
+
+  <div id="root" data-composition-id="09-apprend" data-width="1920" data-height="1080" data-duration="6.8">
+
+    <!-- ground: paper + warm radial (full-bleed, 6.8 s incl. the 0.75 s under the iris) -->
+    <div id="f09-ground" class="clip" data-start="0" data-duration="6.8" data-track-index="0" data-layout-ignore>
+      <div id="f09-halo" data-layout-ignore></div>
+    </div>
+
+    <!-- stage: the three Scenes, sequenced by the timeline -->
+    <div id="f09-stage" class="clip" data-start="0" data-duration="6.8" data-track-index="1">
+
+      <!-- Scene 1 (0.00-1.60): « Ça, ça » + [giant: s’apprend.] over the fanned prompt-cards of frame 8 -->
+      <div id="f09-s1">
+        <div id="f09-deck" data-layout-ignore>
+          <div id="f09-card2" class="f09-card">
+            <div class="f09-chead"><span class="f09-disc">2</span><span class="f09-micro">Comment</span></div>
+            <div class="f09-cui">Aux couleurs de ma marque, sous le titre</div>
+          </div>
+          <div id="f09-card3" class="f09-card">
+            <div class="f09-chead"><span class="f09-disc">3</span><span class="f09-micro">Dans quel ordre</span></div>
+            <div class="f09-cui">D’abord la page, ensuite le bouton</div>
+          </div>
+          <div id="f09-card1" class="f09-card">
+            <div class="f09-chead"><span class="f09-disc">1</span><span class="f09-micro">Quoi demander</span></div>
+            <div class="f09-cui">Un bouton “Réserver” sur l’accueil</div>
+          </div>
+        </div>
+        <div id="f09-s1phrase" class="f09-phrase">
+          <div class="f09-line"><span id="f09-a1" class="f09-w">Ça,</span> <span id="f09-a2" class="f09-w">ça</span></div>
+        </div>
+        <div id="f09-giantwrap">
+          <div id="f09-giant">s’apprend.</div>
+        </div>
+      </div>
+
+      <!-- Scene 2 (1.60-3.25): the code wall returns (hook recall), then falls away line by line -->
+      <div id="f09-s2">
+        <div id="f09-wallcam" data-layout-ignore>
+          <div id="f09-wallfade">
+            <div id="f09-wallhole">
+              <div class="f09-cl" data-r="0" data-c="0" style="left:24px;top:30px">const page = await build(site.routes);</div>
+              <div class="f09-cl" data-r="1" data-c="0" style="left:24px;top:69px">if (!page.ok) return retry(site);</div>
+              <div class="f09-cl" data-r="2" data-c="0" style="left:24px;top:108px">&lt;div class=<span class="f09-cs">"hero"</span>&gt;</div>
+              <div class="f09-cl" data-r="3" data-c="0" style="left:24px;top:147px">  &lt;button onclick=<span class="f09-cs">"book()"</span>&gt;</div>
+              <div class="f09-cl" data-r="4" data-c="0" style="left:24px;top:186px">export async function deploy(site) {</div>
+              <div class="f09-cl" data-r="5" data-c="0" style="left:24px;top:225px">  await publish(site, { cache: true });</div>
+              <div class="f09-cl" data-r="6" data-c="0" style="left:24px;top:264px">}</div>
+              <div class="f09-cl" data-r="7" data-c="0" style="left:24px;top:303px">for (const route of site.routes) {</div>
+              <div class="f09-cl" data-r="8" data-c="0" style="left:24px;top:342px">const page = await build(site.routes);</div>
+              <div class="f09-cl" data-r="9" data-c="0" style="left:24px;top:381px">if (!page.ok) return retry(site);</div>
+              <div class="f09-cl" data-r="10" data-c="0" style="left:24px;top:420px">&lt;div class=<span class="f09-cs">"hero"</span>&gt;</div>
+              <div class="f09-cl" data-r="11" data-c="0" style="left:24px;top:459px">  &lt;button onclick=<span class="f09-cs">"book()"</span>&gt;</div>
+              <div class="f09-cl" data-r="12" data-c="0" style="left:24px;top:498px">export async function deploy(site) {</div>
+              <div class="f09-cl" data-r="13" data-c="0" style="left:24px;top:537px">  await publish(site, { cache: true });</div>
+              <div class="f09-cl" data-r="14" data-c="0" style="left:24px;top:576px">}</div>
+              <div class="f09-cl" data-r="15" data-c="0" style="left:24px;top:615px">for (const route of site.routes) {</div>
+              <div class="f09-cl" data-r="16" data-c="0" style="left:24px;top:654px">const page = await build(site.routes);</div>
+              <div class="f09-cl" data-r="17" data-c="0" style="left:24px;top:693px">if (!page.ok) return retry(site);</div>
+              <div class="f09-cl" data-r="18" data-c="0" style="left:24px;top:732px">&lt;div class=<span class="f09-cs">"hero"</span>&gt;</div>
+              <div class="f09-cl" data-r="19" data-c="0" style="left:24px;top:771px">  &lt;button onclick=<span class="f09-cs">"book()"</span>&gt;</div>
+              <div class="f09-cl" data-r="20" data-c="0" style="left:24px;top:810px">export async function deploy(site) {</div>
+              <div class="f09-cl" data-r="0" data-c="1" style="left:664px;top:43px">  await publish(site, { cache: true });</div>
+              <div class="f09-cl" data-r="1" data-c="1" style="left:664px;top:82px">}</div>
+              <div class="f09-cl" data-r="2" data-c="1" style="left:664px;top:121px">for (const route of site.routes) {</div>
+              <div class="f09-cl" data-r="3" data-c="1" style="left:664px;top:160px">const page = await build(site.routes);</div>
+              <div class="f09-cl" data-r="4" data-c="1" style="left:664px;top:199px">if (!page.ok) return retry(site);</div>
+              <div class="f09-cl" data-r="5" data-c="1" style="left:664px;top:238px">&lt;div class=<span class="f09-cs">"hero"</span>&gt;</div>
+              <div class="f09-cl" data-r="6" data-c="1" style="left:664px;top:277px">  &lt;button onclick=<span class="f09-cs">"book()"</span>&gt;</div>
+              <div class="f09-cl" data-r="7" data-c="1" style="left:664px;top:316px">export async function deploy(site) {</div>
+              <div class="f09-cl" data-r="8" data-c="1" style="left:664px;top:355px">  await publish(site, { cache: true });</div>
+              <div class="f09-cl" data-r="9" data-c="1" style="left:664px;top:394px">}</div>
+              <div class="f09-cl" data-r="10" data-c="1" style="left:664px;top:433px">for (const route of site.routes) {</div>
+              <div class="f09-cl" data-r="11" data-c="1" style="left:664px;top:472px">const page = await build(site.routes);</div>
+              <div class="f09-cl" data-r="12" data-c="1" style="left:664px;top:511px">if (!page.ok) return retry(site);</div>
+              <div class="f09-cl" data-r="13" data-c="1" style="left:664px;top:550px">&lt;div class=<span class="f09-cs">"hero"</span>&gt;</div>
+              <div class="f09-cl" data-r="14" data-c="1" style="left:664px;top:589px">  &lt;button onclick=<span class="f09-cs">"book()"</span>&gt;</div>
+              <div class="f09-cl" data-r="15" data-c="1" style="left:664px;top:628px">export async function deploy(site) {</div>
+              <div class="f09-cl" data-r="16" data-c="1" style="left:664px;top:667px">  await publish(site, { cache: true });</div>
+              <div class="f09-cl" data-r="17" data-c="1" style="left:664px;top:706px">}</div>
+              <div class="f09-cl" data-r="18" data-c="1" style="left:664px;top:745px">for (const route of site.routes) {</div>
+              <div class="f09-cl" data-r="19" data-c="1" style="left:664px;top:784px">const page = await build(site.routes);</div>
+              <div class="f09-cl" data-r="20" data-c="1" style="left:664px;top:823px">if (!page.ok) return retry(site);</div>
+              <div class="f09-cl" data-r="0" data-c="2" style="left:1304px;top:56px">&lt;div class=<span class="f09-cs">"hero"</span>&gt;</div>
+              <div class="f09-cl" data-r="1" data-c="2" style="left:1304px;top:95px">  &lt;button onclick=<span class="f09-cs">"book()"</span>&gt;</div>
+              <div class="f09-cl" data-r="2" data-c="2" style="left:1304px;top:134px">export async function deploy(site) {</div>
+              <div class="f09-cl" data-r="3" data-c="2" style="left:1304px;top:173px">  await publish(site, { cache: true });</div>
+              <div class="f09-cl" data-r="4" data-c="2" style="left:1304px;top:212px">}</div>
+              <div class="f09-cl" data-r="5" data-c="2" style="left:1304px;top:251px">for (const route of site.routes) {</div>
+              <div class="f09-cl" data-r="6" data-c="2" style="left:1304px;top:290px">const page = await build(site.routes);</div>
+              <div class="f09-cl" data-r="7" data-c="2" style="left:1304px;top:329px">if (!page.ok) return retry(site);</div>
+              <div class="f09-cl" data-r="8" data-c="2" style="left:1304px;top:368px">&lt;div class=<span class="f09-cs">"hero"</span>&gt;</div>
+              <div class="f09-cl" data-r="9" data-c="2" style="left:1304px;top:407px">  &lt;button onclick=<span class="f09-cs">"book()"</span>&gt;</div>
+              <div class="f09-cl" data-r="10" data-c="2" style="left:1304px;top:446px">export async function deploy(site) {</div>
+              <div class="f09-cl" data-r="11" data-c="2" style="left:1304px;top:485px">  await publish(site, { cache: true });</div>
+              <div class="f09-cl" data-r="12" data-c="2" style="left:1304px;top:524px">}</div>
+              <div class="f09-cl" data-r="13" data-c="2" style="left:1304px;top:563px">for (const route of site.routes) {</div>
+              <div class="f09-cl" data-r="14" data-c="2" style="left:1304px;top:602px">const page = await build(site.routes);</div>
+              <div class="f09-cl" data-r="15" data-c="2" style="left:1304px;top:641px">if (!page.ok) return retry(site);</div>
+              <div class="f09-cl" data-r="16" data-c="2" style="left:1304px;top:680px">&lt;div class=<span class="f09-cs">"hero"</span>&gt;</div>
+              <div class="f09-cl" data-r="17" data-c="2" style="left:1304px;top:719px">  &lt;button onclick=<span class="f09-cs">"book()"</span>&gt;</div>
+              <div class="f09-cl" data-r="18" data-c="2" style="left:1304px;top:758px">export async function deploy(site) {</div>
+              <div class="f09-cl" data-r="19" data-c="2" style="left:1304px;top:797px">  await publish(site, { cache: true });</div>
+              <div class="f09-cl" data-r="20" data-c="2" style="left:1304px;top:836px">}</div>
+            </div>
+          </div>
+        </div>
+        <div id="f09-s2phrase" class="f09-phrase">
+          <div class="f09-line"><span id="f09-b1" class="f09-w">Et</span> <span id="f09-b2" class="f09-w">pas</span> <span id="f09-b3" class="f09-w">besoin</span> <span id="f09-b4" class="f09-w">d’être</span> <span id="f09-b5" class="f09-w">technique,</span></div>
+        </div>
+      </div>
+
+      <!-- Scene 3 (3.25-6.05, held to 6.80 under the iris): the learning path, station 0 « TU ES ICI » -->
+      <div id="f09-s3">
+        <div id="f09-glow" data-layout-ignore></div>
+        <div id="f09-core" data-layout-ignore></div>
+        <svg id="f09-pathsvg" width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" data-layout-ignore>
+          <path id="f09-path" d="M 560 600 L 1360 600" />
+        </svg>
+        <div id="f09-filltrack" data-layout-ignore><div id="f09-fill"></div></div>
+        <div id="f09-st1" class="f09-station">1</div>
+        <div id="f09-st2" class="f09-station">2</div>
+        <div id="f09-st3" class="f09-station">3</div>
+        <div id="f09-st4" class="f09-station">4</div>
+        <div id="f09-st0" class="f09-station">0<div id="f09-lit">0</div></div>
+        <div id="f09-stem"></div>
+        <div id="f09-tagwrap">
+          <div id="f09-tag">Tu es ici</div>
+        </div>
+        <div id="f09-s3phrase" class="f09-phrase">
+          <div class="f09-line"><span id="f09-c1" class="f09-w">c’est</span> <span id="f09-c2" class="f09-w">pensé</span> <span id="f09-c3" class="f09-w">pour</span> <span id="f09-c4" class="f09-w">ceux</span> <span id="f09-c5" class="f09-w">qui</span> <span id="f09-c6" class="f09-w">partent</span> <span id="f09-pill" class="f09-pill"><span id="f09-pill-bg" class="f09-pillbg"></span><span class="f09-ch">d</span><span class="f09-ch">e</span> <span class="f09-ch">z</span><span class="f09-ch">é</span><span class="f09-ch">r</span><span class="f09-ch">o</span><span class="f09-ch">.</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- film grain 3%, on top -->
+    <div id="f09-grain" class="clip" data-start="0" data-duration="6.8" data-track-index="2" data-layout-ignore></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      function byId(id) {
+        return document.getElementById(id);
+      }
+      function all(sel) {
+        return Array.prototype.slice.call(document.querySelectorAll(sel));
+      }
+
+      var tl = gsap.timeline({ paused: true });
+
+      // word-by-word (frame.md): opacity 0 / y 10 / blur 8 -> sharp, 0.3 s power3.out, on the voice cue
+      function word(id, t) {
+        tl.fromTo(byId(id),
+          { opacity: 0, y: 10, "--b": "8px" },
+          { opacity: 1, y: 0, "--b": "0px", duration: 0.3, ease: "power3.out" },
+          t);
+      }
+      // accent-pill: bg traces scaleX 0->1 from the left (0.28 s power3.out) while straightening -8deg -> 0 (0.4 s),
+      // THEN the letters write inside with a 0.02 s stagger. t = trace start (just before the spoken word).
+      function pill(id, t) {
+        tl.fromTo(byId(id),
+          { rotation: -8 },
+          { rotation: 0, duration: 0.4, ease: "power3.out", immediateRender: false },
+          t);
+        tl.fromTo(byId(id + "-bg"),
+          { scaleX: 0, opacity: 1 },
+          { scaleX: 1, opacity: 1, duration: 0.28, ease: "power3.out", immediateRender: false },
+          t);
+        tl.fromTo(all("#" + id + " .f09-ch"),
+          { opacity: 0, y: 6 },
+          { opacity: 1, y: 0, duration: 0.18, ease: "power3.out", stagger: 0.02 },
+          t + 0.18);
+      }
+      // giant-word tracking via per-letter x transforms (tracking itself stays static): split into inline-block letters
+      function trackChars(root) {
+        var t = root.textContent;
+        root.textContent = "";
+        var out = [];
+        for (var i = 0; i < t.length; i++) {
+          var s = document.createElement("span");
+          s.style.display = "inline-block";
+          s.style.whiteSpace = "pre";
+          s.textContent = t[i];
+          root.appendChild(s);
+          out.push(s);
+        }
+        return out;
+      }
+
+      /* ================= Scene 1 (0.00-1.60) ================= */
+
+      // the three prompt-cards of frame 8 open into a slight fan (seen under the blur-crossfade)
+      var fan = [
+        { id: "f09-card1", x: 0, y: -18, r0: 0, r1: -1 },
+        { id: "f09-card2", x: 140, y: 50, r0: -2, r1: -6 },
+        { id: "f09-card3", x: -140, y: 30, r0: 1.5, r1: 5 }
+      ];
+      fan.forEach(function (c) {
+        tl.fromTo(byId(c.id),
+          { x: c.x, y: c.y, rotation: c.r0 },
+          { x: 0, y: 0, rotation: c.r1, duration: 0.8, ease: "power3.out" },
+          0);
+      });
+
+      // « Ça, ça »  (Ça@0.14 ça@0.67)
+      word("f09-a1", 0.14);
+      word("f09-a2", 0.67);
+
+      // [giant: s’apprend.] lands at 0.92: tracking 0.35em -> -0.05em (0.4em = 104 px per letter step),
+      // opacity 0 -> 1, blur 12 -> 0, 0.5 s expo.out
+      var T_GIANT = 0.86;
+      tl.fromTo(byId("f09-giant"),
+        { opacity: 0, filter: "blur(12px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" },
+        T_GIANT);
+      var gChars = trackChars(byId("f09-giant"));
+      var gN = gChars.length;
+      gChars.forEach(function (ch, i) {
+        tl.fromTo(ch,
+          { x: (i - (gN - 1) / 2) * 104 },
+          { x: 0, duration: 0.5, ease: "expo.out", immediateRender: false },
+          T_GIANT);
+      });
+
+      // depth: as the giant lands in front, the deck settles back and defocuses slightly
+      tl.fromTo(byId("f09-deck"),
+        { scale: 1, opacity: 1, filter: "blur(0px)" },
+        { scale: 0.94, opacity: 0.88, filter: "blur(2px)", duration: 0.6, ease: "power2.out", immediateRender: false },
+        T_GIANT);
+
+      // seam 1 -> 2: forward zoom-through (state change), hard cut at peak blur at 1.60
+      var s1 = byId("f09-s1");
+      tl.fromTo(s1,
+        { scale: 1, filter: "blur(0px)" },
+        { scale: 1.2, filter: "blur(10px)", duration: 0.18, ease: "power3.in", immediateRender: false },
+        1.42);
+      tl.fromTo(s1, { opacity: 1 }, { opacity: 0.15, duration: 0.18, ease: "none", immediateRender: false }, 1.42);
+      tl.set(s1, { opacity: 0 }, 1.6);
+
+      /* ================= Scene 2 (1.60-3.25) ================= */
+
+      // the code wall arrives from behind with matched blur/opacity and settles into the focal plane
+      tl.fromTo(byId("f09-wallcam"),
+        { opacity: 0.15, scale: 0.75, filter: "blur(10px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false },
+        1.6);
+
+      // « Et pas besoin d’être technique, »  (Et@1.79 pas@2.04 besoin@2.22 d’être@2.40 technique@2.68)
+      word("f09-b1", 1.79);
+      word("f09-b2", 2.04);
+      word("f09-b3", 2.22);
+      word("f09-b4", 2.40);
+      word("f09-b5", 2.68);
+
+      // from 2.40 the lines fall down and away, bottom line first, each with a slight blur (it is not needed)
+      var ROWS = 21;
+      var COL_DELAY = [0, 0.03, 0.015];
+      all("#f09-wallhole .f09-cl").forEach(function (el) {
+        var r = parseInt(el.getAttribute("data-r"), 10);
+        var c = parseInt(el.getAttribute("data-c"), 10);
+        var t = 2.4 + (ROWS - 1 - r) * 0.022 + COL_DELAY[c];
+        var dy = 220 + ((r * 7 + c * 3) % 5) * 22;
+        var dx = (((r * 5 + c * 2) % 3) - 1) * 18;
+        var rot = ((r + c) % 2 ? 1 : -1) * (0.8 + ((r * 3 + c) % 3) * 0.9);
+        tl.fromTo(el,
+          { x: 0, y: 0, rotation: 0, filter: "blur(0px)" },
+          { x: dx, y: dy, rotation: rot, filter: "blur(6px)", duration: 0.42, ease: "power2.in", immediateRender: false },
+          t);
+        tl.fromTo(el, { opacity: 1 }, { opacity: 0, duration: 0.42, ease: "power1.in", immediateRender: false }, t);
+      });
+
+      // seam 2 -> 3 (the sentence continues): waterfall cut, words rip out leftward, last one dies at ~3.39
+      ["f09-b1", "f09-b2", "f09-b3", "f09-b4", "f09-b5"].forEach(function (id, i) {
+        var t = 3.12 + i * 0.022;
+        tl.fromTo(byId(id), { x: 0 }, { x: -230, duration: 0.34, ease: "power4.in", immediateRender: false }, t);
+        tl.fromTo(byId(id), { opacity: 1 }, { opacity: 0, duration: 0.18, ease: "power1.in", immediateRender: false }, t);
+      });
+
+      /* ================= Scene 3 (3.25-6.05, held to 6.80) ================= */
+
+      // the warm radial glides from behind the giant to behind station 0 (560, 600)
+      tl.fromTo(byId("f09-halo"),
+        { x: 0, y: 0 },
+        { x: -400, y: 80, duration: 1.0, ease: "power2.inOut", immediateRender: false },
+        3.3);
+
+      // learning path: measured stroke draw, left to right, constant pen speed 3.30 -> 4.40
+      var path = byId("f09-path");
+      var LEN = path.getTotalLength ? path.getTotalLength() : 800;
+      if (!LEN) LEN = 800;
+      path.style.strokeDasharray = LEN + "";
+      path.style.strokeDashoffset = LEN + "";
+      var DRAW_T = 3.3;
+      var DRAW_D = 1.1;
+      tl.fromTo(path,
+        { strokeDashoffset: LEN },
+        { strokeDashoffset: 0, duration: DRAW_D, ease: "none", immediateRender: false },
+        DRAW_T);
+
+      // stations pop as the pen reaches them (station 0 just before the pen leaves it)
+      for (var s = 0; s < 5; s++) {
+        var ts = s === 0 ? DRAW_T - 0.06 : DRAW_T + (DRAW_D * s) / 4 - 0.12;
+        tl.fromTo(byId("f09-st" + s),
+          { opacity: 0, scale: 0.5 },
+          { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out" },
+          ts);
+      }
+
+      // pensé@3.70: station 0 lights up in accent + soft glow + pin label « TU ES ICI »
+      tl.fromTo(byId("f09-lit"),
+        { opacity: 0, scale: 0.3 },
+        { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" },
+        3.66);
+      tl.fromTo(byId("f09-glow"),
+        { opacity: 0, scale: 0.5 },
+        { opacity: 0.8, scale: 1, duration: 0.6, ease: "power2.out" },
+        3.66);
+      tl.fromTo(byId("f09-tag"),
+        { opacity: 0, y: 10, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out" },
+        3.7);
+      tl.fromTo(byId("f09-stem"),
+        { opacity: 1, scaleY: 0 },
+        { opacity: 1, scaleY: 1, duration: 0.25, ease: "power3.out", immediateRender: false },
+        3.76);
+
+      // thin accent progress fill starts from station 0 and stops just after it (stat-bars-and-fills, bar form)
+      tl.fromTo(byId("f09-fill"),
+        { opacity: 1, scaleX: 0 },
+        { opacity: 1, scaleX: 0.32, duration: 0.85, ease: "power2.out", immediateRender: false },
+        3.9);
+
+      // « c’est pensé pour ceux qui partent » + [pill: de zéro.]
+      // (c’est@3.43 pensé@3.70 pour@3.92 ceux@4.16 qui@4.30 partent@4.52 de@4.82)
+      word("f09-c1", 3.43);
+      word("f09-c2", 3.7);
+      word("f09-c3", 3.92);
+      word("f09-c4", 4.16);
+      word("f09-c5", 4.3);
+      word("f09-c6", 4.52);
+      pill("f09-pill", 4.78);
+
+      // from 5.60 station 0 glows brighter (the iris opens from (560, 600) at 6.05), then holds still
+      tl.fromTo(byId("f09-glow"),
+        { opacity: 0.8, scale: 1 },
+        { opacity: 1, scale: 1.7, duration: 0.45, ease: "power2.inOut", immediateRender: false },
+        5.6);
+      tl.fromTo(byId("f09-core"),
+        { opacity: 0, scale: 0.6 },
+        { opacity: 0.9, scale: 1.2, duration: 0.45, ease: "power2.inOut" },
+        5.6);
+      tl.fromTo(byId("f09-st0"),
+        { scale: 1 },
+        { scale: 1.12, duration: 0.45, ease: "power2.inOut", immediateRender: false },
+        5.6);
+      tl.fromTo(byId("f09-lit"),
+        { backgroundColor: "#c25b28", borderColor: "#c25b28" },
+        { backgroundColor: "#d4703f", borderColor: "#e08a5c", duration: 0.45, ease: "power2.inOut", immediateRender: false },
+        5.6);
+
+      // hold the final state still until 6.80 (the orchestrator's iris extension)
+      tl.set({}, {}, 6.8);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["09-apprend"] = tl;
+    })();
+  </script>
+</template>
