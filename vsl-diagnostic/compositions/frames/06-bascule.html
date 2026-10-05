@@ -79,9 +79,6 @@
           <svg id="f06-svg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <clipPath id="f06-clip"><rect x="170" y="90" width="1580" height="760" rx="44" ry="44"/></clipPath>
-              <radialGradient id="f06-rgrad" cx="0" cy="0" r="1" gradientUnits="objectBoundingBox" fx="0.5" fy="0.5">
-                <stop offset="0" stop-color="#fff"/>
-              </radialGradient>
               <radialGradient id="f06-mgrad">
                 <stop offset="0" stop-color="#ffffff"/>
                 <stop offset="0.72" stop-color="#ffffff"/>
@@ -92,7 +89,7 @@
                 <stop offset="1" stop-color="#2f7bff" stop-opacity="0"/>
               </radialGradient>
               <mask id="f06-rmask" maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
-                <g transform="translate(330 700)"><circle id="f06-mcirc" cx="0" cy="0" r="1900" fill="url(#f06-mgrad)"/></g>
+                <g transform="translate(330 700)"><circle id="f06-mcirc" cx="0" cy="0" r="2400" fill="url(#f06-mgrad)"/></g>
               </mask>
             </defs>
 
@@ -214,7 +211,11 @@
 
       /* ===== SCENE 2 (3.10 → 4.40) : the GPS lights up ===== */
       // 3.10 the sentence leaves (box excepted)
-      ft(words, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 3.10);
+      var plain = words.filter(function (w) { return !w.classList.contains("f06-kt"); });
+      var boxed = root.querySelector(".f06-kt");
+      ft(plain, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 3.10);
+      // the word inside the box goes first so the box contracts clean
+      ft(boxed, { opacity: 1 }, { opacity: 0, duration: 0.04, ease: "none" }, 3.10);
 
       // 3.10 → 3.18 the box contracts into a point (centre), 3.16 → 3.20 it hands over to the round point
       var DOT_318 = 58 * (1 + (S_START / D0 - 1) * 0.5) * D0;   // screen diameter of the start point at 3.18 (expo.out p = 0.5)

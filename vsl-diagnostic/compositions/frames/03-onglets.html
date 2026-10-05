@@ -94,9 +94,17 @@
 
     /* ---------- the folded sheet (screen space) ---------- */
     #f03-fall { opacity: 0; }
-    #f03-sheet { position: absolute; left: 580px; top: 50px; width: 760px; height: 980px; border-radius: 8px; background: #ffffff; overflow: hidden;
-      box-shadow: 0 40px 120px rgba(0,0,0,.6), 0 10px 30px rgba(0,0,0,.35); }
-    #f03-cream { position: absolute; left: 0; top: 0; width: 760px; height: 980px; background: #f6efe3; opacity: 0; }
+    #f03-sheet { position: absolute; left: 580px; top: 50px; width: 760px; height: 980px; border-radius: 6px; background: #ffffff; overflow: hidden;
+      box-shadow: 0 60px 140px rgba(0,0,0,.65), 0 16px 40px rgba(0,0,0,.45); }
+    /* the draft paper of frame 04 (cream, blue rules every 70 px, two soft creases), no text */
+    #f03-cream { position: absolute; left: 0; top: 0; width: 760px; height: 980px; opacity: 0; background-color: #f6efe3;
+      background-image: repeating-linear-gradient(180deg, rgba(47,123,255,0) 0px, rgba(47,123,255,0) 68px, rgba(47,123,255,.18) 68px, rgba(47,123,255,.18) 70px); }
+    .f03-tone { position: absolute; left: 0; top: 0; width: 760px; height: 980px;
+      background: radial-gradient(ellipse 700px 900px at 40% 35%, rgba(255,255,255,.18), rgba(0,0,0,0) 60%), linear-gradient(180deg, rgba(0,0,0,0) 70%, rgba(60,45,25,.10) 100%); }
+    .f03-crease1 { position: absolute; left: 0; top: 0; width: 760px; height: 980px;
+      background: linear-gradient(118deg, rgba(0,0,0,0) 47%, rgba(120,100,70,.10) 49.6%, rgba(255,255,255,.55) 50.2%, rgba(255,255,255,0) 53%); }
+    .f03-crease2 { position: absolute; left: 0; top: 0; width: 760px; height: 980px;
+      background: linear-gradient(62deg, rgba(0,0,0,0) 44%, rgba(120,100,70,.08) 46.4%, rgba(255,255,255,.45) 47%, rgba(255,255,255,0) 50%); }
 
     /* shade + vignette */
     #f03-shade { background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); opacity: 0; }
@@ -190,7 +198,7 @@
     <!-- the page folded into a sheet -->
     <div id="f03-sheetl" class="clip f03-layer" data-start="0" data-duration="5.15" data-track-index="3" data-layout-allow-overflow>
       <div id="f03-fall" class="f03-wrap">
-        <div id="f03-sheet"><div id="f03-cream"></div></div>
+        <div id="f03-sheet"><div id="f03-cream"><div class="f03-tone"></div><div class="f03-crease1"></div><div class="f03-crease2"></div></div></div>
       </div>
     </div>
 
@@ -259,8 +267,8 @@
 
       /* ---------- camera track ---------- */
       // 0.00 → 0.25 the pan ends in a pull-back (expo.out), the pan blur clears
-      ft(cam, { x: K0.x, y: K0.y, scale: K0.scale }, { x: K1.x, y: K1.y, scale: K1.scale, duration: 0.25, ease: "expo.out" }, 0);
-      ft(lens, { filter: "blur(10px)" }, { filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, 0);
+      ft(cam, { x: K0.x, y: K0.y, scale: K0.scale }, { x: K1.x, y: K1.y, scale: K1.scale, duration: 0.25, ease: "sine.inOut" }, 0);
+      ft(lens, { filter: "blur(10px)" }, { filter: "blur(0px)", duration: 0.25, ease: "sine.inOut" }, 0);
       // 0.25 → 2.30 drift x −15 px/s
       ft($("dx"), { x: 0 }, { x: DX1, duration: 2.05, ease: "none" }, 0.25);
       // 1.30 → 1.60 a light step toward the balance card (world + foreground together)
@@ -394,8 +402,8 @@
       var fall = $("fall"), sheet = $("sheet");
       tl.set(fall, { opacity: 1 }, 4.65);
       tl.set(lens, { opacity: 0 }, 4.66);
-      ft(fall, { y: -FALL }, { y: 0, duration: 0.5, ease: "none" }, 4.65);
-      ft(sheet, { x: PC.x - 960, y: PC.y - 540 + FALL, scaleX: PW / 760, scaleY: PH / 980, rotation: 0 },
+      ft(fall, { y: -FALL - 30 }, { y: -30, duration: 0.5, ease: "none" }, 4.65);
+      ft(sheet, { x: PC.x - 960, y: PC.y - 540 + FALL + 30, scaleX: PW / 760, scaleY: PH / 980, rotation: 0 },
         { x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: -4, duration: 0.5, ease: "power3.out" }, 4.65);
       ft(fall, { filter: "blur(0px)" }, { filter: "blur(6px)", duration: 0.4, ease: "power1.in" }, 4.75);
       ft($("cream"), { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 4.72);
