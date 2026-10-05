@@ -1,0 +1,11 @@
+# Exclusion du référencement, au niveau du serveur.
+#
+# Double la balise <meta name="robots"> présente dans chaque page : l'en-tête
+# part même si la page est servie autrement, et couvre aussi les fichiers non
+# HTML de ce dossier. Les en-têtes sont hérités par les sous-dossiers.
+#
+# POUR ACTIVER LE RÉFÉRENCEMENT : supprimer ce fichier, retirer le noindex des
+# pages concernées, et les ajouter au sitemap. Voir site/TUNNEL.md.
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
