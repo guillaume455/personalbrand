@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"><style>
+body{background:#f3f3f5}
+/* the real leboncoin listing, camera pushed in on the price (scale 2) */
+.shot{position:absolute;left:404px;top:-1870px;width:4000px;height:2650px;background:url(../assets/img/annonce-audi.png) 0 0/4000px 2650px;
+  transform:rotate(-2deg);transform-origin:560px 2300px;filter:blur(1.2px)}
+.focus{position:absolute;left:470px;top:400px;width:900px;height:260px;overflow:hidden;transform:rotate(-2deg);transform-origin:90px 110px}
+.strike{position:absolute;left:545px;top:505px;width:320px;height:7px;border-radius:7px;background:var(--accent);transform:rotate(-4deg);box-shadow:0 0 18px rgba(252,126,21,.6)}
+.newprice{position:absolute;left:940px;top:400px;font:800 190px Montserrat;color:#1d6b43;letter-spacing:-6px;
+  filter:blur(9px);opacity:.92;transform:rotate(-2deg) scale(1.08);text-shadow:0 20px 60px rgba(0,0,0,.25)}
+.chip{position:absolute;left:560px;top:600px;background:#fff1e4;color:var(--accent-deep);border:2px solid var(--accent);font:700 34px "Instrument Sans";
+  padding:8px 20px;border-radius:40px;transform:rotate(-2deg)}
+.date{position:absolute;left:556px;top:686px;width:560px;height:66px;background:#fff;font:600 40px "Instrument Sans";color:#6b6b6b;padding-top:8px;filter:blur(.6px);transform:rotate(-2deg)}
+.fg{position:absolute;right:-180px;bottom:-140px;width:720px;height:420px;border-radius:40px;background:var(--accent);filter:blur(40px);opacity:.55}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%,transparent 62%,rgba(0,0,0,.72));z-index:30}
+</style></head><body><div class="stage">
+<div class="shot"></div>
+<div class="strike"></div>
+<div class="chip">↘ Baisse de prix · −2 500 €</div>
+<div class="date">Mise en ligne il y a 3 mois</div>
+<div class="newprice">84 400 €</div>
+<div class="fg"></div>
+<div class="shade"></div><div class="vignette"></div>
+<div class="sub">Essayer une voiture… ça coûte ta<span class="box">marge.</span></div>
+<div class="label">A1 · 8,1 s</div>
+</div></body></html>

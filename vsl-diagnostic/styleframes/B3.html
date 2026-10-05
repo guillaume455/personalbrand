@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"><style>
+body{background:#050506}
+.cabin{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,#16171c 0,#050506 70%)}
+.rim{position:absolute;left:-200px;top:-260px;width:2300px;height:700px;border-radius:50%;border-bottom:3px solid rgba(47,123,255,.55);filter:blur(3px);box-shadow:0 30px 90px rgba(47,123,255,.25)}
+.hood{position:absolute;left:0;right:0;bottom:0;height:300px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.9))}
+.top{position:absolute;left:220px;top:130px;background:#16191f;border:2px solid #2a2d35;border-radius:18px;padding:16px 28px;font:700 30px "Instrument Sans";color:#fff}
+.top b{color:#FC7E15}
+.pin{position:absolute;font:700 30px "Instrument Sans";padding:10px 22px;border-radius:30px;background:#16191f;border:2px solid #2a2d35;color:#c9ccd3;white-space:nowrap}
+.on{background:#FC7E15;color:#0b0b0d;border-color:#FC7E15;box-shadow:0 0 40px rgba(252,126,21,.55);transform:scale(1.12)}
+.p1{left:270px;top:740px}.p2{left:690px;top:530px;filter:blur(1.5px)}.p3{left:1150px;top:360px;filter:blur(2.5px)}.p4{left:1440px;top:230px;filter:blur(3.5px)}
+.glare{position:absolute;left:170px;top:90px;width:1580px;height:760px;border-radius:44px;background:linear-gradient(115deg,rgba(255,255,255,.07),transparent 35%)}
+</style></head><body><div class="stage"><div class="cabin"></div><div class="rim"></div>
+<svg width="1920" height="1080" style="position:absolute;inset:0"><defs><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><radialGradient id="dial" cx="50%" cy="45%"><stop offset="0" stop-color="#1c1d22"/><stop offset="1" stop-color="#08080a"/></radialGradient></defs>
+<rect x="170" y="90" width="1580" height="760" rx="44" fill="#0c0e12" stroke="#2a2d35" stroke-width="4"/>
+<clipPath id="scr"><rect x="170" y="90" width="1580" height="760" rx="44"/></clipPath><g clip-path="url(#scr)"><path d="M300,-50 C420,400 220,700 360,1150" stroke="#1f232b" stroke-width="18" fill="none"/><path d="M700,-50 C820,400 620,700 760,1150" stroke="#1f232b" stroke-width="10" fill="none"/><path d="M1150,-50 C1270,400 1070,700 1210,1150" stroke="#1f232b" stroke-width="22" fill="none"/><path d="M1500,-50 C1620,400 1420,700 1560,1150" stroke="#1f232b" stroke-width="12" fill="none"/><path d="M-50,180 C500,270 1300,100 2000,220" stroke="#1f232b" stroke-width="12" fill="none"/><path d="M-50,420 C500,510 1300,340 2000,460" stroke="#1f232b" stroke-width="20" fill="none"/><path d="M-50,700 C500,790 1300,620 2000,740" stroke="#1f232b" stroke-width="14" fill="none"/><path d="M-50,860 C500,950 1300,780 2000,900" stroke="#1f232b" stroke-width="10" fill="none"/></g>
+<path d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" stroke="#FC7E15" stroke-width="16" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M330,700 C520,690 560,520 760,500" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".8"/>
+<circle cx="330" cy="700" r="26" fill="#2f7bff" stroke="#fff" stroke-width="6" filter="url(#glow)"/>
+<circle cx="760" cy="500" r="18" fill="#0c0e12" stroke="#FC7E15" stroke-width="6"/>
+<circle cx="1230" cy="330" r="18" fill="#0c0e12" stroke="#FC7E15" stroke-width="6"/>
+<circle cx="1590" cy="200" r="22" fill="#FC7E15"/>
+</svg><div class="top">Itinéraire calculé · <b>ton plan</b></div>
+<div class="pin p1 on">Ta situation</div><div class="pin p2">Ton modèle</div><div class="pin p3">Tes chiffres</div><div class="pin p4">Prochaine étape</div><div class="glare"></div>
+<div class="hood"></div><div class="vignette"></div><div class="grain"></div>
+<div class="sub">On part de ta<span class="box">situation.</span></div>
+<div class="label">B3 · 42,8 s</div></div></body></html>

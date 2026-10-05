@@ -1,0 +1,27 @@
+/* Shared look of the styleframes: brand charter of Guillaume Herbin (BRIEFS-VISUELS.md + bandeau) */
+@font-face{font-family:"Instrument Sans";src:url(../assets/fonts/InstrumentSans-400.woff2);font-weight:400}
+@font-face{font-family:"Instrument Sans";src:url(../assets/fonts/InstrumentSans-600.woff2);font-weight:600}
+@font-face{font-family:"Instrument Sans";src:url(../assets/fonts/InstrumentSans-700.woff2);font-weight:700}
+@font-face{font-family:"Big Shoulders";src:url(../assets/fonts/BigShoulders-800.woff2);font-weight:800}
+@font-face{font-family:"Big Shoulders";src:url(../assets/fonts/BigShoulders-900.woff2);font-weight:900}
+@font-face{font-family:"Montserrat";src:url(../assets/fonts/Montserrat-700.woff2);font-weight:700}
+@font-face{font-family:"Montserrat";src:url(../assets/fonts/Montserrat-800.woff2);font-weight:800}
+@font-face{font-family:"Space Mono";src:url(../assets/fonts/SpaceMono-700.woff2);font-weight:700}
+@font-face{font-family:"Caveat";src:url(../assets/fonts/Caveat-600.woff2);font-weight:600}
+:root{--ink:#0b0b0d;--accent:#FC7E15;--accent-deep:#e0620a;--cream:#f6efe3;--blue:#2f7bff;--white:#fff;--muted:#8a8f98}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--ink);font-family:"Instrument Sans",sans-serif;color:var(--white)}
+.stage{position:absolute;inset:0;overflow:hidden}
+/* subtitle band: bottom center, y 890 to 980 */
+.sub{position:absolute;left:0;right:0;top:890px;height:90px;display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:62px;letter-spacing:-.5px;text-shadow:0 2px 18px rgba(0,0,0,.55);white-space:nowrap;z-index:50}
+.sub .dim{opacity:.35}
+.box{background:var(--accent);color:var(--ink);padding:0 14px 4px;border-radius:10px;margin:0 6px;text-shadow:none}
+.trait{position:relative}
+.trait::after{content:"";position:absolute;left:-4px;right:-4px;bottom:-8px;height:9px;border-radius:9px;
+  background:linear-gradient(90deg,transparent,var(--accent) 12%,var(--accent) 80%,transparent);transform:rotate(-1.2deg)}
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:40;
+  background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(0,0,0,.55) 100%)}
+.grain{position:absolute;inset:0;z-index:41;pointer-events:none;opacity:.06;
+  background-image:repeating-radial-gradient(circle at 17% 31%,#fff 0 1px,transparent 1px 3px)}
+.label{position:absolute;left:28px;top:22px;font:700 20px "Space Mono",monospace;color:rgba(255,255,255,.35);z-index:60}
