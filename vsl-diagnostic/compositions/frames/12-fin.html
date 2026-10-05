@@ -44,10 +44,10 @@
       background: linear-gradient(118deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.035) 42%, rgba(255,255,255,0) 56%); }
     .f12-wc { position: absolute; left: -170px; top: -90px; width: 1920px; height: 1080px; }
     .f12-groute { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block; overflow: visible; }
-    #f12-gend { position: absolute; left: 1568px; top: 178px; width: 44px; height: 44px; border-radius: 50%; background: #FC7E15; box-shadow: 0 0 26px rgba(252,126,21,.7); }
     #f12-mo { position: absolute; left: 938px; top: 448px; width: 44px; height: 44px; transform-origin: 22px 22px; }
     .f12-mp { position: absolute; left: 0; top: 0; width: 44px; height: 44px; background: #FC7E15; }
-    #f12-mL, #f12-mR { border-radius: 50%; box-shadow: 0 0 26px rgba(252,126,21,.7); }
+    #f12-mL, #f12-mR { border-radius: 50%; }
+    #f12-mL { box-shadow: 0 0 26px rgba(252,126,21,.7); }
     #f12-mM { transform-origin: 22px 22px; transform: scaleX(0); }
 
     /* search component (verbatim from the hook) : white plate, leboncoin wordmark, grey pill, orange button */
@@ -177,7 +177,6 @@
               <path d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" stroke="rgba(252,126,21,.55)" stroke-width="34" filter="url(#f12-glowf)"/>
               <path d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" stroke="#FC7E15" stroke-width="16"/>
             </svg>
-            <div id="f12-gend"></div>
           </div>
         </div>
       </div>
@@ -314,7 +313,7 @@
       ft($("mR"), { x: 0 }, { x: H, duration: 0.3, ease: "expo.out" }, 0);
       ft($("mM"), { scaleX: 0 }, { scaleX: (2 * H) / 44, duration: 0.3, ease: "expo.out" }, 0);
       ft([$("mL"), $("mR"), $("mM")], { backgroundColor: "#FC7E15" }, { backgroundColor: "#ffffff", duration: 0.16, ease: "power1.inOut" }, 0.10);
-      ft([$("mL"), $("mR")], { boxShadow: "0 0 26px rgba(252,126,21,0.7)" }, { boxShadow: "0 0 26px rgba(252,126,21,0)", duration: 0.16, ease: "power1.inOut" }, 0.10);
+      ft($("mL"), { boxShadow: "0 0 26px rgba(252,126,21,0.7)" }, { boxShadow: "0 0 26px rgba(252,126,21,0)", duration: 0.16, ease: "power1.inOut" }, 0.10);
       ft($("barwrap"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, 0.18);
       ft($("mo"), { opacity: 1 }, { opacity: 0, duration: 0.08, ease: "power1.in" }, 0.28);
 
