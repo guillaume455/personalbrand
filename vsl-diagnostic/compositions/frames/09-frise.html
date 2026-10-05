@@ -25,7 +25,7 @@
 
     /* timeline of years (world units : the camera holds it at x2) */
     #f09-frise { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
-    .f09-yr { position: absolute; top: 627px; width: 200px; text-align: center; font: 800 55px/56px "Big Shoulders", sans-serif;
+    .f09-yr { position: absolute; top: 590px; width: 300px; height: 90px; text-align: center; font: 800 90px/90px "Big Shoulders", sans-serif;
       color: #8a8f98; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .f09-err { position: absolute; white-space: nowrap; font: 600 30px/36px "Caveat", cursive; color: #c9ccd3; }
     .f09-ch { opacity: 0; display: inline-block; white-space: pre; }
@@ -69,7 +69,7 @@
     <!-- directional whip blur (one envelope, shared by every streaked element) -->
     <svg width="0" height="0" aria-hidden="true" style="position:absolute">
       <filter id="f09-streak" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur id="f09-streak-blur" in="SourceGraphic" stdDeviation="7 0" />
+        <feGaussianBlur id="f09-streak-blur" in="SourceGraphic" stdDeviation="5.738 0" />
       </filter>
     </svg>
 
@@ -105,13 +105,13 @@
         <!-- the timeline 2010 → 2026 (world : line y 700, years above, errors below) -->
         <div id="f09-frise">
           <svg class="f09-svg" viewBox="0 0 1920 1080" aria-hidden="true">
-            <line id="f09-line" x1="-1300" y1="700" x2="330" y2="700" stroke="#8a8f98" stroke-opacity=".55" stroke-width="3" stroke-linecap="round" />
+            <line id="f09-line" x1="-2600" y1="700" x2="330" y2="700" stroke="#8a8f98" stroke-opacity=".55" stroke-width="3" stroke-linecap="round" />
             <g id="f09-ticks" fill="#8a8f98"></g>
           </svg>
           <div id="f09-years"></div>
-          <div id="f09-e1" class="f09-err" style="left:-642px; top:716px;"><span class="f09-tx">mauvais achat</span><i class="f09-strike" id="f09-k1"><svg viewBox="0 0 100 7" preserveAspectRatio="none"><path d="M0,3.5 C0,1 2,0.4 4,0.5 L100,3 L100,4 L4,6.5 C2,6.6 0,6 0,3.5 Z" fill="#FC7E15"/></svg></i></div>
-          <div id="f09-e2" class="f09-err" style="left:-365px; top:728px;"><span class="f09-tx">marge mal calculée</span><i class="f09-strike" id="f09-k2"><svg viewBox="0 0 100 7" preserveAspectRatio="none"><path d="M0,3.5 C0,1 2,0.4 4,0.5 L100,3 L100,4 L4,6.5 C2,6.6 0,6 0,3.5 Z" fill="#FC7E15"/></svg></i></div>
-          <div id="f09-e3" class="f09-err" style="left:-88px; top:716px;"><span class="f09-tx">charges oubliées</span><i class="f09-strike" id="f09-k3"><svg viewBox="0 0 100 7" preserveAspectRatio="none"><path d="M0,3.5 C0,1 2,0.4 4,0.5 L100,3 L100,4 L4,6.5 C2,6.6 0,6 0,3.5 Z" fill="#FC7E15"/></svg></i></div>
+          <div id="f09-e1" class="f09-err" style="left:-1370px; top:712px;"><span class="f09-tx">mauvais achat</span><i class="f09-strike" id="f09-k1"><svg viewBox="0 0 100 7" preserveAspectRatio="none"><path d="M0,3.5 C0,1 2,0.4 4,0.5 L100,3 L100,4 L4,6.5 C2,6.6 0,6 0,3.5 Z" fill="#FC7E15"/></svg></i></div>
+          <div id="f09-e2" class="f09-err" style="left:-1194px; top:752px;"><span class="f09-tx">marge mal calculée</span><i class="f09-strike" id="f09-k2"><svg viewBox="0 0 100 7" preserveAspectRatio="none"><path d="M0,3.5 C0,1 2,0.4 4,0.5 L100,3 L100,4 L4,6.5 C2,6.6 0,6 0,3.5 Z" fill="#FC7E15"/></svg></i></div>
+          <div id="f09-e3" class="f09-err" style="left:-1031px; top:712px;"><span class="f09-tx">charges oubliées</span><i class="f09-strike" id="f09-k3"><svg viewBox="0 0 100 7" preserveAspectRatio="none"><path d="M0,3.5 C0,1 2,0.4 4,0.5 L100,3 L100,4 L4,6.5 C2,6.6 0,6 0,3.5 Z" fill="#FC7E15"/></svg></i></div>
         </div>
 
         <!-- GPS top : the route born from the timeline, waypoints, arrival, the « toi » start point -->
@@ -134,10 +134,10 @@
     <!-- foreground parallax years + the rolling year counter (screen space) -->
     <div id="f09-fg" class="clip f09-layer" data-start="0" data-duration="4.75" data-track-index="2">
       <div id="f09-fgset">
-        <div class="f09-fgy" data-x="1300">2012</div>
-        <div class="f09-fgy" data-x="2100">2016</div>
-        <div class="f09-fgy" data-x="2900">2020</div>
-        <div class="f09-fgy" data-x="3700">2024</div>
+        <div class="f09-fgy" data-x="1400">2012</div>
+        <div class="f09-fgy" data-x="2900">2016</div>
+        <div class="f09-fgy" data-x="4400">2020</div>
+        <div class="f09-fgy" data-x="6000">2024</div>
       </div>
       <div id="f09-count">2010</div>
     </div>
@@ -166,17 +166,17 @@
       function $(id) { return root.querySelector("#f09-" + id); }
       function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 
-      /* ---------- the timeline of years (world units ; the camera holds it at x2) ---------- */
-      var Y0 = -698, STEP = 111, SCALE1 = 2;          // 2010 at world x -698 ; one label every 2 years
+      /* ---------- the timeline of years (world units ; line y 700, labels 90 px, one every 2 years) ---------- */
+      var STEP = 200, X2026 = 130, Y0 = X2026 - 8 * STEP;      // 2010 at world x -1470 ; « toi » point at (330, 700)
+      var LBL_Y = 635, CY1 = 663.7;                            // label centre ; camera y of scene 1 (2010 at screen y 470)
       var years = [], ticks = $("ticks"), yBox = $("years"), SVGNS = "http://www.w3.org/2000/svg";
       for (var k = 0; k <= 8; k++) {
         var X = Y0 + STEP * k;
         var d = document.createElement("div");
-        d.className = "f09-yr"; d.textContent = String(2010 + 2 * k); d.style.left = (X - 100) + "px";
-        d.style.filter = "url(#f09-streak)";
+        d.className = "f09-yr"; d.textContent = String(2010 + 2 * k); d.style.left = (X - 150) + "px";
         yBox.appendChild(d); years.push({ el: d, x: X });
         var c = document.createElementNS(SVGNS, "circle");
-        c.setAttribute("cx", X); c.setAttribute("cy", 700); c.setAttribute("r", 5); ticks.appendChild(c);
+        c.setAttribute("cx", X); c.setAttribute("cy", 700); c.setAttribute("r", 4.5); ticks.appendChild(c);
       }
       // hand-written errors : one span per character
       var errChars = {};
@@ -185,55 +185,65 @@
         for (var i = 0; i < s.length; i++) { var sp = document.createElement("span"); sp.className = "f09-ch"; sp.textContent = s.charAt(i); tx.appendChild(sp); errChars[id].push(sp); }
       });
       var fgItems = Array.prototype.map.call(root.querySelectorAll(".f09-fgy"), function (el) {
-        el.style.filter = "blur(9px)"; return { el: el, x: parseFloat(el.getAttribute("data-x")) };
+        return { el: el, x: parseFloat(el.getAttribute("data-x")) };
       });
 
       /* ---------- camera : one pure function of time ---------- */
-      // scene 1 travel (screen px) : the whip ends 3000 → 450 px/s over 0.25 s, then a travelling that
-      // swells to ~900 px/s and decelerates to a smooth stop on 2026 at 2.70 (total 1776 px = 8 labels).
-      var DA = 450 * 0.25 + 2550 * 0.25 / 4, DTOT = 8 * STEP * SCALE1;
-      var AK = ((DTOT - DA) / 2.45 - 450 * (9 / 14)) / 0.225;
+      // scene 1 (world px/s) : the whip of frame 08 lands (2400 px/s on screen → 560 px/s by 0.25, slight pull back
+      // x2.44 → x2), a calm travelling over the errors, then from 1.75 the sixteen years rush by (peak ~2.10)
+      // and the camera slows down to a stop on 2026 at 2.70, pulling back to x1.4.
+      var S0 = 2.44, S1 = 2.0, S2 = 1.4, CXE = 230, W = CXE - Y0;
+      var V0 = 2400 / S0, VB = 280, T1 = 1.75, L = 2.70 - T1;
+      var DA = VB * 0.25 + (V0 - VB) * 0.25 / 4, DB = VB * (T1 - 0.25), KR = 60 * ((W - DA - DB) / L - VB * 0.5);
       function travel(t) {
         if (t <= 0) return 0;
-        if (t <= 0.25) { var q = 1 - 4 * t; return 450 * t + 2550 * 0.25 / 4 * (1 - q * q * q * q); }
-        var u = Math.min(1, (t - 0.25) / 2.45);
-        return DA + 2.45 * (450 * (u - Math.pow(u, 4) / 2 + Math.pow(u, 7) / 7) + AK * (u * u / 2 - 2 * Math.pow(u, 5) / 5 + Math.pow(u, 8) / 8));
+        if (t <= 0.25) { var q = 1 - 4 * t; return VB * t + (V0 - VB) * 0.25 / 4 * (1 - q * q * q * q); }
+        if (t <= T1) return DA + VB * (t - 0.25);
+        var u = Math.min(1, (t - T1) / L);
+        return DA + DB + L * (VB * (u - u * u * u + u * u * u * u / 2) + KR * (u * u * u / 3 - 3 * Math.pow(u, 4) / 4 + 3 * Math.pow(u, 5) / 5 - Math.pow(u, 6) / 6));
       }
       var E_p2o = gsap.parseEase("power2.out"), E_p2io = gsap.parseEase("power2.inOut"), E_p3io = gsap.parseEase("power3.inOut");
-      var CX1 = Y0 + DTOT / SCALE1;                       // 190 : 2026 centred at 2.70
-      var SREC = 1.86;                                    // light pull back 2.70 → 3.20
+      var SREC = 1.32;                                     // light pull back 2.70 → 3.20
       var S_L = 0.994, CX_L = 330 + 630 / S_L, CY_L = 700 - 160 / S_L;   // landing pose, start point fixed on screen
       function camAt(t) {
-        if (t <= 2.70) return { s: SCALE1, cx: Y0 + travel(t) / SCALE1, cy: 690 };
-        if (t <= 3.20) { var e = E_p2o((t - 2.70) / 0.5); return { s: SCALE1 + (SREC - SCALE1) * e, cx: CX1, cy: 690 }; }
+        if (t <= 2.70) {
+          var s = t < 0.4 ? S0 + (S1 - S0) * E_p2o(t / 0.4) : (t < T1 ? S1 : S1 + (S2 - S1) * E_p2io((t - T1) / L));
+          return { s: s, cx: Y0 + travel(t), cy: CY1 };
+        }
+        if (t <= 3.20) { var e = E_p2o((t - 2.70) / 0.5); return { s: S2 + (SREC - S2) * e, cx: CXE, cy: CY1 }; }
         if (t <= 4.45) {
-          var u = (t - 3.20) / 1.25, ep = E_p2io(u), es = E_p3io(u);
-          return { s: SREC + (S_L - SREC) * es, cx: CX1 + (CX_L - CX1) * ep, cy: 690 + (CY_L - 690) * ep };
+          var u2 = (t - 3.20) / 1.25, ep = E_p2io(u2), es = E_p3io(u2);
+          return { s: SREC + (S_L - SREC) * es, cx: CXE + (CX_L - CXE) * ep, cy: CY1 + (CY_L - CY1) * ep };
         }
         var v = clamp01((t - 4.45) / 0.30);   // slow push toward the start point, +2 %/s
         return { s: S_L + (1 - S_L) * v, cx: CX_L + (960 - CX_L) * v, cy: CY_L + (540 - CY_L) * v };
       }
 
       var world = $("world"), blurNode = $("streak-blur"), count = $("count");
-      var streaked = years.map(function (y) { return y.el; });
+      var streaked = years.map(function (y) { return y.el; }).concat([$("e1"), $("e2"), $("e3")]);
       var lastBlurOn = null;
       function render(t) {
         var c = camAt(t);
         gsap.set(world, { x: 960 - c.s * c.cx, y: 540 - c.s * c.cy, scale: c.s, transformOrigin: "0px 0px" });
-        // directional whip blur : 14 px → 0 with the whip's velocity (stdDeviation in world units = /2)
-        var b = t < 0.25 ? 14 * Math.pow(1 - 4 * t, 3) : 0;
-        blurNode.setAttribute("stdDeviation", (b / SCALE1).toFixed(3) + " 0");
+        // directional streak follows the on-screen speed of the timeline : 14 px at 2400 px/s, sharp under 700 px/s, cap 18
+        var b = 0;
+        if (t < 2.70) {
+          var t2 = Math.min(2.70, t + 0.004), c2 = camAt(t2), vs = c.s * (c2.cx - c.cx) / (t2 - t);
+          b = Math.min(18, Math.max(0, 14 * (vs - 700) / 1700));
+        }
+        blurNode.setAttribute("stdDeviation", (b / c.s).toFixed(3) + " 0");
         var on = b > 0.05;
         if (on !== lastBlurOn) { streaked.forEach(function (el) { el.style.filter = on ? "url(#f09-streak)" : "none"; }); lastBlurOn = on; }
-        // the year nearest the centre is white, the others ink-mute
+        // the year nearest the centre is white (with the soft glow of frame 08), the others ink-mute
         years.forEach(function (y) {
-          var sx = 960 + c.s * (y.x - c.cx), w = clamp01(1 - Math.abs(sx - 960) / 230);
-          var r = Math.round(138 + (255 - 138) * w), g = Math.round(143 + (255 - 143) * w), bl = Math.round(152 + (255 - 152) * w);
+          var sx = 960 + c.s * (y.x - c.cx), w = clamp01(1 - Math.abs(sx - 960) / 260);
+          var r = Math.round(138 + 117 * w), g = Math.round(143 + 112 * w), bl = Math.round(152 + 103 * w);
           y.el.style.color = "rgb(" + r + "," + g + "," + bl + ")";
+          y.el.style.textShadow = "0 0 16px rgba(255,255,255," + (0.18 * w).toFixed(3) + ")";
         });
         // foreground years slide 1.6x faster (parallax), stop with the camera
         var tr = travel(Math.min(t, 2.70));
-        fgItems.forEach(function (f) { gsap.set(f.el, { x: f.x - 1.6 * tr }); });
+        fgItems.forEach(function (f) { gsap.set(f.el, { x: f.x - 3.2 * tr }); });
       }
 
       /* ---------- the one paused timeline ---------- */

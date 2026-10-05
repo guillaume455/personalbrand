@@ -2,7 +2,6 @@
   <style>
     @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
     @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
-    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
 
     #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
 
@@ -31,9 +30,9 @@
     .f10-route { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block; overflow: visible; }
 
     /* banner (micro) */
-    .f10-banner { position: absolute; left: 220px; top: 130px; padding: 18px 28px; border-radius: 18px; background: #16191f;
-      border: 2px solid #2a2d35; font: 700 22px/28px "Space Mono", monospace; letter-spacing: 0.3em; text-transform: uppercase;
-      color: #c9ccd3; white-space: nowrap; }
+    .f10-banner { position: absolute; left: 220px; top: 130px; padding: 16px 28px; border-radius: 18px; background: #16191f;
+      border: 2px solid #2a2d35; font: 600 30px/39px "Instrument Sans", sans-serif; letter-spacing: -0.01em; color: #ffffff; white-space: nowrap; }
+    .f10-banner b { font-weight: 600; color: #FC7E15; }
 
     /* points */
     .f10-dot { position: absolute; border-radius: 50%; box-sizing: border-box; }
@@ -59,7 +58,7 @@
     #f10-pin2 { left: 797px; top: 561px; }
     #f10-pin2 .f10-lit { opacity: 1; }
     .f10-cut { position: absolute; left: -10px; right: -10px; top: 29px; height: 6px; border-radius: 3px; background: #FC7E15;
-      box-shadow: 0 0 14px rgba(252,126,21,.7); transform-origin: 0 50%; transform: scaleX(0) rotate(-4deg); display: block; }
+      box-shadow: 0 0 14px rgba(252,126,21,.7); transform-origin: 0 50%; display: block; }
 
     /* shade + vignette */
     #f10-shade { opacity: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); }
@@ -113,7 +112,7 @@
               <path d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" stroke="rgba(252,126,21,.55)" stroke-width="34" filter="url(#f10-glowf)"/>
               <path d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" stroke="#FC7E15" stroke-width="16"/>
             </svg>
-            <div class="f10-banner">Itinéraire calculé · ton plan</div>
+            <div class="f10-banner">Itinéraire calculé · <b>ton plan</b></div>
             <div id="f10-spin"></div>
             <div id="f10-start" class="f10-dot"></div>
             <div id="f10-w2" class="f10-dot f10-way"></div>
@@ -196,8 +195,8 @@
       function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
       function camT(from, to, pos) { to.onUpdate = apply; ft(cam, from, to, pos); }
 
-      // 0.00 → 0.35 end of the push : 1 → 1.6 on the start point (expo.out)
-      camT({ s: 1, ax: 330, ay: 700 }, { s: 1.6, ax: 520, ay: 600, duration: 0.35, ease: "expo.out" }, 0);
+      // 0.00 → 0.35 end of the push : 1 → 1.6 on the start point (power3.out : softer first image after the seam than expo.out)
+      camT({ s: 1, ax: 330, ay: 700 }, { s: 1.6, ax: 520, ay: 600, duration: 0.35, ease: "power3.out" }, 0);
       // 0.35 → 1.75 drift x +15 px/s
       camT({ ax: 520 }, { ax: 499, duration: 1.40, ease: "none" }, 0.35);
       // 1.75 → 2.05 travelling along the route to the 2nd point (expo.inOut)
@@ -226,15 +225,17 @@
       var P2 = { x: 760, y: 500 };
       var labs = ["l1", "l2", "l3", "l4"].map(function (id) { return $(id); });
       // 1.95 the four labels fan out from the point (0.05 s apart, x1.2 blur → sharp)
-      labs.forEach(function (el, i) {
+      [3, 0, 1, 2].forEach(function (li, i) {
+        var el = labs[li];
         var dx = P2.x - parseFloat(el.getAttribute("data-cx")), dy = P2.y - parseFloat(el.getAttribute("data-cy"));
         ft(el, { opacity: 0, x: dx * 0.7, y: dy * 0.7, scale: 1.2, filter: "blur(6px)" },
-          { opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 1.95 + 0.05 * i);
+          { opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)", duration: 0.12, ease: "expo.out" }, 1.95 + 0.05 * i);
       });
       // 2.08 on « tranche » : three are cut by an accent stroke and go out (0.05 s apart)
       [0, 1, 2].forEach(function (i) {
         var t = 2.08 + 0.05 * i, cut = labs[i].querySelector(".f10-cut");
-        ft(cut, { scaleX: 0, rotation: -4 }, { scaleX: 1, rotation: -4, duration: 0.12, ease: "power3.out" }, t);
+        gsap.set(cut, { scaleX: 0, scaleY: 1, skewX: 0, rotation: -4, transformOrigin: "0% 50%" });
+        ft(cut, { scaleX: 0 }, { scaleX: 1, duration: 0.12, ease: "power3.out" }, t);
         ft(labs[i], { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power3.out" }, t + 0.12);
       });
       // the one that remains loses its readable name

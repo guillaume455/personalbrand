@@ -37,20 +37,30 @@
     #f03-t1 { left: 12px; } #f03-t2 { left: 318px; opacity: 0; } #f03-t3 { left: 624px; opacity: 0; }
     #f03-t1 .f03-on { opacity: 1; }
 
-    #f03-pagebox { position: absolute; left: 340px; top: 74px; width: 1240px; height: 822px; border-radius: 0 0 18px 18px; background: #ffffff; overflow: hidden;
-      box-shadow: 0 50px 140px rgba(0,0,0,.6), 0 12px 34px rgba(0,0,0,.35); }
+    #f03-pagebox { position: absolute; left: 340px; top: 74px; width: 1240px; height: 822px; border-radius: 0 0 24.8px 24.8px; background: #ffffff; overflow: hidden;
+      box-shadow: 0 37px 99px rgba(0,0,0,.6), 0 9px 25px rgba(0,0,0,.35), 0 0 56px rgba(252,126,21,.10); }
     .f03-page { position: absolute; left: 0; top: 0; width: 1240px; height: 822px; background: #ffffff; overflow: hidden; }
     .f03-nat { position: absolute; left: 0; top: 0; width: 2000px; transform: scale(0.62); transform-origin: 0 0; }
     .f03-nat img { display: block; width: 2000px; }
     #f03-pford, #f03-plac { opacity: 0; }
 
-    /* overlays left on the Audi page by frame 02 (native px) */
-    #f03-strike { position: absolute; left: 70px; top: 1186px; width: 158px; height: 4px; border-radius: 4px; background: #FC7E15;
-      transform: rotate(-4deg); box-shadow: 0 0 9px rgba(252,126,21,.6); }
-    #f03-chip { position: absolute; left: 78px; top: 1226px; height: 32px; padding: 0 12px 0 10px; border-radius: 18px; background: #fff1e4;
-      border: 1.5px solid #FC7E15; color: #e0620a; font: 700 17px/32px "Instrument Sans", sans-serif; white-space: nowrap; }
-    #f03-chip svg { display: inline-block; width: 13px; height: 13px; vertical-align: -1px; margin-right: 4px; }
-    #f03-date { position: absolute; left: 72px; top: 1272px; width: 270px; height: 38px; background: #ffffff; font: 500 21px/38px "Instrument Sans", sans-serif; color: #6b6e73; padding-left: 6px; }
+    /* the Audi page as frame 02 leaves it (native px) : next photo, rolled date, struck price, drop pill, soft sticker */
+    #f03-slot { position: absolute; left: 78px; top: 308px; width: 599px; height: 669px; overflow: hidden; border-radius: 26px 0 0 26px;
+      background: url("assets/img/annonce-audi.png") -1746px -1348px / 4130px 2736px no-repeat; }
+    #f03-fgph { position: absolute; left: 78px; top: 860px; width: 922px; height: 117px; filter: blur(5px);
+      background: url("assets/img/annonce-audi.png") -78px -860px / 2000px 1325px no-repeat; }
+    #f03-date { position: absolute; left: 72px; top: 1274px; width: 300px; height: 34px; overflow: hidden; background: #ffffff;
+      white-space: nowrap; font: 500 21.5px/34px "Instrument Sans", sans-serif; color: #4f4c55; padding-left: 6px; }
+    #f03-strike { position: absolute; left: 70px; top: 1186px; width: 160px; height: 8px; border-radius: 4px; background: #FC7E15; transform-origin: 0 50%;
+      transform: rotate(-3deg); box-shadow: 0 0 10px rgba(252,126,21,.35); }
+    #f03-chip { position: absolute; left: 300px; top: 1214px; height: 40px; padding: 0 16px 0 12px; border: 2.5px solid #FC7E15; border-radius: 20px; background: #fff3e8;
+      font: 700 22px/35px "Instrument Sans", sans-serif; color: #e0620a; white-space: nowrap; }
+    #f03-chip svg { display: inline-block; width: 20px; height: 20px; vertical-align: -3px; margin-right: 6px; }
+    #f03-stk { position: absolute; left: 560px; top: 946px; height: 50px; padding: 0 18px; border: 3px solid #FC7E15; border-radius: 10px; background: #ffffff;
+      font: 700 24px/44px "Space Mono", monospace; color: #1a1b1f; white-space: nowrap; box-shadow: 0 6px 18px rgba(0,0,0,.12);
+      transform: rotate(-3deg); filter: blur(3px); }
+    /* blurred orange reflection carried over from frame 02 (fades away) */
+    .f03-fgo { position: absolute; left: 1540px; top: 1000px; width: 640px; height: 260px; border-radius: 60px; background: #FC7E15; filter: blur(42px); opacity: .5; }
 
     /* sharp copy of the Ford seller card (depth of field in scene 2) */
     #f03-crop { position: absolute; left: 1166.46px; top: 89.5px; width: 391.84px; height: 310px; opacity: 0;
@@ -76,8 +86,11 @@
     #f03-numw { position: absolute; left: 30px; top: 62px; width: 330px; height: 116px; }
     #f03-num { display: inline-block; font: 900 112px/116px "Big Shoulders", sans-serif; font-variant-numeric: tabular-nums; color: #ffffff;
       white-space: nowrap; transform-origin: 0 60%; letter-spacing: 0.005em; }
-    #f03-tag { position: absolute; left: 0; top: 0; font: 800 76px/1 "Montserrat", sans-serif; color: #1d6b43; white-space: nowrap;
-      letter-spacing: -0.02em; text-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    /* the price label from frame 02 (same structure : position > rotated blur frame > counter-rotation > text) */
+    #f03-tag { position: absolute; left: 0; top: 0; width: 10px; height: 10px; }
+    #f03-frot { position: absolute; left: 0; top: 0; transform-origin: 0 0; filter: url(#f03-mbf); }
+    #f03-finn { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+    #f03-flab { position: absolute; left: 0; top: 0; transform-origin: 0 0; font: 800 62px/62px "Montserrat", sans-serif; color: #1d6b43; white-space: nowrap; letter-spacing: -0.01em; }
 
     /* ---------- the folded sheet (screen space) ---------- */
     #f03-fall { opacity: 0; }
@@ -104,6 +117,10 @@
   </style>
 
   <div id="root" data-composition-id="03-onglets" data-width="1920" data-height="1080" data-duration="5.15">
+
+    <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+      <filter id="f03-mbf" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur id="f03-mbb" in="SourceGraphic" stdDeviation="10 0" /></filter>
+    </svg>
 
     <!-- ground-dark -->
     <div id="f03-ground" class="clip f03-layer" data-start="0" data-duration="5.15" data-track-index="0">
@@ -132,9 +149,12 @@
               <div id="f03-pagebox">
                 <div id="f03-paudi" class="f03-page"><div class="f03-nat">
                   <img src="assets/img/annonce-audi.png" alt="">
-                  <div id="f03-strike"></div>
-                  <div id="f03-chip"><svg viewBox="0 0 14 14" fill="none" stroke="#e0620a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5l9 9M11.5 4.5v7h-7"/></svg>Baisse de prix · −2 500 €</div>
+                  <div id="f03-slot"></div>
                   <div id="f03-date">il y a 3 mois</div>
+                  <div id="f03-strike"></div>
+                  <div id="f03-chip"><svg viewBox="0 0 20 20" fill="none" stroke="#e0620a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11 11"/><path d="M15 7v8H7"/></svg>Baisse de prix · −2 500 €</div>
+                  <div id="f03-stk">Modèle : achat-revente</div>
+                  <div id="f03-fgph"></div>
                 </div></div>
                 <div id="f03-pford" class="f03-page"><div class="f03-nat"><img src="assets/img/annonce-ford.png" alt=""></div></div>
                 <div id="f03-plac" class="f03-page"><div class="f03-nat"><img src="assets/img/lacentrale-accueil.png" alt=""></div></div>
@@ -152,6 +172,7 @@
           </div>
         </div>
       </div>
+      <div id="f03-fgo" class="f03-fgo"></div>
     </div>
 
     <!-- foreground : the balance card and the price tag (sharp, outside the lens blur) -->
@@ -162,7 +183,7 @@
           <div class="f03-lab">SOLDE ÉPARGNE</div>
           <div id="f03-numw"><span id="f03-num">12 400 €</span></div>
         </div>
-        <div id="f03-tag">84 400 €</div>
+        <div id="f03-tag"><div id="f03-frot"><div id="f03-finn"><div id="f03-flab">84 400 €</div></div></div></div>
       </div>
     </div>
 
@@ -220,7 +241,12 @@
       var BTN = W(1649, 335);                   // « Envoyer un message » centre
       var XBTN = { x: 340 + 318 + 300 - 28, y: 18 + 8 + 24 }; // × of the Ford tab
 
-      var K0 = camFor(PRICE, { x: 700, y: 510 }, 2 / 0.62, 1, 0, 1);      // handoff_in : listing at x2, price centre-left
+      // handoff_in = frame 02 at 5.05 : screen = A + 1.9 * P (P in listing px)
+      var S02 = 0.95 * 2, Q02 = { x: 960, y: 440 };
+      var T02 = { x: Q02.x - (148 + (960 - 691) / S02) - 16.5 / S02 - 50, y: Q02.y - (1190 + (440 - 515) / S02) + 30 };
+      var A02 = { x: Q02.x + S02 * (T02.x - Q02.x), y: Q02.y + S02 * (T02.y - Q02.y) };
+      var C0 = S02 / 0.62;
+      var K0 = { scale: C0, x: A02.x - C0 * 340, y: A02.y - C0 * 74 };
       var K1 = camFor(WIN_C, { x: 960, y: 465 }, 0.9, 1, 0, 1);           // whole page + tab bar
       var K2 = camFor(SELLER, { x: 960, y: 450 }, 2.2, N1, DX1, 1);       // A2 framing on the seller card
       var K3 = camFor(XBTN, { x: 760, y: 300 }, 2.2, N1, DX1, DZ1);       // reframed up on the Ford tab ×
@@ -269,12 +295,22 @@
 
       /* ---------- the price tag falls into the balance card ---------- */
       var tag = $("tag"), card = $("card");
-      // t=0 : flying up-right at ~1800 px/s, motion blur 10 px
-      ft(tag, { x: 1450, y: 230, xPercent: -50, yPercent: -50 }, { x: 1682, duration: 0.6, ease: "power4.out" }, 0);
-      ft(tag, { y: 230 }, { y: 95, duration: 0.3, ease: "power2.out" }, 0);
-      ft(tag, { y: 95 }, { y: 206, duration: 0.3, ease: "power2.in" }, 0.30);
-      ft(tag, { filter: "blur(10px)" }, { filter: "blur(0px)", duration: 0.28, ease: "power2.out" }, 0);
-      ft(tag, { scale: 1, opacity: 1 }, { scale: 0.55, opacity: 0, duration: 0.16, ease: "power2.in" }, 0.46);
+      // t=0 : text box top-left at (1127.7, 318.6), 1800 px/s toward −35°, directional blur 10 px (frame 02's last state)
+      var ANG = -35, FLY0 = { x: 955.7 + 210 * Math.cos(ANG * Math.PI / 180), y: 439 + 210 * Math.sin(ANG * Math.PI / 180) };
+      gsap.set($("flab"), { scale: S02 });
+      gsap.set($("frot"), { rotation: ANG, width: 760, height: 150 });
+      gsap.set($("finn"), { rotation: -ANG });
+      gsap.set(tag, { transformOrigin: "0px 0px" });
+      ft(tag, { x: FLY0.x }, { x: 1526, duration: 0.8, ease: "power3.out" }, 0);
+      ft(tag, { y: FLY0.y }, { y: 164, duration: 0.3, ease: "power2.out" }, 0);
+      ft(tag, { y: 164 }, { y: 184, duration: 0.3, ease: "power2.in" }, 0.30);
+      ft(tag, { scale: 1 }, { scale: 0.5, duration: 0.5, ease: "power2.inOut" }, 0.1);
+      var mb = $("mbb"), mbp = { v: 10 };
+      function wmb() { mb.setAttribute("stdDeviation", mbp.v.toFixed(2) + " 0"); }
+      ft(mbp, { v: 10 }, { v: 0, duration: 0.3, ease: "power2.out", onUpdate: wmb }, 0);
+      ft(tag, { opacity: 1 }, { opacity: 0, duration: 0.16, ease: "power2.in" }, 0.46);
+      // the orange reflection of frame 02 dims away
+      ft($("fgo"), { opacity: 0.5 }, { opacity: 0, duration: 0.4, ease: "power1.out" }, 0.25);
       // the card arrives just before (dark glass, top right)
       tl.set(card, { opacity: 1 }, 0.16);
       ft(card, { y: -26, scale: 1.08, filter: "blur(8px)", opacity: 0 }, { y: 0, scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.22, ease: "expo.out" }, 0.16);
