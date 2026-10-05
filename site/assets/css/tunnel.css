@@ -347,22 +347,29 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
 }
 .preuve-etroite{max-width:520px;margin-inline:auto}
 
-/* pour qui / pas pour qui */
+/* pour qui / pas pour qui : deux cartes côte à côte, pastilles rondes */
 .duo{
-  display:grid;gap:clamp(20px,3vw,34px);
-  grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));
+  display:grid;gap:clamp(16px,2vw,24px);max-width:1000px;margin-inline:auto;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));
 }
-.duo-col{min-width:0;padding:28px 26px;border-radius:var(--rayon);border:1px solid var(--filet)}
-.duo-col h2{font-size:clamp(20px,1.4vw + 15px,24px);margin-bottom:18px}
-.duo-col ul{margin:0;padding:0;list-style:none;display:grid;gap:11px}
-.duo-col li{font-size:16.5px;padding-left:28px;position:relative;color:var(--encre-doux)}
+.duo-col{
+  min-width:0;padding:clamp(24px,2.6vw,32px);border-radius:var(--rayon);
+  border:1px solid var(--filet);
+}
+.duo-col h2{font-size:clamp(19px,1.1vw + 15px,22px);margin-bottom:18px}
+.duo-col ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.duo-col li{font-size:16px;line-height:1.45;padding-left:34px;position:relative;color:var(--encre)}
 .duo-col li::before{
-  position:absolute;left:0;top:0;font-weight:700;font-size:15px;line-height:1.7;
+  position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:12px;line-height:1;
 }
-.duo-pour{background:var(--carte);box-shadow:var(--ombre-1)}
-.duo-pour li::before{content:"✓";color:var(--or-fonce)}
-.duo-pas{background:transparent;border-style:dashed}
-.duo-pas li::before{content:"✕";color:var(--encre-clair)}
+.duo-pour{background:var(--carte);box-shadow:var(--ombre-2);border-top:3px solid var(--or)}
+.duo-pour li::before{content:"✓";background:var(--or);color:#fff}
+.duo-pas{background:var(--papier-doux);border-top:3px solid var(--filet-fort)}
+.duo-pas h2{color:var(--encre-doux)}
+.duo-pas li{color:var(--encre-doux)}
+.duo-pas li::before{content:"✕";background:#fff;color:var(--encre-clair);border:1px solid var(--filet-fort)}
 
 /* ============ 06. TÉMOIGNAGES ========================================== */
 .temoins{
@@ -419,19 +426,19 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
 .prix-bloc .cta{width:100%;max-width:420px}
 .prix-bloc .micro{margin-inline:auto;text-align:center;max-width:none}
 
-.garantie{
-  padding:clamp(28px,3.4vw,44px);border-radius:var(--rayon);
-  background:linear-gradient(180deg, var(--or-voile), transparent);
-  border:1px solid rgba(251,128,0,.38);
-  position:relative;
+/* garantie et disponibilité, sous le prix : icône à gauche, texte à droite */
+.engagements{display:grid;gap:14px;margin-top:clamp(20px,2.4vw,28px)}
+.engagement{
+  display:flex;gap:18px;align-items:flex-start;
+  padding:clamp(20px,2.2vw,26px);background:var(--carte);
+  border:1px solid var(--filet);border-radius:var(--rayon);box-shadow:var(--ombre-1);
 }
-.garantie h2{margin-bottom:.6em}
-.garantie p{color:var(--encre-doux);margin:0}
-
-.dispo{
-  font-size:clamp(17px,.5vw + 16px,19px);color:var(--encre-doux);
-  padding-left:20px;border-left:2px solid var(--filet-fort);max-width:62ch;
-}
+.engagement .pastille{flex:none;margin:0}
+.engagement h3{font-size:clamp(17px,.6vw + 15px,19.5px);margin:2px 0 6px}
+.engagement p{margin:0;font-size:15.5px;color:var(--encre-doux)}
+.engagement-fort{border-color:rgba(251,128,0,.42);border-left:3px solid var(--or)}
+.engagement-fort .pastille{background:var(--or);border-color:var(--or)}
+.engagement-fort .pastille svg{stroke:#fff}
 
 .faq{margin-top:clamp(24px,3vw,36px)}
 .faq details{border-top:1px solid var(--filet)}
@@ -642,13 +649,6 @@ h2{font-weight:700}
 .interro{border-left-color:var(--or)}
 .pointe{border-left-color:var(--or)}
 .temoin figcaption b{color:var(--or)}
-.garantie{
-  background:linear-gradient(180deg, rgba(251,128,0,.10), transparent 70%);
-  border-color:rgba(251,128,0,.42);
-}
-.garantie::before{
-  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--or);
-}
 .prix-chiffre{color:var(--encre)}
 .prix-bloc{border-top:3px solid var(--or)}
 .cookies{border-top-color:var(--or)}
