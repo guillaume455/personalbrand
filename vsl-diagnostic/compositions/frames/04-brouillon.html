@@ -1,4 +1,23 @@
 <template>
+  <!--
+    DRAFT SHEET at the last image (4.00) - for 05-questions to match
+    - sheet: 760 x 980 (sheet-local px), rotation -4deg around its centre, apparent scale 0.85 (=> 646 x 833 on screen),
+      centre on screen (959.4, 539.5); axis-aligned screen box x 608-1311, y 101-977. Camera still drifting z -1 %/s (power3.out pull-back just ended).
+      Build recipe: world sheet left 580 top 50 (centre 960,540), transform-origin 380px 490px, rotation -4; camera scale 0.8433 (origin 960 540)
+      x drift 1.008 (origin 1050 610) = 0.85 total.
+    - paper #f6efe3, ruled lines rgba(47,123,255,.18) 2 px at y = 70k (68-70, 138-140 ...), creases: linear-gradients 118deg and 62deg crossing near the centre.
+    - written lines: Caveat 600 64px, line box height 84 (line-height 84), ink #1a1b1f, left x 86 (sheet-local):
+        "Essai n°2 — la voiture"      top 72  (centre y 114)  -> screen line-box centre y 224
+        "Achat ……… 11 800"            top 200 (centre y 242)  -> screen 334
+        "Contrôle + pneus … 640"      top 275 (centre y 317)  -> screen 395
+        "Carte grise, annonce … 310"  top 350 (centre y 392)  -> screen 456
+        "Baisse de prix …… 900"       top 425 (centre y 467)  -> screen 523
+        total rule: path M 82 520 C 260 516, 470 513, 668 508 (stroke 4, ink-dark)
+        "Marge :"  left 96, top 540 (centre y 582)            -> screen 629
+        "− 650 €"  left 392, top 534 (centre y 576), pen-red #d33a2c, circled by a pen-red 5 px loop centred (482, 580), rx 126 ry 54, tilt -5deg
+    - empty below sheet-local y ~ 640 (rule lines at 700, 770, 840, 910): room for the three questions.
+    - pen: out of frame on the right (sheet-local x 1900, y 260); no subtitle, no band, bottom shade at 0; halo + grain as the pilot.
+  -->
   <style>
     @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
     @font-face { font-family: "Caveat"; src: url("assets/fonts/Caveat-600.woff2") format("woff2"); font-weight: 600; }
@@ -33,7 +52,7 @@
       background: radial-gradient(ellipse 700px 900px at 40% 35%, rgba(255,255,255,.18), rgba(0,0,0,0) 60%), linear-gradient(180deg, rgba(0,0,0,0) 70%, rgba(60,45,25,.10) 100%); }
 
     .f04-hand { position: absolute; height: 84px; white-space: nowrap; font: 600 64px/84px "Caveat", cursive; color: #1a1b1f;
-      opacity: 0; clip-path: inset(0% 100% -10% 0%); }
+      opacity: 0; clip-path: inset(-15% 100% -15% -4%); }
     .f04-red { color: #d33a2c; }
     #f04-ink { position: absolute; left: 0; top: 0; width: 760px; height: 980px; overflow: visible; }
     #f04-ink path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -57,7 +76,7 @@
     .f04-kw .f04-w { position: relative; text-shadow: none; }
 
     /* typographic moment : 84 px, centered in the lower third of the sheet, on a dark band */
-    #f04-ph { position: absolute; left: 0; top: 742px; width: 1920px; text-align: center; opacity: 0; }
+    #f04-ph { position: absolute; left: 0; top: 750px; width: 1920px; text-align: center; opacity: 0; }
     #f04-band { display: inline-block; position: relative; padding: 18px 50px 24px; border-radius: 22px; background: rgba(11,11,13,.88);
       box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06); white-space: nowrap;
       font: 600 84px/94px "Instrument Sans", sans-serif; letter-spacing: -0.025em; color: #ffffff; }
@@ -141,9 +160,9 @@
       var cam = $("cam"), drift = $("drift"), lens = $("lens"), sheet = $("sheet"), pen = $("pen");
 
       /* ---- the ring around "- 650 EUR" : one hand loop with an overshoot (sheet coordinates) ---- */
-      var RC = { x: 512, y: 574, rx: 150, ry: 64, tilt: -5 * Math.PI / 180 };
+      var RC = { x: 482, y: 580, rx: 126, ry: 54, tilt: -5 * Math.PI / 180 };
       function ringPt(u) {   // u : 0 -> 1 along the loop
-        var a = Math.PI * 1.08 + u * Math.PI * 2.18, r = 1 + 0.06 * u;
+        var a = Math.PI * 0.92 + u * Math.PI * 2.12, r = 1 + 0.05 * u;
         var ex = Math.cos(a) * RC.rx * r, ey = Math.sin(a) * RC.ry * r;
         return { x: RC.x + ex * Math.cos(RC.tilt) - ey * Math.sin(RC.tilt), y: RC.y + ex * Math.sin(RC.tilt) + ey * Math.cos(RC.tilt) };
       }
@@ -176,13 +195,13 @@
       /* ---- the writing : each line clips in from the left, the pen tip follows ---- */
       // [id, start, duration, x0, x1, tip y] (sheet coordinates)
       var W = [
-        ["l0", 0.20, 0.25, 90, 640, 128],
-        ["l1", 0.55, 0.25, 90, 560, 256],
-        ["l2", 0.85, 0.25, 90, 600, 331],
-        ["l3", 1.15, 0.25, 90, 690, 406],
-        ["l4", 1.45, 0.25, 90, 590, 481],
-        ["l5", 2.00, 0.25, 100, 300, 596],
-        ["l6", 2.30, 0.30, 396, 610, 590]
+        ["l0", 0.20, 0.25, 90, 570, 128],
+        ["l1", 0.55, 0.25, 90, 530, 256],
+        ["l2", 0.85, 0.25, 90, 608, 331],
+        ["l3", 1.15, 0.25, 90, 698, 406],
+        ["l4", 1.45, 0.25, 90, 582, 481],
+        ["l5", 2.00, 0.25, 100, 270, 596],
+        ["l6", 2.30, 0.30, 396, 572, 590]
       ];
       var PEN_OFF = { x: 1500, y: 1300 }, last = { x: PEN_OFF.x, y: PEN_OFF.y }, lastT = 0.07;
       gsap.set(pen, { x: PEN_OFF.x, y: PEN_OFF.y });
@@ -195,7 +214,7 @@
         var el = $(w[0]);
         if (w[1] > lastT + 0.01) penTo(w[3], w[5], lastT, w[1]);
         tl.set(el, { opacity: 1 }, w[1]);
-        ft(el, { clipPath: "inset(0% 100% -10% 0%)" }, { clipPath: "inset(0% 0% -10% 0%)", duration: w[2], ease: "none" }, w[1]);
+        ft(el, { clipPath: "inset(-15% 100% -15% -4%)" }, { clipPath: "inset(-15% -6% -15% -4%)", duration: w[2], ease: "none" }, w[1]);
         penTo(w[4], w[5] + 6, w[1], w[1] + w[2], "none");
         if (w[0] === "l4") {
           // 1.75 the total rule pulls (0.2 s)

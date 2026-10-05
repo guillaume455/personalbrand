@@ -1,14 +1,16 @@
 <template>
   <!--
-    05-questions : sheet geometry (draft component, shared with 04-brouillon)
-    - sheet #f05-sheet : 760 x 980, layer box left 580 top 50 (centre 960,540), rotate(-4deg) around its centre,
-      cream #f6efe3, radius 6, blue rules rgba(47,123,255,.18) every 70 px at sheet-local y = 35 + 70k.
-    - camera at handoff_in : scale 0.85 around (960,540), x 0, y 0 (whole sheet centred).
-    - Caveat 600, sheet-local baselines (x 70) : "Essai n°2 — la voiture" 105 ; Achat 245 ; Contrôle + pneus 315 ;
-      Carte grise, annonce 385 ; Baisse de prix 455 ; total rule y 482 (x 70 to 640) ; "Marge :" 595 ;
-      "− 650 €" pen-red 88 px x 330 baseline 600, red ellipse centre (468,570) rx 178 ry 64 rot -6.
-    - bottom of the sheet (below y 650) empty at handoff_in ; frame 05 writes : "Quel modèle ?" 735,
-      "Combien il me faut ?" 875, "Combien je dois vendre ?" 945.
+    05-questions : sheet geometry, matched to 04-brouillon (its last image is this frame's first image)
+    - sheet #f05-sheet : 760 x 980, layer box left 580 top 50 (centre 960,540), rotation -4 around (380,490),
+      paper #f6efe3 radius 6, blue rules rgba(47,123,255,.18) at sheet-local y 68-70 + 70k, tone + two creases.
+    - camera at handoff_in : scale 0.85 around (960,540), x 0, y 0 (whole sheet centred), drift -1 %/s.
+    - Caveat 600 64/84, sheet-local boxes : "Essai n°2 — la voiture" (86,72) ; "Achat ……… 11 800" (86,200) ;
+      "Contrôle + pneus … 640" (86,275) ; "Carte grise, annonce … 310" (86,350) ; "Baisse de prix …… 900" (86,425) ;
+      total rule path M 82 520 C 260 516, 470 513, 668 508 ; "Marge :" (96,540) ; "− 650 €" pen-red (392,534) ;
+      red ring : hand loop centre (512,574) rx 150 ry 64 tilt -5 (same generator as 04).
+    - bottom of the sheet (below y 650) empty at handoff_in ; frame 05 writes (box tops, 64/80) :
+      "Quel modèle ?" (70,677), "Combien il me faut ?" (70,817), "Combien je dois vendre ?" (70,887).
+    - pen : the 04 pen component (svg ballpoint, blur 9), tip at its wrapper origin, enters from sheet-local (1900,260).
   -->
   <style>
     @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
@@ -33,17 +35,20 @@
     #f05-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
 
     /* draft : lined cream sheet, -4deg, two soft creases, deep shadow */
-    #f05-sheet { position: absolute; left: 580px; top: 50px; width: 760px; height: 980px; border-radius: 6px; background-color: #f6efe3;
-      background-image: repeating-linear-gradient(180deg, rgba(47,123,255,0) 0px, rgba(47,123,255,0) 69px, rgba(47,123,255,.18) 69px, rgba(47,123,255,.18) 71px);
-      background-position: 0 -35px; transform: rotate(-4deg); transform-origin: 380px 490px;
-      box-shadow: 0 50px 120px rgba(0,0,0,.7), 0 12px 30px rgba(0,0,0,.4); }
-    .f05-crease { position: absolute; left: 0; top: 0; width: 760px; height: 980px; border-radius: 6px;
-      background: linear-gradient(118deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.07) 41%, rgba(0,0,0,0) 47%), linear-gradient(32deg, rgba(0,0,0,0) 60%, rgba(0,0,0,.06) 61%, rgba(0,0,0,0) 66%); }
+    #f05-sheet { position: absolute; left: 580px; top: 50px; width: 760px; height: 980px; transform-origin: 380px 490px; transform: rotate(-4deg); }
+    .f05-paper { position: absolute; left: 0; top: 0; width: 760px; height: 980px; border-radius: 6px; background-color: #f6efe3;
+      background-image: repeating-linear-gradient(180deg, rgba(47,123,255,0) 0px, rgba(47,123,255,0) 68px, rgba(47,123,255,.18) 68px, rgba(47,123,255,.18) 70px);
+      box-shadow: 0 60px 140px rgba(0,0,0,.65), 0 16px 40px rgba(0,0,0,.45); overflow: hidden; }
+    .f05-crease1 { position: absolute; left: 0; top: 0; width: 760px; height: 980px;
+      background: linear-gradient(118deg, rgba(0,0,0,0) 47%, rgba(120,100,70,.10) 49.6%, rgba(255,255,255,.55) 50.2%, rgba(255,255,255,0) 53%); }
+    .f05-crease2 { position: absolute; left: 0; top: 0; width: 760px; height: 980px;
+      background: linear-gradient(62deg, rgba(0,0,0,0) 44%, rgba(120,100,70,.08) 46.4%, rgba(255,255,255,.45) 47%, rgba(255,255,255,0) 50%); }
+    .f05-tone { position: absolute; left: 0; top: 0; width: 760px; height: 980px;
+      background: radial-gradient(ellipse 700px 900px at 40% 35%, rgba(255,255,255,.18), rgba(0,0,0,0) 60%), linear-gradient(180deg, rgba(0,0,0,0) 70%, rgba(60,45,25,.10) 100%); }
+    .f05-hand { position: absolute; height: 84px; white-space: nowrap; font: 600 64px/84px "Caveat", cursive; color: #1a1b1f; clip-path: inset(0% 0% -10% 0%); }
+    .f05-red { color: #d33a2c; }
     .f05-group { position: absolute; left: 0; top: 0; width: 760px; height: 980px; --dof: 0px; filter: blur(var(--dof)); will-change: filter; }
     .f05-h { position: absolute; left: 70px; height: 80px; font: 600 64px/80px "Caveat", cursive; color: #1a1b1f; white-space: nowrap; }
-    .f05-h small { font-size: 46px; color: #555a63; }
-    .f05-res { position: absolute; left: 330px; height: 110px; font: 600 88px/110px "Caveat", cursive; color: #d33a2c; white-space: nowrap; }
-    .f05-rule { position: absolute; left: 70px; top: 480px; width: 570px; height: 4px; border-radius: 4px; background: #1a1b1f; transform: rotate(-1deg); }
     .f05-ink { position: absolute; left: 0; top: 0; width: 760px; height: 980px; overflow: visible; }
     .f05-ink path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -56,10 +61,8 @@
     #f05-strikes path { opacity: 0; }
 
     /* pen : black ballpoint, blurred, foreground ; the wrapper sits on the tip */
-    #f05-pen { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; }
-    .f05-penbar { position: absolute; left: -10px; top: -24px; width: 560px; height: 48px; border-radius: 24px 30px 30px 24px; opacity: .88;
-      background: linear-gradient(180deg, #2a2b30, #09090b); transform-origin: 10px 24px; transform: rotate(-34deg);
-      filter: blur(15px); box-shadow: 0 0 0 5px rgba(252,126,21,.45); }
+    #f05-pen { position: absolute; left: 0; top: 0; width: 1px; height: 1px; filter: blur(9px); opacity: 0; }
+    #f05-pen svg { position: absolute; left: -40px; top: -1240px; width: 1300px; height: 1300px; overflow: visible; }
 
     /* shade + vignette */
     #f05-shade { opacity: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); }
@@ -107,48 +110,57 @@
       <div id="f05-drift">
         <div id="f05-cam">
           <div id="f05-sheet">
-            <div class="f05-crease"></div>
+            <div class="f05-paper"><div class="f05-tone"></div><div class="f05-crease1"></div><div class="f05-crease2"></div></div>
 
             <!-- the calculations (frame 04), defocused as the camera goes down -->
             <div id="f05-calc" class="f05-group">
-              <div class="f05-h" style="top:43px">Essai n°2 — la voiture</div>
-              <div class="f05-h" style="top:183px">Achat <small>………</small> 11 800</div>
-              <div class="f05-h" style="top:253px">Contrôle + pneus <small>…</small> 640</div>
-              <div class="f05-h" style="top:323px">Carte grise, annonce <small>…</small> 310</div>
-              <div class="f05-h" style="top:393px">Baisse de prix <small>……</small> 900</div>
-              <div class="f05-rule"></div>
-              <div class="f05-h" style="top:533px">Marge :</div>
-              <div class="f05-res" style="top:515px">− 650 €</div>
+              <div class="f05-hand" style="left:86px;top:72px;">Essai n°2 — la voiture</div>
+              <div class="f05-hand" style="left:86px;top:200px;">Achat ……… 11 800</div>
+              <div class="f05-hand" style="left:86px;top:275px;">Contrôle + pneus … 640</div>
+              <div class="f05-hand" style="left:86px;top:350px;">Carte grise, annonce … 310</div>
+              <div class="f05-hand" style="left:86px;top:425px;">Baisse de prix …… 900</div>
+              <div class="f05-hand" style="left:96px;top:540px;">Marge :</div>
+              <div class="f05-hand f05-red" style="left:392px;top:534px;">− 650 €</div>
               <svg class="f05-ink" viewBox="0 0 760 980">
-                <path d="M 292 568 C 288 520, 380 496, 470 500 C 572 504, 650 528, 646 568 C 642 612, 560 640, 466 638 C 372 636, 296 614, 292 568" stroke="#d33a2c" stroke-width="6" transform="rotate(-6 468 570)"/>
+                <path d="M 82 520 C 260 516, 470 513, 668 508" stroke="#1a1b1f" stroke-width="4"/>
+                <path id="f05-ring" d="" stroke="#d33a2c" stroke-width="5"/>
               </svg>
             </div>
 
             <!-- question 1 and its four model words -->
             <div id="f05-g1" class="f05-group">
-              <div id="f05-q1" class="f05-h f05-q" style="top:673px"><span id="f05-q1t" class="f05-qt">Quel modèle</span><span id="f05-q1m" class="f05-qm">?</span></div>
-              <div id="f05-mw1" class="f05-mw" style="left:440px;top:655px;transform:rotate(-5deg)"><span>achat-revente ?</span></div>
-              <div id="f05-mw2" class="f05-mw" style="left:478px;top:712px;transform:rotate(3deg)"><span>dépôt-vente ?</span></div>
-              <div id="f05-mw3" class="f05-mw" style="left:96px;top:768px;transform:rotate(-3deg)"><span>courtage ?</span></div>
-              <div id="f05-mw4" class="f05-mw" style="left:300px;top:772px;transform:rotate(2deg)"><span>intermédiation ?</span></div>
+              <div id="f05-q1" class="f05-h f05-q" style="top:677px"><span id="f05-q1t" class="f05-qt">Quel modèle</span><span id="f05-q1m" class="f05-qm">?</span></div>
+              <div id="f05-mw1" class="f05-mw" style="left:440px;top:659px;transform:rotate(-5deg)"><span>achat-revente ?</span></div>
+              <div id="f05-mw2" class="f05-mw" style="left:478px;top:716px;transform:rotate(3deg)"><span>dépôt-vente ?</span></div>
+              <div id="f05-mw3" class="f05-mw" style="left:96px;top:772px;transform:rotate(-3deg)"><span>courtage ?</span></div>
+              <div id="f05-mw4" class="f05-mw" style="left:300px;top:776px;transform:rotate(2deg)"><span>intermédiation ?</span></div>
               <svg id="f05-strikes" class="f05-ink" viewBox="0 0 760 980">
-                <path id="f05-k1" d="M 436 690 L 676 664" stroke="#d33a2c" stroke-width="4"/>
-                <path id="f05-k2" d="M 474 740 L 680 748" stroke="#d33a2c" stroke-width="4"/>
-                <path id="f05-k3" d="M 92 796 L 246 786" stroke="#d33a2c" stroke-width="4"/>
-                <path id="f05-k4" d="M 296 796 L 540 806" stroke="#d33a2c" stroke-width="4"/>
+                <path id="f05-k1" d="M 436 694 L 676 668" stroke="#d33a2c" stroke-width="4"/>
+                <path id="f05-k2" d="M 474 744 L 680 752" stroke="#d33a2c" stroke-width="4"/>
+                <path id="f05-k3" d="M 92 800 L 246 790" stroke="#d33a2c" stroke-width="4"/>
+                <path id="f05-k4" d="M 296 800 L 540 810" stroke="#d33a2c" stroke-width="4"/>
               </svg>
             </div>
 
             <!-- questions 2 and 3 -->
             <div id="f05-g2" class="f05-group">
-              <div id="f05-q2" class="f05-h f05-q" style="top:813px"><span id="f05-q2t" class="f05-qt">Combien il me faut</span><span id="f05-q2m" class="f05-qm">?</span></div>
+              <div id="f05-q2" class="f05-h f05-q" style="top:817px"><span id="f05-q2t" class="f05-qt">Combien il me faut</span><span id="f05-q2m" class="f05-qm">?</span></div>
             </div>
             <div id="f05-g3" class="f05-group">
-              <div id="f05-q3" class="f05-h f05-q" style="top:883px"><span id="f05-q3t" class="f05-qt">Combien je dois vendre</span><span id="f05-q3m" class="f05-qm">?</span></div>
+              <div id="f05-q3" class="f05-h f05-q" style="top:887px"><span id="f05-q3t" class="f05-qt">Combien je dois vendre</span><span id="f05-q3m" class="f05-qm">?</span></div>
             </div>
 
             <!-- pen (foreground, blurred), tip on the writing -->
-            <div id="f05-pen"><div class="f05-penbar"></div></div>
+            <div id="f05-pen">
+              <svg viewBox="0 0 1300 1300">
+                <g transform="translate(40 1240) rotate(-50)">
+                  <path d="M 0 0 L 70 -12 L 70 12 Z" fill="#2a2a2e"/>
+                  <rect x="66" y="-17" width="60" height="34" rx="6" fill="#8e9097"/>
+                  <rect x="122" y="-30" width="1200" height="60" rx="26" fill="#121214"/>
+                  <rect x="140" y="-22" width="1150" height="10" rx="5" fill="#4a4b52"/>
+                </g>
+              </svg>
+            </div>
           </div>
         </div>
       </div>
@@ -189,9 +201,9 @@
       var SH = { cx: 960, cy: 540, w: 760, h: 980, rot: -4 * Math.PI / 180 };
       // measured ink widths (Caveat 600 64 px) of the three questions, "?" included
       var Q = [
-        { id: "q1", x: 70, base: 735, ink: 244, full: 280 },
-        { id: "q2", x: 70, base: 875, ink: 401, full: 437 },
-        { id: "q3", x: 70, base: 945, ink: 486, full: 522 }
+        { id: "q1", x: 70, base: 739, ink: 244, full: 280 },
+        { id: "q2", x: 70, base: 879, ink: 401, full: 437 },
+        { id: "q3", x: 70, base: 949, ink: 486, full: 522 }
       ];
       // sheet-local point -> layer point (sheet rotated around its centre)
       function P(lx, ly) {
@@ -202,7 +214,18 @@
       function aim(lx, ly, s) { var p = P(lx, ly); return { x: -s * (p.x - 960), y: -70 - s * (p.y - 540), scale: s }; }
 
       var cam = $("cam"), drift = $("drift"), pen = $("pen");
-      var S0 = 0.85, S1 = 1.15, AIM_X = 330;   // camera goes straight down the text column
+
+      // the red ring around "- 650 EUR" : same hand loop as 04-brouillon (sheet coordinates), fully drawn
+      var RC = { x: 512, y: 574, rx: 150, ry: 64, tilt: -5 * Math.PI / 180 };
+      function ringPt(u) {
+        var a = Math.PI * 1.08 + u * Math.PI * 2.18, r = 1 + 0.06 * u;
+        var ex = Math.cos(a) * RC.rx * r, ey = Math.sin(a) * RC.ry * r;
+        return { x: RC.x + ex * Math.cos(RC.tilt) - ey * Math.sin(RC.tilt), y: RC.y + ex * Math.sin(RC.tilt) + ey * Math.cos(RC.tilt) };
+      }
+      var rd = "";
+      for (var k = 0; k <= 72; k++) { var rp = ringPt(k / 72); rd += (k ? " L " : "M ") + rp.x.toFixed(1) + " " + rp.y.toFixed(1); }
+      $("ring").setAttribute("d", rd);
+      var S0 = 0.85, S1 = 1.15, AIM_X = 380;   // camera goes straight down the sheet axis (equal side margins)
 
       // first image = handoff_in : whole sheet, scale 0.85, centred
       gsap.set(cam, { x: 0, y: 0, scale: S0, transformOrigin: "960px 540px" });
@@ -228,7 +251,7 @@
 
       /* ---- the pen writes (tip in sheet-local px) ---- */
       var CLIP0 = "inset(0px 100% 0px 0px)", CLIP1 = "inset(0px 0% 0px 0px)";
-      var penAt = { x: 1100, y: 640 };
+      var penAt = { x: 1900, y: 260 };   // where 04 left it, out of frame
       gsap.set(pen, { x: penAt.x, y: penAt.y });
       function penTo(x, y, dur, ease, pos) {
         ft(pen, { x: penAt.x, y: penAt.y }, { x: x, y: y, duration: dur, ease: ease }, pos);
@@ -251,10 +274,10 @@
 
       // 1.40 four model words scribbled around, then struck through in red at 1.90
       var MW = [
-        { id: "mw1", t: 1.40, x0: 440, x1: 670, y: 690 },
-        { id: "mw2", t: 1.52, x0: 478, x1: 676, y: 746 },
-        { id: "mw3", t: 1.64, x0: 96, x1: 240, y: 802 },
-        { id: "mw4", t: 1.76, x0: 300, x1: 536, y: 806 }
+        { id: "mw1", t: 1.40, x0: 440, x1: 670, y: 694 },
+        { id: "mw2", t: 1.52, x0: 478, x1: 676, y: 750 },
+        { id: "mw3", t: 1.64, x0: 96, x1: 240, y: 806 },
+        { id: "mw4", t: 1.76, x0: 300, x1: 536, y: 810 }
       ];
       MW.forEach(function (w, i) {
         var el = $(w.id);
@@ -272,7 +295,7 @@
         tl.set(p, { opacity: 1 }, t);
         ft(p, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: 0.1, ease: "power2.out" }, t);
       });
-      penTo(MW[3].x1 - 40, 800, 0.24, "power2.inOut", 1.86);
+      penTo(MW[3].x1 - 40, 804, 0.24, "power2.inOut", 1.86);
 
       // 2.29 "Combien il me faut", "?" at 2.88 ; 3.38 "Combien je dois vendre", "?" at 3.95
       penTo(Q[1].x, Q[1].base - 12, 0.22, "power3.out", 2.07);
@@ -292,7 +315,8 @@
       /* ---- scene 2 : the light goes out ---- */
       ft($("halo"), { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power2.out" }, 4.25);
       // the shadow closes in from the edges (power2.in) to pure black, complete on the last rendered image
-      ft($("iris"), { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1.25, duration: 0.2, ease: "power1.in" }, 4.30);
+      gsap.set($("iris"), { scale: 1.25 });
+      ft($("iris"), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.in" }, 4.30);
       ft($("iris"), { scale: 1.25 }, { scale: 0.02, duration: 4.83 - 4.30, ease: "power2.in" }, 4.30);
       ft($("black"), { opacity: 0 }, { opacity: 1, duration: 4.83 - 4.50, ease: "power2.in" }, 4.50);
 
