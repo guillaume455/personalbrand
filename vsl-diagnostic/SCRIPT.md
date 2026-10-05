@@ -1,6 +1,6 @@
 # SCRIPT — VSL diagnostic (guillaumeherbin.fr/accompagnement)
 
-Format : 45 s, 16:9, lecteur de la page de vente. Appel à l'action : « Voir si mon profil correspond »
+Format : environ 55 s (durée validée par Guillaume), 16:9, lecteur de la page de vente. Appel à l'action : « Voir si mon profil correspond »
 → https://guillaumeherbin.fr/accompagnement/candidature/
 
 **Angle** : on croit qu'il suffit de se lancer pour essayer. Se lancer, c'est bien, mais avec un plan donné par
