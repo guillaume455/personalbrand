@@ -53,7 +53,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - scene: Sur la scène sombre, la barre de recherche leboncoin arrive trop grande et floue et se pose ; la requête « voiture occasion » se tape ; le curseur arrive et clique Rechercher sur « j'essaie » ; trois résultats tombent ; la caméra plonge dans le premier
 - duration: 3.80s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/01-recherche.html
 - voiceover: "Tu veux vivre de l’automobile. Alors tu te dis : j’essaie."
 - type: hook
@@ -91,7 +91,7 @@ Scene 2 (1.70 à 3.80 s) : P2, le clic et la plongée
 - scene: La vraie annonce Audi : une étiquette « Modèle : achat-revente » se tamponne ; la date « avant-hier » roule jusqu'à « il y a 3 mois » ; la caméra monte au prix : il est barré, le nouveau prix arrive trop grand et flou, « Baisse de prix » ; l'étiquette du prix se détache
 - duration: 5.05s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/02-annonce.html
 - voiceover: "Essayer un modèle… ça coûte des mois. Essayer une voiture… ça coûte ta marge."
 - type: pain_point
@@ -129,7 +129,7 @@ Scene 2 (2.55 à 5.05 s) : P4, la voiture et la marge
 - scene: Les annonces s'empilent en onglets (Ford Ranger, La Centrale) ; l'étiquette du prix tombe dans une carte « SOLDE ÉPARGNE » qui roule de 12 400 € à 4 150 € ; puis, en silence, le curseur hésite trois fois sur « Envoyer un message » de la Ford et ferme l'onglet ; la page se replie en une feuille
 - duration: 5.15s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/03-onglets.html
 - voiceover: "Essayer encore… ça coûte ton épargne."
 - type: pain_point
@@ -167,7 +167,7 @@ Scene 2 (2.30 à 5.15 s) : P6, le gag muet, puis la page se referme
 - scene: La feuille se pose : le brouillon de celui qui se lance seul s'écrit à la main (achat, contrôle, carte grise, baisse de prix), le total tombe, « Marge : − 650 € » en rouge, entouré ; « C'est de te lancer sans plan. » s'inscrit au centre
 - duration: 4.00s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/04-brouillon.html
 - voiceover: "Le problème, ce n’est pas de te lancer. C’est de te lancer sans plan."
 - type: pain_point
@@ -205,7 +205,7 @@ Scene 2 (2.00 à 4.00 s) : P8, la marge négative, et la phrase
 - scene: Au bas du brouillon, le stylo écrit trois questions sans réponse, chacune sur son mot : « Quel modèle ? », « Combien il me faut ? », « Combien je dois vendre ? » ; chaque point d'interrogation est repris en rouge ; puis la lumière s'éteint sur la feuille jusqu'au noir
 - duration: 4.90s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/05-questions.html
 - voiceover: "Sans savoir quel modèle te correspond. Combien il te faut. Combien tu dois vendre."
 - type: pain_point
@@ -243,7 +243,7 @@ Scene 2 (4.25 à 4.90 s) : P12, la lumière s'éteint
 - scene: Noir. « Et si tu essayais… avec un plan ? » s'écrit seul au centre. Dans le silence, un point bleu s'allume, l'écran du GPS se dessine autour, « Itinéraire calculé · ton plan »
 - duration: 4.40s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/06-bascule.html
 - voiceover: "Et si tu essayais… avec un plan ?"
 - type: pivot
@@ -281,7 +281,7 @@ Scene 2 (3.10 à 4.40 s) : P14, le GPS s'allume
 - scene: L'itinéraire orange se trace sur le GPS, d'un seul geste sûr ; la caméra plonge dans le point bleu, qui devient le halo du vrai portrait de Guillaume ; « Guillaume Herbin » se pose à côté
 - duration: 4.10s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/07-metier.html
 - voiceover: "Un plan fait par quelqu’un qui connaît le métier. Je m’appelle Guillaume Herbin."
 - type: solution
@@ -319,7 +319,7 @@ Scene 2 (2.00 à 4.10 s) : P16, Guillaume
 - scene: À côté du portrait, « 21 ANS » roule, puis « 3 000 € » ; « 2010 » en filigrane ; « Pas de formation. Pas d'expérience. » se posent en deux lignes ; whip vers la droite sur 2010
 - duration: 5.60s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/08-preuve.html
 - voiceover: "Je me suis lancé à vingt et un ans, avec trois mille euros en poche. Pas de formation. Pas d’expérience."
 - type: proof
@@ -357,7 +357,7 @@ Scene 2 (3.40 à 5.60 s) : P18, ni formation, ni expérience
 - scene: La frise 2010 → 2026 défile ; entre les années, des erreurs écrites à la main sont raturées d'un trait orange ; arrivée sur 2026 : la ligne continue, tourne à l'orange et devient l'itinéraire du GPS, pour « toi »
 - duration: 4.75s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/09-frise.html
 - voiceover: "J’ai appris en me trompant, pendant seize ans. Toi, tu peux commencer avec un plan."
 - type: proof
@@ -395,7 +395,7 @@ Scene 2 (2.70 à 4.75 s) : P20, toi, avec un plan
 - scene: Sur le GPS, l'épingle « Ta situation » s'allume au départ ; travelling le long de la route jusqu'au 2e point : quatre modèles se déploient, trois sont tranchés d'un trait, « Ton modèle » s'allume
 - duration: 3.05s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/10-situation.html
 - voiceover: "On part de ta situation. On tranche le modèle."
 - type: demo
@@ -433,7 +433,7 @@ Scene 2 (1.75 à 3.05 s) : P22, on tranche le modèle
 - scene: Au 3e point, la caméra plonge dans l'anneau et arrive sur la vraie page « Ton point d'équilibre » du plan : la ligne « Ventes nécessaires » est cerclée d'orange ; puis les cadrans du tableau de bord : la jauge épargne remonte de la réserve, le compteur de mois perdus revient à 00
 - duration: 4.05s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/11-chiffres.html
 - voiceover: "On pose les vrais chiffres. Moins de casse. Moins de temps perdu."
 - type: demo
@@ -471,7 +471,7 @@ Scene 2 (1.75 à 4.05 s) : P24, moins de casse, moins de temps perdu
 - scene: Le point d'arrivée s'étire et redevient la barre de recherche du début ; la requête « voiture occasion » s'efface ; la barre se change en bouton « Voir si mon profil correspond » ; un curseur arrive et clique directement ; tenue vivante ; noir
 - duration: 7.95s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/12-fin.html
 - voiceover: "Tu n’as pas besoin de tout savoir. Juste ta prochaine étape."
 - type: cta

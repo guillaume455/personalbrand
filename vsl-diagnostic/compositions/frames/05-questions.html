@@ -256,6 +256,8 @@
       ft($("calc"), { "--dof": "5px", opacity: 0.6 }, { "--dof": "7px", opacity: 0.5, duration: 0.35, ease: "power2.inOut" }, 2.15);
       ft($("g1"), { "--dof": "0px", opacity: 1 }, { "--dof": "1.5px", opacity: 0.8, duration: 0.35, ease: "power2.inOut" }, 2.15);
       ft($("g2"), { "--dof": "0px", opacity: 1 }, { "--dof": "1.5px", opacity: 0.8, duration: 0.35, ease: "power2.inOut" }, 3.25);
+      // 4.12 -> 4.28 the questions settle sharp, so the lit "?" swap invisibly for their screen copies at 4.30
+      ft([$("g1"), $("g2")], { "--dof": "1.5px", opacity: 0.8 }, { "--dof": "0px", opacity: 1, duration: 0.16, ease: "power2.out" }, 4.12);
 
       /* ---- the pen writes (tip in sheet-local px) ---- */
       var CLIP0 = "inset(0px 100% 0px 0px)", CLIP1 = "inset(0px 0% 0px 0px)";
@@ -322,11 +324,11 @@
 
       /* ---- scene 2 : the light switches off ---- */
       // measured on screen at 4.30 : glyph (ink box) centres of the three red "?" of the sheet, and their rendered font size
-      var MK_FONT0 = 76.5, GX = 0, GY = 0;
+      var MK_FONT0 = 76.5, GX = -12, GY = 3;   // 64 px x cam 1.15 x drift 1.0395 ; ink centre sits at (+12,-3) from the box centre
       var MK = [
-        { start: { x: 0, y: 0 }, end: { x: 880, y: 520 } },
-        { start: { x: 0, y: 0 }, end: { x: 960, y: 500 } },
-        { start: { x: 0, y: 0 }, end: { x: 1040, y: 520 } }
+        { start: { x: 904.5, y: 217.5 }, end: { x: 880, y: 520 } },
+        { start: { x: 1099.5, y: 371.5 }, end: { x: 960, y: 500 } },
+        { start: { x: 1205, y: 448 }, end: { x: 1040, y: 520 } }
       ];
       // ink centre of the 72 px Caveat "?" inside its 100 x 100 box (measured), so the wrapper origin is the glyph centre
       Array.prototype.forEach.call(root.querySelectorAll(".f05-cmg"), function (g) { g.style.setProperty("--gx", (-50 + GX) + "px"); g.style.setProperty("--gy", (-50 + GY) + "px"); });
