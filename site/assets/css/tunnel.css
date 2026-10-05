@@ -724,7 +724,8 @@ h2{font-weight:700}
 }
 .vsl video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#090C11}
 .vsl-son{
-  position:absolute;left:50%;bottom:clamp(14px,3vw,28px);transform:translateX(-50%);
+  /* en haut à droite : en bas au centre, il masquait les sous-titres de la vidéo */
+  position:absolute;right:clamp(10px,2vw,20px);top:clamp(10px,2vw,20px);
   display:inline-flex;align-items:center;gap:10px;
   padding:12px 20px;border:0;border-radius:999px;cursor:pointer;
   background:var(--or);color:#14100B;font:inherit;font-weight:700;font-size:15.5px;
@@ -734,7 +735,7 @@ h2{font-weight:700}
 .vsl-son svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .vsl-son:hover{background:var(--or-clair)}
 .vsl-son[hidden]{display:none}
-@keyframes vsl-pouls{50%{transform:translateX(-50%) scale(1.05)}}
+@keyframes vsl-pouls{50%{transform:scale(1.05)}}
 @media (prefers-reduced-motion:reduce){.vsl-son{animation:none}}
 
 /* =========================================================================
@@ -946,3 +947,5 @@ textarea{min-height:130px;resize:vertical}
 .bloc .lire > :last-child,.bloc .large > :last-child,
 .bloc .lire > :last-child > :last-child,.bloc .large > :last-child > :last-child{margin-bottom:0}
 .temoins-note{margin-bottom:0}
+/* microcopie sous un bouton centré (dernier appel) : centrée elle aussi */
+[style*="text-align:center"] .micro{margin-inline:auto}
