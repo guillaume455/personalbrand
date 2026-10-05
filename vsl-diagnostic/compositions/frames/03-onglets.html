@@ -1,0 +1,388 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Montserrat"; src: url("assets/fonts/Montserrat-800.woff2") format("woff2"); font-weight: 800; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
+
+    /* ---------- ground-dark (verbatim from 01) ---------- */
+    .f03-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f03-ground { background: #0b0b0d; overflow: hidden; }
+    .f03-halo { position: absolute; left: 360px; top: 170px; width: 1200px; height: 600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.20), rgba(252,126,21,.08) 55%, rgba(252,126,21,0)); }
+    .f03-halo-b { position: absolute; left: -200px; top: -420px; width: 2320px; height: 700px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(47,123,255,.12), rgba(47,123,255,0)); }
+    .f03-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
+      border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
+    /* soft orange halo behind the folded sheet (scene 2 end) */
+    #f03-halo-s { position: absolute; left: 410px; top: 140px; width: 1100px; height: 820px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(252,126,21,.22), rgba(252,126,21,.08) 60%, rgba(252,126,21,0)); }
+
+    /* ---------- the world : lens (blur) > nud (step toward the balance) > dx (x drift) > dz (z drift) > cam ---------- */
+    .f03-wrap { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f03-cam { transform-origin: 0 0; }
+
+    /* browser window (world units) : left 340, top 18, 1240 x 878 */
+    #f03-bar { position: absolute; left: 340px; top: 18px; width: 1240px; height: 56px; border-radius: 18px 18px 0 0; background: #141519;
+      box-shadow: 0 -1px 0 rgba(255,255,255,.06) inset; }
+    .f03-tab { position: absolute; top: 8px; width: 300px; height: 48px; border-radius: 12px 12px 0 0; background: #1b1d22; overflow: hidden; }
+    .f03-tab .f03-on { position: absolute; left: 0; top: 0; width: 300px; height: 48px; background: #30333c; opacity: 0; }
+    .f03-tab .f03-tt { position: absolute; left: 18px; top: 0; width: 236px; height: 48px; font: 500 22px/48px "Instrument Sans", sans-serif;
+      color: #e9ebef; white-space: nowrap; overflow: hidden; letter-spacing: -0.005em; }
+    .f03-tab svg { position: absolute; left: 262px; top: 14px; width: 20px; height: 20px; display: block; }
+    #f03-t1 { left: 12px; } #f03-t2 { left: 318px; opacity: 0; } #f03-t3 { left: 624px; opacity: 0; }
+    #f03-t1 .f03-on { opacity: 1; }
+
+    #f03-pagebox { position: absolute; left: 340px; top: 74px; width: 1240px; height: 822px; border-radius: 0 0 18px 18px; background: #ffffff; overflow: hidden;
+      box-shadow: 0 50px 140px rgba(0,0,0,.6), 0 12px 34px rgba(0,0,0,.35); }
+    .f03-page { position: absolute; left: 0; top: 0; width: 1240px; height: 822px; background: #ffffff; overflow: hidden; }
+    .f03-nat { position: absolute; left: 0; top: 0; width: 2000px; transform: scale(0.62); transform-origin: 0 0; }
+    .f03-nat img { display: block; width: 2000px; }
+    #f03-pford, #f03-plac { opacity: 0; }
+
+    /* overlays left on the Audi page by frame 02 (native px) */
+    #f03-strike { position: absolute; left: 70px; top: 1186px; width: 158px; height: 4px; border-radius: 4px; background: #FC7E15;
+      transform: rotate(-4deg); box-shadow: 0 0 9px rgba(252,126,21,.6); }
+    #f03-chip { position: absolute; left: 78px; top: 1226px; height: 32px; padding: 0 12px 0 10px; border-radius: 18px; background: #fff1e4;
+      border: 1.5px solid #FC7E15; color: #e0620a; font: 700 17px/32px "Instrument Sans", sans-serif; white-space: nowrap; }
+    #f03-chip svg { display: inline-block; width: 13px; height: 13px; vertical-align: -1px; margin-right: 4px; }
+    #f03-date { position: absolute; left: 72px; top: 1272px; width: 270px; height: 38px; background: #ffffff; font: 500 21px/38px "Instrument Sans", sans-serif; color: #6b6e73; padding-left: 6px; }
+
+    /* sharp copy of the Ford seller card (depth of field in scene 2) */
+    #f03-crop { position: absolute; left: 1166.46px; top: 89.5px; width: 391.84px; height: 310px; opacity: 0;
+      background-image: url("assets/img/annonce-ford.png"); background-repeat: no-repeat; background-size: 1240px auto; background-position: -826.46px -15.5px; }
+    #f03-hov { position: absolute; left: 26.66px; top: 168px; width: 338.52px; height: 48.36px; border-radius: 24.2px; background: #ffffff; opacity: 0;
+      box-shadow: 0 0 14px rgba(255,255,255,.5); }
+
+    /* cursor + traces + ripple (world) */
+    .f03-cw { position: absolute; left: 0; top: 0; width: 76px; height: 76px; opacity: 0; }
+    .f03-cw svg { display: block; width: 76px; height: 76px; }
+    #f03-cur { position: absolute; left: 0; top: 0; width: 76px; height: 76px; filter: drop-shadow(0 8px 12px rgba(0,0,0,.5)); }
+    .f03-ghost svg { filter: blur(0.6px); }
+    .f03-rip { position: absolute; left: 0; top: 0; width: 40px; height: 40px; border-radius: 50%; border: 1.6px solid #FC7E15;
+      opacity: 0; pointer-events: none; box-shadow: 0 0 8px rgba(252,126,21,.45); }
+
+    /* ---------- foreground : balance card + the flying price tag (screen space) ---------- */
+    #f03-card { position: absolute; left: 1478px; top: 92px; width: 380px; height: 196px; border-radius: 26px; opacity: 0;
+      background: linear-gradient(155deg, rgba(38,40,47,.92), rgba(16,17,21,.94)); border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08); }
+    #f03-glow { position: absolute; left: -2px; top: -2px; width: 382px; height: 198px; border-radius: 27px; border: 2px solid #FC7E15; opacity: 0;
+      box-shadow: 0 0 40px rgba(252,126,21,.55), inset 0 0 30px rgba(252,126,21,.18); }
+    .f03-lab { position: absolute; left: 32px; top: 28px; font: 700 20px/24px "Space Mono", monospace; letter-spacing: 0.3em; color: #8a8f98; white-space: nowrap; }
+    #f03-numw { position: absolute; left: 30px; top: 62px; width: 330px; height: 116px; }
+    #f03-num { display: inline-block; font: 900 112px/116px "Big Shoulders", sans-serif; font-variant-numeric: tabular-nums; color: #ffffff;
+      white-space: nowrap; transform-origin: 0 60%; letter-spacing: 0.005em; }
+    #f03-tag { position: absolute; left: 0; top: 0; font: 800 76px/1 "Montserrat", sans-serif; color: #1d6b43; white-space: nowrap;
+      letter-spacing: -0.02em; text-shadow: 0 10px 30px rgba(0,0,0,.25); }
+
+    /* ---------- the folded sheet (screen space) ---------- */
+    #f03-fall { opacity: 0; }
+    #f03-sheet { position: absolute; left: 580px; top: 50px; width: 760px; height: 980px; border-radius: 8px; background: #ffffff; overflow: hidden;
+      box-shadow: 0 40px 120px rgba(0,0,0,.6), 0 10px 30px rgba(0,0,0,.35); }
+    #f03-cream { position: absolute; left: 0; top: 0; width: 760px; height: 980px; background: #f6efe3; opacity: 0; }
+
+    /* shade + vignette */
+    #f03-shade { background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); opacity: 0; }
+    .f03-vig { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 1300px 820px at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+
+    /* subtitle : bottom center, band y 890 to 980 (verbatim from 01) */
+    .f03-sub { position: absolute; left: 0; top: 898px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+    .f03-w { display: inline-block; opacity: 0; color: rgba(255,255,255,.35); }
+    .f03-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
+    .f03-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f03-kw .f03-w { position: relative; text-shadow: none; }
+
+    /* film grain 5 % */
+    #f03-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+  </style>
+
+  <div id="root" data-composition-id="03-onglets" data-width="1920" data-height="1080" data-duration="5.15">
+
+    <!-- ground-dark -->
+    <div id="f03-ground" class="clip f03-layer" data-start="0" data-duration="5.15" data-track-index="0">
+      <div class="f03-halo-b"></div>
+      <div class="f03-arc"></div>
+      <div class="f03-halo"></div>
+      <div id="f03-halo-s"></div>
+    </div>
+
+    <!-- the world -->
+    <div id="f03-lens" class="clip f03-layer" data-start="0" data-duration="5.15" data-track-index="1" data-layout-allow-overflow>
+      <div id="f03-nud" class="f03-wrap">
+        <div id="f03-dx" class="f03-wrap">
+          <div id="f03-dz" class="f03-wrap">
+            <div id="f03-cam" class="f03-wrap">
+
+              <div id="f03-bar">
+                <div id="f03-t1" class="f03-tab"><i class="f03-on"></i><div class="f03-tt">Audi RS Q8 4.0 V8…</div>
+                  <svg viewBox="0 0 20 20" fill="none" stroke="#8a8f98" stroke-width="2" stroke-linecap="round"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9"/></svg></div>
+                <div id="f03-t2" class="f03-tab"><i class="f03-on"></i><div class="f03-tt">Ford Ranger WILDTRAK…</div>
+                  <svg viewBox="0 0 20 20" fill="none" stroke="#8a8f98" stroke-width="2" stroke-linecap="round"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9"/></svg></div>
+                <div id="f03-t3" class="f03-tab"><i class="f03-on"></i><div class="f03-tt">La Centrale</div>
+                  <svg viewBox="0 0 20 20" fill="none" stroke="#8a8f98" stroke-width="2" stroke-linecap="round"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9"/></svg></div>
+              </div>
+
+              <div id="f03-pagebox">
+                <div id="f03-paudi" class="f03-page"><div class="f03-nat">
+                  <img src="assets/img/annonce-audi.png" alt="">
+                  <div id="f03-strike"></div>
+                  <div id="f03-chip"><svg viewBox="0 0 14 14" fill="none" stroke="#e0620a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5l9 9M11.5 4.5v7h-7"/></svg>Baisse de prix · −2 500 €</div>
+                  <div id="f03-date">il y a 3 mois</div>
+                </div></div>
+                <div id="f03-pford" class="f03-page"><div class="f03-nat"><img src="assets/img/annonce-ford.png" alt=""></div></div>
+                <div id="f03-plac" class="f03-page"><div class="f03-nat"><img src="assets/img/lacentrale-accueil.png" alt=""></div></div>
+              </div>
+
+              <div id="f03-crop"><div id="f03-hov"></div></div>
+
+              <div id="f03-gh1" class="f03-cw f03-ghost"><svg viewBox="0 0 24 24"><path d="M3 2l7 19 2.6-7.6L20 11z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+              <div id="f03-gh2" class="f03-cw f03-ghost"><svg viewBox="0 0 24 24"><path d="M3 2l7 19 2.6-7.6L20 11z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+              <div id="f03-rip1" class="f03-rip"></div>
+              <div id="f03-rip2" class="f03-rip"></div>
+              <div id="f03-curw" class="f03-cw"><div id="f03-cur"><svg viewBox="0 0 24 24"><path d="M3 2l7 19 2.6-7.6L20 11z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div></div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- foreground : the balance card and the price tag (sharp, outside the lens blur) -->
+    <div id="f03-fgl" class="clip f03-layer" data-start="0" data-duration="5.15" data-track-index="2" data-layout-allow-overflow>
+      <div id="f03-nud2" class="f03-wrap">
+        <div id="f03-card">
+          <i id="f03-glow"></i>
+          <div class="f03-lab">SOLDE ÉPARGNE</div>
+          <div id="f03-numw"><span id="f03-num">12 400 €</span></div>
+        </div>
+        <div id="f03-tag">84 400 €</div>
+      </div>
+    </div>
+
+    <!-- the page folded into a sheet -->
+    <div id="f03-sheetl" class="clip f03-layer" data-start="0" data-duration="5.15" data-track-index="3" data-layout-allow-overflow>
+      <div id="f03-fall" class="f03-wrap">
+        <div id="f03-sheet"><div id="f03-cream"></div></div>
+      </div>
+    </div>
+
+    <!-- bottom shade + vignette -->
+    <div id="f03-veil" class="clip f03-layer" data-start="0" data-duration="5.15" data-track-index="4"><div id="f03-shade" class="f03-layer"></div><div class="f03-vig"></div></div>
+
+    <!-- the sentence of the voice, bottom center, word by word (frame-local cues) -->
+    <div id="f03-subs" class="clip f03-layer" data-start="0" data-duration="5.15" data-track-index="5" data-layout-allow-overflow>
+      <div id="f03-s1" class="f03-sub"><span class="f03-w" data-cue="0.15">Essayer</span> <span class="f03-w" data-cue="0.45">encore…</span> <span class="f03-w" data-cue="1.35">ça</span> <span class="f03-w" data-cue="1.51">coûte</span> <span class="f03-w" data-cue="1.66">ton</span><span class="f03-kw"><i id="f03-kb1" class="f03-kwbg"></i><span class="f03-w f03-kt" data-cue="1.82">épargne.</span></span></div>
+    </div>
+
+    <!-- film grain 5 % -->
+    <div id="f03-grain" class="clip f03-layer" data-start="0" data-duration="5.15" data-track-index="6"></div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "03-onglets", DUR = 5.15, FR = 1 / 30;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#f03-" + id); }
+
+      var tl = gsap.timeline({ paused: true });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+
+      /* ---------- camera math : screen = N( Dx( Dz( C(p) ) ) ) ---------- */
+      var ON = { x: 1660, y: 200 }, OZ = { x: 960, y: 470 };
+      var N1 = 1.06, DX1 = -15 * (2.30 - 0.25), DZ1 = 1 + 0.01 * (3.85 - 2.70);
+      function camFor(P, S, c, n, dx, dz) {
+        var qx = ON.x + (S.x - ON.x) / n, qy = ON.y + (S.y - ON.y) / n;
+        qx -= dx;
+        qx = OZ.x + (qx - OZ.x) / dz; qy = OZ.y + (qy - OZ.y) / dz;
+        return { scale: c, x: qx - c * P.x, y: qy - c * P.y };
+      }
+      function toScreen(P, k, n, dx, dz) {
+        var x = k.x + k.scale * P.x, y = k.y + k.scale * P.y;
+        x = OZ.x + dz * (x - OZ.x); y = OZ.y + dz * (y - OZ.y);
+        x += dx;
+        return { x: ON.x + n * (x - ON.x), y: ON.y + n * (y - ON.y) };
+      }
+
+      // world anchors (page box at 340,74 ; native → world x0.62)
+      function W(nx, ny) { return { x: 340 + 0.62 * nx, y: 74 + 0.62 * ny }; }
+      var PRICE = W(148, 1190);                 // struck « 86 900 € »
+      var WIN_C = { x: 960, y: 457 };           // browser window centre
+      var SELLER = W(1649, 275);                // Ford seller card centre
+      var BTN = W(1649, 335);                   // « Envoyer un message » centre
+      var XBTN = { x: 340 + 318 + 300 - 28, y: 18 + 8 + 24 }; // × of the Ford tab
+
+      var K0 = camFor(PRICE, { x: 700, y: 510 }, 2 / 0.62, 1, 0, 1);      // handoff_in : listing at x2, price centre-left
+      var K1 = camFor(WIN_C, { x: 960, y: 465 }, 0.9, 1, 0, 1);           // whole page + tab bar
+      var K2 = camFor(SELLER, { x: 960, y: 450 }, 2.2, N1, DX1, 1);       // A2 framing on the seller card
+      var K3 = camFor(XBTN, { x: 760, y: 300 }, 2.2, N1, DX1, DZ1);       // reframed up on the Ford tab ×
+
+      var cam = $("cam"), lens = $("lens");
+      gsap.set(cam, { x: K0.x, y: K0.y, scale: K0.scale, transformOrigin: "0px 0px" });
+      gsap.set(lens, { filter: "blur(10px)" });
+      gsap.set([$("nud"), $("nud2")], { transformOrigin: ON.x + "px " + ON.y + "px", scale: 1 });
+      gsap.set($("dz"), { transformOrigin: OZ.x + "px " + OZ.y + "px", scale: 1 });
+
+      /* ---------- camera track ---------- */
+      // 0.00 → 0.25 the pan ends in a pull-back (expo.out), the pan blur clears
+      ft(cam, { x: K0.x, y: K0.y, scale: K0.scale }, { x: K1.x, y: K1.y, scale: K1.scale, duration: 0.25, ease: "expo.out" }, 0);
+      ft(lens, { filter: "blur(10px)" }, { filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, 0);
+      // 0.25 → 2.30 drift x −15 px/s
+      ft($("dx"), { x: 0 }, { x: DX1, duration: 2.05, ease: "none" }, 0.25);
+      // 1.30 → 1.60 a light step toward the balance card (world + foreground together)
+      ft([$("nud"), $("nud2")], { scale: 1 }, { scale: N1, duration: 0.3, ease: "expo.out" }, 1.30);
+      // 2.30 → 2.70 push on the Ford seller card (A2), expo.out
+      ft(cam, { x: K1.x, y: K1.y, scale: K1.scale }, { x: K2.x, y: K2.y, scale: K2.scale, duration: 0.4, ease: "expo.out" }, 2.30);
+      // 2.70 → 3.85 drift z +1 %/s during the hesitations
+      ft($("dz"), { scale: 1 }, { scale: DZ1, duration: 1.15, ease: "none" }, 2.70);
+      // 3.85 → 4.25 reframe up toward the Ford tab
+      ft(cam, { x: K2.x, y: K2.y }, { x: K3.x, y: K3.y, duration: 0.4, ease: "expo.out" }, 3.85);
+
+      /* ---------- scene 1 : the tabs pile up ---------- */
+      var t1 = $("t1"), t2 = $("t2"), t3 = $("t3");
+      var on1 = t1.querySelector(".f03-on"), on2 = t2.querySelector(".f03-on"), on3 = t3.querySelector(".f03-on");
+      var pA = $("paudi"), pF = $("pford"), pL = $("plac");
+      function newTab(tab, page, at) {
+        tl.set(tab, { opacity: 1 }, at);
+        ft(tab, { y: 10, scale: 0.92, transformOrigin: "50% 100%" }, { y: 0, scale: 1, duration: 0.18, ease: "expo.out" }, at);
+        tl.set(page, { opacity: 1 }, at);
+        ft(page, { y: 36, scale: 1.15, filter: "blur(8px)", transformOrigin: "50% 30%" }, { y: 0, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out" }, at);
+      }
+      // 0.30 the Ford page slides over in a new tab
+      tl.set(on1, { opacity: 0 }, 0.30); tl.set(on2, { opacity: 1 }, 0.30);
+      newTab(t2, pF, 0.30);
+      // 0.70 La Centrale home slides in turn
+      tl.set(on2, { opacity: 0 }, 0.70); tl.set(on3, { opacity: 1 }, 0.70);
+      newTab(t3, pL, 0.70);
+      // 0.95 the Ford comes back to the front
+      tl.set(on3, { opacity: 0 }, 0.95); tl.set(on2, { opacity: 1 }, 0.95);
+      tl.set(pF, { zIndex: 5 }, 0.95);
+      ft(pF, { x: 48, scale: 1.03, filter: "blur(5px)" }, { x: 0, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out" }, 0.95);
+
+      /* ---------- the price tag falls into the balance card ---------- */
+      var tag = $("tag"), card = $("card");
+      // t=0 : flying up-right at ~1800 px/s, motion blur 10 px
+      ft(tag, { x: 1450, y: 230, xPercent: -50, yPercent: -50 }, { x: 1682, duration: 0.6, ease: "power4.out" }, 0);
+      ft(tag, { y: 230 }, { y: 95, duration: 0.3, ease: "power2.out" }, 0);
+      ft(tag, { y: 95 }, { y: 206, duration: 0.3, ease: "power2.in" }, 0.30);
+      ft(tag, { filter: "blur(10px)" }, { filter: "blur(0px)", duration: 0.28, ease: "power2.out" }, 0);
+      ft(tag, { scale: 1, opacity: 1 }, { scale: 0.55, opacity: 0, duration: 0.16, ease: "power2.in" }, 0.46);
+      // the card arrives just before (dark glass, top right)
+      tl.set(card, { opacity: 1 }, 0.16);
+      ft(card, { y: -26, scale: 1.08, filter: "blur(8px)", opacity: 0 }, { y: 0, scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.22, ease: "expo.out" }, 0.16);
+      // it absorbs the tag : accent flash
+      ft($("glow"), { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "power2.out" }, 0.54);
+      ft($("glow"), { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power2.out" }, 0.64);
+      ft($("numw"), { scale: 1 }, { scale: 1.06, duration: 0.08, ease: "power2.out", transformOrigin: "0% 60%" }, 0.56);
+      ft($("numw"), { scale: 1.06 }, { scale: 1, duration: 0.3, ease: "power3.out" }, 0.64);
+
+      // 1.35 → 1.82 the balance rolls 12 400 € → 4 150 € (tabular, slight shrink)
+      var num = $("num"), bal = { v: 12400 };
+      function fmt(v) { var r = Math.round(v / 10) * 10, s = String(r); return (s.length > 3 ? s.slice(0, s.length - 3) + " " + s.slice(-3) : s) + " €"; }
+      tl.fromTo(bal, { v: 12400 }, { v: 4150, duration: 0.47, ease: "power3.out", immediateRender: false,
+        onUpdate: function () { num.textContent = fmt(bal.v); } }, 1.35);
+      ft(num, { scale: 1 }, { scale: 0.92, duration: 0.47, ease: "power3.out" }, 1.35);
+
+      // 2.30 the push passes the card : it leaves past the camera (faster than it came)
+      ft(card, { x: 0, y: 0, scale: 1, filter: "blur(0px)", opacity: 1 }, { x: 240, y: -170, scale: 1.4, filter: "blur(10px)", opacity: 0, duration: 0.2, ease: "power3.in" }, 2.30);
+
+      /* ---------- scene 2 : the silent gag ---------- */
+      // depth : the Ford page goes soft, its seller card stays sharp (pixel-identical copy)
+      tl.set($("crop"), { opacity: 1 }, 2.30);
+      ft(pF, { filter: "blur(0px)" }, { filter: "blur(5px)", duration: 0.4, ease: "expo.out" }, 2.30);
+
+      var CS = 0.43, TIP = { x: 9.5 * CS, y: 6.3 * CS };
+      function at(P) { return { x: P.x - TIP.x, y: P.y - TIP.y }; }
+      var PX = 1 / (2.2 * N1);                  // one screen px in world units at A2
+      var S1 = { x: BTN.x - 8, y: BTN.y + 4 }, S2 = { x: S1.x - 60 * PX, y: S1.y }, S3 = { x: S2.x + 90 * PX, y: S2.y };
+      var START = { x: BTN.x + 700, y: BTN.y + 520 };
+      var curw = $("curw"), cur = $("cur");
+      gsap.set([curw, $("gh1"), $("gh2")], { scale: CS, transformOrigin: "0px 0px" });
+      gsap.set(cur, { transformOrigin: "9.5px 6.3px" });
+      gsap.set(curw, { x: at(START).x, y: at(START).y });
+      gsap.set($("gh1"), { x: at(S1).x, y: at(S1).y });
+      gsap.set($("gh2"), { x: at(S2).x, y: at(S2).y });
+
+      // 2.18 → 2.62 it arrives in one curve on « Envoyer un message » and stops
+      tl.set(curw, { opacity: 1 }, 2.18);
+      ft(curw, { x: at(START).x }, { x: at(S1).x, duration: 0.44, ease: "power3.out" }, 2.18);
+      ft(curw, { y: at(START).y }, { y: at(S1).y, duration: 0.44, ease: "power2.out" }, 2.18);
+      // the three stops (the gag, the only hesitation of the film) ; the button lights on hover then dims
+      var hov = $("hov");
+      function hoverOn(t) { ft(hov, { opacity: 0 }, { opacity: 0.16, duration: 0.1, ease: "power2.out" }, t); }
+      function hoverOff(t) { ft(hov, { opacity: 0.16 }, { opacity: 0, duration: 0.08, ease: "power2.in" }, t); }
+      hoverOn(2.60);
+      hoverOff(2.96);
+      ft(curw, { x: at(S1).x }, { x: at(S2).x, duration: 0.14, ease: "power3.out" }, 3.00);
+      ft($("gh1"), { opacity: 0.38 }, { opacity: 0.12, duration: 0.85, ease: "power1.in" }, 3.00);
+      hoverOn(3.04);
+      hoverOff(3.36);
+      ft(curw, { x: at(S2).x }, { x: at(S3).x, duration: 0.16, ease: "power3.out" }, 3.40);
+      ft($("gh2"), { opacity: 0.38 }, { opacity: 0.14, duration: 0.45, ease: "power1.in" }, 3.40);
+      hoverOn(3.44);
+      hoverOff(3.82);
+      ft([$("gh1"), $("gh2")], { opacity: function (i) { return i ? 0.14 : 0.12; } }, { opacity: 0, duration: 0.2, ease: "power2.in" }, 3.85);
+      // 3.85 → 4.25 one gesture up to the × of the Ford tab
+      var XC = at(XBTN);
+      ft(curw, { x: at(S3).x }, { x: XC.x, duration: 0.4, ease: "power3.out" }, 3.85);
+      ft(curw, { y: at(S3).y }, { y: XC.y, duration: 0.4, ease: "power2.out" }, 3.85);
+      // 4.30 click on the × : press + accent ripple
+      ft(cur, { scale: 1 }, { scale: 0.85, duration: 0.06, ease: "power2.in" }, 4.27);
+      ft(cur, { scale: 0.85 }, { scale: 1, duration: 0.06, ease: "power2.out" }, 4.33);
+      var rp = [$("rip1"), $("rip2")];
+      gsap.set(rp, { x: XBTN.x - 20, y: XBTN.y - 20 });
+      tl.set(rp, { opacity: 1 }, 4.30);
+      ft(rp[0], { scale: 0.3, opacity: 1 }, { scale: 3.6, opacity: 0, duration: 0.5, ease: "power2.out" }, 4.30);
+      ft(rp[1], { scale: 0.3, opacity: 1 }, { scale: 3.6, opacity: 0, duration: 0.5, ease: "power2.out" }, 4.37);
+      ft(curw, { opacity: 1 }, { opacity: 0, duration: 0.14, ease: "power2.in" }, 4.42);
+
+      // 4.35 → 4.55 the three tabs close in cascade (0.1 s apart), each page with its tab
+      [[t2, [pF, $("crop")], 4.35], [t3, [pL], 4.45], [t1, [pA], 4.55]].forEach(function (c) {
+        ft(c[0], { scale: 1, opacity: 1, transformOrigin: "50% 100%" }, { scale: 0.7, opacity: 0, duration: 0.1, ease: "power3.in" }, c[2]);
+        ft(c[1], { opacity: 1 }, { opacity: 0, duration: 0.08, ease: "power2.in" }, c[2]);
+      });
+      ft($("bar"), { opacity: 1 }, { opacity: 0, duration: 0.12, ease: "power2.in" }, 4.55);
+
+      // 4.65 → 5.15 the blank page folds toward the centre into a 760 x 980 sheet, white → cream, −4°
+      var TL_ = toScreen({ x: 340, y: 74 }, K3, N1, DX1, DZ1), BR_ = toScreen({ x: 1580, y: 896 }, K3, N1, DX1, DZ1);
+      var PW = BR_.x - TL_.x, PH = BR_.y - TL_.y, PC = { x: (TL_.x + BR_.x) / 2, y: (TL_.y + BR_.y) / 2 };
+      var FALL = 300 * 0.5;                      // 300 px/s carried through the seam
+      var fall = $("fall"), sheet = $("sheet");
+      tl.set(fall, { opacity: 1 }, 4.65);
+      tl.set(lens, { opacity: 0 }, 4.66);
+      ft(fall, { y: -FALL }, { y: 0, duration: 0.5, ease: "none" }, 4.65);
+      ft(sheet, { x: PC.x - 960, y: PC.y - 540 + FALL, scaleX: PW / 760, scaleY: PH / 980, rotation: 0 },
+        { x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: -4, duration: 0.5, ease: "power3.out" }, 4.65);
+      ft(fall, { filter: "blur(0px)" }, { filter: "blur(6px)", duration: 0.4, ease: "power1.in" }, 4.75);
+      ft($("cream"), { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 4.72);
+      ft($("halo-s"), { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power1.out" }, 4.55);
+
+      /* ---------- the voice line : word by word, 35 % white then white ; one key-word box ---------- */
+      Array.prototype.forEach.call(root.querySelectorAll(".f03-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f03-kt");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb1"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 1.80 - FR);
+      // the bottom shade comes with the subtitle, both leave before the silence
+      ft($("shade"), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.out" }, 0.08);
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.16);
+      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power1.out" }, 2.16);
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

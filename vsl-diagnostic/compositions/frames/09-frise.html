@@ -1,0 +1,325 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-800.woff2") format("woff2"); font-weight: 800; }
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
+    @font-face { font-family: "Caveat"; src: url("assets/fonts/Caveat-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
+
+    /* ---------- ground-dark : canvas, orange halo, rim-blue arc at the top (copied from the pilot) ---------- */
+    .f09-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f09-ground { background: #0b0b0d; overflow: hidden; }
+    .f09-halo { position: absolute; left: 360px; top: 170px; width: 1200px; height: 600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.20), rgba(252,126,21,.08) 55%, rgba(252,126,21,0)); }
+    .f09-halo-b { position: absolute; left: -200px; top: -420px; width: 2320px; height: 700px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(47,123,255,.12), rgba(47,123,255,0)); }
+    .f09-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
+      border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
+
+    /* ---------- the world (camera) : coordinates = the GPS screen at camera scale 1 ---------- */
+    #f09-lens { overflow: visible; }
+    #f09-world { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+    .f09-svg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+
+    /* timeline of years (world units : the camera holds it at x2) */
+    #f09-frise { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+    .f09-yr { position: absolute; top: 627px; width: 200px; text-align: center; font: 800 55px/56px "Big Shoulders", sans-serif;
+      color: #8a8f98; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .f09-err { position: absolute; white-space: nowrap; font: 600 30px/36px "Caveat", cursive; color: #c9ccd3; }
+    .f09-ch { opacity: 0; display: inline-block; white-space: pre; }
+    .f09-strike { position: absolute; left: -5%; top: 15px; width: 110%; height: 7px; transform-origin: 0 50%; transform: scaleX(0) rotate(-1.2deg); display: block; }
+    .f09-strike svg { display: block; width: 100%; height: 7px; }
+
+    /* GPS banner */
+    #f09-banner { position: absolute; left: 220px; top: 130px; height: 58px; padding: 0 28px; border-radius: 29px; opacity: 0;
+      background: rgba(255,255,255,.05); border: 1px solid #2a2d35; white-space: nowrap;
+      font: 700 22px/56px "Space Mono", monospace; letter-spacing: 0.3em; text-transform: uppercase; color: #c9ccd3; }
+
+    /* foreground : blurred years sliding faster (parallax), the year counter above the timeline */
+    #f09-fg { overflow: hidden; }
+    .f09-fgy { position: absolute; left: 0; top: -40px; font: 800 230px/230px "Big Shoulders", sans-serif; color: #8a8f98; opacity: .13; filter: blur(9px); white-space: nowrap; }
+    #f09-count { position: absolute; left: 0; top: 256px; width: 1920px; text-align: center; font: 900 88px/88px "Big Shoulders", sans-serif;
+      color: #c9ccd3; font-variant-numeric: tabular-nums; opacity: 0; }
+
+    /* shade + vignette */
+    #f09-shade { background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); }
+    .f09-vig { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 1300px 820px at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+
+    /* subtitle : bottom center, band y 890 to 980 (copied from the pilot) */
+    .f09-sub { position: absolute; left: 0; top: 898px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+    .f09-w { display: inline-block; opacity: 0; color: rgba(255,255,255,.35); }
+    .f09-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
+    .f09-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f09-kw .f09-w { position: relative; text-shadow: none; }
+
+    /* film grain 5 % */
+    #f09-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+
+    /* hidden until their cue */
+    #f09-screen, .f09-road, #f09-route, #f09-glow, .f09-wp, #f09-arrive, #f09-toi { opacity: 0; }
+  </style>
+
+  <div id="root" data-composition-id="09-frise" data-width="1920" data-height="1080" data-duration="4.75">
+
+    <!-- directional whip blur (one envelope, shared by every streaked element) -->
+    <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+      <filter id="f09-streak" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur id="f09-streak-blur" in="SourceGraphic" stdDeviation="7 0" />
+      </filter>
+    </svg>
+
+    <!-- ground-dark -->
+    <div id="f09-ground" class="clip f09-layer" data-start="0" data-duration="4.75" data-track-index="0">
+      <div class="f09-halo-b"></div>
+      <div class="f09-arc"></div>
+      <div class="f09-halo"></div>
+    </div>
+
+    <!-- the world -->
+    <div id="f09-lens" class="clip f09-layer" data-start="0" data-duration="4.75" data-track-index="1" data-layout-allow-overflow>
+      <div id="f09-world" data-layout-allow-overflow>
+
+        <!-- GPS base : screen + roads (lights up in scene 2) -->
+        <svg class="f09-svg" viewBox="0 0 1920 1080" aria-hidden="true">
+          <defs>
+            <clipPath id="f09-clip"><rect x="170" y="90" width="1580" height="760" rx="44" ry="44" /></clipPath>
+          </defs>
+          <rect id="f09-screen" x="170" y="90" width="1580" height="760" rx="44" ry="44" fill="#0c0e12" stroke="#2a2d35" stroke-width="4" />
+          <g clip-path="url(#f09-clip)" fill="none" stroke="#1f232b" stroke-linecap="round">
+            <path class="f09-road" d="M300,-50 C420,400 220,700 360,1150" stroke-width="18" />
+            <path class="f09-road" d="M-50,180 C500,270 1300,100 2000,220" stroke-width="12" />
+            <path class="f09-road" d="M700,-50 C820,400 620,700 760,1150" stroke-width="10" />
+            <path class="f09-road" d="M-50,420 C500,510 1300,340 2000,460" stroke-width="20" />
+            <path class="f09-road" d="M1150,-50 C1270,400 1070,700 1210,1150" stroke-width="22" />
+            <path class="f09-road" d="M-50,700 C500,790 1300,620 2000,740" stroke-width="14" />
+            <path class="f09-road" d="M1500,-50 C1620,400 1420,700 1560,1150" stroke-width="12" />
+            <path class="f09-road" d="M-50,860 C500,950 1300,780 2000,900" stroke-width="10" />
+          </g>
+        </svg>
+
+        <!-- the timeline 2010 → 2026 (world : line y 700, years above, errors below) -->
+        <div id="f09-frise">
+          <svg class="f09-svg" viewBox="0 0 1920 1080" aria-hidden="true">
+            <line id="f09-line" x1="-1300" y1="700" x2="330" y2="700" stroke="#8a8f98" stroke-opacity=".55" stroke-width="3" stroke-linecap="round" />
+            <g id="f09-ticks" fill="#8a8f98"></g>
+          </svg>
+          <div id="f09-years"></div>
+          <div id="f09-e1" class="f09-err" style="left:-642px; top:716px;"><span class="f09-tx">mauvais achat</span><i class="f09-strike" id="f09-k1"><svg viewBox="0 0 100 7" preserveAspectRatio="none"><path d="M0,3.5 C0,1 2,0.4 4,0.5 L100,3 L100,4 L4,6.5 C2,6.6 0,6 0,3.5 Z" fill="#FC7E15"/></svg></i></div>
+          <div id="f09-e2" class="f09-err" style="left:-365px; top:728px;"><span class="f09-tx">marge mal calculée</span><i class="f09-strike" id="f09-k2"><svg viewBox="0 0 100 7" preserveAspectRatio="none"><path d="M0,3.5 C0,1 2,0.4 4,0.5 L100,3 L100,4 L4,6.5 C2,6.6 0,6 0,3.5 Z" fill="#FC7E15"/></svg></i></div>
+          <div id="f09-e3" class="f09-err" style="left:-88px; top:716px;"><span class="f09-tx">charges oubliées</span><i class="f09-strike" id="f09-k3"><svg viewBox="0 0 100 7" preserveAspectRatio="none"><path d="M0,3.5 C0,1 2,0.4 4,0.5 L100,3 L100,4 L4,6.5 C2,6.6 0,6 0,3.5 Z" fill="#FC7E15"/></svg></i></div>
+        </div>
+
+        <!-- GPS top : the route born from the timeline, waypoints, arrival, the « toi » start point -->
+        <svg class="f09-svg" viewBox="0 0 1920 1080" aria-hidden="true">
+          <defs>
+            <filter id="f09-glowf" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="9" /></filter>
+          </defs>
+          <path id="f09-glow" d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" fill="none" stroke="#FC7E15" stroke-width="30" stroke-opacity=".38" stroke-linecap="round" filter="url(#f09-glowf)" />
+          <path id="f09-route" d="M330,700 C520,690 560,520 760,500 S1060,330 1230,330 S1500,230 1590,200" fill="none" stroke="#FC7E15" stroke-width="16" stroke-linecap="round" />
+          <circle id="f09-wp1" class="f09-wp" cx="760" cy="500" r="18" fill="#0c0e12" stroke="#FC7E15" stroke-width="6" />
+          <circle id="f09-wp2" class="f09-wp" cx="1230" cy="330" r="18" fill="#0c0e12" stroke="#FC7E15" stroke-width="6" />
+          <circle id="f09-arrive" cx="1590" cy="200" r="22" fill="#FC7E15" />
+          <circle id="f09-toi" cx="330" cy="700" r="26" fill="#2f7bff" stroke="#ffffff" stroke-width="6" />
+        </svg>
+
+        <div id="f09-banner">Itinéraire calculé · ton plan</div>
+      </div>
+    </div>
+
+    <!-- foreground parallax years + the rolling year counter (screen space) -->
+    <div id="f09-fg" class="clip f09-layer" data-start="0" data-duration="4.75" data-track-index="2">
+      <div id="f09-fgset">
+        <div class="f09-fgy" data-x="1300">2012</div>
+        <div class="f09-fgy" data-x="2100">2016</div>
+        <div class="f09-fgy" data-x="2900">2020</div>
+        <div class="f09-fgy" data-x="3700">2024</div>
+      </div>
+      <div id="f09-count">2010</div>
+    </div>
+
+    <!-- bottom shade + vignette -->
+    <div id="f09-veil" class="clip f09-layer" data-start="0" data-duration="4.75" data-track-index="3"><div id="f09-shade" class="f09-layer"></div><div class="f09-vig"></div></div>
+
+    <!-- the sentence of the voice, bottom center, word by word (frame-local cues) -->
+    <div id="f09-subs" class="clip f09-layer" data-start="0" data-duration="4.75" data-track-index="4" data-layout-allow-overflow>
+      <div id="f09-s1" class="f09-sub"><span class="f09-w" data-cue="0.14">J’ai</span> <span class="f09-w" data-cue="0.31">appris</span> <span class="f09-w" data-cue="0.64">en</span> <span class="f09-w" data-cue="0.81">me</span> <span class="f09-w" data-cue="0.98">trompant,</span></div>
+      <div id="f09-s2" class="f09-sub"><span class="f09-w" data-cue="1.32">pendant</span><span class="f09-kw"><i id="f09-kb1" class="f09-kwbg"></i><span class="f09-w f09-kt" data-cue="1.65">seize</span> <span class="f09-w f09-kt" data-cue="1.82">ans.</span></span></div>
+      <div id="f09-s3" class="f09-sub"><span class="f09-w" data-cue="2.70">Toi,</span></div>
+      <div id="f09-s4" class="f09-sub"><span class="f09-w" data-cue="3.26">tu</span> <span class="f09-w" data-cue="3.40">peux</span> <span class="f09-w" data-cue="3.54">commencer</span><span class="f09-kw"><i id="f09-kb2" class="f09-kwbg"></i><span class="f09-w f09-kt" data-cue="3.97">avec</span> <span class="f09-w f09-kt" data-cue="4.26">un</span> <span class="f09-w f09-kt" data-cue="4.40">plan.</span></span></div>
+    </div>
+
+    <!-- film grain 5 % -->
+    <div id="f09-grain" class="clip f09-layer" data-start="0" data-duration="4.75" data-track-index="5"></div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "09-frise", DUR = 4.75, FR = 1 / 30;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#f09-" + id); }
+      function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+
+      /* ---------- the timeline of years (world units ; the camera holds it at x2) ---------- */
+      var Y0 = -698, STEP = 111, SCALE1 = 2;          // 2010 at world x -698 ; one label every 2 years
+      var years = [], ticks = $("ticks"), yBox = $("years"), SVGNS = "http://www.w3.org/2000/svg";
+      for (var k = 0; k <= 8; k++) {
+        var X = Y0 + STEP * k;
+        var d = document.createElement("div");
+        d.className = "f09-yr"; d.textContent = String(2010 + 2 * k); d.style.left = (X - 100) + "px";
+        d.style.filter = "url(#f09-streak)";
+        yBox.appendChild(d); years.push({ el: d, x: X });
+        var c = document.createElementNS(SVGNS, "circle");
+        c.setAttribute("cx", X); c.setAttribute("cy", 700); c.setAttribute("r", 5); ticks.appendChild(c);
+      }
+      // hand-written errors : one span per character
+      var errChars = {};
+      ["e1", "e2", "e3"].forEach(function (id) {
+        var tx = $(id).querySelector(".f09-tx"), s = tx.textContent; tx.textContent = ""; errChars[id] = [];
+        for (var i = 0; i < s.length; i++) { var sp = document.createElement("span"); sp.className = "f09-ch"; sp.textContent = s.charAt(i); tx.appendChild(sp); errChars[id].push(sp); }
+      });
+      var fgItems = Array.prototype.map.call(root.querySelectorAll(".f09-fgy"), function (el) {
+        el.style.filter = "blur(9px)"; return { el: el, x: parseFloat(el.getAttribute("data-x")) };
+      });
+
+      /* ---------- camera : one pure function of time ---------- */
+      // scene 1 travel (screen px) : the whip ends 3000 → 450 px/s over 0.25 s, then a travelling that
+      // swells to ~900 px/s and decelerates to a smooth stop on 2026 at 2.70 (total 1776 px = 8 labels).
+      var DA = 450 * 0.25 + 2550 * 0.25 / 4, DTOT = 8 * STEP * SCALE1;
+      var AK = ((DTOT - DA) / 2.45 - 450 * (9 / 14)) / 0.225;
+      function travel(t) {
+        if (t <= 0) return 0;
+        if (t <= 0.25) { var q = 1 - 4 * t; return 450 * t + 2550 * 0.25 / 4 * (1 - q * q * q * q); }
+        var u = Math.min(1, (t - 0.25) / 2.45);
+        return DA + 2.45 * (450 * (u - Math.pow(u, 4) / 2 + Math.pow(u, 7) / 7) + AK * (u * u / 2 - 2 * Math.pow(u, 5) / 5 + Math.pow(u, 8) / 8));
+      }
+      var E_p2o = gsap.parseEase("power2.out"), E_p2io = gsap.parseEase("power2.inOut"), E_p3io = gsap.parseEase("power3.inOut");
+      var CX1 = Y0 + DTOT / SCALE1;                       // 190 : 2026 centred at 2.70
+      var SREC = 1.86;                                    // light pull back 2.70 → 3.20
+      var S_L = 0.994, CX_L = 330 + 630 / S_L, CY_L = 700 - 160 / S_L;   // landing pose, start point fixed on screen
+      function camAt(t) {
+        if (t <= 2.70) return { s: SCALE1, cx: Y0 + travel(t) / SCALE1, cy: 690 };
+        if (t <= 3.20) { var e = E_p2o((t - 2.70) / 0.5); return { s: SCALE1 + (SREC - SCALE1) * e, cx: CX1, cy: 690 }; }
+        if (t <= 4.45) {
+          var u = (t - 3.20) / 1.25, ep = E_p2io(u), es = E_p3io(u);
+          return { s: SREC + (S_L - SREC) * es, cx: CX1 + (CX_L - CX1) * ep, cy: 690 + (CY_L - 690) * ep };
+        }
+        var v = clamp01((t - 4.45) / 0.30);   // slow push toward the start point, +2 %/s
+        return { s: S_L + (1 - S_L) * v, cx: CX_L + (960 - CX_L) * v, cy: CY_L + (540 - CY_L) * v };
+      }
+
+      var world = $("world"), blurNode = $("streak-blur"), count = $("count");
+      var streaked = years.map(function (y) { return y.el; });
+      var lastBlurOn = null;
+      function render(t) {
+        var c = camAt(t);
+        gsap.set(world, { x: 960 - c.s * c.cx, y: 540 - c.s * c.cy, scale: c.s, transformOrigin: "0px 0px" });
+        // directional whip blur : 14 px → 0 with the whip's velocity (stdDeviation in world units = /2)
+        var b = t < 0.25 ? 14 * Math.pow(1 - 4 * t, 3) : 0;
+        blurNode.setAttribute("stdDeviation", (b / SCALE1).toFixed(3) + " 0");
+        var on = b > 0.05;
+        if (on !== lastBlurOn) { streaked.forEach(function (el) { el.style.filter = on ? "url(#f09-streak)" : "none"; }); lastBlurOn = on; }
+        // the year nearest the centre is white, the others ink-mute
+        years.forEach(function (y) {
+          var sx = 960 + c.s * (y.x - c.cx), w = clamp01(1 - Math.abs(sx - 960) / 230);
+          var r = Math.round(138 + (255 - 138) * w), g = Math.round(143 + (255 - 143) * w), bl = Math.round(152 + (255 - 152) * w);
+          y.el.style.color = "rgb(" + r + "," + g + "," + bl + ")";
+        });
+        // foreground years slide 1.6x faster (parallax), stop with the camera
+        var tr = travel(Math.min(t, 2.70));
+        fgItems.forEach(function (f) { gsap.set(f.el, { x: f.x - 1.6 * tr }); });
+      }
+
+      /* ---------- the one paused timeline ---------- */
+      var tl = gsap.timeline({ paused: true });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+
+      var clock = { t: 0 };
+      render(0);
+      tl.fromTo(clock, { t: 0 }, { t: DUR, duration: DUR, ease: "none", onUpdate: function () { render(clock.t); } }, 0);
+
+      /* ---- scene 1 : the errors written then struck ---- */
+      function writeErr(id, t0, t1) {
+        var ch = errChars[id], n = ch.length, dt = (t1 - t0) / n;
+        ch.forEach(function (sp, i) {
+          ft(sp, { opacity: 0, y: 3, filter: "blur(2px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: Math.max(0.06, dt * 2.2), ease: "power2.out" }, t0 + i * dt);
+        });
+      }
+      function strike(k, t) {
+        ft($(k), { scaleX: 0, rotation: -1.2 }, { scaleX: 1, rotation: -1.2, duration: 0.15, ease: "power2.out" }, t);
+      }
+      writeErr("e1", 0.30, 0.80); strike("k1", 0.98);
+      writeErr("e2", 1.05, 1.25); strike("k2", 1.30);
+      writeErr("e3", 1.55, 1.75); strike("k3", 1.80);
+      // struck errors settle back into the soft ink
+      ft($("e1"), { opacity: 1 }, { opacity: 0.6, duration: 0.3, ease: "power1.out" }, 1.13);
+      ft($("e2"), { opacity: 1 }, { opacity: 0.6, duration: 0.3, ease: "power1.out" }, 1.45);
+      ft($("e3"), { opacity: 1 }, { opacity: 0.6, duration: 0.3, ease: "power1.out" }, 1.95);
+
+      // 1.65 → 2.10 the year counter above the timeline rolls 2010 → 2026
+      ft(count, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.15, ease: "power3.out" }, 1.65);
+      var roll = { v: 2010 };
+      function writeCount() { count.textContent = String(Math.round(roll.v)); }
+      writeCount();
+      ft(roll, { v: 2010 }, { v: 2026, duration: 0.42, ease: "power2.inOut", onUpdate: writeCount }, 1.68);
+
+      /* ---- scene 2 : toi, then the route ---- */
+      // 2.70 the « toi » point lands after 2026 (x1.4 → 1, 0.14 s)
+      ft($("toi"), { opacity: 0, scale: 1.4, svgOrigin: "330 700" }, { opacity: 1, scale: 1, svgOrigin: "330 700", duration: 0.14, ease: "power3.out" }, 2.70);
+      // the foreground years leave with the stop of the travelling
+      ft($("fgset"), { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "power1.out" }, 2.75);
+      // 3.26 → 4.40 the route draws from the point (svg-path-draw)
+      var route = $("route"), glow = $("glow"), LEN = route.getTotalLength();
+      [route, glow].forEach(function (p) { p.style.strokeDasharray = LEN + " " + (LEN + 40); p.style.strokeDashoffset = LEN; });
+      var DRAW0 = 3.26, DRAWD = 1.14, DRAW_EASE = "sine.inOut";
+      tl.set([route, glow], { opacity: 1 }, DRAW0);
+      ft([route, glow], { strokeDashoffset: LEN }, { strokeDashoffset: 0, duration: DRAWD, ease: DRAW_EASE }, DRAW0);
+      // waypoints light when the tip passes them (measured on the path, eased time inverted)
+      var E_draw = gsap.parseEase(DRAW_EASE);
+      function lenNear(px, py) { var best = 0, bd = 1e9; for (var l = 0; l <= LEN; l += 2) { var p = route.getPointAtLength(l), dd = (p.x - px) * (p.x - px) + (p.y - py) * (p.y - py); if (dd < bd) { bd = dd; best = l; } } return best; }
+      function timeAtFrac(f) { var lo = 0, hi = 1; for (var i = 0; i < 40; i++) { var m = (lo + hi) / 2; if (E_draw(m) < f) lo = m; else hi = m; } return DRAW0 + DRAWD * lo; }
+      [["wp1", 760, 500], ["wp2", 1230, 330]].forEach(function (w) {
+        var tw = timeAtFrac(lenNear(w[1], w[2]) / LEN);
+        ft($(w[0]), { opacity: 0, scale: 1.5, svgOrigin: w[1] + " " + w[2] }, { opacity: 1, scale: 1, svgOrigin: w[1] + " " + w[2], duration: 0.14, ease: "power3.out" }, tw);
+      });
+      ft($("arrive"), { opacity: 0, scale: 1.5, svgOrigin: "1590 200" }, { opacity: 1, scale: 1, svgOrigin: "1590 200", duration: 0.14, ease: "power3.out" }, 4.38);
+
+      // the timeline goes out while the map lights up
+      ft($("frise"), { opacity: 1 }, { opacity: 0, duration: 0.65, ease: "power1.inOut" }, 3.55);
+      ft(count, { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power1.out" }, 3.30);
+      // 3.80 the GPS roads appear around (staggered fade), the screen frame is complete at 4.40
+      ft($("screen"), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.inOut" }, 3.80);
+      Array.prototype.forEach.call(root.querySelectorAll(".f09-road"), function (r, i) {
+        ft(r, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 3.80 + i * 0.03);
+      });
+      ft($("banner"), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.24, ease: "power3.out" }, 4.16);
+
+      /* ---- the voice line : word by word, 35 % white then white ; one key-word box per sentence ---- */
+      Array.prototype.forEach.call(root.querySelectorAll(".f09-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f09-kt");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb1"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 1.63 - FR);
+      ft($("kb2"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 3.95 - FR);
+      // each chunk leaves before the next one (and before the seam : no subtitle at 4.75)
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 1.13);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.48);
+      ft($("s3"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 3.07);
+      ft($("s4"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 4.52);
+      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power1.out" }, 4.46);
+
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

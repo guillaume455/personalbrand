@@ -1,0 +1,299 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Montserrat"; src: url("assets/fonts/Montserrat-800.woff2") format("woff2"); font-weight: 800; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
+
+    /* ---------- ground-dark (verbatim from the pilot) ---------- */
+    .f02-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f02-ground { background: #0b0b0d; overflow: hidden; }
+    .f02-halo { position: absolute; left: 360px; top: 170px; width: 1200px; height: 600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.20), rgba(252,126,21,.08) 55%, rgba(252,126,21,0)); }
+    .f02-halo-b { position: absolute; left: -200px; top: -420px; width: 2320px; height: 700px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(47,123,255,.12), rgba(47,123,255,0)); }
+    .f02-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
+      border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
+
+    /* ---------- the world : lens (blur) > cam (scale around Q) > move (counter-translate) ---------- */
+    #f02-lens { overflow: visible; }
+    #f02-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 440px; }
+    #f02-move { position: absolute; left: 0; top: 0; width: 2000px; height: 1325px; }
+
+    /* listing component : the real page on a white sheet, 40px radius, soft shadow (world units = image pixels) */
+    .f02-sheet { position: absolute; left: 0; top: 0; width: 2000px; height: 1325px; border-radius: 40px; background: #ffffff; overflow: hidden;
+      box-shadow: 0 60px 160px rgba(0,0,0,.6), 0 14px 40px rgba(0,0,0,.35), 0 0 90px rgba(252,126,21,.10); }
+    .f02-sheet img { position: absolute; left: 0; top: 0; width: 2000px; height: 1325px; display: block; }
+
+    /* main photo slot : a strip that slides one notch (next photo) */
+    #f02-slot { position: absolute; left: 78px; top: 308px; width: 599px; height: 669px; overflow: hidden; border-radius: 26px 0 0 26px; }
+    #f02-strip { position: absolute; left: 0; top: 0; width: 1212px; height: 669px; }
+    .f02-pa { position: absolute; left: 0; top: 0; width: 599px; height: 669px; background: url("assets/img/annonce-audi.png") -78px -308px / 2000px 1325px no-repeat; }
+    .f02-pb { position: absolute; left: 613px; top: 0; width: 599px; height: 669px; background: url("assets/img/annonce-audi.png") -1746px -1348px / 4130px 2736px no-repeat; }
+
+    /* soft foreground copy of the photo bottom (depth when the camera goes down to the date) */
+    #f02-fgph { position: absolute; left: 78px; top: 860px; width: 922px; height: 117px; opacity: 0; filter: blur(5px);
+      background: url("assets/img/annonce-audi.png") -78px -860px / 2000px 1325px no-repeat; }
+
+    /* sticker « Modèle : achat-revente » */
+    #f02-tag { position: absolute; left: 560px; top: 946px; height: 50px; padding: 0 18px; border: 3px solid #FC7E15; border-radius: 10px; background: #ffffff;
+      font: 700 24px/44px "Space Mono", monospace; color: #1a1b1f; white-space: nowrap; opacity: 0; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+
+    /* the rolling date : white window over the real date, labels slide up */
+    #f02-date { position: absolute; left: 72px; top: 1274px; width: 300px; height: 34px; overflow: hidden; background: #ffffff; }
+    .f02-dl { position: absolute; left: 0; top: 0; width: 300px; height: 34px; white-space: nowrap; font: 500 21.5px/34px "Instrument Sans", sans-serif; color: #4f4c55; padding-left: 6px; }
+    #f02-d0 { background: url("assets/img/annonce-audi.png") -72px -1274px / 2000px 1325px no-repeat; }
+    #f02-d1, #f02-d2, #f02-d3 { opacity: 0; }
+
+    /* price : strike, new price, drop pill */
+    #f02-strike { position: absolute; left: 70px; top: 1186px; width: 160px; height: 8px; border-radius: 4px; background: #FC7E15; transform-origin: 0 50%; opacity: 0;
+      box-shadow: 0 0 10px rgba(252,126,21,.35); }
+    #f02-np { position: absolute; left: 296px; top: 1150px; font: 800 62px/62px "Montserrat", sans-serif; color: #1d6b43; white-space: nowrap; opacity: 0; letter-spacing: -0.01em; }
+    #f02-pill { position: absolute; left: 300px; top: 1214px; height: 40px; padding: 0 16px 0 12px; border: 2.5px solid #FC7E15; border-radius: 20px; background: #fff3e8;
+      font: 700 22px/35px "Instrument Sans", sans-serif; color: #e0620a; white-space: nowrap; opacity: 0; }
+    #f02-pill svg { display: inline-block; width: 20px; height: 20px; vertical-align: -3px; margin-right: 6px; }
+
+    /* handoff card (frame 1's result card 1, same transforms as the pilot's last image) */
+    #f02-cfly { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 540px; }
+    #f02-ccam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f02-cpush { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    .f02-card { position: absolute; top: 330px; width: 460px; height: 452px; border-radius: 16px; background: #ffffff; overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 4px 14px rgba(0,0,0,.3); }
+    #f02-c1 { left: 230px; }
+    .f02-ph { position: absolute; left: 0; top: 0; width: 460px; height: 300px; background-repeat: no-repeat; background-size: 460px auto;
+      background-image: url("assets/img/thumb-audi.png"); background-position: 0 -120px; }
+    .f02-ti { position: absolute; left: 24px; top: 318px; width: 412px; font: 600 25px/32px "Instrument Sans", sans-serif; color: #1a1b1f; letter-spacing: -0.01em; }
+    .f02-pr { position: absolute; left: 24px; top: 392px; font: 800 30px/40px "Montserrat", sans-serif; color: #1d6b43; white-space: nowrap; }
+
+    /* foreground : blurred orange reflection cut by the bottom right edge (verbatim) */
+    .f02-fg { position: absolute; left: 1540px; top: 1000px; width: 640px; height: 260px; border-radius: 60px; background: #FC7E15; filter: blur(42px); opacity: .5; }
+
+    /* the detaching price label (screen space twin, directional motion blur) */
+    #f02-fly { pointer-events: none; }
+    #f02-fpos { position: absolute; left: 0; top: 0; width: 10px; height: 10px; opacity: 0; }
+    #f02-frot { position: absolute; left: 0; top: 0; transform-origin: 0 0; filter: url(#f02-mbf); }
+    #f02-finn { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+    #f02-flab { position: absolute; left: 0; top: 0; transform-origin: 0 0; font: 800 62px/62px "Montserrat", sans-serif; color: #1d6b43; white-space: nowrap; letter-spacing: -0.01em; }
+
+    /* shade + vignette (verbatim) */
+    #f02-shade { background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); opacity: 0; }
+    .f02-vig { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 1300px 820px at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+
+    /* subtitle : bottom center, band y 890 to 980 (verbatim) */
+    .f02-sub { position: absolute; left: 0; top: 898px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+    .f02-w { display: inline-block; opacity: 0; color: rgba(255,255,255,.35); }
+    .f02-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
+    .f02-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f02-kw .f02-w { position: relative; text-shadow: none; }
+
+    /* film grain 5 % (verbatim) */
+    #f02-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+  </style>
+
+  <div id="root" data-composition-id="02-annonce" data-width="1920" data-height="1080" data-duration="5.05">
+
+    <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+      <filter id="f02-mbf" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur id="f02-mbb" in="SourceGraphic" stdDeviation="0 0" /></filter>
+      <filter id="f02-vbf" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur id="f02-vbb" in="SourceGraphic" stdDeviation="0 0" /></filter>
+    </svg>
+
+    <!-- ground-dark -->
+    <div id="f02-ground" class="clip f02-layer" data-start="0" data-duration="5.05" data-track-index="0">
+      <div class="f02-halo-b"></div>
+      <div class="f02-arc"></div>
+      <div class="f02-halo"></div>
+    </div>
+
+    <!-- the world -->
+    <div id="f02-lens" class="clip f02-layer" data-start="0" data-duration="5.05" data-track-index="1" data-layout-allow-overflow>
+      <div id="f02-cam">
+        <div id="f02-move" data-layout-allow-overflow>
+          <div class="f02-sheet"><img src="assets/img/annonce-audi.png" alt=""></div>
+          <div id="f02-slot"><div id="f02-strip"><div class="f02-pa"></div><div class="f02-pb"></div></div></div>
+          <div id="f02-date" style="filter:url(#f02-vbf)">
+            <div id="f02-d0" class="f02-dl"></div>
+            <div id="f02-d1" class="f02-dl">il y a 2 semaines</div>
+            <div id="f02-d2" class="f02-dl">il y a 1 mois</div>
+            <div id="f02-d3" class="f02-dl">il y a 3 mois</div>
+          </div>
+          <div id="f02-strike"></div>
+          <div id="f02-pill"><svg viewBox="0 0 20 20" fill="none" stroke="#e0620a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11 11"/><path d="M15 7v8H7"/></svg>Baisse de prix · −2 500 €</div>
+          <div id="f02-np">84 400 €</div>
+          <div id="f02-tag">Modèle : achat-revente</div>
+          <div id="f02-fgph"></div>
+        </div>
+      </div>
+      <!-- handoff_in : frame 1's card 1 mid-dive, continues forward and dissolves into the listing -->
+      <div id="f02-cfly">
+        <div id="f02-ccam">
+          <div id="f02-cpush">
+            <div id="f02-c1" class="f02-card">
+              <div class="f02-ph"></div>
+              <div class="f02-ti">Audi RS Q8 4.0 V8 BiTFSI 600ch quattro</div>
+              <div class="f02-pr">86 900 €</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="f02-fg"></div>
+    </div>
+
+    <!-- the price label leaving the page (screen space) -->
+    <div id="f02-fly" class="clip f02-layer" data-start="0" data-duration="5.05" data-track-index="2" data-layout-allow-overflow>
+      <div id="f02-fpos"><div id="f02-frot"><div id="f02-finn"><div id="f02-flab">84 400 €</div></div></div></div>
+    </div>
+
+    <!-- bottom shade + vignette -->
+    <div id="f02-veil" class="clip f02-layer" data-start="0" data-duration="5.05" data-track-index="3"><div id="f02-shade" class="f02-layer"></div><div class="f02-vig"></div></div>
+
+    <!-- the sentence of the voice, bottom center, word by word (frame-local cues) -->
+    <div id="f02-subs" class="clip f02-layer" data-start="0" data-duration="5.05" data-track-index="4" data-layout-allow-overflow>
+      <div id="f02-s1" class="f02-sub"><span class="f02-w" data-cue="0.15">Essayer</span> <span class="f02-w" data-cue="0.43">un</span> <span class="f02-w" data-cue="0.58">modèle…</span> <span class="f02-w" data-cue="1.34">ça</span> <span class="f02-w" data-cue="1.51">coûte</span> <span class="f02-w" data-cue="1.68">des</span><span class="f02-kw"><i id="f02-kb1" class="f02-kwbg"></i><span class="f02-w f02-kt" data-cue="1.85">mois.</span></span></div>
+      <div id="f02-s2" class="f02-sub"><span class="f02-w" data-cue="2.57">Essayer</span> <span class="f02-w" data-cue="2.87">une</span> <span class="f02-w" data-cue="3.02">voiture…</span> <span class="f02-w" data-cue="3.84">ça</span> <span class="f02-w" data-cue="4.00">coûte</span> <span class="f02-w" data-cue="4.16">ta</span><span class="f02-kw"><i id="f02-kb2" class="f02-kwbg"></i><span class="f02-w f02-kt" data-cue="4.33">marge.</span></span></div>
+    </div>
+
+    <!-- film grain 5 % -->
+    <div id="f02-grain" class="clip f02-layer" data-start="0" data-duration="5.05" data-track-index="5"></div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "02-annonce", DUR = 5.05, FR = 1 / 30;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#f02-" + id); }
+
+      var tl = gsap.timeline({ paused: true });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+
+      /* ================= handoff_in : rebuild the pilot's last image (3.80) ================= */
+      var P_DEND = 1 + 0.015 * (3.8 - 0.3);
+      var P_S = (1.2 * 1920) / (460 * P_DEND);
+      var P_DX = 960 - 460, P_DY = (470 + 70 / P_DEND) - 660;
+      gsap.set($("ccam"), { scale: P_DEND, transformOrigin: "960px 470px" });
+      gsap.set($("cpush"), { scale: P_S, x: P_DX, y: P_DY, transformOrigin: "460px 660px" });
+      // the card keeps travelling toward the lens and dissolves (born in frame 1, alive on images 0 and 1)
+      ft($("cfly"), { scale: 1 }, { scale: 1.7, duration: 0.26, ease: "power2.out" }, 0);
+      ft($("cfly"), { opacity: 1 }, { opacity: 0, duration: 0.15, ease: "none" }, 2 * FR);
+
+      /* ================= camera : screen = Q + s * (P + T - Q), P in listing pixels ================= */
+      var Q = { x: 960, y: 440 };
+      var cam = $("cam"), mv = $("move"), lens = $("lens");
+      function T(F) { return { x: Q.x - F.x, y: Q.y - F.y }; }
+      var S1 = 0.95 * 1.15, S2 = 0.95 * 1.6, S3 = 0.95 * 2;
+      var T1 = T({ x: 684, y: 700 });                    // photos + title
+      var T1b = { x: T1.x - 6 / S1, y: T1.y };           // drift x +12 px/s (0.30 → 0.80)
+      var T2 = T({ x: 330, y: 1200 });                   // the date line
+      var S2b = S2 * (1 + 0.01 * (2.55 - 1.2));          // drift z +1 %/s
+      var T3 = T({ x: 148 + (960 - 691) / S3, y: 1190 + (440 - 515) / S3 });   // A1 : old price centre-left
+      var T3b = { x: T3.x - 16.5 / S3, y: T3.y };        // drift x +10 px/s (3.05 → 4.70)
+      var T4 = { x: T3b.x - 50, y: T3b.y + 30 };         // pan up-right (expo.in)
+
+      gsap.set(cam, { scale: S1 * 0.75, transformOrigin: Q.x + "px " + Q.y + "px" });
+      gsap.set(mv, { x: T1.x, y: T1.y });
+      gsap.set(lens, { filter: "blur(12px)" });
+
+      // 0.00 → 0.30 landing (zoom-through forward, expo.out), blur 12 → 0
+      ft(cam, { scale: S1 * 0.75 }, { scale: S1, duration: 0.3, ease: "expo.out" }, 0);
+      ft(lens, { filter: "blur(12px)" }, { filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, 0);
+      // 0.30 → 0.80 drift x
+      ft(mv, { x: T1.x }, { x: T1b.x, duration: 0.5, ease: "none" }, 0.3);
+      // 0.80 → 1.20 down to the date (expo.inOut, scale 1.6)
+      ft(cam, { scale: S1 }, { scale: S2, duration: 0.4, ease: "expo.inOut" }, 0.8);
+      ft(mv, { x: T1b.x, y: T1b.y }, { x: T2.x, y: T2.y, duration: 0.4, ease: "expo.inOut" }, 0.8);
+      // 1.20 → 2.55 drift z
+      ft(cam, { scale: S2 }, { scale: S2b, duration: 1.35, ease: "none" }, 1.2);
+      // 2.55 → 3.05 up to the price (A1, scale 2)
+      ft(cam, { scale: S2b }, { scale: S3, duration: 0.5, ease: "expo.inOut" }, 2.55);
+      ft(mv, { x: T2.x, y: T2.y }, { x: T3.x, y: T3.y, duration: 0.5, ease: "expo.inOut" }, 2.55);
+      // 3.05 → 4.70 drift x
+      ft(mv, { x: T3.x }, { x: T3b.x, duration: 1.65, ease: "none" }, 3.05);
+      // 4.70 → 5.05 pan up-right, expo.in, blur 0 → 10
+      ft(mv, { x: T3b.x, y: T3b.y }, { x: T4.x, y: T4.y, duration: 0.35, ease: "expo.in" }, 4.7);
+      ft(lens, { filter: "blur(0px)" }, { filter: "blur(10px)", duration: 0.35, ease: "expo.in" }, 4.7);
+
+      /* ================= scene 1 : the model and the months ================= */
+      // 0.20 the sticker stamps (x1.4 blur 6 → sharp, 0.16 s, -3°)
+      var tag = $("tag");
+      tl.set(tag, { opacity: 1 }, 0.2);
+      ft(tag, { scale: 1.4, rotation: -3, filter: "blur(6px)", transformOrigin: "50% 50%" }, { scale: 1, rotation: -3, filter: "blur(0px)", duration: 0.16, ease: "power3.out" }, 0.2);
+      // 0.80 → 1.20 depth : the sticker and the photo bottom go soft as the camera goes down
+      ft(tag, { filter: "blur(0px)" }, { filter: "blur(3px)", duration: 0.4, ease: "power2.inOut" }, 0.8);
+      ft($("fgph"), { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.inOut" }, 0.8);
+      // 2.55 → 3.05 back in focus band ; the photo bottom stays soft at the top
+      // 1.30 → 1.85 the date rolls : each label slides up in 0.12 s with a vertical blur
+      var vb = document.getElementById("f02-vbb"), vbp = { v: 0 };
+      function wvb() { vb.setAttribute("stdDeviation", "0 " + vbp.v.toFixed(2)); }
+      wvb();
+      var rolls = [["d0", "d1", 1.30], ["d1", "d2", 1.515], ["d2", "d3", 1.73]];
+      rolls.forEach(function (r) {
+        var a = $(r[0]), b = $(r[1]), t = r[2];
+        ft(a, { y: 0 }, { y: -34, duration: 0.12, ease: "power3.in" }, t);
+        tl.set(b, { opacity: 1 }, t);
+        ft(b, { y: 34 }, { y: 0, duration: 0.12, ease: "power3.out" }, t);
+        ft(vbp, { v: 0 }, { v: 2.6, duration: 0.06, ease: "power2.in", onUpdate: wvb }, t);
+        ft(vbp, { v: 2.6 }, { v: 0, duration: 0.06, ease: "power2.out", onUpdate: wvb }, t + 0.06);
+      });
+
+      /* ================= scene 2 : the car and the margin ================= */
+      // 3.02 the photo slides one notch (next photo, 0.2 s)
+      ft($("strip"), { x: 0 }, { x: -613, duration: 0.2, ease: "power3.out" }, 3.02);
+      // 3.84 accent stroke strikes « 86 900 € » (0.18 s)
+      var st = $("strike");
+      tl.set(st, { opacity: 1 }, 3.84);
+      ft(st, { scaleX: 0, rotation: -3 }, { scaleX: 1, rotation: -3, duration: 0.18, ease: "power2.out" }, 3.84);
+      // 4.05 the new price arrives too big and blurred from the camera (x1.6 blur 9 → x1 sharp, 0.28 s expo.out)
+      var np = $("np");
+      tl.set(np, { opacity: 1 }, 4.05);
+      ft(np, { scale: 1.6, filter: "blur(9px)", transformOrigin: "0% 80%" }, { scale: 1, filter: "blur(0px)", duration: 0.28, ease: "expo.out" }, 4.05);
+      // 4.33 « Baisse de prix » pill (x1.2 blur 4 → sharp, 0.14 s)
+      var pill = $("pill");
+      tl.set(pill, { opacity: 1 }, 4.33);
+      ft(pill, { scale: 1.2, filter: "blur(4px)", transformOrigin: "20% 50%" }, { scale: 1, filter: "blur(0px)", duration: 0.14, ease: "power3.out" }, 4.33);
+
+      // 4.70 → 5.05 the green price label leaves the page toward the top right (power3.in, 1800 px/s at 5.05, motion blur 10 px)
+      var NP = { x: 296, y: 1150 };
+      var sx = Q.x + S3 * (NP.x + T3b.x - Q.x), sy = Q.y + S3 * (NP.y + T3b.y - Q.y);
+      var ANG = -35 * Math.PI / 180, FLY_T = 0.35, FLY_D = 1800 * FLY_T / 3;
+      var fpos = $("fpos");
+      gsap.set(fpos, { x: sx, y: sy });
+      gsap.set($("flab"), { scale: S3 });
+      gsap.set($("frot"), { rotation: ANG * 180 / Math.PI, width: 760, height: 150 });
+      gsap.set($("finn"), { rotation: -ANG * 180 / Math.PI });
+      tl.set(np, { opacity: 0 }, 4.7);
+      tl.set(fpos, { opacity: 1 }, 4.7);
+      ft(fpos, { x: sx, y: sy }, { x: sx + FLY_D * Math.cos(ANG), y: sy + FLY_D * Math.sin(ANG), duration: FLY_T, ease: "power3.in" }, 4.7);
+      var mb = document.getElementById("f02-mbb"), mbp = { v: 0 };
+      function wmb() { mb.setAttribute("stdDeviation", mbp.v.toFixed(2) + " 0"); }
+      wmb();
+      ft(mbp, { v: 0 }, { v: 10, duration: FLY_T, ease: "power3.in", onUpdate: wmb }, 4.7);
+
+      /* ================= the voice line (pilot implementation) ================= */
+      Array.prototype.forEach.call(root.querySelectorAll(".f02-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f02-kt");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb1"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 1.83 - FR);
+      ft($("kb2"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 4.31 - FR);
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 2.36);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 4.8);
+      // the bottom shade comes with the first sentence and leaves with the last one
+      ft($("shade"), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.out" }, 3 * FR);
+      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.18, ease: "power1.out" }, 4.8);
+
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
