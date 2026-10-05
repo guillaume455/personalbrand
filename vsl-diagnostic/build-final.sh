@@ -16,7 +16,7 @@ DROP=$(python3 -c "print(round(27.57/$SPEED,3))")      # « Un plan fait par que
 DUR=$(python3 -c "print(round(56.8/$SPEED,3))")
 A_START=51.49      # track: a section that starts on a drop, energetic from the first image
 B_START=17.24      # track: the main drop (biggest low-end jump of the track)
-A_GAIN=0.42; B_GAIN=0.56   # part A about 2.5 dB under part B
+A_GAIN=0.27; B_GAIN=0.36   # part A about 2.5 dB under part B
 LEN_A=$PIVOT; LEN_B=$(python3 -c "print(round($DUR-$DROP,3))")
 GAP=$(python3 -c "print(round($DROP-$PIVOT,3))")
 RISER_AT=$(python3 -c "print(round($PIVOT-3.5,3))")
@@ -35,7 +35,7 @@ anullsrc=r=48000:cl=stereo,atrim=0:$GAP[g];
 [3:a]volume=0.35,adelay=$(python3 -c "print(int($PIVOT*1000))")|$(python3 -c "print(int($PIVOT*1000))"),aresample=48000,aformat=channel_layouts=stereo[imp];
 [mus][ris][imp]amix=inputs=3:normalize=0:duration=first[bed];
 [1:a]aformat=channel_layouts=stereo,asplit=2[vo][key];
-[bed][key]sidechaincompress=threshold=0.03:ratio=6:attack=20:release=300:makeup=1[duck];
+[bed][key]sidechaincompress=threshold=0.02:ratio=8:attack=20:release=300:makeup=1[duck];
 [vo][duck]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-16:TP=-2:LRA=11,aresample=48000,alimiter=limit=0.82:level=false[out]" \
   -map "[out]" -t "$DUR" -c:a pcm_s16le "$TMP/mix.wav"
 
