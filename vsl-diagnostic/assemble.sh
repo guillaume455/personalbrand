@@ -75,6 +75,8 @@ if missing:
 EOF
 node $S/assemble-index.mjs --storyboard ./STORYBOARD.md --hyperframes . | tail -3
 node $S/transitions.mjs inject --storyboard ./STORYBOARD.md --hyperframes . | tail -2
+# This environment cannot reach cdn.jsdelivr.net: use the pinned local copy of gsap 3.14.2 (assets/vendor, from npm).
+sed -i -E 's#<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"[^>]*>#<script src="assets/vendor/gsap.min.js">#' index.html
 node $S/transitions.mjs verify --storyboard ./STORYBOARD.md --index ./index.html | tail -1
 
 python3 - <<'EOF'

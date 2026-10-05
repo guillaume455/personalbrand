@@ -1,0 +1,251 @@
+<template>
+  <style>
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-500.woff2") format("woff2"); font-weight: 500; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    @font-face { font-family: "Montserrat"; src: url("assets/fonts/Montserrat-800.woff2") format("woff2"); font-weight: 800; }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Instrument Sans", sans-serif; color: #ffffff; -webkit-font-smoothing: antialiased; }
+
+    /* ---------- ground-dark : canvas, orange halo behind the bar, rim-blue arc at the top ---------- */
+    .f01-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #f01-ground { background: #0b0b0d; overflow: hidden; }
+    .f01-halo { position: absolute; left: 360px; top: 170px; width: 1200px; height: 600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(252,126,21,.20), rgba(252,126,21,.08) 55%, rgba(252,126,21,0)); }
+    .f01-halo-b { position: absolute; left: -200px; top: -420px; width: 2320px; height: 700px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(47,123,255,.12), rgba(47,123,255,0)); }
+    .f01-arc { position: absolute; left: -340px; top: -610px; width: 2600px; height: 820px; border-radius: 50%;
+      border-bottom: 3px solid rgba(47,123,255,.32); filter: blur(1px); box-shadow: 0 24px 70px rgba(47,123,255,.14); }
+
+    /* ---------- the world (camera) ---------- */
+    #f01-lens { overflow: visible; }
+    #f01-cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 960px 470px; }
+    #f01-push { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+
+    /* search component : white plate, leboncoin wordmark, grey pill, orange button */
+    #f01-bar { position: absolute; left: 230px; top: 410px; width: 1460px; height: 120px; }
+    .f01-plate { position: absolute; left: 0; top: 0; width: 1460px; height: 120px; border-radius: 30px; background: #ffffff;
+      box-shadow: 0 40px 120px rgba(0,0,0,.55), 0 10px 30px rgba(0,0,0,.35), 0 0 60px rgba(252,126,21,.10); }
+    #f01-logo { position: absolute; left: 34px; top: 31px; width: 230px; height: 58px; opacity: 0; }
+    #f01-logo img { display: block; width: 230px; height: 58px; }
+    .f01-pill { position: absolute; left: 300px; top: 17px; width: 1130px; height: 86px; border-radius: 43px; background: #f2f2f4; }
+    #f01-q { position: absolute; left: 40px; top: 0; height: 86px; white-space: pre; font: 500 36px/86px "Instrument Sans", sans-serif; color: #1a1b1f; letter-spacing: -0.005em; }
+    .f01-ch { opacity: 0; }
+    .f01-ct { display: inline-block; width: 0; height: 44px; position: relative; vertical-align: -9px; opacity: 0; }
+    .f01-ct i { position: absolute; left: 1px; top: 0; width: 3px; height: 44px; border-radius: 2px; background: #FC7E15; display: block; }
+    #f01-btn { position: absolute; left: 1055px; top: 11px; width: 64px; height: 64px; border-radius: 50%; background: #ec5a13;
+      box-shadow: 0 6px 16px rgba(236,90,19,.35); }
+    #f01-btn svg { position: absolute; left: 17px; top: 17px; width: 30px; height: 30px; display: block; }
+    .f01-rip { position: absolute; left: 1342px; top: 15px; width: 90px; height: 90px; border-radius: 50%; border: 3px solid #FC7E15;
+      opacity: 0; pointer-events: none; box-shadow: 0 0 18px rgba(252,126,21,.45); }
+
+    /* result cards (leboncoin style) */
+    .f01-card { position: absolute; top: 330px; width: 460px; height: 452px; border-radius: 16px; background: #ffffff; overflow: hidden; opacity: 0;
+      box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 4px 14px rgba(0,0,0,.3); }
+    #f01-c1 { left: 230px; } #f01-c2 { left: 730px; } #f01-c3 { left: 1230px; }
+    .f01-ph { position: absolute; left: 0; top: 0; width: 460px; height: 300px; background-repeat: no-repeat; background-size: 460px auto; }
+    #f01-c1 .f01-ph { background-image: url("assets/img/thumb-audi.png"); background-position: 0 -120px; }
+    #f01-c2 .f01-ph { background-image: url("assets/img/thumb-ford.png"); background-position: 0 -70px; }
+    #f01-c3 .f01-ph { background: linear-gradient(160deg, #5d6169 0%, #2f3238 55%, #8d9097 100%); }
+    .f01-ti { position: absolute; left: 24px; top: 318px; width: 412px; font: 600 25px/32px "Instrument Sans", sans-serif; color: #1a1b1f; letter-spacing: -0.01em; }
+    .f01-pr { position: absolute; left: 24px; top: 392px; font: 800 30px/40px "Montserrat", sans-serif; color: #1d6b43; white-space: nowrap; }
+    .f01-gb { position: absolute; left: 24px; height: 22px; border-radius: 11px; background: #d9dbe0; }
+
+    /* cursor */
+    #f01-cur { position: absolute; left: 0; top: 0; width: 76px; height: 76px; opacity: 0; filter: drop-shadow(0 8px 12px rgba(0,0,0,.5)); }
+    #f01-cur svg { display: block; width: 76px; height: 76px; }
+
+    /* foreground : blurred orange reflection cut by the bottom right edge */
+    .f01-fg { position: absolute; left: 1540px; top: 1000px; width: 640px; height: 260px; border-radius: 60px; background: #FC7E15; filter: blur(42px); opacity: .5; }
+
+    /* shade + vignette */
+    #f01-shade { background: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 640px, rgba(0,0,0,.8) 1080px); }
+    .f01-vig { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: radial-gradient(ellipse 1300px 820px at 50% 46%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+
+    /* subtitle : bottom center, band y 890 to 980 */
+    .f01-sub { position: absolute; left: 0; top: 898px; width: 1920px; text-align: center; font: 600 62px/74px "Instrument Sans", sans-serif;
+      letter-spacing: -0.015em; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+    .f01-w { display: inline-block; opacity: 0; color: rgba(255,255,255,.35); }
+    .f01-kw { position: relative; display: inline-block; padding: 0 14px 4px; margin: 0 6px; }
+    .f01-kwbg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 10px; background: #FC7E15; transform-origin: 0 50%; transform: scaleX(0); display: block; }
+    .f01-kw .f01-w { position: relative; text-shadow: none; }
+
+    /* film grain 5 % */
+    #f01-grain { pointer-events: none; opacity: .05; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+  </style>
+
+  <div id="root" data-composition-id="01-recherche" data-width="1920" data-height="1080" data-duration="3.8">
+
+    <!-- ground-dark -->
+    <div id="f01-ground" class="clip f01-layer" data-start="0" data-duration="3.8" data-track-index="0">
+      <div class="f01-halo-b"></div>
+      <div class="f01-arc"></div>
+      <div class="f01-halo"></div>
+    </div>
+
+    <!-- the world : lens (blur, unscaled) > cam (arrival + drift) > push (dive into card 1) -->
+    <div id="f01-lens" class="clip f01-layer" data-start="0" data-duration="3.8" data-track-index="1" data-layout-allow-overflow>
+      <div id="f01-cam">
+        <div id="f01-push">
+          <div id="f01-c1" class="f01-card">
+            <div class="f01-ph"></div>
+            <div class="f01-ti">Audi RS Q8 4.0 V8 BiTFSI 600ch quattro</div>
+            <div class="f01-pr">86 900 €</div>
+          </div>
+          <div id="f01-c2" class="f01-card">
+            <div class="f01-ph"></div>
+            <div class="f01-ti">Ford Ranger WILDTRAK Double Cabine</div>
+            <div class="f01-pr">55 809 €</div>
+          </div>
+          <div id="f01-c3" class="f01-card">
+            <div class="f01-ph"></div>
+            <div class="f01-gb" style="top:324px;width:380px;"></div>
+            <div class="f01-gb" style="top:358px;width:250px;"></div>
+            <div class="f01-gb" style="top:404px;width:150px;height:28px;background:#b9d3c4;"></div>
+          </div>
+
+          <div id="f01-bar">
+            <div class="f01-plate"></div>
+            <div id="f01-logo"><img src="assets/img/lbc-logo.png" alt=""></div>
+            <div class="f01-pill">
+              <div id="f01-q"></div>
+              <div id="f01-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4L21 21"/></svg>
+              </div>
+            </div>
+            <div id="f01-rip1" class="f01-rip"></div>
+            <div id="f01-rip2" class="f01-rip"></div>
+          </div>
+
+          <div id="f01-cur"><svg viewBox="0 0 24 24"><path d="M3 2l7 19 2.6-7.6L20 11z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+      <div class="f01-fg"></div>
+    </div>
+
+    <!-- bottom shade + vignette -->
+    <div id="f01-veil" class="clip f01-layer" data-start="0" data-duration="3.8" data-track-index="2"><div id="f01-shade" class="f01-layer"></div><div class="f01-vig"></div></div>
+
+    <!-- the sentence of the voice, bottom center, word by word (frame-local cues) -->
+    <div id="f01-subs" class="clip f01-layer" data-start="0" data-duration="3.8" data-track-index="3" data-layout-allow-overflow>
+      <div id="f01-s1" class="f01-sub"><span class="f01-w" data-cue="0.06">Tu</span> <span class="f01-w" data-cue="0.21">veux</span> <span class="f01-w" data-cue="0.36">vivre</span> <span class="f01-w" data-cue="0.51">de</span><span class="f01-kw"><i id="f01-kb1" class="f01-kwbg"></i><span class="f01-w f01-kt" data-cue="0.66">l’automobile.</span></span></div>
+      <div id="f01-s2" class="f01-sub"><span class="f01-w" data-cue="1.75">Alors</span> <span class="f01-w" data-cue="2.05">tu</span> <span class="f01-w" data-cue="2.21">te</span> <span class="f01-w" data-cue="2.36">dis&nbsp;:</span><span class="f01-kw"><i id="f01-kb2" class="f01-kwbg"></i><span class="f01-w f01-kt" data-cue="2.90">j’essaie.</span></span></div>
+    </div>
+
+    <!-- film grain 5 % -->
+    <div id="f01-grain" class="clip f01-layer" data-start="0" data-duration="3.8" data-track-index="4"></div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "01-recherche", DUR = 3.8, FR = 1 / 30;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#f01-" + id); }
+
+      /* ---- build the query : one span per char, a zero-width caret after each position ---- */
+      var QUERY = "voiture occasion";
+      var q = $("q"), chars = [], carets = [];
+      function mkCaret() { var c = document.createElement("span"); c.className = "f01-ct"; c.appendChild(document.createElement("i")); q.appendChild(c); carets.push(c); }
+      mkCaret();
+      for (var i = 0; i < QUERY.length; i++) {
+        var s = document.createElement("span"); s.className = "f01-ch"; s.textContent = QUERY.charAt(i); q.appendChild(s); chars.push(s);
+        mkCaret();
+      }
+      carets[0].style.opacity = "1";   // handoff_in : empty field, accent caret
+
+      /* ---- the one paused timeline ---- */
+      var tl = gsap.timeline({ paused: true });
+      function ft(target, from, to, pos) { if (pos > 0) to.immediateRender = false; tl.fromTo(target, from, to, pos); }
+
+      var cam = $("cam"), push = $("push"), lens = $("lens"), bar = $("bar");
+
+      // first image = handoff_in : bar at x2.2, blur 14 px
+      gsap.set(cam, { scale: 2.2, transformOrigin: "960px 470px" });
+      gsap.set(lens, { filter: "blur(14px)" });
+
+      /* ---- camera track ---- */
+      // 0.00 → 0.30 arrival (2.2 → 1, expo.out), the blur clears with it
+      ft(cam, { scale: 2.2 }, { scale: 1, duration: 0.3, ease: "expo.out" }, 0);
+      ft(lens, { filter: "blur(14px)" }, { filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, 0);
+      // 0.30 → 3.80 drift z +1.5 %/s (continuous, linear)
+      var D_END = 1 + 0.015 * (DUR - 0.3);
+      ft(cam, { scale: 1 }, { scale: D_END, duration: DUR - 0.3, ease: "none" }, 0.3);
+      // 3.35 → 3.80 dive into card 1 (power3.in), card 1 covers 120 % of the frame width at 3.80, blur 0 → 12
+      var C1 = { x: 230 + 230, y: 330 + 330, w: 460 };   // aim between the photo and the price
+      var S = (1.2 * 1920) / (C1.w * D_END);
+      var DX = 960 - C1.x, DY = (470 + 70 / D_END) - C1.y;   // card 1 centre lands on the frame centre
+      ft(push, { scale: 1, x: 0, y: 0, transformOrigin: C1.x + "px " + C1.y + "px" },
+        { scale: S, x: DX, y: DY, duration: 0.45, ease: "power3.in" }, 3.35);
+      ft(lens, { filter: "blur(0px)" }, { filter: "blur(12px)", duration: 0.45, ease: "power3.in" }, 3.35);
+
+      /* ---- scene 1 : the search ---- */
+      // 0.10 the leboncoin wordmark lights up
+      ft($("logo"), { opacity: 0, scale: 0.94, transformOrigin: "0px 29px" }, { opacity: 1, scale: 1, duration: 0.22, ease: "power3.out" }, 0.10);
+      // 0.18 first char, then one every 0.07 s ; the caret rides after the last char
+      var T0 = 0.18, STEP = 0.07, tLast = T0 + STEP * (QUERY.length - 1);
+      for (var k = 0; k < chars.length; k++) {
+        var t = T0 + STEP * k;
+        tl.set(chars[k], { opacity: 1 }, t);
+        tl.set(carets[k], { opacity: 0 }, t);
+        tl.set(carets[k + 1], { opacity: 1 }, t);
+      }
+      // 1.30 → 2.90 the caret blinks (finite steps of 0.2 s), off at the click
+      var last = carets[carets.length - 1], on = true;
+      for (var tb = 1.30; tb < 2.89; tb += 0.2) { on = !on; tl.set(last, { opacity: on ? 1 : 0 }, tb); }
+      tl.set(last, { opacity: 0 }, 2.90);
+
+      /* ---- scene 2 : the click and the dive ---- */
+      // button centre in world coordinates (bar at 230,410 ; pill +300,+17 ; button +1055,+11 ; 32 px radius)
+      var BTN = { x: 230 + 300 + 1055 + 32, y: 410 + 17 + 11 + 32 };
+      var TIP = { x: 9.5, y: 6.3 };   // arrow tip inside the 76 px cursor
+      var CUR_END = { x: BTN.x - TIP.x, y: BTN.y - TIP.y };
+      var cur = $("cur");
+      gsap.set(cur, { x: 2080, y: 1180, transformOrigin: TIP.x + "px " + TIP.y + "px" });
+      // 2.40 it arrives from the bottom right in one curve (x and y on different eases), 0.45 s power3.out
+      tl.set(cur, { opacity: 1 }, 2.40);
+      ft(cur, { x: 2080 }, { x: CUR_END.x, duration: 0.45, ease: "power3.out" }, 2.40);
+      ft(cur, { y: 1180 }, { y: CUR_END.y, duration: 0.45, ease: "power2.out" }, 2.40);
+      // 2.90 click : press x0.85 (0.06 s) + button dip, accent ripple
+      ft(cur, { scale: 1 }, { scale: 0.85, duration: 0.06, ease: "power2.in" }, 2.89);
+      ft(cur, { scale: 0.85 }, { scale: 1, duration: 0.06, ease: "power2.out" }, 2.95);
+      ft($("btn"), { scale: 1 }, { scale: 0.93, duration: 0.06, ease: "power2.in" }, 2.89);
+      ft($("btn"), { scale: 0.93 }, { scale: 1, duration: 0.06, ease: "power2.out" }, 2.95);
+      tl.set([$("rip1"), $("rip2")], { opacity: 1 }, 2.90);
+      ft($("rip1"), { scale: 0.3, opacity: 1 }, { scale: 3.6, opacity: 0, duration: 0.6, ease: "power2.out" }, 2.90);
+      ft($("rip2"), { scale: 0.3, opacity: 1 }, { scale: 3.6, opacity: 0, duration: 0.6, ease: "power2.out" }, 2.98);
+      // 2.94 the bar docks up to make room for the results (power3.out), then goes soft as focus moves to the cards
+      ft(bar, { y: 0 }, { y: -260, duration: 0.3, ease: "power3.out" }, 2.94);
+      ft(bar, { filter: "blur(0px)" }, { filter: "blur(4px)", duration: 0.2, ease: "power2.out" }, 3.20);
+      // 3.00, 3.10, 3.20 the three cards fall in cascade (x1.15 blur 8 → sharp, 0.16 s) ; card 3 stays soft (depth)
+      [["c1", 3.00, 0], ["c2", 3.10, 0], ["c3", 3.20, 7]].forEach(function (c) {
+        var el = $(c[0]);
+        tl.set(el, { opacity: 1 }, c[1]);
+        ft(el, { y: -46, scale: 1.15, filter: "blur(8px)" }, { y: 0, scale: 1, filter: "blur(" + c[2] + "px)", duration: 0.16, ease: "expo.out" }, c[1]);
+      });
+
+      /* ---- the voice line : word by word, 35 % white then white ; one key-word box per sentence ---- */
+      Array.prototype.forEach.call(root.querySelectorAll(".f01-w"), function (w) {
+        var cue = parseFloat(w.getAttribute("data-cue")) - FR, kw = w.classList.contains("f01-kt");
+        ft(w, { opacity: 0, y: 8, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, cue);
+        if (kw) ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#1a1b1f", duration: 0.1, ease: "none" }, cue + 0.04);
+        else ft(w, { color: "rgba(255,255,255,0.35)" }, { color: "#ffffff", duration: 0.2, ease: "power1.out" }, cue + 0.1);
+      });
+      ft($("kb1"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 0.64 - FR);
+      ft($("kb2"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "power3.out" }, 2.88 - FR);
+      // each sentence leaves before the next one (and before the seam : no subtitle at 3.80)
+      ft($("s1"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 1.55);
+      ft($("s2"), { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, 3.42);
+      // the bottom shade follows the subtitle out (gone before the seam)
+      ft($("shade"), { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power1.out" }, 3.42);
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

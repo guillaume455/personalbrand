@@ -53,7 +53,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - scene: Sur la scène sombre, la barre de recherche leboncoin arrive trop grande et floue et se pose ; la requête « voiture occasion » se tape ; le curseur arrive et clique Rechercher sur « j'essaie » ; trois résultats tombent ; la caméra plonge dans le premier
 - duration: 3.80s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/01-recherche.html
 - voiceover: "Tu veux vivre de l’automobile. Alors tu te dis : j’essaie."
 - type: hook
