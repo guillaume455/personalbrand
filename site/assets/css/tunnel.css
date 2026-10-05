@@ -56,7 +56,7 @@
   /* mesures */
   --lire:min(100% - 40px, 720px);
   --large:min(100% - 40px, 1180px);
-  --rythme:clamp(40px, 4.6vw, 72px);  /* resserré le 05/10 (était 56 à 120 px) */
+  --rythme:clamp(30px, 3.2vw, 46px);  /* resserré le 05/10 (était 56 à 120 px) */
   --rayon:3px;
 
   --police:"Archivo", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -941,3 +941,8 @@ textarea{min-height:130px;resize:vertical}
 .erreur[hidden]{display:none}
 /* dans un .champ, l'écart entre l'intitulé et la case vient déjà de la grille */
 .champ label{margin-bottom:0}
+
+/* le dernier élément d'un bloc ne rajoute pas sa marge basse à celle du bloc */
+.bloc .lire > :last-child,.bloc .large > :last-child,
+.bloc .lire > :last-child > :last-child,.bloc .large > :last-child > :last-child{margin-bottom:0}
+.temoins-note{margin-bottom:0}
