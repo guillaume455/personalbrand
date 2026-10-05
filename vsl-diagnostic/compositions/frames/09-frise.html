@@ -27,6 +27,7 @@
     .f09-yr { position: absolute; top: 590px; width: 300px; height: 90px; text-align: center; font: 800 90px/90px "Big Shoulders", sans-serif;
       color: #8a8f98; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .f09-err { position: absolute; white-space: nowrap; font: 600 30px/36px "Caveat", cursive; color: #c9ccd3; }
+    #f09-rail, .f09-yr-in { opacity: 0; }
     .f09-ch { opacity: 0; display: inline-block; white-space: pre; }
     .f09-strike { position: absolute; left: -5%; top: 15px; width: 110%; height: 7px; display: block; opacity: 0; }
     .f09-strike svg { display: block; width: 100%; height: 7px; }
@@ -116,7 +117,7 @@
 
         <!-- the timeline 2010 → 2026 (world : line y 700, years above, errors below) -->
         <div id="f09-frise">
-          <svg class="f09-svg" viewBox="0 0 1920 1080" aria-hidden="true">
+          <svg id="f09-rail" class="f09-svg" viewBox="0 0 1920 1080" aria-hidden="true">
             <line id="f09-line" x1="-2600" y1="700" x2="330" y2="700" stroke="#8a8f98" stroke-opacity=".55" stroke-width="3" stroke-linecap="round" />
             <g id="f09-ticks" fill="#8a8f98"></g>
           </svg>
@@ -145,7 +146,7 @@
     <!-- foreground parallax years + the rolling year counter (screen space) -->
     <div id="f09-fg" class="clip f09-layer" data-start="0" data-duration="4.75" data-track-index="2">
       <div id="f09-fgset">
-        <div class="f09-fgy" data-x="1400">2012</div>
+        <div class="f09-fgy" data-x="2100">2012</div>
         <div class="f09-fgy" data-x="2900">2016</div>
         <div class="f09-fgy" data-x="4400">2020</div>
         <div class="f09-fgy" data-x="6000">2024</div>
@@ -184,7 +185,7 @@
       for (var k = 0; k <= 8; k++) {
         var X = Y0 + STEP * k;
         var d = document.createElement("div");
-        d.className = "f09-yr"; d.textContent = String(2010 + 2 * k); d.style.left = (X - 150) + "px";
+        d.className = k === 0 ? "f09-yr" : "f09-yr f09-yr-in"; d.textContent = String(2010 + 2 * k); d.style.left = (X - 150) + "px";
         yBox.appendChild(d); years.push({ el: d, x: X });
         var c = document.createElementNS(SVGNS, "circle");
         c.setAttribute("cx", X); c.setAttribute("cy", 700); c.setAttribute("r", 4.5); ticks.appendChild(c);
@@ -264,6 +265,10 @@
       var clock = { t: 0 };
       render(0);
       tl.fromTo(clock, { t: 0 }, { t: DUR, duration: DUR, ease: "none", onUpdate: function () { render(clock.t); } }, 0);
+
+      /* ---- scene 1 : the timeline comes out of the whip (only « 2010 » is in the seam image) ---- */
+      ft(root.querySelectorAll(".f09-yr-in"), { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power1.out" }, 0.10);
+      ft($("rail"), { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power1.out" }, 0.10);
 
       /* ---- scene 1 : the errors written then struck ---- */
       function writeErr(id, t0, t1) {

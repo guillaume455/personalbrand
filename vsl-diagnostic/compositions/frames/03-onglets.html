@@ -84,7 +84,7 @@
       box-shadow: 0 0 40px rgba(252,126,21,.55), inset 0 0 30px rgba(252,126,21,.18); }
     .f03-lab { position: absolute; left: 32px; top: 28px; font: 700 20px/24px "Space Mono", monospace; letter-spacing: 0.3em; color: #8a8f98; white-space: nowrap; }
     #f03-numw { position: absolute; left: 30px; top: 62px; width: 330px; height: 116px; opacity: 0; }
-    #f03-num { display: inline-block; font: 900 112px/116px "Big Shoulders", sans-serif; font-variant-numeric: tabular-nums; color: #ffffff;
+    #f03-num { display: inline-block; font: 900 100px/116px "Big Shoulders", sans-serif; font-variant-numeric: tabular-nums; color: #ffffff;
       white-space: nowrap; transform-origin: 0 60%; letter-spacing: 0.005em; }
     /* the price label from frame 02 (same structure : position > rotated blur frame > counter-rotation > text) */
     #f03-tag { position: absolute; left: 0; top: 0; width: 10px; height: 10px; }
@@ -301,24 +301,24 @@
       gsap.set($("frot"), { rotation: ANG, width: 760, height: 150 });
       gsap.set($("finn"), { rotation: -ANG });
       gsap.set(tag, { transformOrigin: "0px 0px" });
-      ft(tag, { x: FLY0.x }, { x: 1526, duration: 0.8, ease: "power3.out" }, 0);
+      ft(tag, { x: FLY0.x }, { x: 1560, duration: 0.8, ease: "power3.out" }, 0);
       ft(tag, { y: FLY0.y }, { y: 164, duration: 0.3, ease: "power2.out" }, 0);
       ft(tag, { y: 164 }, { y: 184, duration: 0.3, ease: "power2.in" }, 0.30);
-      ft(tag, { scale: 1 }, { scale: 0.5, duration: 0.5, ease: "power2.inOut" }, 0.1);
+      ft(tag, { scale: 1 }, { scale: 0.5, duration: 0.4, ease: "power2.inOut" }, 0.08);
       var mb = $("mbb"), mbp = { v: 10 };
       function wmb() { mb.setAttribute("stdDeviation", mbp.v.toFixed(2) + " 0"); }
       ft(mbp, { v: 10 }, { v: 0, duration: 0.3, ease: "power2.out", onUpdate: wmb }, 0);
-      ft(tag, { opacity: 1 }, { opacity: 0, duration: 0.14, ease: "power2.in" }, 0.46);
+      ft(tag, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(5px)", duration: 0.1, ease: "power2.in" }, 0.44);
       // the orange reflection of frame 02 dims away
       ft($("fgo"), { opacity: 0.5 }, { opacity: 0, duration: 0.4, ease: "power1.out" }, 0.25);
       // the card arrives just before (dark glass, top right)
       tl.set(card, { opacity: 1 }, 0.16);
       ft(card, { y: -26, scale: 1.08, filter: "blur(8px)", opacity: 0 }, { y: 0, scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.22, ease: "expo.out" }, 0.16);
       // it absorbs the tag : accent flash
-      ft($("glow"), { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "power2.out" }, 0.54);
-      ft($("glow"), { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power2.out" }, 0.64);
+      ft($("glow"), { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "power2.out" }, 0.50);
+      ft($("glow"), { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power2.out" }, 0.60);
       // the tag becomes the balance : the numeral condenses out of it (x1.15 blur 6 → sharp)
-      ft($("numw"), { opacity: 0, scale: 1.15, filter: "blur(6px)", transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" }, 0.48);
+      ft($("numw"), { opacity: 0, scale: 1.15, filter: "blur(6px)", transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" }, 0.50);
 
       // 1.35 → 1.82 the balance rolls 12 400 € → 4 150 € (tabular, slight shrink)
       var num = $("num"), bal = { v: 12400 };
@@ -349,8 +349,8 @@
 
       // 2.18 → 2.62 it arrives in one curve on « Envoyer un message » and stops
       tl.set(curw, { opacity: 1 }, 2.18);
-      ft(curw, { x: at(START).x }, { x: at(S1).x, duration: 0.44, ease: "power3.out" }, 2.18);
-      ft(curw, { y: at(START).y }, { y: at(S1).y, duration: 0.44, ease: "power2.out" }, 2.18);
+      ft(curw, { x: at(START).x }, { x: at(S1).x, duration: 0.44, ease: "power2.out" }, 2.18);
+      ft(curw, { y: at(START).y }, { y: at(S1).y, duration: 0.44, ease: "power3.out" }, 2.18);
       // the three stops (the gag, the only hesitation of the film) ; the button lights on hover then dims
       var hov = $("hov");
       function hoverOn(t) { ft(hov, { opacity: 0 }, { opacity: 0.16, duration: 0.1, ease: "power2.out" }, t); }
