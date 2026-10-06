@@ -733,8 +733,9 @@ h1{font-variation-settings:'wdth' 100}
   #qui-suis-je .prose > p:nth-last-of-type(-n+2),
   #about .prose > p:nth-last-of-type(-n+2){grid-column:1 / -1}
   #qui-suis-je .photos-duo,#about .photos-duo{
+    /* pas de position:sticky : son conteneur est toute la grille, encadré compris,
+       et les photos glissaient par-dessus la conclusion en fin de défilement */
     grid-column:2;grid-row:1 / span 7;align-self:start;
-    position:sticky;top:96px;
     grid-template-columns:1fr;margin:6px 0 0;max-width:none;
   }
   #qui-suis-je .photos-duo img,#about .photos-duo img{aspect-ratio:4/3}
