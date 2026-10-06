@@ -1,12 +1,44 @@
 <template>
+  <!--
+  ===================== HANDOFF_OUT 08-carte2 @ 3.44 s (binding for 09-cadenas) =====================
+  CARD STACK (geometry copied from 06-carte1 « SHARED: card »: card 860 x 940, left 110, top 300, ends y 1240 — frame px,
+    before camera). Card: #161616, radius 36, 1 px #2a2a2a border, overflow hidden, box-shadow 0 30px 80px rgba(0,0,0,.55).
+    Card 1 (behind, static the whole frame): same box, transform-origin 430px 0 (top centre), scale 0.94, y -44
+      => frame box x 135.8-944.2, y 256-1139.6; darkened by a #0A0A0A overlay at opacity 0.55 (.f08-card-dim).
+      It only peeks as a 44 px strip above card 2 (its contents are hidden behind card 2 at 3.44).
+    Card 2 (on top, at rest since 0.35 s: y 0, scale 1, opacity 1):
+      badge   : accent #FB8000 circle 96 x 96 at card-local (48, 52); « 2 » Big Shoulders 900 72 px #0A0A0A, centred.
+      title   : « TA RÉPUTATION », Big Shoulders 900 96 px caps, line-height 0.95, white, card-local left 172, top 52,
+                one line; orange title-stroke fully drawn under it (scaleX 1).
+      stars   : 5 stars 116 x 116, gap 26, row at card-local left 88, top 214 (x 88, 230, 372, 514, 656; y 214-330).
+                Outline #3a3a3a (stroke 5 on a 100-unit viewBox) under an accent #FB8000 filled star; at 3.44 ALL FIVE are
+                full accent (scale 1, opacity 1). Star path (viewBox 0 0 100 100):
+                M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z
+      bubbles : review bubbles, white #ffffff, 764 x 150, radius 28, a small white tail (26 px square at 45 deg) at
+                left 56 / bottom -10; inside: 5 accent stars 30 px (gap 8) at (36, 30); grey bars #d4d4d4 16 px tall,
+                radius 8: (36, 84) 520 wide and (36, 112) 320 wide. NO TEXT.
+                Slots, card-local left 48: bubble 1 top 380 (landed 2.37), bubble 2 top 552 (landed 2.84),
+                bubble 3 top 724 (enters 3.20 from y +70 / scale 0.92 / opacity 0 -> 1, 0.24 s expo.out, so it lands
+                EXACTLY at 3.44: y 0, scale 1, opacity 1, velocity ~0). All three bubbles at rest at 3.44, rotation 0.
+                Frame boxes before camera: b1 x 158-922, y 680-830; b2 y 852-1002; b3 y 1024-1174.
+  CAMERA @ 3.44 (both wrappers transform-origin 540px 1040px, frame coords, like 06): #f08-push scale 1.0344
+    (1 %/s linear from 1.0, still moving at 1 %/s), #f08-cran scale 1.02 (step at 1.30, 0.3 s power3.out, at rest).
+    Net scale 1.05509 about (540, 1040): card 2 on screen x 86.2-993.8, y 259.2-1251.0.
+  Halo: centre (540, 900), 1200 px, y -60, scale 1.12, opacity 1 at 3.44. Grain 4 %.
+  Subtitles: none at 3.44 (last chunk leaves 3.34 -> 3.44).
+  ===================================================================================================
+  -->
   <style>
     @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
     @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
 
     #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
       font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
 
     /* ===================== SHARED: ground ===================== */
+    /* solid #0A0A0A + one soft accent halo behind the focal element + static grain 4 %.
+       Full-duration class="clip" layer on track 0. Move the halo by tweening its x / y / scale / opacity only. */
     .f08-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
     .f08-halo { position: absolute; left: -60px; top: 300px; width: 1200px; height: 1200px; border-radius: 50%;
       background: radial-gradient(closest-side, rgba(251,128,0,0.16) 0%, rgba(251,128,0,0.10) 38%, rgba(251,128,0,0.035) 70%, rgba(251,128,0,0) 100%); }
@@ -15,22 +47,277 @@
       background-size: 240px 240px; }
     /* ===================== end SHARED: ground ===================== */
 
-    /* draft — card geometry pending 06-carte1 */
-    .f08-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    /* ===================== SHARED: title ===================== */
+    /* Scene title: Big Shoulders 900, 128 px, caps, line-height 0.95, white, centred in the title zone (y 260 to 640,
+       side margins 80 px). The orange title-stroke sits under the LAST line: it is sized in em, so it is always
+       "line width + 20 px" (10 px each side at 128 px), 14 px tall, round cap at the left, tapered end, tilted -1.5 deg.
+       Markup:
+         <div class="f08-title" style="top: ...px">
+           <span class="f08-tline">LINE 1</span><br>
+           <span class="f08-tline">LINE 2<i class="f08-stroke-tilt"><i class="f08-stroke" id="f08-..."></i></i></span>
+         </div>
+       The same component scales with font-size (this frame uses it at the card-title size, 96 px). */
+    .f08-title { position: absolute; left: 80px; width: 920px; text-align: center; font: 900 128px/0.95 "Big Shoulders", sans-serif;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .f08-tline { position: relative; display: inline-block; }
+    .f08-stroke-tilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.085em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .f08-stroke { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%);
+      transform-origin: 0 50%; transform: scaleX(0); }
+    /* ===================== end SHARED: title ===================== */
+
+    /* ===================== SHARED: subtitle ===================== */
+    /* The voice, word by word, in the subtitle band (y 1260 to 1440, nothing else in it): Instrument Sans 700 58/70,
+       centred on y 1350. One .f08-chunk per quoted chunk (2 to 6 words), all chunks stacked at the same place.
+       Every word is a .f08-w with data-cue (frame-local s); the key word also carries .f08-key (turns #FB8000 as it
+       appears, no box). data-out on the chunk = its 0.1 s leave (opacity + blur) before the next chunk. */
+    .f08-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .f08-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 58px/70px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .f08-w { display: inline-block; opacity: 0; }
+    /* ===================== end SHARED: subtitle ===================== */
+
+    /* ---- camera (two stacked wrappers: continuous push / discrete crans), origin as in 06 ---- */
+    .f08-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 1040px; }
+
+    /* ===================== SHARED: card (CSS, geometry from 06-carte1) ===================== */
+    .f08-card { position: absolute; left: 110px; top: 300px; width: 860px; height: 940px; box-sizing: border-box;
+      background: #161616; border: 1px solid #2a2a2a; border-radius: 36px; overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.55); }
+    .f08-badge { position: absolute; left: 48px; top: 52px; width: 96px; height: 96px; border-radius: 50%; background: #FB8000;
+      color: #0A0A0A; font: 900 72px/96px "Big Shoulders", sans-serif; text-align: center; }
+    .f08-title.f08-ctitle { left: 172px; top: 52px; width: auto; text-align: left; font-size: 96px; transform-origin: 0 50%; }
+    /* card 1, behind: static, scale 0.94 from its top centre, lifted 44 px, darkened */
+    #f08-card1 { transform-origin: 430px 0px; }
+    .f08-card-dim { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #0A0A0A; opacity: 0.55; pointer-events: none; }
+    .f08-feed { position: absolute; left: 48px; top: 196px; width: 764px; height: 620px; overflow: hidden; }
+    .f08-post { position: absolute; left: 0; width: 764px; height: 350px; }
+    .f08-photo { position: absolute; left: 0; top: 0; width: 764px; height: 280px; border-radius: 18px; overflow: hidden; background: #222222; }
+    .f08-photo img { position: absolute; left: 0; top: 0; width: 764px; height: 280px; object-fit: cover; object-position: 50% 40%; display: block; }
+    .f08-cap { position: absolute; left: 18px; bottom: 18px; padding: 8px 14px; border-radius: 10px; background: rgba(10,10,10,0.82);
+      font: 700 26px/34px "Space Mono", monospace; color: #ffffff; white-space: nowrap; }
+    .f08-bar1 { position: absolute; left: 40px; height: 14px; border-radius: 7px; background: #2a2a2a; }
+    .f08-counter { position: absolute; left: 48px; top: 836px; width: 764px; height: 64px; }
+    .f08-vues { position: absolute; left: 60px; top: 15px; font: 700 26px/34px "Space Mono", monospace; color: #bdbdbd; letter-spacing: 0.06em; }
+    .f08-num { position: absolute; left: 160px; top: 0; font: 700 52px/64px "Space Mono", monospace; color: #ffffff; white-space: pre; }
+    /* ===================== end SHARED: card (CSS) ===================== */
+
+    /* ===================== SHARED: card2 (CSS) ===================== */
+    #f08-card2 { opacity: 0; }
+    #f08-badge2 { opacity: 0; }
+    #f08-title2 { opacity: 0; }
+    .f08-stars { position: absolute; left: 88px; top: 214px; width: 684px; height: 116px; }
+    .f08-star { position: absolute; top: 0; width: 116px; height: 116px; }
+    .f08-star svg { position: absolute; left: 0; top: 0; width: 116px; height: 116px; overflow: visible; }
+    .f08-star-off { opacity: 0; }
+    .f08-star-off path { fill: none; stroke: #3a3a3a; stroke-width: 5; stroke-linejoin: round; }
+    .f08-star-on { opacity: 0; transform-origin: 58px 58px; }
+    .f08-star-on path { fill: #FB8000; stroke: #FB8000; stroke-width: 5; stroke-linejoin: round; }
+    .f08-bubble { position: absolute; left: 48px; width: 764px; height: 150px; opacity: 0; transform-origin: 382px 75px; }
+    .f08-bubble-body { position: absolute; left: 0; top: 0; width: 764px; height: 150px; border-radius: 28px; background: #ffffff;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.45); }
+    .f08-tail { position: absolute; left: 56px; bottom: -10px; width: 26px; height: 26px; background: #ffffff; transform: rotate(45deg); border-radius: 4px; }
+    .f08-mini { position: absolute; left: 36px; top: 30px; width: 182px; height: 30px; }
+    .f08-mini svg { position: absolute; top: 0; width: 30px; height: 30px; }
+    .f08-mini path { fill: #FB8000; }
+    .f08-gbar { position: absolute; left: 36px; height: 16px; border-radius: 8px; background: #d4d4d4; }
+    /* ===================== end SHARED: card2 (CSS) ===================== */
   </style>
+
   <div id="root" data-composition-id="08-carte2" data-width="1080" data-height="1920" data-duration="3.44">
+
+    <!-- SHARED: ground (full-duration clip, lowest track) -->
     <div id="f08-ground" class="clip f08-ground" data-start="0" data-duration="3.44" data-track-index="0">
       <div id="f08-halo" class="f08-halo"></div>
       <div class="f08-grain"></div>
     </div>
+
+    <!-- camera: push (continuous +1 %/s) > cran (step in at 1.30 toward the stars) > scene -->
+    <div id="f08-push" class="f08-cam">
+      <div id="f08-cran" class="f08-cam">
+
+        <!-- ===================== SHARED: card — card 1 behind (state of 06 simplified, static) ===================== -->
+        <div id="f08-card1" class="f08-card">
+          <div class="f08-badge">1</div>
+          <div class="f08-title f08-ctitle"><span class="f08-tline">MONTRE TON TRAVAIL<i class="f08-stroke-tilt"><i class="f08-stroke" style="transform: scaleX(1);"></i></i></span></div>
+          <div class="f08-feed">
+            <div class="f08-post" style="top: -31px;">
+              <div class="f08-photo"><img src="assets/img/thumb-audi.png" alt="" style="object-position: 50% 50%;"><div class="f08-cap">CLIENT LIVRÉ</div></div>
+              <div class="f08-bar1" style="top: 298px; width: 62%;"></div><div class="f08-bar1" style="top: 326px; width: 38%;"></div>
+            </div>
+            <div class="f08-post" style="top: 343px;">
+              <div class="f08-photo"><img src="assets/img/thumb-ford.png" alt="" style="object-position: 50% 45%;"></div>
+              <div class="f08-bar1" style="top: 298px; width: 62%;"></div><div class="f08-bar1" style="top: 326px; width: 38%;"></div>
+            </div>
+          </div>
+          <div class="f08-counter">
+            <svg style="position:absolute;left:0;top:10px;width:44px;height:44px" viewBox="0 0 44 44"><path d="M3 22 C 9 12, 15 8, 22 8 C 29 8, 35 12, 41 22 C 35 32, 29 36, 22 36 C 15 36, 9 32, 3 22 Z" fill="none" stroke="#FB8000" stroke-width="3.6" stroke-linejoin="round"></path><circle cx="22" cy="22" r="6.5" fill="#FB8000"></circle></svg>
+            <div class="f08-vues">VUES</div>
+            <div class="f08-num">9 800</div>
+          </div>
+          <div class="f08-card-dim"></div>
+        </div>
+
+        <!-- ===================== SHARED: card2 (HTML) — card 2 on top ===================== -->
+        <div id="f08-card2" class="f08-card">
+          <div id="f08-badge2" class="f08-badge">2</div>
+          <div id="f08-title2" class="f08-title f08-ctitle"><span class="f08-tline">TA RÉPUTATION<i class="f08-stroke-tilt"><i id="f08-stroke2" class="f08-stroke"></i></i></span></div>
+
+          <div class="f08-stars">
+            <div class="f08-star" style="left: 0px;"><svg class="f08-star-off" viewBox="0 0 100 100"><path d="M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z"></path></svg><svg class="f08-star-on" viewBox="0 0 100 100"><path d="M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z"></path></svg></div>
+            <div class="f08-star" style="left: 142px;"><svg class="f08-star-off" viewBox="0 0 100 100"><path d="M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z"></path></svg><svg class="f08-star-on" viewBox="0 0 100 100"><path d="M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z"></path></svg></div>
+            <div class="f08-star" style="left: 284px;"><svg class="f08-star-off" viewBox="0 0 100 100"><path d="M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z"></path></svg><svg class="f08-star-on" viewBox="0 0 100 100"><path d="M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z"></path></svg></div>
+            <div class="f08-star" style="left: 426px;"><svg class="f08-star-off" viewBox="0 0 100 100"><path d="M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z"></path></svg><svg class="f08-star-on" viewBox="0 0 100 100"><path d="M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z"></path></svg></div>
+            <div class="f08-star" style="left: 568px;"><svg class="f08-star-off" viewBox="0 0 100 100"><path d="M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z"></path></svg><svg class="f08-star-on" viewBox="0 0 100 100"><path d="M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z"></path></svg></div>
+          </div>
+
+          <div id="f08-b1" class="f08-bubble" style="top: 380px;">
+            <div class="f08-tail"></div><div class="f08-bubble-body"></div>
+            <div class="f08-mini"></div>
+            <div class="f08-gbar" style="top: 84px; width: 520px;"></div><div class="f08-gbar" style="top: 112px; width: 320px;"></div>
+          </div>
+          <div id="f08-b2" class="f08-bubble" style="top: 552px;">
+            <div class="f08-tail"></div><div class="f08-bubble-body"></div>
+            <div class="f08-mini"></div>
+            <div class="f08-gbar" style="top: 84px; width: 520px;"></div><div class="f08-gbar" style="top: 112px; width: 320px;"></div>
+          </div>
+          <div id="f08-b3" class="f08-bubble" style="top: 724px;">
+            <div class="f08-tail"></div><div class="f08-bubble-body"></div>
+            <div class="f08-mini"></div>
+            <div class="f08-gbar" style="top: 84px; width: 520px;"></div><div class="f08-gbar" style="top: 112px; width: 320px;"></div>
+          </div>
+        </div>
+        <!-- ===================== end SHARED: card2 (HTML) ===================== -->
+
+      </div>
+    </div>
+
+    <!-- SHARED: subtitle (outside the camera: it never moves with the scene) -->
+    <div id="f08-sub" class="f08-sub">
+      <div class="f08-chunk" data-out="1.60"><span class="f08-w" data-cue="0.15">Deux&nbsp;:</span> <span class="f08-w" data-cue="0.31">ta</span> <span class="f08-w f08-key" data-cue="0.77">réputation.</span></div>
+      <div class="f08-chunk" data-out="2.27"><span class="f08-w" data-cue="1.70">Les</span> <span class="f08-w f08-key" data-cue="1.87">avis,</span></div>
+      <div class="f08-chunk" data-out="3.34"><span class="f08-w" data-cue="2.37">les</span> <span class="f08-w" data-cue="2.53">clients</span> <span class="f08-w" data-cue="2.68">qui</span> <span class="f08-w" data-cue="2.84">reviennent,</span></div>
+    </div>
+
   </div>
+
   <script src="assets/vendor/gsap.min.js"></script>
   <script>
     (function () {
+      var FID = "08-carte2";
+      var DUR = 3.44;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#" + id); }
+      function $$(sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
       var tl = gsap.timeline({ paused: true });
-      tl.set({}, {}, 3.44);
+
+      /* ===================== SHARED: title (JS) ===================== */
+      // Title slam: scale 1.25 -> 1, blur 10 -> 0, 0.18 s expo.out (t0 > 0: the element starts at opacity 0 in CSS).
+      function f08TitleIn(tl, el, t0) {
+        tl.fromTo(el, { opacity: 0, scale: 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false }, t0);
+      }
+      // Orange stroke: draws from the left, scaleX 0 -> 1, 0.3 s power3.out.
+      function f08StrokeDraw(tl, el, t0) {
+        tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, t0);
+      }
+      /* ===================== end SHARED: title (JS) ===================== */
+
+      /* ===================== SHARED: subtitle (JS) ===================== */
+      // Each word appears 1 frame before its cue (never late): opacity 0 -> 1, y 14 -> 0, blur 6 -> 0 in 0.12 s.
+      // The key word turns #FB8000 as it appears. A chunk leaves at its data-out in 0.1 s (opacity + blur).
+      var F08_LEAD = 1 / 30;
+      function f08Subtitle(tl, box) {
+        Array.prototype.forEach.call(box.querySelectorAll(".f08-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".f08-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - F08_LEAD);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" },
+              { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("f08-key")) {
+              tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            }
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) {
+            tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" },
+              { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+          }
+        });
+      }
+      /* ===================== end SHARED: subtitle (JS) ===================== */
+
+      /* ===================== SHARED: card2 (JS) ===================== */
+      // mini stars inside each review bubble (5 x 30 px, gap 8), built once, synchronously
+      var STAR_D = "M50 5 L61.2 37.4 L95.5 38.2 L68.2 59 L78.1 91.8 L50 72.4 L21.9 91.8 L31.8 59 L4.5 38.2 L38.8 37.4 Z";
+      $$(".f08-mini").forEach(function (m) {
+        var s = "";
+        for (var i = 0; i < 5; i++) {
+          s += '<svg viewBox="0 0 100 100" style="left:' + (i * 38) + 'px"><path d="' + STAR_D + '"></path></svg>';
+        }
+        m.innerHTML = s;
+      });
+      var STAR_CUES = [1.70, 1.82, 1.94, 2.06, 2.18];      // fill one by one, 0.12 s apart
+      var BUBBLES = [["f08-b1", 2.37, 0.32], ["f08-b2", 2.84, 0.32], ["f08-b3", 3.20, 0.24]]; // b3 lands exactly at 3.44
+      /* ===================== end SHARED: card2 (JS) ===================== */
+
+      /* ---- camera track ---- */
+      // push +1 %/s over the whole frame (scale 1.0344 at 3.44)
+      tl.fromTo($("f08-push"), { scale: 1 }, { scale: 1 + 0.01 * DUR, duration: DUR, ease: "none" }, 0);
+      // cran 1.30: a step in toward the stars, just before they fill
+      tl.fromTo($("f08-cran"), { scale: 1 }, { scale: 1.02, duration: 0.3, ease: "power3.out", immediateRender: false }, 1.30);
+
+      /* ---- 0.00 card 1 already in place behind (static: 0.94, y -44, darkened); card 2 rises from below ---- */
+      tl.fromTo($("f08-card1"), { scale: 0.94, y: -44 }, { scale: 0.94, y: -44, duration: 0.01, ease: "none" }, 0);
+      tl.fromTo($("f08-card2"), { opacity: 1, y: 900 }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out" }, 0);
+      tl.fromTo($("f08-halo"), { scale: 0.9, opacity: 0.7 }, { scale: 1.05, opacity: 1, duration: 0.6, ease: "power3.out" }, 0);
+
+      /* ---- 0.15 badge « 2 » slams ---- */
+      tl.fromTo($("f08-badge2"), { opacity: 0, scale: 1.7, filter: "blur(8px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out", immediateRender: false }, 0.15);
+
+      /* ---- 0.40 the five empty star outlines whip in from below (waterfall entry: binary opacity, shrinking gaps) ---- */
+      var offs = $$(".f08-star-off");
+      var F = 1 / 30, ts = 0.40, gaps = [0.07, 0.06, 0.05, 0.04];
+      var travel = [70, 56, 50, 46, 60];
+      offs.forEach(function (el, i) {
+        tl.set(el, { opacity: 1, y: travel[i] }, ts);
+        tl.fromTo(el, { y: travel[i] }, { y: 0, duration: i === 4 ? 0.16 : 0.18, ease: "power4.out", immediateRender: false }, ts);
+        if (i < 4) ts += gaps[i];
+      });
+
+      /* ---- 0.77 « réputation »: the card title slams, 1.00 its stroke draws ---- */
+      f08TitleIn(tl, $("f08-title2"), 0.77);
+      f08StrokeDraw(tl, $("f08-stroke2"), 1.00);
+      // 1.30 the halo rises behind the stars
+      tl.fromTo($("f08-halo"), { y: 0, scale: 1.05 }, { y: -60, scale: 1.12, duration: 0.5, ease: "power3.out", immediateRender: false }, 1.30);
+
+      /* ---- 1.70 -> 2.18 the five stars fill one by one (accent pop, 0.12 s apart) ---- */
+      var ons = $$(".f08-star-on");
+      ons.forEach(function (el, i) {
+        tl.fromTo(el, { opacity: 0, scale: 1.6, filter: "blur(6px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out", immediateRender: false }, STAR_CUES[i] - F);
+      });
+
+      /* ---- 2.37 / 2.84 / 3.20 the review bubbles land and stack, top to bottom ---- */
+      BUBBLES.forEach(function (b) {
+        tl.fromTo($(b[0]), { opacity: 0, y: 70, scale: 0.92 },
+          { opacity: 1, y: 0, scale: 1, duration: b[2], ease: "expo.out", immediateRender: false }, b[1]);
+      });
+      // each landing nudges the card a hair (a settle, not an exit)
+      [2.37, 2.84].forEach(function (t) {
+        tl.fromTo($("f08-card2"), { y: 0 }, { y: 6, duration: 0.08, ease: "power3.out", immediateRender: false }, t + 0.04);
+        tl.fromTo($("f08-card2"), { y: 6 }, { y: 0, duration: 0.2, ease: "power3.out", immediateRender: false }, t + 0.12);
+      });
+
+      /* ---- the voice, word by word ---- */
+      f08Subtitle(tl, $("f08-sub"));
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
       window.__timelines = window.__timelines || {};
-      window.__timelines["08-carte2"] = tl;
+      window.__timelines[FID] = tl;
     })();
   </script>
 </template>
