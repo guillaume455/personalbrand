@@ -208,7 +208,7 @@ Scene 1 (0.00 à 4.80 s) : P8, la carte 1
 - scene: Sur la carte 1, une étiquette « PUB » se barre, « ORGANIQUE » s'allume, le compteur de vues continue de grimper
 - duration: 3.64s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/07-organique.html
 - voiceover: "En organique, pas en pub. On achète à quelqu'un qu'on a déjà vu bosser."
 - type: solution

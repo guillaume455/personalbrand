@@ -1,0 +1,388 @@
+<template>
+  <!--
+  ===================== 07-organique (3.64 s) : geometry =====================
+  HANDOFF_IN @ 0.00 = 06-carte1 @ 4.80, copied exactly (see 06's top comment):
+    card 860 x 940 at left 110, top 300, badge « 1 », title « MONTRE TON / TRAVAIL » with its stroke drawn,
+    caption chips 1..3 visible, hearts 1..3 filled; feed list y = step -975 + drift -178.2 = -1153.2, drift 60 px/s up;
+    counter « VUES » row at card (48, 836), number « 9 800 », box scale 1;
+    camera #push scale 1.048 (+1 %/s linear), #cran scale 1.02, both origin 540px 1040px; halo scale 1.10; grain 4 %;
+    no subtitle at 0.00.
+  This frame adds (nothing of it is visible at 0.00):
+    posts 6..11 appended below post 5 in the list (post 10 = audi « CLIENT LIVRÉ »);
+    pill row at card-local y 304 (feed-window y 20-86), centred: « ORGANIQUE » 280 x 66 (accent when lit) + gap 24 +
+      « PUB » 134 x 66 (struck by an accent line, svg path draw);
+    big accent heart 120 px on the photo of post 10.
+  Feed: drift continues 60 px/s to 1.67 (-278.4), then decelerates to a stop at 3.25 (power1.out, -325.8);
+    the step wrapper scrolls fast from 1.67 (-975 -> -3323.2, power2.inOut) so post 10 freezes at feed-window y 91
+    (centred in the 532 px window) at 3.25.
+  Counter: holds « 9 800 » until 2.16, then rolls to « 18 600 » (2.16 -> 3.26, power3.out quantised per row, no onUpdate),
+    box scale 1 -> 1.15.
+  Camera: #push 1.048 -> 1.0844 linear; #cran y 0 -> -24 linear over the frame (keeps the card above the subtitle band),
+    cran scale 1.02 -> 1.028 at 3.25. Ends on a hard cut (no exit).
+  ===========================================================================
+  -->
+  <style>
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+
+    /* ===================== SHARED: ground ===================== */
+    /* solid #0A0A0A + one soft accent halo behind the focal element + static grain 4 %.
+       Full-duration class="clip" layer on track 0. Move the halo by tweening its x / y / scale / opacity only. */
+    .f07-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .f07-halo { position: absolute; left: -60px; top: 300px; width: 1200px; height: 1200px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.16) 0%, rgba(251,128,0,0.10) 38%, rgba(251,128,0,0.035) 70%, rgba(251,128,0,0) 100%); }
+    .f07-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    /* ===================== end SHARED: ground ===================== */
+
+    /* ===================== SHARED: title ===================== */
+    /* Scene title: Big Shoulders 900, 128 px, caps, line-height 0.95, white, centred in the title zone (y 260 to 640,
+       side margins 80 px). The orange title-stroke sits under the LAST line: it is sized in em, so it is always
+       "line width + 20 px" (10 px each side at 128 px), 14 px tall, round cap at the left, tapered end, tilted -1.5 deg.
+       Markup:
+         <div class="f07-title" style="top: ...px">
+           <span class="f07-tline">LINE 1</span><br>
+           <span class="f07-tline">LINE 2<i class="f07-stroke-tilt"><i class="f07-stroke" id="f07-..."></i></i></span>
+         </div>
+       The same component scales with font-size (this frame uses it at the jumbo size, 300 px). */
+    .f07-title { position: absolute; left: 80px; width: 920px; text-align: center; font: 900 128px/0.95 "Big Shoulders", sans-serif;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .f07-tline { position: relative; display: inline-block; }
+    .f07-stroke-tilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.085em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .f07-stroke { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%);
+      transform-origin: 0 50%; transform: scaleX(0); }
+    /* ===================== end SHARED: title ===================== */
+
+    /* ===================== SHARED: subtitle ===================== */
+    /* The voice, word by word, in the subtitle band (y 1260 to 1440, nothing else in it): Instrument Sans 700 58/70,
+       centred on y 1350. One .f07-chunk per quoted chunk (2 to 6 words), all chunks stacked at the same place.
+       Every word is a .f07-w with data-cue (frame-local s); the key word also carries .f07-key (turns #FB8000 as it
+       appears, no box). data-out on the chunk = its 0.1 s leave (opacity + blur) before the next chunk. */
+    .f07-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .f07-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 58px/70px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .f07-w { display: inline-block; opacity: 0; }
+    /* ===================== end SHARED: subtitle ===================== */
+
+    /* ---- camera (two stacked wrappers: continuous push / discrete crans), origin under the card centre ---- */
+    .f07-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 1040px; }
+
+    /* ===================== SHARED: card (CSS) ===================== */
+    /* Card stack geometry for frames 06 / 08 / 10: 860 x 940, left 110, top 300 (ends y 1240, above the subtitle band). */
+    .f07-card { position: absolute; left: 110px; top: 300px; width: 860px; height: 940px; box-sizing: border-box;
+      background: #161616; border: 1px solid #2a2a2a; border-radius: 36px; overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.55); }
+    .f07-badge { position: absolute; left: 48px; top: 52px; width: 96px; height: 96px; border-radius: 50%; background: #FB8000;
+      color: #0A0A0A; font: 900 72px/96px "Big Shoulders", sans-serif; text-align: center; opacity: 0; }
+    .f07-title.f07-ctitle { left: 172px; top: 52px; width: auto; text-align: left; font-size: 96px; transform-origin: 0 50%; opacity: 0; }
+    .f07-feed { position: absolute; left: 48px; top: 284px; width: 764px; height: 532px; overflow: hidden; }
+    .f07-feed-fade { position: absolute; left: 0; width: 764px; height: 44px; pointer-events: none; }
+    .f07-feed-fade.f07-top { top: 0; background: linear-gradient(#161616, rgba(22,22,22,0)); }
+    .f07-feed-fade.f07-bot { bottom: 0; background: linear-gradient(rgba(22,22,22,0), #161616); }
+    .f07-list { position: absolute; left: 0; top: 0; width: 764px; }
+    .f07-post { position: absolute; left: 0; width: 764px; height: 350px; }
+    .f07-photo { position: absolute; left: 0; top: 0; width: 764px; height: 280px; border-radius: 18px; overflow: hidden; background: #222222; }
+    .f07-photo img { position: absolute; left: 0; top: 0; width: 764px; height: 280px; object-fit: cover; object-position: 50% 40%; display: block; }
+    .f07-cap { position: absolute; left: 18px; bottom: 18px; padding: 8px 14px; border-radius: 10px; background: rgba(10,10,10,0.82);
+      font: 700 26px/34px "Space Mono", monospace; color: #ffffff; white-space: nowrap; opacity: 0; transform-origin: 0 100%; }
+    .f07-heart { position: absolute; left: 0; top: 292px; width: 26px; height: 26px; }
+    .f07-heart svg { position: absolute; left: 0; top: 0; width: 26px; height: 26px; overflow: visible; }
+    .f07-heart-off path { fill: none; stroke: #6f6f6f; stroke-width: 2.4; }
+    .f07-heart-on { opacity: 0; transform-origin: 13px 13px; }
+    .f07-heart-on path { fill: #FB8000; stroke: #FB8000; stroke-width: 2.4; }
+    .f07-bar { position: absolute; left: 40px; height: 14px; border-radius: 7px; background: #2a2a2a; }
+    .f07-counter { position: absolute; left: 48px; top: 836px; width: 764px; height: 64px; opacity: 0; }
+    .f07-eye { position: absolute; left: 0; top: 10px; width: 44px; height: 44px; }
+    .f07-vues { position: absolute; left: 60px; top: 15px; font: 700 26px/34px "Space Mono", monospace; color: #bdbdbd; letter-spacing: 0.06em; }
+    .f07-num-box { position: absolute; left: 160px; top: 0; width: 260px; height: 64px; overflow: hidden; transform-origin: 0 50%; }
+    .f07-num { position: absolute; left: 0; top: 0; width: 260px; font: 700 52px/64px "Space Mono", monospace; color: #ffffff;
+      font-variant-numeric: tabular-nums; white-space: pre; word-spacing: -0.45em; }
+    .f07-num span { display: block; height: 64px; }
+    /* ===================== end SHARED: card (CSS) ===================== */
+
+    /* ---- 07: the card is already landed at 0.00 (state of 06 @ 4.80) ---- */
+    #f07-badge, #f07-title, #f07-counter, #f07-cap1, #f07-cap2, #f07-cap3, #f07-cap10,
+    #f07-heart1, #f07-heart2, #f07-heart3 { opacity: 1; }
+    #f07-stroke { transform: scaleX(1); }
+
+    /* ---- 07: the two pills, pinned over the top of the feed ---- */
+    .f07-pills { position: absolute; left: 0; top: 304px; width: 860px; height: 66px; }
+    .f07-pill { position: absolute; top: 0; height: 66px; box-sizing: border-box; border-radius: 33px; border: 2px solid #3a3a3a;
+      background: #0A0A0A; text-align: center; font: 700 38px/62px "Space Mono", monospace; letter-spacing: 0.04em;
+      color: #bdbdbd; white-space: nowrap; opacity: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+    #f07-pill-org { left: 213px; width: 280px; transform-origin: 140px 33px; }
+    #f07-pill-pub { left: 517px; width: 134px; transform-origin: 67px 33px; }
+    .f07-pill-glow { position: absolute; left: -2px; top: -2px; width: 280px; height: 66px; border-radius: 33px; opacity: 0;
+      box-shadow: 0 0 46px 6px rgba(251,128,0,0.55); }
+    .f07-pill-lit { position: absolute; left: -2px; top: -2px; width: 280px; height: 66px; border-radius: 33px; opacity: 0;
+      background: #FB8000; color: #0A0A0A; line-height: 66px; }
+    #f07-pub-txt { position: relative; display: inline-block; color: #ffffff; }
+    .f07-pub-svg { position: absolute; left: -14px; top: 0; width: 158px; height: 66px; overflow: visible; }
+    #f07-pub-strike { fill: none; stroke: #FB8000; stroke-width: 7; stroke-linecap: round; stroke-dasharray: 145; stroke-dashoffset: 145; }
+
+    /* ---- 07: the big heart on the frozen « CLIENT LIVRÉ » post ---- */
+    .f07-bigheart { position: absolute; left: 322px; top: 80px; width: 120px; height: 120px; opacity: 0; transform-origin: 60px 60px; }
+    .f07-bigheart svg { width: 120px; height: 120px; overflow: visible; }
+    .f07-bigheart path { fill: #FB8000; stroke: #FB8000; stroke-width: 1.2; }
+  </style>
+
+  <div id="root" data-composition-id="07-organique" data-width="1080" data-height="1920" data-duration="3.64">
+
+    <!-- SHARED: ground (full-duration clip, lowest track) -->
+    <div id="f07-ground" class="clip f07-ground" data-start="0" data-duration="3.64" data-track-index="0">
+      <div id="f07-halo" class="f07-halo"></div>
+      <div class="f07-grain"></div>
+    </div>
+
+    <!-- camera: push (continuous +1 %/s) > cran (slow tilt up, step in at 3.25) > scene -->
+    <div id="f07-push" class="f07-cam">
+      <div id="f07-cran" class="f07-cam">
+
+        <!-- ===================== SHARED: card (HTML) ===================== -->
+        <div id="f07-card" class="f07-card">
+          <div id="f07-badge" class="f07-badge">1</div>
+          <div id="f07-title" class="f07-title f07-ctitle"><span class="f07-tline">MONTRE TON</span><br><span class="f07-tline">TRAVAIL<i class="f07-stroke-tilt"><i id="f07-stroke" class="f07-stroke"></i></i></span></div>
+
+          <div id="f07-feed" class="f07-feed">
+            <div id="f07-drift" class="f07-list">
+              <div id="f07-step" class="f07-list">
+                <div class="f07-post" style="top: 0px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-ford.png" alt=""></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f07-post" style="top: 374px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-audi.png" alt=""><div id="f07-cap1" class="f07-cap">PRÊTE À PARTIR</div></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg><svg id="f07-heart1" class="f07-heart-on" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f07-post" style="top: 748px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-ford.png" alt="" style="object-position: 50% 30%;"><div id="f07-cap2" class="f07-cap">CLÉS REMISES</div></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg><svg id="f07-heart2" class="f07-heart-on" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f07-post" style="top: 1122px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-audi.png" alt="" style="object-position: 50% 50%;"><div id="f07-cap3" class="f07-cap">CLIENT LIVRÉ</div></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg><svg id="f07-heart3" class="f07-heart-on" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f07-post" style="top: 1496px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-ford.png" alt="" style="object-position: 50% 45%;"></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f07-post" style="top: 1870px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-audi.png" alt="" style="object-position: 50% 35%;"></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <!-- 07 only: posts 6..11, below the window at 0.00, reached by the fast scroll -->
+                <div class="f07-post" style="top: 2244px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-ford.png" alt="" style="object-position: 50% 55%;"></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f07-post" style="top: 2618px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-audi.png" alt="" style="object-position: 50% 45%;"></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f07-post" style="top: 2992px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-ford.png" alt="" style="object-position: 50% 35%;"></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f07-post" style="top: 3366px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-audi.png" alt="" style="object-position: 50% 60%;"></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f07-post" style="top: 3740px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-audi.png" alt="" style="object-position: 50% 50%;"><div id="f07-cap10" class="f07-cap">CLIENT LIVRÉ</div>
+                    <div id="f07-bigheart" class="f07-bigheart"><svg viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  </div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg><svg id="f07-heart10" class="f07-heart-on" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f07-post" style="top: 4114px;">
+                  <div class="f07-photo"><img src="assets/img/thumb-ford.png" alt="" style="object-position: 50% 40%;"></div>
+                  <div class="f07-heart"><svg class="f07-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f07-bar" style="top: 298px; width: 62%;"></div><div class="f07-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="f07-feed-fade f07-top"></div>
+            <div class="f07-feed-fade f07-bot"></div>
+          </div>
+
+          <div id="f07-counter" class="f07-counter">
+            <svg class="f07-eye" viewBox="0 0 44 44"><path d="M3 22 C 9 12, 15 8, 22 8 C 29 8, 35 12, 41 22 C 35 32, 29 36, 22 36 C 15 36, 9 32, 3 22 Z" fill="none" stroke="#FB8000" stroke-width="3.6" stroke-linejoin="round"></path><circle cx="22" cy="22" r="6.5" fill="#FB8000"></circle></svg>
+            <div class="f07-vues">VUES</div>
+            <div id="f07-num-box" class="f07-num-box"><div id="f07-num" class="f07-num"><span>9 800</span></div></div>
+          </div>
+
+          <!-- 07 only: the pinned pills over the top of the feed -->
+          <div class="f07-pills">
+            <div id="f07-pill-org" class="f07-pill">ORGANIQUE<div id="f07-pill-glow" class="f07-pill-glow"></div><div id="f07-pill-lit" class="f07-pill-lit">ORGANIQUE</div></div>
+            <div id="f07-pill-pub" class="f07-pill"><span id="f07-pub-txt">PUB</span><svg class="f07-pub-svg" viewBox="0 0 158 66" xmlns="http://www.w3.org/2000/svg"><path id="f07-pub-strike" d="M 10 45 L 148 21"></path></svg></div>
+          </div>
+        </div>
+        <!-- ===================== end SHARED: card (HTML) ===================== -->
+
+      </div>
+    </div>
+
+    <!-- SHARED: subtitle (outside the camera: it never moves with the scene) -->
+    <div id="f07-sub" class="f07-sub">
+      <div class="f07-chunk" data-out="0.80"><span class="f07-w" data-cue="0.15">En</span> <span class="f07-w f07-key" data-cue="0.27">organique,</span></div>
+      <div class="f07-chunk" data-out="1.55"><span class="f07-w" data-cue="0.93">pas</span> <span class="f07-w" data-cue="1.07">en</span> <span class="f07-w" data-cue="1.22">pub.</span></div>
+      <div class="f07-chunk" data-out="2.40"><span class="f07-w" data-cue="1.67">On</span> <span class="f07-w" data-cue="1.79">achète</span> <span class="f07-w" data-cue="2.03">à</span> <span class="f07-w" data-cue="2.16">quelqu'un</span></div>
+      <div class="f07-chunk"><span class="f07-w" data-cue="2.52">qu'on</span> <span class="f07-w" data-cue="2.76">a</span> <span class="f07-w" data-cue="2.88">déjà</span> <span class="f07-w" data-cue="3.13">vu</span> <span class="f07-w f07-key" data-cue="3.25">bosser.</span></div>
+    </div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "07-organique";
+      var DUR = 3.64;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#" + id); }
+      var tl = gsap.timeline({ paused: true });
+
+      /* ===================== SHARED: title (JS) ===================== */
+      // Title slam: scale 1.25 -> 1, blur 10 -> 0, 0.18 s expo.out (t0 > 0: the element starts at opacity 0 in CSS).
+      function f07TitleIn(tl, el, t0) {
+        tl.fromTo(el, { opacity: 0, scale: 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false }, t0);
+      }
+      // Orange stroke: draws from the left, scaleX 0 -> 1, 0.3 s power3.out.
+      function f07StrokeDraw(tl, el, t0) {
+        tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, t0);
+      }
+      /* ===================== end SHARED: title (JS) ===================== */
+
+      /* ===================== SHARED: subtitle (JS) ===================== */
+      // Each word appears 1 frame before its cue (never late): opacity 0 -> 1, y 14 -> 0, blur 6 -> 0 in 0.12 s.
+      // The key word turns #FB8000 as it appears. A chunk leaves at its data-out in 0.1 s (opacity + blur).
+      var F07_LEAD = 1 / 30;
+      function f07Subtitle(tl, box) {
+        Array.prototype.forEach.call(box.querySelectorAll(".f07-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".f07-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - F07_LEAD);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" },
+              { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("f07-key")) {
+              tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            }
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) {
+            tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" },
+              { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+          }
+        });
+      }
+      /* ===================== end SHARED: subtitle (JS) ===================== */
+
+      /* ===================== SHARED: card (JS) ===================== */
+      // French thousands: « 9 800 »
+      function f07Fmt(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+      var FEED_SPEED = 60;          // px/s, upward (state inherited from 06 @ 4.80)
+      /* ===================== end SHARED: card (JS) ===================== */
+
+      /* ---- camera track: continues 06 (push 1.048, cran 1.02 at 0.00) ---- */
+      tl.fromTo($("f07-push"), { scale: 1.048 }, { scale: 1.048 + 0.01 * DUR, duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("f07-cran"), { y: 0 }, { y: -24, duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("f07-cran"), { scale: 1.02 }, { scale: 1.02, duration: 0.01, ease: "none" }, 0);
+      // 3.25 a small step in on the frozen post
+      tl.fromTo($("f07-cran"), { scale: 1.02 }, { scale: 1.028, duration: 0.3, ease: "power3.out", immediateRender: false }, 3.25);
+
+      /* ---- feed: 06's state at 0.00, drift 60 px/s, then the fast scroll that freezes post 10 at 3.25 ---- */
+      var FAST_AT = 1.67, FREEZE_AT = 3.25, FAST = FREEZE_AT - FAST_AT;
+      var D0 = -178.2, D1 = D0 - FEED_SPEED * FAST_AT, D2 = D1 - FEED_SPEED * FAST / 2;   // power1.out starts at 60 px/s
+      var S0 = -975, S1 = 91 - 374 * 10 - D2;                                               // post 10 top at window y 91
+      tl.fromTo($("f07-drift"), { y: D0 }, { y: D1, duration: FAST_AT, ease: "none" }, 0);
+      tl.fromTo($("f07-drift"), { y: D1 }, { y: D2, duration: FAST, ease: "power1.out", immediateRender: false }, FAST_AT);
+      tl.fromTo($("f07-step"), { y: S0 }, { y: S0, duration: 0.01, ease: "none" }, 0);
+      tl.fromTo($("f07-step"), { y: S0 }, { y: S1, duration: FAST, ease: "power2.inOut", immediateRender: false }, FAST_AT);
+      // speed blur at the peak of the scroll
+      tl.fromTo($("f07-step"), { filter: "blur(0px)" }, { filter: "blur(3px)", duration: 0.4, ease: "power3.out", immediateRender: false }, 2.10);
+      tl.fromTo($("f07-step"), { filter: "blur(3px)" }, { filter: "blur(0px)", duration: 0.45, ease: "power3.out", immediateRender: false }, 2.62);
+
+      /* ---- halo: 06's state (scale 1.10), then follows the focal ---- */
+      tl.fromTo($("f07-halo"), { scale: 1.10, y: 0 }, { scale: 1.10, y: 0, duration: 0.01, ease: "none" }, 0);
+      tl.fromTo($("f07-halo"), { scale: 1.10, y: 0 }, { scale: 1.18, y: -220, duration: 0.5, ease: "power3.out", immediateRender: false }, 0.27);
+      tl.fromTo($("f07-halo"), { scale: 1.18, y: -220 }, { scale: 1.12, y: 0, duration: 0.6, ease: "power3.out", immediateRender: false }, 2.52);
+      tl.fromTo($("f07-halo"), { scale: 1.12 }, { scale: 1.2, duration: 0.35, ease: "power3.out", immediateRender: false }, 3.25);
+
+      /* ---- 0.10 the « ORGANIQUE » pill lands (dark), 0.27 it lights up in accent ---- */
+      var org = $("f07-pill-org");
+      tl.fromTo(org, { opacity: 0, scale: 1.3, filter: "blur(8px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false }, 0.10);
+      tl.fromTo($("f07-pill-lit"), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power3.out", immediateRender: false }, 0.26);
+      tl.fromTo($("f07-pill-glow"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 0.26);
+      tl.fromTo(org, { scale: 1 }, { scale: 1.12, duration: 0.08, ease: "power3.out", immediateRender: false }, 0.26);
+      tl.fromTo(org, { scale: 1.12 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 0.34);
+
+      /* ---- 0.93 the « PUB » pill appears, 1.22 it is struck through (svg path draw) and dims ---- */
+      var pub = $("f07-pill-pub");
+      tl.fromTo(pub, { opacity: 0, x: 60, scale: 1.2, filter: "blur(8px)" },
+        { opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out", immediateRender: false }, 0.90);
+      var strike = $("f07-pub-strike");
+      var len = 145;
+      try { len = Math.ceil(strike.getTotalLength()) + 1; } catch (e) {}
+      strike.style.strokeDasharray = len;
+      strike.style.strokeDashoffset = len;
+      tl.fromTo(strike, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: 0.22, ease: "power3.out", immediateRender: false }, 1.20);
+      tl.fromTo($("f07-pub-txt"), { opacity: 1 }, { opacity: 0.4, duration: 0.25, ease: "power3.out", immediateRender: false }, 1.30);
+      tl.fromTo(pub, { x: 0 }, { x: 7, duration: 0.04, ease: "sine.out", immediateRender: false }, 1.30);
+      tl.fromTo(pub, { x: 7 }, { x: -6, duration: 0.08, ease: "sine.inOut", immediateRender: false }, 1.34);
+      tl.fromTo(pub, { x: -6 }, { x: 3, duration: 0.08, ease: "sine.inOut", immediateRender: false }, 1.42);
+      tl.fromTo(pub, { x: 3 }, { x: 0, duration: 0.06, ease: "sine.out", immediateRender: false }, 1.50);
+      tl.fromTo(pub, { scale: 1 }, { scale: 0.92, duration: 0.3, ease: "power3.out", immediateRender: false }, 1.30);
+
+      /* ---- 2.16 the views counter rolls 9 800 -> 18 600 (counting-dynamic-scale, seek-safe: no onUpdate) ---- */
+      // a strip of rows (64 px) rolled by y; the power3.out ease is quantised to whole rows.
+      var num = $("f07-num");
+      var ROWS = 33, html = "";
+      for (var i = 0; i <= ROWS; i++) {
+        var v = 9800 + Math.round(8800 * i / ROWS / 10) * 10;
+        if (i > 0 && i < ROWS) v += (i * 37) % 10;
+        html += "<span>" + f07Fmt(v) + "</span>";
+      }
+      num.innerHTML = html;
+      var p3 = gsap.parseEase("power3.out");
+      var rowEase = function (t) { return Math.round(p3(t) * ROWS) / ROWS; };
+      tl.fromTo(num, { y: 0 }, { y: -ROWS * 64, duration: 1.1, ease: rowEase, immediateRender: false }, 2.16);
+      tl.fromTo($("f07-num-box"), { scale: 1 }, { scale: 1.15, duration: 1.1, ease: "power3.out", immediateRender: false }, 2.16);
+
+      /* ---- 2.52 the lit pill pulses once more ---- */
+      tl.fromTo(org, { scale: 1 }, { scale: 1.07, duration: 0.1, ease: "power3.out", immediateRender: false }, 2.52);
+      tl.fromTo(org, { scale: 1.07 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 2.62);
+
+      /* ---- 3.25 « bosser »: post « CLIENT LIVRÉ » frozen in the centre, accent heart ---- */
+      tl.fromTo($("f07-bigheart"), { opacity: 0, scale: 0.3 },
+        { opacity: 1, scale: 1, duration: 0.3, ease: "expo.out", immediateRender: false }, 3.22);
+      tl.fromTo($("f07-heart10"), { opacity: 0, scale: 1.8 },
+        { opacity: 1, scale: 1, duration: 0.22, ease: "expo.out", immediateRender: false }, 3.28);
+
+      /* ---- the voice, word by word ---- */
+      f07Subtitle(tl, $("f07-sub"));
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
