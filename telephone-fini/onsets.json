@@ -1,0 +1,1792 @@
+{
+ "audio": "telephone-fini/assets/audio/voix-montage.wav",
+ "duration": 58.23,
+ "threshold_db": -40.0,
+ "min_silence": 0.12,
+ "stats": {
+  "p10_db": -92.4,
+  "p50_db": -30.0,
+  "p95_db": -16.5
+ },
+ "phrases": [
+  {
+   "start": 0.05,
+   "end": 1.46,
+   "silence_after": 0.2,
+   "cut_point": 1.56,
+   "text": "Si tu trouves tes mandats au téléphone,",
+   "words": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  {
+   "start": 1.66,
+   "end": 3.11,
+   "silence_after": 0.31,
+   "cut_point": 3.26,
+   "text": "t'as un problème depuis le onze août.",
+   "words": [
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+   ]
+  },
+  {
+   "start": 3.42,
+   "end": 4.25,
+   "silence_after": 0.13,
+   "cut_point": 4.31,
+   "text": "La loi est passée tu",
+   "words": [
+    14,
+    15,
+    16,
+    17,
+    18
+   ]
+  },
+  {
+   "start": 4.38,
+   "end": 4.61,
+   "silence_after": 0.12,
+   "cut_point": 4.67,
+   "text": "n'as plus",
+   "words": [
+    19,
+    20
+   ]
+  },
+  {
+   "start": 4.73,
+   "end": 6.43,
+   "silence_after": 0.13,
+   "cut_point": 6.49,
+   "text": "le droit d'appeler un particulier pour lui",
+   "words": [
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27
+   ]
+  },
+  {
+   "start": 6.56,
+   "end": 7.18,
+   "silence_after": 0.22,
+   "cut_point": 7.29,
+   "text": "proposer un mandat,",
+   "words": [
+    28,
+    29,
+    30
+   ]
+  },
+  {
+   "start": 7.4,
+   "end": 8.11,
+   "silence_after": 0.29,
+   "cut_point": 8.25,
+   "text": "sans son accord.",
+   "words": [
+    31,
+    32,
+    33
+   ]
+  },
+  {
+   "start": 8.4,
+   "end": 9.03,
+   "silence_after": 0.3,
+   "cut_point": 9.18,
+   "text": "Mais soyons honnêtes",
+   "words": [
+    34,
+    35,
+    36
+   ]
+  },
+  {
+   "start": 9.33,
+   "end": 10.56,
+   "silence_after": 0.3,
+   "cut_point": 10.71,
+   "text": "le téléphone mourait déjà.",
+   "words": [
+    37,
+    38,
+    39,
+    40
+   ]
+  },
+  {
+   "start": 10.86,
+   "end": 11.64,
+   "silence_after": 0.22,
+   "cut_point": 11.75,
+   "text": "Quand j'ai commencé,",
+   "words": [
+    41,
+    42,
+    43
+   ]
+  },
+  {
+   "start": 11.86,
+   "end": 14.02,
+   "silence_after": 0.3,
+   "cut_point": 14.17,
+   "text": "sur dix appels, je décrochais neuf rendez-vous.",
+   "words": [
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50
+   ]
+  },
+  {
+   "start": 14.32,
+   "end": 14.82,
+   "silence_after": 0.28,
+   "cut_point": 14.96,
+   "text": "Aujourd'hui,",
+   "words": [
+    51
+   ]
+  },
+  {
+   "start": 15.1,
+   "end": 15.37,
+   "silence_after": 0.53,
+   "cut_point": 15.63,
+   "text": "trois.",
+   "words": [
+    52
+   ]
+  },
+  {
+   "start": 15.9,
+   "end": 17.39,
+   "silence_after": 0.3,
+   "cut_point": 17.54,
+   "text": "Le vrai problème, c'est pas la loi.",
+   "words": [
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59
+   ]
+  },
+  {
+   "start": 17.69,
+   "end": 19.6,
+   "silence_after": 0.19,
+   "cut_point": 19.7,
+   "text": "Si tu pêches là où pêchent tous tes concurrents,",
+   "words": [
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68
+   ]
+  },
+  {
+   "start": 19.79,
+   "end": 21.31,
+   "silence_after": 0.3,
+   "cut_point": 21.46,
+   "text": "c'est normal d'avoir de la concurrence.",
+   "words": [
+    69,
+    70,
+    71,
+    72,
+    73,
+    74
+   ]
+  },
+  {
+   "start": 21.61,
+   "end": 21.82,
+   "silence_after": 0.29,
+   "cut_point": 21.96,
+   "text": "Un",
+   "words": [
+    75
+   ]
+  },
+  {
+   "start": 22.11,
+   "end": 22.99,
+   "silence_after": 0.3,
+   "cut_point": 23.14,
+   "text": "montre ton travail.",
+   "words": [
+    76,
+    77,
+    78
+   ]
+  },
+  {
+   "start": 23.29,
+   "end": 26.1,
+   "silence_after": 0.31,
+   "cut_point": 26.26,
+   "text": "Chaque voiture vendue, chaque client livré, c'est un contenu.",
+   "words": [
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87
+   ]
+  },
+  {
+   "start": 26.41,
+   "end": 27.0,
+   "silence_after": 0.19,
+   "cut_point": 27.09,
+   "text": "En organique,",
+   "words": [
+    88,
+    89
+   ]
+  },
+  {
+   "start": 27.19,
+   "end": 27.62,
+   "silence_after": 0.31,
+   "cut_point": 27.77,
+   "text": "pas en pub.",
+   "words": [
+    90,
+    91,
+    92
+   ]
+  },
+  {
+   "start": 27.93,
+   "end": 29.75,
+   "silence_after": 0.3,
+   "cut_point": 29.9,
+   "text": "On achète à quelqu'un qu'on a déjà vu bosser.",
+   "words": [
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101
+   ]
+  },
+  {
+   "start": 30.05,
+   "end": 30.37,
+   "silence_after": 0.3,
+   "cut_point": 30.52,
+   "text": "Deux ta",
+   "words": [
+    102,
+    103
+   ]
+  },
+  {
+   "start": 30.67,
+   "end": 31.3,
+   "silence_after": 0.3,
+   "cut_point": 31.45,
+   "text": "réputation.",
+   "words": [
+    104
+   ]
+  },
+  {
+   "start": 31.6,
+   "end": 32.1,
+   "silence_after": 0.17,
+   "cut_point": 32.19,
+   "text": "Les avis,",
+   "words": [
+    105,
+    106
+   ]
+  },
+  {
+   "start": 32.27,
+   "end": 33.21,
+   "silence_after": 0.25,
+   "cut_point": 33.34,
+   "text": "les clients qui reviennent,",
+   "words": [
+    107,
+    108,
+    109,
+    110
+   ]
+  },
+  {
+   "start": 33.46,
+   "end": 34.5,
+   "silence_after": 0.31,
+   "cut_point": 34.66,
+   "text": "ceux qui t'envoient leur beau-frère.",
+   "words": [
+    111,
+    112,
+    113,
+    114,
+    115
+   ]
+  },
+  {
+   "start": 34.81,
+   "end": 35.14,
+   "silence_after": 0.24,
+   "cut_point": 35.26,
+   "text": "Ça,",
+   "words": [
+    116
+   ]
+  },
+  {
+   "start": 35.38,
+   "end": 36.47,
+   "silence_after": 0.14,
+   "cut_point": 36.54,
+   "text": "aucun concurrent ne peut te",
+   "words": [
+    117,
+    118,
+    119,
+    120,
+    121
+   ]
+  },
+  {
+   "start": 36.61,
+   "end": 36.72,
+   "silence_after": 0.31,
+   "cut_point": 36.88,
+   "text": "le",
+   "words": [
+    122
+   ]
+  },
+  {
+   "start": 37.03,
+   "end": 37.35,
+   "silence_after": 0.25,
+   "cut_point": 37.48,
+   "text": "prendre.",
+   "words": [
+    123
+   ]
+  },
+  {
+   "start": 37.6,
+   "end": 38.49,
+   "silence_after": 0.29,
+   "cut_point": 38.64,
+   "text": "Trois sois installé.",
+   "words": [
+    124,
+    125,
+    126
+   ]
+  },
+  {
+   "start": 38.78,
+   "end": 40.74,
+   "silence_after": 0.32,
+   "cut_point": 40.9,
+   "text": "Un point de vente, une adresse, une vitrine.",
+   "words": [
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134
+   ]
+  },
+  {
+   "start": 41.06,
+   "end": 43.2,
+   "silence_after": 0.32,
+   "cut_point": 43.36,
+   "text": "Face à un inconnu sur Leboncoin, c'est ce qui rassure.",
+   "words": [
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144
+   ]
+  },
+  {
+   "start": 43.52,
+   "end": 44.21,
+   "silence_after": 0.13,
+   "cut_point": 44.28,
+   "text": "Ça prend du temps et de",
+   "words": [
+    145,
+    146,
+    147,
+    148,
+    149,
+    150
+   ]
+  },
+  {
+   "start": 44.34,
+   "end": 45.15,
+   "silence_after": 0.31,
+   "cut_point": 45.3,
+   "text": "la régularité.",
+   "words": [
+    151,
+    152
+   ]
+  },
+  {
+   "start": 45.46,
+   "end": 46.37,
+   "silence_after": 0.22,
+   "cut_point": 46.48,
+   "text": "Mais une fois en place,",
+   "words": [
+    153,
+    154,
+    155,
+    156,
+    157
+   ]
+  },
+  {
+   "start": 46.59,
+   "end": 47.24,
+   "silence_after": 0.49,
+   "cut_point": 47.48,
+   "text": "personne ne te le prend.",
+   "words": [
+    158,
+    159,
+    160,
+    161,
+    162
+   ]
+  },
+  {
+   "start": 47.73,
+   "end": 48.51,
+   "silence_after": 0.3,
+   "cut_point": 48.66,
+   "text": "Pas le temps d'être régulier",
+   "words": [
+    163,
+    164,
+    165,
+    166,
+    167
+   ]
+  },
+  {
+   "start": 48.81,
+   "end": 49.77,
+   "silence_after": 0.28,
+   "cut_point": 49.91,
+   "text": "Le marché tranchera pour toi.",
+   "words": [
+    168,
+    169,
+    170,
+    171,
+    172
+   ]
+  },
+  {
+   "start": 50.05,
+   "end": 51.64,
+   "silence_after": 0.27,
+   "cut_point": 51.77,
+   "text": "Le téléphone, c'est louer tes clients,",
+   "words": [
+    173,
+    174,
+    175,
+    176,
+    177,
+    178
+   ]
+  },
+  {
+   "start": 51.91,
+   "end": 53.67,
+   "silence_after": 0.31,
+   "cut_point": 53.83,
+   "text": "et chercher de nouvelles locations tous les jours.",
+   "words": [
+    179,
+    180,
+    181,
+    182,
+    183,
+    184,
+    185,
+    186
+   ]
+  },
+  {
+   "start": 53.98,
+   "end": 54.56,
+   "silence_after": 0.18,
+   "cut_point": 54.65,
+   "text": "Ces canaux-là,",
+   "words": [
+    187,
+    188
+   ]
+  },
+  {
+   "start": 54.74,
+   "end": 55.37,
+   "silence_after": 0.31,
+   "cut_point": 55.52,
+   "text": "tu les possèdes.",
+   "words": [
+    189,
+    190,
+    191
+   ]
+  },
+  {
+   "start": 55.68,
+   "end": 56.5,
+   "silence_after": 1.73,
+   "cut_point": null,
+   "text": "Abonne-toi pour la suite.",
+   "words": [
+    192,
+    193,
+    194,
+    195
+   ]
+  }
+ ],
+ "words": [
+  {
+   "w": "Si",
+   "s": 0.05,
+   "e": 0.18,
+   "whisper_s": 0.05
+  },
+  {
+   "w": "tu",
+   "s": 0.18,
+   "e": 0.31,
+   "whisper_s": 0.18
+  },
+  {
+   "w": "trouves",
+   "s": 0.31,
+   "e": 0.43,
+   "whisper_s": 0.31
+  },
+  {
+   "w": "tes",
+   "s": 0.43,
+   "e": 0.56,
+   "whisper_s": 0.43
+  },
+  {
+   "w": "mandats",
+   "s": 0.56,
+   "e": 0.82,
+   "whisper_s": 0.56
+  },
+  {
+   "w": "au",
+   "s": 0.82,
+   "e": 0.95,
+   "whisper_s": 0.82
+  },
+  {
+   "w": "téléphone,",
+   "s": 0.95,
+   "e": 1.46,
+   "whisper_s": 0.95
+  },
+  {
+   "w": "t'as",
+   "s": 1.66,
+   "e": 1.82,
+   "whisper_s": 1.66
+  },
+  {
+   "w": "un",
+   "s": 1.82,
+   "e": 1.98,
+   "whisper_s": 1.82
+  },
+  {
+   "w": "problème",
+   "s": 1.98,
+   "e": 2.3,
+   "whisper_s": 1.98
+  },
+  {
+   "w": "depuis",
+   "s": 2.3,
+   "e": 2.63,
+   "whisper_s": 2.3
+  },
+  {
+   "w": "le",
+   "s": 2.63,
+   "e": 2.79,
+   "whisper_s": 2.63
+  },
+  {
+   "w": "onze",
+   "s": 2.79,
+   "e": 2.95,
+   "whisper_s": 2.79
+  },
+  {
+   "w": "août.",
+   "s": 2.95,
+   "e": 3.11,
+   "whisper_s": 2.95
+  },
+  {
+   "w": "La",
+   "s": 3.42,
+   "e": 3.56,
+   "whisper_s": 3.42
+  },
+  {
+   "w": "loi",
+   "s": 3.56,
+   "e": 3.7,
+   "whisper_s": 3.56
+  },
+  {
+   "w": "est",
+   "s": 3.7,
+   "e": 3.83,
+   "whisper_s": 3.7
+  },
+  {
+   "w": "passée",
+   "s": 3.83,
+   "e": 4.11,
+   "whisper_s": 3.83
+  },
+  {
+   "w": "tu",
+   "s": 4.11,
+   "e": 4.25,
+   "whisper_s": 4.11
+  },
+  {
+   "w": "n'as",
+   "s": 4.38,
+   "e": 4.5,
+   "whisper_s": 4.38
+  },
+  {
+   "w": "plus",
+   "s": 4.5,
+   "e": 4.61,
+   "whisper_s": 4.5
+  },
+  {
+   "w": "le",
+   "s": 4.73,
+   "e": 4.87,
+   "whisper_s": 4.73
+  },
+  {
+   "w": "droit",
+   "s": 4.87,
+   "e": 5.01,
+   "whisper_s": 4.87
+  },
+  {
+   "w": "d'appeler",
+   "s": 5.01,
+   "e": 5.44,
+   "whisper_s": 5.01
+  },
+  {
+   "w": "un",
+   "s": 5.44,
+   "e": 5.58,
+   "whisper_s": 5.44
+  },
+  {
+   "w": "particulier",
+   "s": 5.58,
+   "e": 6.15,
+   "whisper_s": 5.58
+  },
+  {
+   "w": "pour",
+   "s": 6.15,
+   "e": 6.29,
+   "whisper_s": 6.15
+  },
+  {
+   "w": "lui",
+   "s": 6.29,
+   "e": 6.43,
+   "whisper_s": 6.29
+  },
+  {
+   "w": "proposer",
+   "s": 6.56,
+   "e": 6.87,
+   "whisper_s": 6.56
+  },
+  {
+   "w": "un",
+   "s": 6.87,
+   "e": 6.97,
+   "whisper_s": 6.87
+  },
+  {
+   "w": "mandat,",
+   "s": 6.97,
+   "e": 7.18,
+   "whisper_s": 6.97
+  },
+  {
+   "w": "sans",
+   "s": 7.4,
+   "e": 7.58,
+   "whisper_s": 7.4
+  },
+  {
+   "w": "son",
+   "s": 7.58,
+   "e": 7.76,
+   "whisper_s": 7.58
+  },
+  {
+   "w": "accord.",
+   "s": 7.76,
+   "e": 8.11,
+   "whisper_s": 7.76
+  },
+  {
+   "w": "Mais",
+   "s": 8.4,
+   "e": 8.56,
+   "whisper_s": 8.4
+  },
+  {
+   "w": "soyons",
+   "s": 8.56,
+   "e": 8.71,
+   "whisper_s": 8.56
+  },
+  {
+   "w": "honnêtes",
+   "s": 8.71,
+   "e": 9.03,
+   "whisper_s": 8.71
+  },
+  {
+   "w": "le",
+   "s": 9.33,
+   "e": 9.48,
+   "whisper_s": 9.33
+  },
+  {
+   "w": "téléphone",
+   "s": 9.48,
+   "e": 9.95,
+   "whisper_s": 9.48
+  },
+  {
+   "w": "mourait",
+   "s": 9.95,
+   "e": 10.25,
+   "whisper_s": 9.95
+  },
+  {
+   "w": "déjà.",
+   "s": 10.25,
+   "e": 10.56,
+   "whisper_s": 10.25
+  },
+  {
+   "w": "Quand",
+   "s": 10.86,
+   "e": 11.02,
+   "whisper_s": 10.86
+  },
+  {
+   "w": "j'ai",
+   "s": 11.02,
+   "e": 11.17,
+   "whisper_s": 11.02
+  },
+  {
+   "w": "commencé,",
+   "s": 11.17,
+   "e": 11.64,
+   "whisper_s": 11.17
+  },
+  {
+   "w": "sur",
+   "s": 11.86,
+   "e": 12.04,
+   "whisper_s": 11.86
+  },
+  {
+   "w": "dix",
+   "s": 12.04,
+   "e": 12.22,
+   "whisper_s": 12.04
+  },
+  {
+   "w": "appels,",
+   "s": 12.22,
+   "e": 12.58,
+   "whisper_s": 12.22
+  },
+  {
+   "w": "je",
+   "s": 12.58,
+   "e": 12.76,
+   "whisper_s": 12.58
+  },
+  {
+   "w": "décrochais",
+   "s": 12.76,
+   "e": 13.3,
+   "whisper_s": 12.76
+  },
+  {
+   "w": "neuf",
+   "s": 13.3,
+   "e": 13.48,
+   "whisper_s": 13.3
+  },
+  {
+   "w": "rendez-vous.",
+   "s": 13.48,
+   "e": 14.02,
+   "whisper_s": 13.48
+  },
+  {
+   "w": "Aujourd'hui,",
+   "s": 14.32,
+   "e": 14.82,
+   "whisper_s": 14.32
+  },
+  {
+   "w": "trois.",
+   "s": 15.1,
+   "e": 15.37,
+   "whisper_s": 15.1
+  },
+  {
+   "w": "Le",
+   "s": 15.9,
+   "e": 16.07,
+   "whisper_s": 15.9
+  },
+  {
+   "w": "vrai",
+   "s": 16.07,
+   "e": 16.23,
+   "whisper_s": 16.07
+  },
+  {
+   "w": "problème,",
+   "s": 16.23,
+   "e": 16.73,
+   "whisper_s": 16.23
+  },
+  {
+   "w": "c'est",
+   "s": 16.73,
+   "e": 16.89,
+   "whisper_s": 16.73
+  },
+  {
+   "w": "pas",
+   "s": 16.89,
+   "e": 17.06,
+   "whisper_s": 16.89
+  },
+  {
+   "w": "la",
+   "s": 17.06,
+   "e": 17.22,
+   "whisper_s": 17.06
+  },
+  {
+   "w": "loi.",
+   "s": 17.22,
+   "e": 17.39,
+   "whisper_s": 17.22
+  },
+  {
+   "w": "Si",
+   "s": 17.69,
+   "e": 17.85,
+   "whisper_s": 17.69
+  },
+  {
+   "w": "tu",
+   "s": 17.85,
+   "e": 18.01,
+   "whisper_s": 17.85
+  },
+  {
+   "w": "pêches",
+   "s": 18.01,
+   "e": 18.17,
+   "whisper_s": 18.01
+  },
+  {
+   "w": "là",
+   "s": 18.17,
+   "e": 18.33,
+   "whisper_s": 18.17
+  },
+  {
+   "w": "où",
+   "s": 18.33,
+   "e": 18.49,
+   "whisper_s": 18.33
+  },
+  {
+   "w": "pêchent",
+   "s": 18.49,
+   "e": 18.8,
+   "whisper_s": 18.49
+  },
+  {
+   "w": "tous",
+   "s": 18.8,
+   "e": 18.96,
+   "whisper_s": 18.8
+  },
+  {
+   "w": "tes",
+   "s": 18.96,
+   "e": 19.12,
+   "whisper_s": 18.96
+  },
+  {
+   "w": "concurrents,",
+   "s": 19.12,
+   "e": 19.6,
+   "whisper_s": 19.12
+  },
+  {
+   "w": "c'est",
+   "s": 19.79,
+   "e": 19.93,
+   "whisper_s": 19.79
+  },
+  {
+   "w": "normal",
+   "s": 19.93,
+   "e": 20.2,
+   "whisper_s": 19.93
+  },
+  {
+   "w": "d'avoir",
+   "s": 20.2,
+   "e": 20.48,
+   "whisper_s": 20.2
+  },
+  {
+   "w": "de",
+   "s": 20.48,
+   "e": 20.62,
+   "whisper_s": 20.48
+  },
+  {
+   "w": "la",
+   "s": 20.62,
+   "e": 20.76,
+   "whisper_s": 20.62
+  },
+  {
+   "w": "concurrence.",
+   "s": 20.76,
+   "e": 21.31,
+   "whisper_s": 20.76
+  },
+  {
+   "w": "Un",
+   "s": 21.61,
+   "e": 21.82,
+   "whisper_s": 21.61
+  },
+  {
+   "w": "montre",
+   "s": 22.11,
+   "e": 22.33,
+   "whisper_s": 22.11
+  },
+  {
+   "w": "ton",
+   "s": 22.33,
+   "e": 22.55,
+   "whisper_s": 22.33
+  },
+  {
+   "w": "travail.",
+   "s": 22.55,
+   "e": 22.99,
+   "whisper_s": 22.55
+  },
+  {
+   "w": "Chaque",
+   "s": 23.29,
+   "e": 23.64,
+   "whisper_s": 23.29
+  },
+  {
+   "w": "voiture",
+   "s": 23.64,
+   "e": 23.99,
+   "whisper_s": 23.64
+  },
+  {
+   "w": "vendue,",
+   "s": 23.99,
+   "e": 24.34,
+   "whisper_s": 23.99
+  },
+  {
+   "w": "chaque",
+   "s": 24.34,
+   "e": 24.7,
+   "whisper_s": 24.34
+  },
+  {
+   "w": "client",
+   "s": 24.7,
+   "e": 24.87,
+   "whisper_s": 24.7
+  },
+  {
+   "w": "livré,",
+   "s": 24.87,
+   "e": 25.22,
+   "whisper_s": 24.87
+  },
+  {
+   "w": "c'est",
+   "s": 25.22,
+   "e": 25.4,
+   "whisper_s": 25.22
+  },
+  {
+   "w": "un",
+   "s": 25.4,
+   "e": 25.57,
+   "whisper_s": 25.4
+  },
+  {
+   "w": "contenu.",
+   "s": 25.57,
+   "e": 26.1,
+   "whisper_s": 25.57
+  },
+  {
+   "w": "En",
+   "s": 26.41,
+   "e": 26.53,
+   "whisper_s": 26.41
+  },
+  {
+   "w": "organique,",
+   "s": 26.53,
+   "e": 27.0,
+   "whisper_s": 26.53
+  },
+  {
+   "w": "pas",
+   "s": 27.19,
+   "e": 27.33,
+   "whisper_s": 27.19
+  },
+  {
+   "w": "en",
+   "s": 27.33,
+   "e": 27.48,
+   "whisper_s": 27.33
+  },
+  {
+   "w": "pub.",
+   "s": 27.48,
+   "e": 27.62,
+   "whisper_s": 27.48
+  },
+  {
+   "w": "On",
+   "s": 27.93,
+   "e": 28.05,
+   "whisper_s": 27.93
+  },
+  {
+   "w": "achète",
+   "s": 28.05,
+   "e": 28.29,
+   "whisper_s": 28.05
+  },
+  {
+   "w": "à",
+   "s": 28.29,
+   "e": 28.42,
+   "whisper_s": 28.29
+  },
+  {
+   "w": "quelqu'un",
+   "s": 28.42,
+   "e": 28.78,
+   "whisper_s": 28.42
+  },
+  {
+   "w": "qu'on",
+   "s": 28.78,
+   "e": 29.02,
+   "whisper_s": 28.78
+  },
+  {
+   "w": "a",
+   "s": 29.02,
+   "e": 29.14,
+   "whisper_s": 29.02
+  },
+  {
+   "w": "déjà",
+   "s": 29.14,
+   "e": 29.39,
+   "whisper_s": 29.14
+  },
+  {
+   "w": "vu",
+   "s": 29.39,
+   "e": 29.51,
+   "whisper_s": 29.39
+  },
+  {
+   "w": "bosser.",
+   "s": 29.51,
+   "e": 29.75,
+   "whisper_s": 29.51
+  },
+  {
+   "w": "Deux",
+   "s": 30.05,
+   "e": 30.21,
+   "whisper_s": 30.05
+  },
+  {
+   "w": "ta",
+   "s": 30.21,
+   "e": 30.37,
+   "whisper_s": 30.21
+  },
+  {
+   "w": "réputation.",
+   "s": 30.67,
+   "e": 31.3,
+   "whisper_s": 30.67
+  },
+  {
+   "w": "Les",
+   "s": 31.6,
+   "e": 31.77,
+   "whisper_s": 31.6
+  },
+  {
+   "w": "avis,",
+   "s": 31.77,
+   "e": 32.1,
+   "whisper_s": 31.77
+  },
+  {
+   "w": "les",
+   "s": 32.27,
+   "e": 32.43,
+   "whisper_s": 32.27
+  },
+  {
+   "w": "clients",
+   "s": 32.43,
+   "e": 32.58,
+   "whisper_s": 32.43
+  },
+  {
+   "w": "qui",
+   "s": 32.58,
+   "e": 32.74,
+   "whisper_s": 32.58
+  },
+  {
+   "w": "reviennent,",
+   "s": 32.74,
+   "e": 33.21,
+   "whisper_s": 32.74
+  },
+  {
+   "w": "ceux",
+   "s": 33.46,
+   "e": 33.59,
+   "whisper_s": 33.46
+  },
+  {
+   "w": "qui",
+   "s": 33.59,
+   "e": 33.72,
+   "whisper_s": 33.59
+  },
+  {
+   "w": "t'envoient",
+   "s": 33.72,
+   "e": 33.98,
+   "whisper_s": 33.72
+  },
+  {
+   "w": "leur",
+   "s": 33.98,
+   "e": 34.11,
+   "whisper_s": 33.98
+  },
+  {
+   "w": "beau-frère.",
+   "s": 34.11,
+   "e": 34.5,
+   "whisper_s": 34.11
+  },
+  {
+   "w": "Ça,",
+   "s": 34.81,
+   "e": 35.14,
+   "whisper_s": 34.81
+  },
+  {
+   "w": "aucun",
+   "s": 35.38,
+   "e": 35.65,
+   "whisper_s": 35.38
+  },
+  {
+   "w": "concurrent",
+   "s": 35.65,
+   "e": 36.06,
+   "whisper_s": 35.65
+  },
+  {
+   "w": "ne",
+   "s": 36.06,
+   "e": 36.2,
+   "whisper_s": 36.06
+  },
+  {
+   "w": "peut",
+   "s": 36.2,
+   "e": 36.33,
+   "whisper_s": 36.2
+  },
+  {
+   "w": "te",
+   "s": 36.33,
+   "e": 36.47,
+   "whisper_s": 36.33
+  },
+  {
+   "w": "le",
+   "s": 36.61,
+   "e": 36.72,
+   "whisper_s": 36.61
+  },
+  {
+   "w": "prendre.",
+   "s": 37.03,
+   "e": 37.35,
+   "whisper_s": 37.03
+  },
+  {
+   "w": "Trois",
+   "s": 37.6,
+   "e": 37.78,
+   "whisper_s": 37.6
+  },
+  {
+   "w": "sois",
+   "s": 37.78,
+   "e": 37.96,
+   "whisper_s": 37.78
+  },
+  {
+   "w": "installé.",
+   "s": 37.96,
+   "e": 38.49,
+   "whisper_s": 37.96
+  },
+  {
+   "w": "Un",
+   "s": 38.78,
+   "e": 38.93,
+   "whisper_s": 38.78
+  },
+  {
+   "w": "point",
+   "s": 38.93,
+   "e": 39.08,
+   "whisper_s": 38.93
+  },
+  {
+   "w": "de",
+   "s": 39.08,
+   "e": 39.23,
+   "whisper_s": 39.08
+  },
+  {
+   "w": "vente,",
+   "s": 39.23,
+   "e": 39.53,
+   "whisper_s": 39.23
+  },
+  {
+   "w": "une",
+   "s": 39.53,
+   "e": 39.68,
+   "whisper_s": 39.53
+  },
+  {
+   "w": "adresse,",
+   "s": 39.68,
+   "e": 40.14,
+   "whisper_s": 39.68
+  },
+  {
+   "w": "une",
+   "s": 40.14,
+   "e": 40.29,
+   "whisper_s": 40.14
+  },
+  {
+   "w": "vitrine.",
+   "s": 40.29,
+   "e": 40.74,
+   "whisper_s": 40.29
+  },
+  {
+   "w": "Face",
+   "s": 41.06,
+   "e": 41.19,
+   "whisper_s": 41.06
+  },
+  {
+   "w": "à",
+   "s": 41.19,
+   "e": 41.33,
+   "whisper_s": 41.19
+  },
+  {
+   "w": "un",
+   "s": 41.33,
+   "e": 41.46,
+   "whisper_s": 41.33
+  },
+  {
+   "w": "inconnu",
+   "s": 41.46,
+   "e": 41.86,
+   "whisper_s": 41.46
+  },
+  {
+   "w": "sur",
+   "s": 41.86,
+   "e": 42.0,
+   "whisper_s": 41.86
+  },
+  {
+   "w": "Leboncoin,",
+   "s": 42.0,
+   "e": 42.4,
+   "whisper_s": 42.0
+  },
+  {
+   "w": "c'est",
+   "s": 42.4,
+   "e": 42.53,
+   "whisper_s": 42.4
+  },
+  {
+   "w": "ce",
+   "s": 42.53,
+   "e": 42.66,
+   "whisper_s": 42.53
+  },
+  {
+   "w": "qui",
+   "s": 42.66,
+   "e": 42.8,
+   "whisper_s": 42.66
+  },
+  {
+   "w": "rassure.",
+   "s": 42.8,
+   "e": 43.2,
+   "whisper_s": 42.8
+  },
+  {
+   "w": "Ça",
+   "s": 43.52,
+   "e": 43.64,
+   "whisper_s": 43.52
+  },
+  {
+   "w": "prend",
+   "s": 43.64,
+   "e": 43.75,
+   "whisper_s": 43.64
+  },
+  {
+   "w": "du",
+   "s": 43.75,
+   "e": 43.87,
+   "whisper_s": 43.75
+  },
+  {
+   "w": "temps",
+   "s": 43.87,
+   "e": 43.98,
+   "whisper_s": 43.87
+  },
+  {
+   "w": "et",
+   "s": 43.98,
+   "e": 44.1,
+   "whisper_s": 43.98
+  },
+  {
+   "w": "de",
+   "s": 44.1,
+   "e": 44.21,
+   "whisper_s": 44.1
+  },
+  {
+   "w": "la",
+   "s": 44.34,
+   "e": 44.48,
+   "whisper_s": 44.34
+  },
+  {
+   "w": "régularité.",
+   "s": 44.48,
+   "e": 45.15,
+   "whisper_s": 44.48
+  },
+  {
+   "w": "Mais",
+   "s": 45.46,
+   "e": 45.61,
+   "whisper_s": 45.46
+  },
+  {
+   "w": "une",
+   "s": 45.61,
+   "e": 45.76,
+   "whisper_s": 45.61
+  },
+  {
+   "w": "fois",
+   "s": 45.76,
+   "e": 45.91,
+   "whisper_s": 45.76
+  },
+  {
+   "w": "en",
+   "s": 45.91,
+   "e": 46.07,
+   "whisper_s": 45.91
+  },
+  {
+   "w": "place,",
+   "s": 46.07,
+   "e": 46.37,
+   "whisper_s": 46.07
+  },
+  {
+   "w": "personne",
+   "s": 46.59,
+   "e": 46.81,
+   "whisper_s": 46.59
+  },
+  {
+   "w": "ne",
+   "s": 46.81,
+   "e": 46.92,
+   "whisper_s": 46.81
+  },
+  {
+   "w": "te",
+   "s": 46.92,
+   "e": 47.02,
+   "whisper_s": 46.92
+  },
+  {
+   "w": "le",
+   "s": 47.02,
+   "e": 47.13,
+   "whisper_s": 47.02
+  },
+  {
+   "w": "prend.",
+   "s": 47.13,
+   "e": 47.24,
+   "whisper_s": 47.13
+  },
+  {
+   "w": "Pas",
+   "s": 47.73,
+   "e": 47.84,
+   "whisper_s": 47.73
+  },
+  {
+   "w": "le",
+   "s": 47.84,
+   "e": 47.95,
+   "whisper_s": 47.84
+  },
+  {
+   "w": "temps",
+   "s": 47.95,
+   "e": 48.06,
+   "whisper_s": 47.95
+  },
+  {
+   "w": "d'être",
+   "s": 48.06,
+   "e": 48.18,
+   "whisper_s": 48.06
+  },
+  {
+   "w": "régulier",
+   "s": 48.18,
+   "e": 48.51,
+   "whisper_s": 48.18
+  },
+  {
+   "w": "Le",
+   "s": 48.81,
+   "e": 48.93,
+   "whisper_s": 48.81
+  },
+  {
+   "w": "marché",
+   "s": 48.93,
+   "e": 49.17,
+   "whisper_s": 48.93
+  },
+  {
+   "w": "tranchera",
+   "s": 49.17,
+   "e": 49.53,
+   "whisper_s": 49.17
+  },
+  {
+   "w": "pour",
+   "s": 49.53,
+   "e": 49.65,
+   "whisper_s": 49.53
+  },
+  {
+   "w": "toi.",
+   "s": 49.65,
+   "e": 49.77,
+   "whisper_s": 49.65
+  },
+  {
+   "w": "Le",
+   "s": 50.05,
+   "e": 50.23,
+   "whisper_s": 50.05
+  },
+  {
+   "w": "téléphone,",
+   "s": 50.23,
+   "e": 50.93,
+   "whisper_s": 50.23
+  },
+  {
+   "w": "c'est",
+   "s": 50.93,
+   "e": 51.11,
+   "whisper_s": 50.93
+  },
+  {
+   "w": "louer",
+   "s": 51.11,
+   "e": 51.29,
+   "whisper_s": 51.11
+  },
+  {
+   "w": "tes",
+   "s": 51.29,
+   "e": 51.46,
+   "whisper_s": 51.29
+  },
+  {
+   "w": "clients,",
+   "s": 51.46,
+   "e": 51.64,
+   "whisper_s": 51.46
+  },
+  {
+   "w": "et",
+   "s": 51.91,
+   "e": 52.06,
+   "whisper_s": 51.91
+  },
+  {
+   "w": "chercher",
+   "s": 52.06,
+   "e": 52.35,
+   "whisper_s": 52.06
+  },
+  {
+   "w": "de",
+   "s": 52.35,
+   "e": 52.5,
+   "whisper_s": 52.35
+  },
+  {
+   "w": "nouvelles",
+   "s": 52.5,
+   "e": 52.79,
+   "whisper_s": 52.5
+  },
+  {
+   "w": "locations",
+   "s": 52.79,
+   "e": 53.23,
+   "whisper_s": 52.79
+  },
+  {
+   "w": "tous",
+   "s": 53.23,
+   "e": 53.38,
+   "whisper_s": 53.23
+  },
+  {
+   "w": "les",
+   "s": 53.38,
+   "e": 53.52,
+   "whisper_s": 53.38
+  },
+  {
+   "w": "jours.",
+   "s": 53.52,
+   "e": 53.67,
+   "whisper_s": 53.52
+  },
+  {
+   "w": "Ces",
+   "s": 53.98,
+   "e": 54.12,
+   "whisper_s": 53.98
+  },
+  {
+   "w": "canaux-là,",
+   "s": 54.12,
+   "e": 54.56,
+   "whisper_s": 54.12
+  },
+  {
+   "w": "tu",
+   "s": 54.74,
+   "e": 54.87,
+   "whisper_s": 54.74
+  },
+  {
+   "w": "les",
+   "s": 54.87,
+   "e": 54.99,
+   "whisper_s": 54.87
+  },
+  {
+   "w": "possèdes.",
+   "s": 54.99,
+   "e": 55.37,
+   "whisper_s": 54.99
+  },
+  {
+   "w": "Abonne-toi",
+   "s": 55.68,
+   "e": 56.09,
+   "whisper_s": 55.68
+  },
+  {
+   "w": "pour",
+   "s": 56.09,
+   "e": 56.19,
+   "whisper_s": 56.09
+  },
+  {
+   "w": "la",
+   "s": 56.19,
+   "e": 56.3,
+   "whisper_s": 56.19
+  },
+  {
+   "w": "suite.",
+   "s": 56.3,
+   "e": 56.5,
+   "whisper_s": 56.3
+  }
+ ]
+}
