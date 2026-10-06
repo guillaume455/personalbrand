@@ -76,7 +76,7 @@ Scene 2 (1.60 à 3.26 s) : P2, le téléphone barré
 - scene: « DÉMARCHAGE SANS ACCORD = INTERDIT » en titre, une liste de numéros masqués qui se grisent un par un
 - duration: 4.99s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/02-loi.html
 - voiceover: "La loi est passée : tu n'as plus le droit d'appeler un particulier pour lui proposer un mandat, sans son accord."
 - type: context
@@ -101,7 +101,7 @@ Scene 1 (0.00 à 4.99 s) : P3, la loi
 - scene: Titre « LE TÉLÉPHONE MOURAIT DÉJÀ », la courbe démarre en haut avec « 2010 : 9 RDV SUR 10 APPELS »
 - duration: 3.50s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/03-courbe.html
 - voiceover: "Mais soyons honnêtes : le téléphone mourait déjà. Quand j'ai commencé,"
 - type: pain_point
@@ -126,7 +126,7 @@ Scene 1 (0.00 à 3.50 s) : P4, la courbe commence haut
 - scene: La courbe chute jusqu'en 2026, « 2026 : 3 » se pose, le 3 en orange
 - duration: 3.88s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/04-trois.html
 - voiceover: "sur dix appels, je décrochais neuf rendez-vous. Aujourd'hui, trois."
 - type: pain_point
@@ -151,7 +151,7 @@ Scene 1 (0.00 à 3.88 s) : P5, 9 sur 10, puis 3
 - scene: Une mosaïque d'annonces auto identiques qui se multiplient jusqu'à remplir l'écran, puis « TOUT LE MONDE PÊCHE AU MÊME ENDROIT »
 - duration: 5.83s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/05-mosaique.html
 - voiceover: "Le vrai problème, c'est pas la loi. Si tu pêches là où pêchent tous tes concurrents, c'est normal d'avoir de la concurrence."
 - type: pain_point
@@ -183,7 +183,7 @@ Scene 2 (2.00 à 5.83 s) : P7, la même mare
 - scene: La carte 1 monte du bas : « MONTRE TON TRAVAIL », un feed qui défile (remise de clés, voiture préparée), le compteur de vues grimpe
 - duration: 4.80s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/06-carte1.html
 - voiceover: "Un : montre ton travail. Chaque voiture vendue, chaque client livré, c'est un contenu."
 - type: solution
@@ -233,7 +233,7 @@ Scene 1 (0.00 à 3.64 s) : P9, organique
 - scene: La carte 2 monte et recouvre la carte 1 : « TA RÉPUTATION », cinq étoiles se remplissent, les avis s'empilent
 - duration: 3.44s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/08-carte2.html
 - voiceover: "Deux : ta réputation. Les avis, les clients qui reviennent,"
 - type: solution
@@ -258,7 +258,7 @@ Scene 1 (0.00 à 3.44 s) : P10, la carte 2
 - scene: Sur la carte 2, une flèche de recommandation relie deux bulles (« le beau-frère »), puis un cadenas orange se ferme sur les étoiles
 - duration: 4.14s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/09-cadenas.html
 - voiceover: "ceux qui t'envoient leur beau-frère. Ça, aucun concurrent ne peut te le prendre."
 - type: solution
@@ -283,7 +283,7 @@ Scene 1 (0.00 à 4.14 s) : P11, le beau-frère et le cadenas
 - scene: La carte 3 monte : « SOIS INSTALLÉ », une vitrine s'allume, une adresse apparaît sur une carte avec un repère orange
 - duration: 5.88s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/10-carte3.html
 - voiceover: "Trois : sois installé. Un point de vente, une adresse, une vitrine. Face à un inconnu sur Leboncoin, c'est ce qui rassure."
 - type: solution
@@ -308,7 +308,7 @@ Scene 1 (0.00 à 5.88 s) : P12, la carte 3
 - scene: Un mur se construit brique par brique du bas vers le haut, la dernière brique en orange ; « Le marché tranchera pour toi »
 - duration: 6.55s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/11-mur.html
 - voiceover: "Ça prend du temps et de la régularité. Mais une fois en place, personne ne te le prend. Pas le temps d'être régulier ? Le marché tranchera pour toi."
 - type: punchline
@@ -333,7 +333,7 @@ Scene 1 (0.00 à 6.55 s) : P13, brique par brique
 - scene: « LE TÉLÉPHONE : TU LOUES TES CLIENTS. » avec un compteur de jours qui défile dessous
 - duration: 3.92s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/12-louer.html
 - voiceover: "Le téléphone, c'est louer tes clients, et chercher de nouvelles locations tous les jours."
 - type: cta
@@ -358,7 +358,7 @@ Scene 1 (0.00 à 3.92 s) : P14, louer
 - scene: « CES CANAUX : TU LES POSSÈDES. », puis « @guillaumeherbin_ » avec un bouton S'abonner
 - duration: 4.40s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/13-posseder.html
 - voiceover: "Ces canaux-là, tu les possèdes. Abonne-toi pour la suite."
 - type: cta

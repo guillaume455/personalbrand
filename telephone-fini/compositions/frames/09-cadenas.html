@@ -12,8 +12,8 @@
     avatar B (the « beau-frère ») in bubble 3's right zone, centre (724, 799); accent arrow A -> B curving left over bubble 2.
     grey figures (#6f6f6f line, frame coords, in front of the cards): heads at x 95 (y 560, 900) and x 985 (y 420, 700);
       they slide in from the frame edges at 2.31 and stop at the card border (right ones stay above y 900: safe zone).
-    padlock 140 x 170 at (360, 242): accent body centred on (430, 360), on the bottom of the star row; a 5 px accent band
-      drawn around the star row (x 66-794, y 196-348) closes into it at 3.27; shackle snaps shut at 3.69.
+    padlock 140 x 170 at (360, 302): shackle (closed y 324-384) hooks the bottom edge of a 5 px accent band drawn around
+      the star row (x 66-794, y 196-348), body (y 376-464) on the top centre of bubble 1; lands 3.27, snaps shut 3.69.
     Cran 3.20: x1.05 and y -14 on top of the 1.02 (card bottom stays above the subtitle band).
   Ends on a hard cut (no exit).
   ===================================================================================================
@@ -112,10 +112,10 @@
 
     /* ---- band around the stars + padlock ---- */
     .f09-band { fill: none; stroke: #FB8000; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
-    #f09-lock { position: absolute; left: 360px; top: 242px; width: 140px; height: 170px; opacity: 0; transform-origin: 70px 118px; }
+    #f09-lock { position: absolute; left: 360px; top: 302px; width: 140px; height: 170px; opacity: 0; transform-origin: 70px 118px; }
     #f09-lock svg { position: absolute; left: 0; top: 0; width: 140px; height: 170px; overflow: visible; }
     #f09-shackle { transform-origin: 70px 60px; }
-    .f09-knock { fill: none; stroke: #161616; stroke-width: 26; stroke-linecap: round; }
+    .f09-knock { fill: none; stroke: #161616; stroke-width: 22; stroke-linecap: round; }
     .f09-shk { fill: none; stroke: #FB8000; stroke-width: 14; stroke-linecap: round; }
     .f09-body { fill: #FB8000; stroke: #161616; stroke-width: 8; paint-order: stroke; }
     .f09-hole { fill: #0A0A0A; }
@@ -292,7 +292,7 @@
       /* ---- handoff state at 0.00 (= 08-carte2 @ 3.44) ---- */
       tl.fromTo($("f09-card1"), { scale: 0.97, y: -42 }, { scale: 0.97, y: -42, duration: 0.01, ease: "none" }, 0);
       tl.fromTo($("f09-halo"), { y: -60, scale: 1.12, opacity: 1 }, { y: -60, scale: 1.12, opacity: 1, duration: 0.01, ease: "none" }, 0);
-      tl.fromTo($("f09-shackle"), { y: -24 }, { y: -24, duration: 0.01, ease: "none" }, 0);   // lock (still hidden) opens
+      tl.fromTo($("f09-shackle"), { y: -20 }, { y: -20, duration: 0.01, ease: "none" }, 0);   // lock (still hidden) opens
 
       /* ---- camera track ---- */
       // push continues at +1 %/s from 08's 1.0344
@@ -312,9 +312,9 @@
       /* ---- 0.77 « beau-frère »: avatar B pops in bubble 3 ---- */
       tl.fromTo($("f09-avB"), { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.22, ease: "expo.out", immediateRender: false }, 0.77 - F);
       // 0.92 the arrow lands: head + accent ring on B
-      tl.fromTo($("f09-arrowhead"), { opacity: 0, scale: 0.6, transformOrigin: "680px 748px" },
-        { opacity: 1, scale: 1, duration: 0.14, ease: "expo.out", immediateRender: false }, 0.92);
-      tl.fromTo($("f09-ringB"), { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.22, ease: "expo.out", immediateRender: false }, 0.94);
+      tl.fromTo($("f09-arrowhead"), { opacity: 0, scale: 0.6, svgOrigin: "680 748" },
+        { opacity: 1, scale: 1, svgOrigin: "680 748", duration: 0.14, ease: "expo.out", immediateRender: false }, 0.92);
+      tl.fromTo($("f09-ringB"), { opacity: 0, scale: 1.3, svgOrigin: "52 52" }, { opacity: 1, scale: 1, svgOrigin: "52 52", duration: 0.22, ease: "expo.out", immediateRender: false }, 0.94);
       // 1.20 the bubble 3 card gives a small nod (new client counted)
       tl.fromTo($("f09-b3"), { scale: 1 }, { scale: 1.025, duration: 0.1, ease: "power3.out", immediateRender: false }, 1.18);
       tl.fromTo($("f09-b3"), { scale: 1.025 }, { scale: 1, duration: 0.25, ease: "power3.out", immediateRender: false }, 1.28);
@@ -333,9 +333,9 @@
       tl.fromTo($("f09-halo"), { opacity: 1 }, { opacity: 0.7, duration: 0.3, ease: "power3.out", immediateRender: false }, 2.04);
 
       /* ---- 2.31 « concurrent »: grey figures slide in from the edges and stop at the card border ---- */
-      var GH = [["f09-gL1", -220, 2.31], ["f09-gR1", 220, 2.39], ["f09-gL2", -220, 2.47], ["f09-gR2", 220, 2.55]];
+      var GH = [["f09-gL1", -220, 2.31], ["f09-gR1", 220, 2.37], ["f09-gL2", -220, 2.43], ["f09-gR2", 220, 2.49]];
       GH.forEach(function (g) {
-        tl.fromTo($(g[0]), { opacity: 0, x: g[1] }, { opacity: 1, x: 0, duration: 0.3, ease: "expo.out", immediateRender: false }, g[2] - F);
+        tl.fromTo($(g[0]), { opacity: 0, x: g[1] }, { opacity: 1, x: 0, duration: 0.2, ease: "expo.out", immediateRender: false }, g[2] - F);   // last ends 2.657 < recoil 2.687
       });
       // 2.72 « ne »: they bump the border and recoil
       GH.forEach(function (g) {
@@ -351,7 +351,7 @@
       tl.fromTo($("f09-halo"), { y: -150 }, { y: -230, duration: 0.4, ease: "power3.out", immediateRender: false }, 3.27);
 
       /* ---- 3.69 « prendre »: the shackle snaps shut, the lock punches, the figures are pushed back ---- */
-      tl.fromTo($("f09-shackle"), { y: -24 }, { y: 0, duration: 0.06, ease: "power3.in", immediateRender: false }, 3.69 - F);
+      tl.fromTo($("f09-shackle"), { y: -20 }, { y: 0, duration: 0.06, ease: "power3.in", immediateRender: false }, 3.69 - F);
       tl.fromTo($("f09-lock"), { scale: 1 }, { scale: 1.1, duration: 0.05, ease: "power3.out", immediateRender: false }, 3.69 - F + 0.06);
       tl.fromTo($("f09-lock"), { scale: 1.1 }, { scale: 1, duration: 0.22, ease: "power3.out", immediateRender: false }, 3.69 - F + 0.11);
       tl.fromTo($("f09-halo"), { opacity: 0.7, scale: 1.2 }, { opacity: 1, scale: 1.3, duration: 0.3, ease: "power3.out", immediateRender: false }, 3.69);
