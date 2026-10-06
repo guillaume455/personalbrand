@@ -57,7 +57,7 @@
     #f13-old { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
 
     /* ---- NEW: three small line icons (feed / star / shopfront) above « CES CANAUX : » ---- */
-    .f13-ico { position: absolute; top: 262px; width: 104px; height: 104px; opacity: 0; transform-origin: 52px 52px; }
+    .f13-ico { position: absolute; top: 312px; width: 104px; height: 104px; opacity: 0; transform-origin: 52px 52px; }
     #f13-ico1 { left: 358px; }
     #f13-ico2 { left: 488px; }
     #f13-ico3 { left: 618px; }
@@ -67,15 +67,15 @@
     .f13-ico .f13-ico-a { opacity: 0; }
     .f13-ico .f13-ico-a * { stroke: #FB8000; }
 
-    #f13-t1 { top: 392px; opacity: 0; transform-origin: 460px 61px; }
-    #f13-t2 { top: 514px; opacity: 0; transform-origin: 460px 61px; }
+    #f13-t1 { top: 430px; font-size: 118px; opacity: 0; transform-origin: 460px 56px; }
+    #f13-t2 { top: 542px; font-size: 118px; opacity: 0; transform-origin: 460px 56px; }
 
     /* ---- handle + subscribe button (visual zone) ---- */
-    #f13-handle { position: absolute; left: 0; top: 768px; width: 1080px; text-align: center; white-space: nowrap;
+    #f13-handle { position: absolute; left: 0; top: 830px; width: 1080px; text-align: center; white-space: nowrap;
       font: 800 66px/80px "Montserrat", sans-serif; letter-spacing: -0.01em; color: #ffffff; opacity: 0; transform-origin: 540px 40px; }
-    #f13-glow { position: absolute; left: 190px; top: 830px; width: 700px; height: 420px; border-radius: 50%; opacity: 0;
+    #f13-glow { position: absolute; left: 190px; top: 892px; width: 700px; height: 420px; border-radius: 50%; opacity: 0;
       background: radial-gradient(closest-side, rgba(251,128,0,0.34) 0%, rgba(251,128,0,0.14) 50%, rgba(251,128,0,0) 100%); }
-    #f13-btn { position: absolute; left: 300px; top: 948px; width: 480px; height: 124px; opacity: 0; transform-origin: 240px 62px; }
+    #f13-btn { position: absolute; left: 300px; top: 1010px; width: 480px; height: 124px; opacity: 0; transform-origin: 240px 62px; }
     .f13-face { position: absolute; left: 0; top: 0; width: 480px; height: 124px; border-radius: 999px; overflow: hidden;
       display: flex; align-items: center; justify-content: center; font: 700 50px/1 "Instrument Sans", sans-serif; letter-spacing: 0.04em; }
     #f13-face-a { background: #FB8000; color: #111111; }
@@ -88,9 +88,9 @@
       transform: skewX(-20deg); }
 
     /* ---- cursor: fingertip circle + ripple rings at the button centre ---- */
-    .f13-ripple { position: absolute; left: 490px; top: 960px; width: 100px; height: 100px; border-radius: 50%;
+    .f13-ripple { position: absolute; left: 490px; top: 1022px; width: 100px; height: 100px; border-radius: 50%;
       border: 4px solid #FB8000; box-sizing: border-box; opacity: 0; transform: scale(0); pointer-events: none; }
-    #f13-cur { position: absolute; left: 512px; top: 980px; width: 84px; height: 84px; opacity: 0; pointer-events: none;
+    #f13-cur { position: absolute; left: 548px; top: 1058px; width: 84px; height: 84px; opacity: 0; pointer-events: none;
       transform-origin: 42px 42px; }
     #f13-cur-dot { position: absolute; left: 0; top: 0; width: 84px; height: 84px; border-radius: 50%;
       background: rgba(255,255,255,0.88); border: 4px solid #ffffff; box-sizing: border-box;
@@ -133,7 +133,7 @@
 
         <!-- handle + subscribe button -->
         <div id="f13-glow"></div>
-        <div id="f13-handle">@guillaumeherbin_</div>
+        <div id="f13-handle"><span id="f13-handle-t">@guillaumeherbin_</span></div>
         <div id="f13-btn">
           <div id="f13-face-a" class="f13-face">S'ABONNER<i id="f13-sheen-a" class="f13-sheen"></i></div>
           <div id="f13-face-b" class="f13-face">ABONNÉ<svg id="f13-check" viewBox="0 0 44 44"><path d="M6 23 L17 34 L38 10"></path></svg><i id="f13-sheen-b" class="f13-sheen"></i></div>
@@ -203,9 +203,9 @@
       var PUSH0 = 1 + 0.01 * 3.92;
       tl.fromTo($("f13-push"), { scale: PUSH0 }, { scale: PUSH0 + 0.01 * DUR, duration: DUR, ease: "none" }, 0);
       // cran 1.80: a step in as the scene turns to the subscription
-      tl.fromTo($("f13-cran"), { scale: 1, y: 0 }, { scale: 1.02, y: -18, duration: 0.4, ease: "power3.out", immediateRender: false }, 1.80);
+      tl.fromTo($("f13-cran"), { scale: 1, y: 0 }, { scale: 1.015, y: -10, duration: 0.4, ease: "power3.out", immediateRender: false }, 1.80);
       // cran 3.00: a small punch on the tap
-      tl.fromTo($("f13-cran"), { scale: 1.02 }, { scale: 1.035, duration: 0.3, ease: "expo.out", immediateRender: false }, 3.00);
+      tl.fromTo($("f13-cran"), { scale: 1.015 }, { scale: 1.025, duration: 0.3, ease: "expo.out", immediateRender: false }, 3.00);
 
       /* ---- Scene 1 (0.00 -> 1.80): ces canaux, tu les possèdes ---- */
       // 0.00 the 12-louer title, phone and counter leave upward (0.2 s)

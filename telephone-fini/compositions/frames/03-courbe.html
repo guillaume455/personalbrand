@@ -15,8 +15,8 @@
       d = "M 200 710 C 225 710 236 710 252 712 C 282 716 318 746 358 746 C 386 746 398 738 410 738
            C 446 738 482 750 515 772 C 610 836 740 958 1040 1010"
       (2010 high 9 -> slight dip 2013 -> small recovery 2014 -> 2016 starts falling -> steep fall to 3 in 2026 at (1040,1010)).
-      At 3.50: strokeDashoffset = 715 (= drawn up to ~2016, tip at about x 515 y 772, just starting the steep fall),
-      moving with ease "none" at -100 units/s at 3.50 (keep drawing from 715 -> 0).
+      At 3.50: strokeDashoffset = 640 (= drawn up to 2016, tip at x 514 y 772, just starting the steep fall),
+      moving with ease "none" at -166.7 units/s (keep drawing 640 -> 0; same speed = 3.84 s more, or ease out to land).
     Start dot: white circle r 11 at (200, 710), fully visible at 3.50.
     Start label « 2010 : 9 RDV SUR 10 APPELS »: Space Mono 700 38 px, white, left x 200, top y 608 (chart coords),
       i.e. on screen at 3.50 left x 60 top 608; the « 9 » is accent #FB8000. Opacity 1, scale 1 at 3.50.
@@ -97,8 +97,11 @@
     /* ---- start label « 2010 : 9 RDV SUR 10 APPELS » ---- */
     #f03-label { position: absolute; left: 200px; top: 608px; white-space: nowrap; opacity: 0;
       font: 700 38px/56px "Space Mono", monospace; color: #ffffff; transform-origin: 0 50%; }
-    #f03-nine { display: inline-block; width: 0.6em; text-align: center; color: #FB8000; font-variant-numeric: tabular-nums;
-      transform-origin: 50% 70%; }
+    /* the 9 rolls 0 -> 9: a digit reel (56 px per digit) inside a fixed 1-digit window, color accent */
+    #f03-nine { position: relative; display: inline-block; vertical-align: top; width: 0.6em; height: 56px; overflow: hidden;
+      color: #FB8000; font-variant-numeric: tabular-nums; transform-origin: 50% 60%; }
+    #f03-reel { position: absolute; left: 0; top: 0; width: 100%; }
+    #f03-reel span { display: block; height: 56px; text-align: center; }
   </style>
 
   <div id="root" data-composition-id="03-courbe" data-width="1080" data-height="1920" data-duration="3.5">
@@ -122,7 +125,7 @@
       </svg>
       <div id="f03-y2010" class="f03-year">2010</div>
       <div id="f03-y2026" class="f03-year">2026</div>
-      <div id="f03-label">2010 : <span id="f03-nine">0</span> RDV SUR 10 APPELS</div>
+      <div id="f03-label">2010 : <span id="f03-nine"><span id="f03-reel"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span> RDV SUR 10 APPELS</div>
     </div>
 
     <!-- title (outside the camera: holds still) -->
@@ -217,13 +220,11 @@
       tl.fromTo($("f03-dot"), { opacity: 0, scale: 2.2 }, { opacity: 1, scale: 1, duration: 0.2, ease: "expo.out", immediateRender: false }, 1.00);
       tl.fromTo($("f03-ring"), { opacity: 0.9, scale: 0.5 }, { opacity: 0, scale: 2.2, duration: 0.45, ease: "power3.out", immediateRender: false }, 1.00);
       var curve = $("f03-curve");
-      // 1.00 -> 1.70 the flat start (2010 -> 2011)
-      tl.fromTo(curve, { strokeDashoffset: 1000 }, { strokeDashoffset: 940, duration: 0.70, ease: "power2.inOut", immediateRender: false }, 1.00);
-      // 1.70 on « mourait » the line starts to go down (dip 2011 -> 2014)
-      tl.fromTo(curve, { strokeDashoffset: 940 }, { strokeDashoffset: 818, duration: 1.10, ease: "power3.out", immediateRender: false }, 1.70);
-      // 2.80 -> 3.00 eases back to speed ; 3.00 -> 3.50 constant speed toward 2016 (100 units/s, carried into 04)
-      tl.fromTo(curve, { strokeDashoffset: 818 }, { strokeDashoffset: 765, duration: 0.20, ease: "power1.in", immediateRender: false }, 2.80);
-      tl.fromTo(curve, { strokeDashoffset: 765 }, { strokeDashoffset: 715, duration: 0.50, ease: "none", immediateRender: false }, 3.00);
+      // 1.00 -> 1.70 the flat start (2010 -> 2011), accelerating into the pen speed
+      tl.fromTo(curve, { strokeDashoffset: 1000 }, { strokeDashoffset: 940, duration: 0.70, ease: "power1.in", immediateRender: false }, 1.00);
+      // 1.70 on « mourait » the line starts to go down (2011 dip -> 2014 -> 2016), constant pen speed
+      // 166.7 units/s (pathLength 1000), reaching 2016 at 3.50 and carried at that speed into 04
+      tl.fromTo(curve, { strokeDashoffset: 940 }, { strokeDashoffset: 640, duration: 1.80, ease: "none", immediateRender: false }, 1.70);
 
       /* ---- 2.30 a second pulse on the start point (event under « déjà ») ---- */
       tl.fromTo($("f03-ring"), { opacity: 0.7, scale: 0.6 }, { opacity: 0, scale: 2, duration: 0.4, ease: "power3.out", immediateRender: false }, 2.30);
@@ -232,9 +233,8 @@
       tl.fromTo($("f03-label"), { opacity: 0, x: -24, filter: "blur(8px)" },
         { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.2, ease: "expo.out", immediateRender: false }, 2.60);
       var nine = $("f03-nine");
-      var cnt = { v: 0 };
-      tl.fromTo(cnt, { v: 0 }, { v: 9, duration: 0.5, ease: "power3.out", immediateRender: false,
-        onUpdate: function () { nine.textContent = String(Math.round(cnt.v)); } }, 2.61);
+      // seek-safe count: the reel translates 9 digits up (transform only, no onUpdate callback)
+      tl.fromTo($("f03-reel"), { y: 0 }, { y: -9 * 56, duration: 0.5, ease: "power3.out", immediateRender: false }, 2.61);
       tl.fromTo(nine, { scale: 0.5 }, { scale: 1, duration: 0.5, ease: "power3.out", immediateRender: false }, 2.61);
 
       /* ---- the voice, word by word ---- */

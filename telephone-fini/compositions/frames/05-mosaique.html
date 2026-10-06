@@ -50,10 +50,10 @@
     /* ===================== end SHARED: subtitle ===================== */
 
     /* ---- camera: push (scene 1 pull-back 1.3 -> 0.8) > drift (scene 2: up -20 px/s, +1 %/s) > cran (discrete steps) ---- */
-    .f05-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 880px; }
+    .f05-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 820px; }
 
-    /* ---- the mosaic: origin point at (540, 880); every tile is centred on it, placed by GSAP x / y ---- */
-    #f05-mosaic { position: absolute; left: 540px; top: 880px; width: 0; height: 0; }
+    /* ---- the mosaic: origin point at (540, 820); every tile is centred on it, placed by GSAP x / y ---- */
+    #f05-mosaic { position: absolute; left: 540px; top: 820px; width: 0; height: 0; }
 
     /* ---- listing-tile: white card 300x380, radius 18, lbc header, photo, title, green price ---- */
     .f05-tile { position: absolute; left: -150px; top: -190px; width: 300px; height: 380px; border-radius: 18px; overflow: hidden;
@@ -68,13 +68,13 @@
 
     /* ---- darkening of the mosaic (35 % brightness), its flash, the bottom fade that keeps the subtitle band clean ---- */
     #f05-dim { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; opacity: 0; }
-    #f05-fade { position: absolute; left: 0; top: 1120px; width: 1080px; height: 800px;
-      background: linear-gradient(to bottom, rgba(10,10,10,0) 0%, rgba(10,10,10,0.82) 28%, #0A0A0A 52%, #0A0A0A 100%); }
+    #f05-fade { position: absolute; left: 0; top: 1040px; width: 1080px; height: 880px;
+      background: linear-gradient(to bottom, rgba(10,10,10,0) 0%, rgba(10,10,10,0.88) 22%, #0A0A0A 30%, #0A0A0A 100%); }
 
     /* ---- the dark band under the title ---- */
     #f05-band { position: absolute; left: 0; top: 236px; width: 1080px; height: 470px; background: rgba(10,10,10,0.9);
       border-top: 2px solid #1f1f1f; border-bottom: 2px solid #1f1f1f; opacity: 0; transform-origin: 540px 235px; }
-    #f05-title { top: 285px; }
+    #f05-title { top: 300px; font-size: 104px; }
     #f05-title .f05-tline { opacity: 0; }
   </style>
 
@@ -198,8 +198,24 @@
         { t: 1.80, s: layout(4, 4, PX, PY), blur: true },
         { t: 2.06, s: layout(6, 6, PX, PY), blur: false }
       ];
+      // existing tiles take the nearest free slot (no crossings); new copies fill the rest, centre outwards
+      function assign(prevSlots, slots) {
+        var used = [], out = [];
+        prevSlots.forEach(function (p) {
+          var best = -1, bd = 1e9;
+          slots.forEach(function (q, j) {
+            if (used[j]) return;
+            var d = (q.x - p.x) * (q.x - p.x) + (q.y - p.y) * (q.y - p.y);
+            if (d < bd - 0.5) { bd = d; best = j; }
+          });
+          used[best] = true; out.push(slots[best]);
+        });
+        slots.forEach(function (q, j) { if (!used[j]) out.push(q); });
+        return out;
+      }
       var prev = [];
       stages.forEach(function (st) {
+        st.s = assign(prev, st.s);
         st.s.forEach(function (slot, i) {
           var el = tiles[i];
           if (i < prev.length) {
@@ -223,7 +239,7 @@
 
       /* ---- camera track ---- */
       // Scene 1: continuous pull-back 1.3 -> 0.8 to discover the mosaic
-      tl.fromTo($("f05-push"), { scale: 1.3 }, { scale: 0.8, duration: 2.06, ease: "power1.inOut" }, 0);
+      tl.fromTo($("f05-push"), { scale: 1.3 }, { scale: 0.8, duration: 2.06, ease: "power1.out" }, 0);
       // Scene 2: slow drift up (-20 px/s) + push +1 %/s, to the cut
       tl.fromTo($("f05-drift"), { y: 0, scale: 1 }, { y: -20 * (DUR - 2.06), scale: 1 + 0.01 * (DUR - 2.06), duration: DUR - 2.06, ease: "none", immediateRender: false }, 2.06);
       // 4.00 a short step in on the mass of tiles

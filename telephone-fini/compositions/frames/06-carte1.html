@@ -1,0 +1,302 @@
+<template>
+  <!--
+  ===================== HANDOFF_OUT 06-carte1 @ 4.80 s (binding for 07-organique; shared with 08 / 10) =====================
+  CARD STACK GEOMETRY (choice made here, ONE for frames 06 / 08 / 10): option B, card 860 x 940, left 110, top 300
+    (frame px, before camera), ends at y 1240, so it NEVER enters the subtitle band (1260-1440): no dark gradient needed.
+    Card: #161616, radius 36, 1 px #2a2a2a border, overflow hidden, box-shadow 0 30px 80px rgba(0,0,0,.55).
+    Card-local layout (px from the card's top-left):
+      badge   : accent #FB8000 circle 96 x 96 at (48, 52); « 1 » Big Shoulders 900 72 px #0A0A0A, centred.
+      title   : « MONTRE TON TRAVAIL », Big Shoulders 900 96 px caps, line-height 0.95, white, left 172, top 52
+                (one line, ~600 px wide), orange title-stroke under it (SHARED: title, em-sized: 14 px at 96... => 0.11em = 10.6 px).
+      feed    : window left 48, top 196, 764 x 620 (y 196-816), overflow hidden, 44 px fades top and bottom (#161616 -> 0).
+                Post = 764 x 350: photo 764 x 280 (radius 18, object-fit cover, object-position 50% 40%), then a row at
+                y 298: accent heart 26 px at x 0, grey bars (#2a2a2a, 14 px tall, radius 7) at x 40: 62 % wide, and at y 326: 38 %.
+                Pitch 374 (350 + 24 gap). Order top -> bottom: post0 ford (no caption), post1 audi « PRÊTE À PARTIR »,
+                post2 ford « CLÉS REMISES », post3 audi « CLIENT LIVRÉ », post4 ford (no caption), post5 audi (no caption).
+                Caption chip: Space Mono 700 26 px white on rgba(10,10,10,.82), padding 8/14, radius 10, at photo
+                left 18 / bottom 18. Hearts of post1..3 are filled accent at 4.80; post0 / post4 / post5 grey outline.
+      SCROLL @ 4.80: feed list translateY = -1153.2 px (step wrapper -975 + drift wrapper -178.2), so post3 top is at
+                feed-window y -31.2 and post4 top at +342.8. Scroll speed at 4.80: 60 px/s upward, constant (linear drift
+                since 1.83). Continue: list y(t07) = -1153.2 - 60 * t07.
+      counter : row at card-local (48, 836), height 64: accent eye icon 44 x 44, « VUES » Space Mono 700 26 px #bdbdbd at x 60,
+                number Space Mono 700 52 px white tabular-nums at x 160 (fixed 260 px box, left aligned).
+                Value at 4.80: « 9 800 », still rising: linear 1 240 -> 9 800 between 3.76 and 4.80 (8 231 / s).
+  CAMERA @ 4.80 (both wrappers transform-origin 540px 1040px, frame coords): #push scale 1.048 (1 %/s linear from 1.0),
+    #cran scale 1.02 (step at 1.80). Net scale 1.06896 about (540, 1040): card on screen x 80.6-999.4, y 248.5-1254.3.
+  Halo: centre (540, 900), 1200 px, scale 1.10 at 4.80. Grain 4 %. No subtitle visible at 4.80 (last chunk out at 4.70).
+  ===================================================================================================================
+  -->
+  <style>
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+
+    /* ===================== SHARED: ground ===================== */
+    /* solid #0A0A0A + one soft accent halo behind the focal element + static grain 4 %.
+       Full-duration class="clip" layer on track 0. Move the halo by tweening its x / y / scale / opacity only. */
+    .f06-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .f06-halo { position: absolute; left: -60px; top: 300px; width: 1200px; height: 1200px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.16) 0%, rgba(251,128,0,0.10) 38%, rgba(251,128,0,0.035) 70%, rgba(251,128,0,0) 100%); }
+    .f06-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    /* ===================== end SHARED: ground ===================== */
+
+    /* ===================== SHARED: title ===================== */
+    /* Scene title: Big Shoulders 900, 128 px, caps, line-height 0.95, white, centred in the title zone (y 260 to 640,
+       side margins 80 px). The orange title-stroke sits under the LAST line: it is sized in em, so it is always
+       "line width + 20 px" (10 px each side at 128 px), 14 px tall, round cap at the left, tapered end, tilted -1.5 deg.
+       Markup:
+         <div class="f06-title" style="top: ...px">
+           <span class="f06-tline">LINE 1</span><br>
+           <span class="f06-tline">LINE 2<i class="f06-stroke-tilt"><i class="f06-stroke" id="f06-..."></i></i></span>
+         </div>
+       The same component scales with font-size (this frame uses it at the jumbo size, 300 px). */
+    .f06-title { position: absolute; left: 80px; width: 920px; text-align: center; font: 900 128px/0.95 "Big Shoulders", sans-serif;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .f06-tline { position: relative; display: inline-block; }
+    .f06-stroke-tilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.085em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .f06-stroke { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%);
+      transform-origin: 0 50%; transform: scaleX(0); }
+    /* ===================== end SHARED: title ===================== */
+
+    /* ===================== SHARED: subtitle ===================== */
+    /* The voice, word by word, in the subtitle band (y 1260 to 1440, nothing else in it): Instrument Sans 700 58/70,
+       centred on y 1350. One .f06-chunk per quoted chunk (2 to 6 words), all chunks stacked at the same place.
+       Every word is a .f06-w with data-cue (frame-local s); the key word also carries .f06-key (turns #FB8000 as it
+       appears, no box). data-out on the chunk = its 0.1 s leave (opacity + blur) before the next chunk. */
+    .f06-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .f06-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 58px/70px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .f06-w { display: inline-block; opacity: 0; }
+    /* ===================== end SHARED: subtitle ===================== */
+
+    /* ---- camera (two stacked wrappers: continuous push / discrete crans), origin under the card centre ---- */
+    .f06-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 1040px; }
+
+    /* ===================== SHARED: card (CSS) ===================== */
+    /* Card stack geometry for frames 06 / 08 / 10: 860 x 940, left 110, top 300 (ends y 1240, above the subtitle band). */
+    .f06-card { position: absolute; left: 110px; top: 300px; width: 860px; height: 940px; box-sizing: border-box;
+      background: #161616; border: 1px solid #2a2a2a; border-radius: 36px; overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.55); }
+    .f06-badge { position: absolute; left: 48px; top: 52px; width: 96px; height: 96px; border-radius: 50%; background: #FB8000;
+      color: #0A0A0A; font: 900 72px/96px "Big Shoulders", sans-serif; text-align: center; opacity: 0; }
+    .f06-title.f06-ctitle { left: 172px; top: 52px; width: auto; text-align: left; font-size: 96px; transform-origin: 0 50%; opacity: 0; }
+    .f06-feed { position: absolute; left: 48px; top: 196px; width: 764px; height: 620px; overflow: hidden; }
+    .f06-feed-fade { position: absolute; left: 0; width: 764px; height: 44px; pointer-events: none; }
+    .f06-feed-fade.f06-top { top: 0; background: linear-gradient(#161616, rgba(22,22,22,0)); }
+    .f06-feed-fade.f06-bot { bottom: 0; background: linear-gradient(rgba(22,22,22,0), #161616); }
+    .f06-list { position: absolute; left: 0; top: 0; width: 764px; }
+    .f06-post { position: absolute; left: 0; width: 764px; height: 350px; }
+    .f06-photo { position: absolute; left: 0; top: 0; width: 764px; height: 280px; border-radius: 18px; overflow: hidden; background: #222222; }
+    .f06-photo img { position: absolute; left: 0; top: 0; width: 764px; height: 280px; object-fit: cover; object-position: 50% 40%; display: block; }
+    .f06-cap { position: absolute; left: 18px; bottom: 18px; padding: 8px 14px; border-radius: 10px; background: rgba(10,10,10,0.82);
+      font: 700 26px/34px "Space Mono", monospace; color: #ffffff; white-space: nowrap; opacity: 0; transform-origin: 0 100%; }
+    .f06-heart { position: absolute; left: 0; top: 292px; width: 26px; height: 26px; }
+    .f06-heart svg { position: absolute; left: 0; top: 0; width: 26px; height: 26px; overflow: visible; }
+    .f06-heart-off path { fill: none; stroke: #6f6f6f; stroke-width: 2.4; }
+    .f06-heart-on { opacity: 0; transform-origin: 13px 13px; }
+    .f06-heart-on path { fill: #FB8000; stroke: #FB8000; stroke-width: 2.4; }
+    .f06-bar { position: absolute; left: 40px; height: 14px; border-radius: 7px; background: #2a2a2a; }
+    .f06-counter { position: absolute; left: 48px; top: 836px; width: 764px; height: 64px; opacity: 0; }
+    .f06-eye { position: absolute; left: 0; top: 10px; width: 44px; height: 44px; }
+    .f06-vues { position: absolute; left: 60px; top: 15px; font: 700 26px/34px "Space Mono", monospace; color: #bdbdbd; letter-spacing: 0.06em; }
+    .f06-num-box { position: absolute; left: 160px; top: 0; width: 260px; height: 64px; }
+    .f06-num { position: absolute; left: 0; top: 0; font: 700 52px/64px "Space Mono", monospace; color: #ffffff;
+      font-variant-numeric: tabular-nums; white-space: pre; transform-origin: 0 50%; }
+    /* ===================== end SHARED: card (CSS) ===================== */
+  </style>
+
+  <div id="root" data-composition-id="06-carte1" data-width="1080" data-height="1920" data-duration="4.80">
+
+    <!-- SHARED: ground (full-duration clip, lowest track) -->
+    <div id="f06-ground" class="clip f06-ground" data-start="0" data-duration="4.80" data-track-index="0">
+      <div id="f06-halo" class="f06-halo"></div>
+      <div class="f06-grain"></div>
+    </div>
+
+    <!-- camera: push (continuous +1 %/s) > cran (step in at 1.80 toward the feed) > scene -->
+    <div id="f06-push" class="f06-cam">
+      <div id="f06-cran" class="f06-cam">
+
+        <!-- ===================== SHARED: card (HTML) ===================== -->
+        <div id="f06-card" class="f06-card">
+          <div id="f06-badge" class="f06-badge">1</div>
+          <div id="f06-title" class="f06-title f06-ctitle"><span class="f06-tline">MONTRE TON TRAVAIL<i class="f06-stroke-tilt"><i id="f06-stroke" class="f06-stroke"></i></i></span></div>
+
+          <div id="f06-feed" class="f06-feed">
+            <div id="f06-drift" class="f06-list">
+              <div id="f06-step" class="f06-list">
+                <div class="f06-post" style="top: 0px;">
+                  <div class="f06-photo"><img src="assets/img/thumb-ford.png" alt=""></div>
+                  <div class="f06-heart"><svg class="f06-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f06-bar" style="top: 298px; width: 62%;"></div><div class="f06-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f06-post" style="top: 374px;">
+                  <div class="f06-photo"><img src="assets/img/thumb-audi.png" alt=""><div id="f06-cap1" class="f06-cap">PRÊTE À PARTIR</div></div>
+                  <div class="f06-heart"><svg class="f06-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg><svg id="f06-heart1" class="f06-heart-on" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f06-bar" style="top: 298px; width: 62%;"></div><div class="f06-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f06-post" style="top: 748px;">
+                  <div class="f06-photo"><img src="assets/img/thumb-ford.png" alt="" style="object-position: 50% 30%;"><div id="f06-cap2" class="f06-cap">CLÉS REMISES</div></div>
+                  <div class="f06-heart"><svg class="f06-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg><svg id="f06-heart2" class="f06-heart-on" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f06-bar" style="top: 298px; width: 62%;"></div><div class="f06-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f06-post" style="top: 1122px;">
+                  <div class="f06-photo"><img src="assets/img/thumb-audi.png" alt="" style="object-position: 50% 50%;"><div id="f06-cap3" class="f06-cap">CLIENT LIVRÉ</div></div>
+                  <div class="f06-heart"><svg class="f06-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg><svg id="f06-heart3" class="f06-heart-on" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f06-bar" style="top: 298px; width: 62%;"></div><div class="f06-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f06-post" style="top: 1496px;">
+                  <div class="f06-photo"><img src="assets/img/thumb-ford.png" alt="" style="object-position: 50% 45%;"></div>
+                  <div class="f06-heart"><svg class="f06-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f06-bar" style="top: 298px; width: 62%;"></div><div class="f06-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+                <div class="f06-post" style="top: 1870px;">
+                  <div class="f06-photo"><img src="assets/img/thumb-audi.png" alt="" style="object-position: 50% 35%;"></div>
+                  <div class="f06-heart"><svg class="f06-heart-off" viewBox="0 0 26 26"><path d="M13 23 C 4 16, 1 11, 1 7.5 C 1 4, 3.8 1.5, 7 1.5 C 9.6 1.5, 11.6 3, 13 5.2 C 14.4 3, 16.4 1.5, 19 1.5 C 22.2 1.5, 25 4, 25 7.5 C 25 11, 22 16, 13 23 Z"></path></svg></div>
+                  <div class="f06-bar" style="top: 298px; width: 62%;"></div><div class="f06-bar" style="top: 326px; width: 38%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="f06-feed-fade f06-top"></div>
+            <div class="f06-feed-fade f06-bot"></div>
+          </div>
+
+          <div id="f06-counter" class="f06-counter">
+            <svg class="f06-eye" viewBox="0 0 44 44"><path d="M3 22 C 9 12, 15 8, 22 8 C 29 8, 35 12, 41 22 C 35 32, 29 36, 22 36 C 15 36, 9 32, 3 22 Z" fill="none" stroke="#FB8000" stroke-width="3.6" stroke-linejoin="round"></path><circle cx="22" cy="22" r="6.5" fill="#FB8000"></circle></svg>
+            <div class="f06-vues">VUES</div>
+            <div class="f06-num-box"><span id="f06-num" class="f06-num">1 240</span></div>
+          </div>
+        </div>
+        <!-- ===================== end SHARED: card (HTML) ===================== -->
+
+      </div>
+    </div>
+
+    <!-- SHARED: subtitle (outside the camera: it never moves with the scene) -->
+    <div id="f06-sub" class="f06-sub">
+      <div class="f06-chunk" data-out="1.68"><span class="f06-w" data-cue="0.15">Un&nbsp;:</span> <span class="f06-w f06-key" data-cue="0.65">montre</span> <span class="f06-w" data-cue="0.87">ton</span> <span class="f06-w" data-cue="1.09">travail.</span></div>
+      <div class="f06-chunk" data-out="2.76"><span class="f06-w" data-cue="1.83">Chaque</span> <span class="f06-w" data-cue="2.18">voiture</span> <span class="f06-w" data-cue="2.53">vendue,</span></div>
+      <div class="f06-chunk" data-out="3.62"><span class="f06-w" data-cue="2.88">chaque</span> <span class="f06-w" data-cue="3.24">client</span> <span class="f06-w" data-cue="3.41">livré,</span></div>
+      <div class="f06-chunk" data-out="4.70"><span class="f06-w" data-cue="3.76">c'est</span> <span class="f06-w" data-cue="3.94">un</span> <span class="f06-w f06-key" data-cue="4.11">contenu.</span></div>
+    </div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "06-carte1";
+      var DUR = 4.80;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#" + id); }
+      var tl = gsap.timeline({ paused: true });
+
+      /* ===================== SHARED: title (JS) ===================== */
+      // Title slam: scale 1.25 -> 1, blur 10 -> 0, 0.18 s expo.out (t0 > 0: the element starts at opacity 0 in CSS).
+      function f06TitleIn(tl, el, t0) {
+        tl.fromTo(el, { opacity: 0, scale: 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false }, t0);
+      }
+      // Orange stroke: draws from the left, scaleX 0 -> 1, 0.3 s power3.out.
+      function f06StrokeDraw(tl, el, t0) {
+        tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, t0);
+      }
+      /* ===================== end SHARED: title (JS) ===================== */
+
+      /* ===================== SHARED: subtitle (JS) ===================== */
+      // Each word appears 1 frame before its cue (never late): opacity 0 -> 1, y 14 -> 0, blur 6 -> 0 in 0.12 s.
+      // The key word turns #FB8000 as it appears. A chunk leaves at its data-out in 0.1 s (opacity + blur).
+      var F06_LEAD = 1 / 30;
+      function f06Subtitle(tl, box) {
+        Array.prototype.forEach.call(box.querySelectorAll(".f06-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".f06-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - F06_LEAD);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" },
+              { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("f06-key")) {
+              tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            }
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) {
+            tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" },
+              { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+          }
+        });
+      }
+      /* ===================== end SHARED: subtitle (JS) ===================== */
+
+      /* ---- camera track ---- */
+      // push +1 %/s over the whole frame (scale 1.048 at 4.80)
+      tl.fromTo($("f06-push"), { scale: 1 }, { scale: 1 + 0.01 * DUR, duration: DUR, ease: "none" }, 0);
+      // cran 1.80: a step in toward the feed as it starts to scroll
+      tl.fromTo($("f06-cran"), { scale: 1 }, { scale: 1.02, duration: 0.3, ease: "power3.out", immediateRender: false }, 1.80);
+
+      /* ===================== SHARED: card (JS) ===================== */
+      // French thousands: « 9 800 »
+      function f06Fmt(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+      var FEED_SPEED = 60;          // px/s, upward, linear from 1.83 (continues in 07)
+      var FEED_START = 1.83;
+      /* ===================== end SHARED: card (JS) ===================== */
+
+      /* ---- 0.00 the card rises from below (y +900 -> 0, 0.35 s expo.out) ---- */
+      tl.fromTo($("f06-card"), { y: 900 }, { y: 0, duration: 0.35, ease: "expo.out" }, 0);
+      // 0.00 -> 0.40 the halo swells behind the card
+      tl.fromTo($("f06-halo"), { scale: 0.85, opacity: 0.6 }, { scale: 1.05, opacity: 1, duration: 0.6, ease: "power3.out" }, 0);
+
+      /* ---- 0.15 the badge « 1 » slams ---- */
+      tl.fromTo($("f06-badge"), { opacity: 0, scale: 1.7, filter: "blur(8px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out", immediateRender: false }, 0.15);
+
+      /* ---- 0.65 the card title slams, 0.90 its stroke ---- */
+      f06TitleIn(tl, $("f06-title"), 0.65);
+      f06StrokeDraw(tl, $("f06-stroke"), 0.90);
+
+      /* ---- 1.30 the counter row lands at 1 240 ---- */
+      tl.fromTo($("f06-counter"), { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.3, ease: "power3.out", immediateRender: false }, 1.30);
+
+      /* ---- 1.83 -> 4.80 the feed scrolls: linear drift 60 px/s + one step per post cue ---- */
+      tl.fromTo($("f06-drift"), { y: 0 },
+        { y: -FEED_SPEED * (DUR - FEED_START), duration: DUR - FEED_START, ease: "none", immediateRender: false }, FEED_START);
+      var steps = [[2.18, 0, -301], [2.88, -301, -633], [3.41, -633, -975]];
+      steps.forEach(function (s) {
+        tl.fromTo($("f06-step"), { y: s[1] }, { y: s[2], duration: 0.4, ease: "power3.out", immediateRender: false }, s[0]);
+      });
+
+      /* ---- the three captioned posts: chip slams as the post settles; heart fills on the next word ---- */
+      [["f06-cap1", 2.30, "f06-heart1", 2.53], ["f06-cap2", 3.00, "f06-heart2", 3.24], ["f06-cap3", 3.50, "f06-heart3", 4.40]].forEach(function (p) {
+        tl.fromTo($(p[0]), { opacity: 0, scale: 1.3, filter: "blur(6px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false }, p[1]);
+        tl.fromTo($(p[2]), { opacity: 0, scale: 1.8 },
+          { opacity: 1, scale: 1, duration: 0.22, ease: "expo.out", immediateRender: false }, p[3]);
+      });
+
+      /* ---- 3.76 the views counter rolls 1 240 -> 9 800 (linear: still rising at 4.80, continues in 07) ---- */
+      var num = $("f06-num");
+      var st = { v: 1240 };
+      num.textContent = f06Fmt(1240);
+      tl.fromTo(st, { v: 1240 }, { v: 9800, duration: DUR - 3.76, ease: "none", immediateRender: false,
+        onUpdate: function () { num.textContent = f06Fmt(st.v); } }, 3.76);
+      tl.fromTo(num, { scale: 0.7 }, { scale: 1, duration: 0.5, ease: "power3.out", immediateRender: false }, 3.76);
+      // 4.11 « contenu »: the halo pulses
+      tl.fromTo($("f06-halo"), { scale: 1.05 }, { scale: 1.10, duration: 0.4, ease: "power3.out", immediateRender: false }, 4.11);
+
+      /* ---- the voice, word by word ---- */
+      f06Subtitle(tl, $("f06-sub"));
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

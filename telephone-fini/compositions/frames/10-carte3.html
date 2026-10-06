@@ -79,12 +79,12 @@
     .f10-sign-dot { position: absolute; top: 31px; width: 12px; height: 12px; border-radius: 50%; background: #3a3a3a; }
     #f10-body { position: absolute; left: 0; top: 74px; width: 480px; height: 416px; background: #1d1d1d; }
     #f10-win { position: absolute; left: 30px; top: 116px; width: 280px; height: 300px; background: #0d0d0d; border-radius: 6px; overflow: hidden; }
-    #f10-door { position: absolute; left: 340px; top: 170px; width: 110px; height: 320px; background: #121212; border-radius: 6px 6px 0 0; }
+    #f10-door { position: absolute; left: 340px; top: 96px; width: 110px; height: 320px; background: #121212; border-radius: 6px 6px 0 0; }
     #f10-knob { position: absolute; left: 86px; top: 160px; width: 10px; height: 10px; border-radius: 50%; background: #3a3a3a; }
     /* the window light: warm accent glow inside the window + its spill, opacity only */
     #f10-light { position: absolute; left: 0; top: 0; width: 280px; height: 300px; opacity: 0;
       background: radial-gradient(120% 90% at 50% 40%, rgba(255,180,102,0.95) 0%, rgba(251,128,0,0.85) 45%, rgba(217,108,0,0.75) 100%); }
-    .f10-mullion { position: absolute; background: #1d1d1d; }
+    .f10-mullion { position: absolute; background: #141414; }
     #f10-spill { position: absolute; left: -110px; top: 40px; width: 500px; height: 560px; border-radius: 50%; opacity: 0;
       background: radial-gradient(closest-side, rgba(251,128,0,0.38) 0%, rgba(251,128,0,0.14) 55%, rgba(251,128,0,0) 100%); }
     #f10-floor { position: absolute; left: -40px; top: 486px; width: 360px; height: 60px; opacity: 0; border-radius: 50%;
@@ -94,7 +94,7 @@
 
     #f10-map { position: absolute; left: 44px; top: 222px; width: 290px; height: 250px; border-radius: 22px; overflow: hidden;
       background: #101010; border: 2px solid #2a2a2a; box-sizing: border-box; opacity: 0; transform-origin: 145px 125px; }
-    #f10-map svg { position: absolute; left: 0; top: 0; width: 290px; height: 250px; }
+    #f10-map .f10-roads { position: absolute; left: 0; top: 0; width: 290px; height: 250px; }
     #f10-pinwrap { position: absolute; left: 160px; top: 128px; width: 0; height: 0; }
     #f10-pin { position: absolute; left: -24px; top: -66px; width: 48px; height: 66px; opacity: 0; transform-origin: 24px 66px; }
     #f10-pinshadow { position: absolute; left: -16px; top: -5px; width: 32px; height: 10px; border-radius: 50%; background: rgba(0,0,0,0.6); opacity: 0; }
@@ -141,9 +141,35 @@
 
           <div id="f10-walk"></div>
 
+          <!-- the shopfront: flat facade, sign bar without any name -->
+          <div id="f10-shop">
+            <div id="f10-spill"></div>
+            <div id="f10-floor"></div>
+            <div id="f10-shop-fill">
+              <div id="f10-body">
+                <div id="f10-door"><div id="f10-knob"></div></div>
+              </div>
+              <div id="f10-win">
+                <div id="f10-light"></div>
+                <div class="f10-mullion" style="left: 136px; top: 0; width: 8px; height: 300px;"></div>
+                <div class="f10-mullion" style="left: 0; top: 196px; width: 280px; height: 8px;"></div>
+              </div>
+              <div id="f10-sign">
+                <div class="f10-sign-dot" style="left: 34px;"></div>
+                <div class="f10-sign-dot" style="left: 434px;"></div>
+              </div>
+            </div>
+            <svg id="f10-shop-svg" viewBox="0 0 480 490" xmlns="http://www.w3.org/2000/svg">
+              <path id="f10-p-out" d="M 0 490 L 0 14 Q 0 0 14 0 L 466 0 Q 480 0 480 14 L 480 490"></path>
+              <path id="f10-p-sign" d="M 0 74 L 480 74"></path>
+              <path id="f10-p-win" d="M 30 116 L 310 116 L 310 416 L 30 416 Z"></path>
+              <path id="f10-p-door" d="M 340 490 L 340 170 L 450 170 L 450 490"></path>
+            </svg>
+          </div>
+
           <!-- the map tile with the accent pin -->
           <div id="f10-map">
-            <svg viewBox="0 0 290 250" xmlns="http://www.w3.org/2000/svg">
+            <svg class="f10-roads" viewBox="0 0 290 250" xmlns="http://www.w3.org/2000/svg">
               <rect x="0" y="0" width="290" height="250" fill="#101010"></rect>
               <rect x="22" y="20" width="96" height="76" rx="6" fill="#161616"></rect>
               <rect x="186" y="20" width="84" height="62" rx="6" fill="#161616"></rect>
@@ -163,32 +189,6 @@
                 <circle cx="24" cy="24" r="8" fill="#111111"></circle>
               </svg>
             </div>
-          </div>
-
-          <!-- the shopfront: flat facade, sign bar without any name -->
-          <div id="f10-shop">
-            <div id="f10-spill"></div>
-            <div id="f10-floor"></div>
-            <div id="f10-shop-fill">
-              <div id="f10-body">
-                <div id="f10-door"><div id="f10-knob"></div></div>
-              </div>
-              <div id="f10-win" style="left: 30px; top: 116px;">
-                <div id="f10-light"></div>
-                <div class="f10-mullion" style="left: 136px; top: 0; width: 8px; height: 300px;"></div>
-                <div class="f10-mullion" style="left: 0; top: 196px; width: 280px; height: 8px;"></div>
-              </div>
-              <div id="f10-sign">
-                <div class="f10-sign-dot" style="left: 34px;"></div>
-                <div class="f10-sign-dot" style="left: 434px;"></div>
-              </div>
-            </div>
-            <svg id="f10-shop-svg" viewBox="0 0 480 490" xmlns="http://www.w3.org/2000/svg">
-              <path id="f10-p-out" d="M 0 490 L 0 14 Q 0 0 14 0 L 466 0 Q 480 0 480 14 L 480 490"></path>
-              <path id="f10-p-sign" d="M 0 74 L 480 74"></path>
-              <path id="f10-p-win" d="M 30 116 L 310 116 L 310 416 L 30 416 Z"></path>
-              <path id="f10-p-door" d="M 340 490 L 340 170 L 450 170 L 450 490"></path>
-            </svg>
           </div>
 
           <!-- the faded listing tile, small, on the left -->
@@ -311,7 +311,7 @@
       tl.fromTo($("f10-ring"), { opacity: 1, scale: 0.4 }, { opacity: 0, scale: 2.4, duration: 0.6, ease: "power3.out", immediateRender: false }, 2.56);
 
       /* ---- 2.81 « vitrine »: the window lights up (accent glow) ---- */
-      tl.fromTo($("f10-light"), { opacity: 0 }, { opacity: 0.72, duration: 0.25, ease: "expo.out", immediateRender: false }, 2.81);
+      tl.fromTo($("f10-light"), { opacity: 0 }, { opacity: 0.8, duration: 0.25, ease: "expo.out", immediateRender: false }, 2.81);
       tl.fromTo($("f10-spill"), { opacity: 0, scale: 0.7 }, { opacity: 0.7, scale: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, 2.81);
       tl.fromTo($("f10-floor"), { opacity: 0 }, { opacity: 0.7, duration: 0.35, ease: "power3.out", immediateRender: false }, 3.05);
       tl.fromTo($("f10-halo"), { x: 120, y: 120, scale: 0.9 }, { x: 200, y: 60, scale: 1.0, duration: 0.5, ease: "power3.out", immediateRender: false }, 3.05);
@@ -330,7 +330,7 @@
       tl.fromTo($("f10-shop"), { scale: 1 }, { scale: 1.02, duration: 0.4, ease: "power3.out", immediateRender: false }, 4.92);
 
       /* ---- 5.32 « rassure »: the window glows stronger, the faded listing goes out ---- */
-      tl.fromTo($("f10-light"), { opacity: 0.72 }, { opacity: 1, duration: 0.3, ease: "expo.out", immediateRender: false }, 5.32);
+      tl.fromTo($("f10-light"), { opacity: 0.8 }, { opacity: 1, duration: 0.3, ease: "expo.out", immediateRender: false }, 5.32);
       tl.fromTo($("f10-spill"), { opacity: 0.7, scale: 1 }, { opacity: 1, scale: 1.25, duration: 0.45, ease: "power3.out", immediateRender: false }, 5.32);
       tl.fromTo($("f10-floor"), { opacity: 0.7 }, { opacity: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 5.32);
       tl.fromTo($("f10-halo"), { scale: 1.0 }, { scale: 1.2, duration: 0.5, ease: "power3.out", immediateRender: false }, 5.32);
