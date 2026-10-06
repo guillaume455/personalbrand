@@ -1,5 +1,5 @@
 #!/bin/bash
-# Reel mix: voice montage (if present) + sound effects (assets/audio/sfx-events.json, written by build.py) + music
+# Reel mix: voice montage (if present) + sound effects (each cut to 1.2 s max with a fade) (assets/audio/sfx-events.json, written by build.py) + music
 # (fresh.mp3 from its main drop), ducked under the voice, -14 LUFS (social). TOTAL comes from timings.json.
 set -euo pipefail; cd "$(dirname "$0")"
 TOTAL=$(python3 -c "import json;print(json.load(open('timings.json'))['total'])")
@@ -8,7 +8,7 @@ SFX=../.claude/skills/media-use/audio/assets/sfx
 VO=assets/audio/voix-montage.wav
 if [ -f "$VO" ]; then VOIN=(-i "$VO"); else VOIN=(-f lavfi -t "$TOTAL" -i anullsrc=r=44100:cl=mono); echo "mix: no voice yet (silent voice track)"; fi
 ARGS=(); G=""; L=""; i=3
-while read -r name at vol; do ARGS+=(-i "$SFX/$name.mp3"); d=$(python3 -c "print(int($at*1000))"); G+="[$i]volume=$vol,adelay=$d|$d,aformat=channel_layouts=stereo[e$i];"; L+="[e$i]"; i=$((i+1)); done < <(python3 -c "
+while read -r name at vol; do ARGS+=(-i "$SFX/$name.mp3"); d=$(python3 -c "print(int($at*1000))"); m=$(python3 -c "print({'whoosh-cinematic':1.8,'impact-bass-1':1.5,'impact-bass-2':1.5,'chime':1.5,'notification':1.5}.get('$name',1.2))"); G+="[$i]atrim=0:$m,afade=t=out:st=$(python3 -c "print($m-0.25)"):d=0.25,volume=$vol,adelay=$d|$d,aformat=channel_layouts=stereo[e$i];"; L+="[e$i]"; i=$((i+1)); done < <(python3 -c "
 import json
 for n,a,v in json.load(open('assets/audio/sfx-events.json')): print(n,a,v)")
 N=$((i-3))

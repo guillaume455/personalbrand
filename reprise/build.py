@@ -574,7 +574,7 @@ def scene_05():
     """
     sfx = [("typing", None, 0, 0.08, .12), ("pop", "toi", 1, -.06, .18), ("typing", "reprise", 1, 0, .12),
            ("whoosh-short", "paies", 1, -.05, .18), ("pop", "l'argent", 1, 0, .12), ("pop", "pas", 1, 0, .14),
-           ("glitch-1", "crédit", 1, .08, .14), ("pop", "emprunté", 1, -.05, .14), ("click", "cher", 1, 0, .25),
+           ("pop", "emprunté", 1, -.05, .14), ("click", "cher", 1, 0, .25),
            ("chime", "marge", 1, -.04, .2), ("click", "gardes", 1, .05, .35)]
     return css, st, hud, js, (300, 760), sfx
 
@@ -638,7 +638,7 @@ def scene_06():
       cam(0, -10, 1.04, at("surpayer"), 0.6); cam(0, -20, 1.08, at("centime") - 0.1, 0.8, "power2.out");
     """
     sfx = [("impact-bass-1", None, 0, 0.02, .3), ("error", "piège", 1, -.03, .22), ("typing", "reprise", 1, -.05, .12),
-           ("click-soft", "signer", 1, -.04, .25), ("pop", "reprise", 2, 0, .14), ("glitch-2", "mange", 1, 0, .14),
+           ("click-soft", "signer", 1, -.04, .25), ("pop", "reprise", 2, 0, .14), ("click", "mange", 1, 0, .22),
            ("typing", "s'estime", 1, 0, .12), ("pop", "achat", 1, 0, .14), ("typing", "centime", 1, -.03, .1),
            ("chime", "centime", 1, .45, .22)]
     return css, st, hud, js, (540, 880), sfx
