@@ -28,7 +28,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
-- voiceover: "Tu achètes et revends des voitures ? Deux acheteurs. Même voiture. Même prix. Un seul est le bon."
+- voiceover: "Tu achètes et revends des voitures ? Prenons le cas de deux acheteurs. Même voiture. Même prix. Un seul est le bon."
 - type: hook
 - blueprint: none
 - focal: Hook

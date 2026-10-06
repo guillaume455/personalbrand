@@ -24,7 +24,7 @@ FPS = 30
 # into one subtitle word (« 10~000 », « voitures~? »). Numbers are spoken « dix mille », « deux mille vingt-six ».
 SCENES = [
  dict(id="01-hook", name="Hook", window=(0, 5), chunks=[
-   "Tu achètes et revends", "des *voitures*~?", "Deux *acheteurs*.", "Même voiture.", "Même *prix*.",
+   "Tu achètes et revends", "des *voitures*~?", "Prenons le cas", "de deux *acheteurs*.", "Même voiture.", "Même *prix*.",
    "Un seul est le *bon*."]),
  dict(id="02-acheteur1", name="Acheteur 1", window=(5, 11), chunks=[
    "Le premier te l'achète", "*10~000* euros comptant,", "sans *discuter*,", "*virement* le jour même.", "Le *rêve*."]),

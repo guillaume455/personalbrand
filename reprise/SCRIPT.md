@@ -27,7 +27,7 @@ tenir la règle des 6 mots.
 ## Version à coller dans ElevenLabs
 
 ```
-Tu achètes et revends des voitures ? Deux acheteurs. Même voiture. Même prix. Un seul est le bon.
+Tu achètes et revends des voitures ? Prenons le cas de deux acheteurs. Même voiture. Même prix. Un seul est le bon.
 Le premier te l'achète dix mille euros comptant, sans discuter, virement le jour même. Le rêve.
 Le second te l'achète aussi dix mille euros, mais il a une voiture à reprendre. La plupart des vendeurs choisissent le premier. Erreur.
 Avec lui, tu fais une deuxième vente. Tu reprends sa voiture au juste prix, tu la revends derrière. Même client, deux marges.
