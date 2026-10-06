@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "60s"
+duration: "52.667s"
 message: "Entre deux acheteurs au même prix, prends celui qui a une reprise : deux ventes, deux marges, une reprise payée par la vente et pas par la banque, à condition de l'estimer comme un achat."
 arc: Hook → Problem → Turn → Demo → Payoff → Warning → Bonus → CTA
 audience: "Marchands automobiles qui achètent et revendent des véhicules d'occasion"
@@ -21,14 +21,14 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : aucun billet, aucune liasse, aucune espèce ; jamais plus de 6 mots par bloc de texte.
 
-## Frame 1: Hook · 0.00 → 5.00
+## Frame 1: Hook · 0.00 → 5.50
 
 - scene: Hook
-- duration: 5.00s
+- duration: 5.50s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
-- voiceover: "Tu achètes et revends des voitures ? Prenons le cas de deux acheteurs. Même voiture. Même prix. Un seul est le bon."
+- voiceover: "Tu achètes et tu revends des voitures ? OK. Prenons le cas de deux acheteurs. Même voiture et même prix."
 - type: hook
 - blueprint: none
 - focal: Hook
@@ -37,10 +37,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: Acheteur 1 · 5.00 → 11.00
+## Frame 2: Acheteur 1 · 5.50 → 10.17
 
 - scene: Acheteur 1
-- duration: 6.00s
+- duration: 4.67s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-acheteur1.html
@@ -53,10 +53,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: Acheteur 2 · 11.00 → 17.00
+## Frame 3: Acheteur 2 · 10.17 → 16.33
 
 - scene: Acheteur 2
-- duration: 6.00s
+- duration: 6.17s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-acheteur2.html
@@ -69,10 +69,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: Le calcul · 17.00 → 29.00
+## Frame 4: Le calcul · 16.33 → 22.33
 
 - scene: Le calcul
-- duration: 12.00s
+- duration: 6.00s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-calcul.html
@@ -85,10 +85,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: La trésorerie · 29.00 → 40.00
+## Frame 5: La trésorerie · 22.33 → 32.47
 
 - scene: La trésorerie
-- duration: 11.00s
+- duration: 10.13s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-tresorerie.html
@@ -101,10 +101,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 6: Le piège · 40.00 → 49.00
+## Frame 6: Le piège · 32.47 → 40.97
 
 - scene: Le piège
-- duration: 9.00s
+- duration: 8.50s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/06-piege.html
@@ -117,10 +117,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 7: Le bonus · 49.00 → 54.00
+## Frame 7: Le bonus · 40.97 → 46.10
 
 - scene: Le bonus
-- duration: 5.00s
+- duration: 5.13s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/07-bonus.html
@@ -133,10 +133,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 8: CTA · 54.00 → 60.00
+## Frame 8: CTA · 46.10 → 52.67
 
 - scene: CTA
-- duration: 6.00s
+- duration: 6.57s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/08-cta.html

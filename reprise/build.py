@@ -24,8 +24,8 @@ FPS = 30
 # into one subtitle word (« 10~000 », « voitures~? »). Numbers are spoken « dix mille », « deux mille vingt-six ».
 SCENES = [
  dict(id="01-hook", name="Hook", window=(0, 5), chunks=[
-   "Tu achètes et revends", "des *voitures*~?", "Prenons le cas", "de deux *acheteurs*.", "Même voiture.", "Même *prix*.",
-   "Un seul est le *bon*."]),
+   "Tu achètes et tu revends", "des *voitures*~?", "OK.", "Prenons le cas", "de deux *acheteurs*.", "Même voiture",
+   "et même *prix*."]),
  dict(id="02-acheteur1", name="Acheteur 1", window=(5, 11), chunks=[
    "Le premier te l'achète", "*10~000* euros comptant,", "sans *discuter*,", "*virement* le jour même.", "Le *rêve*."]),
  dict(id="03-acheteur2", name="Acheteur 2", window=(11, 17), chunks=[
@@ -355,19 +355,20 @@ def scene_01():
       go("banner", { y: -170, opacity: 0 }, at("même") - 0.14, 0.2, "power3.in");
       slam("t1-0", at("même")); slam("t1-1", at("même", 2)); stroke("t1", at("prix") + 0.05);
       cam(0, -10, 1.04, at("même") - 0.05, 0.45);
-      // « un seul est le bon » : which one ?
+      // same car, same price: which one ? the light hesitates between the two buyers
+      var q = atEnd("prix") + 0.05;
       pre("qa", { opacity: 0, scale: 0.4 }); pre("qb", { opacity: 0, scale: 0.4 });
-      go("qa", { opacity: 1, scale: 1 }, at("un") - 0.03, 0.25, "back.out(2)");
-      go("qb", { opacity: 1, scale: 1 }, at("un") + 0.07, 0.25, "back.out(2)");
-      [["seul", "pa"], ["est", "pb"], ["le", "pa"], ["bon", "pb"]].forEach(function (s) {
-        go(s[1] + "-o", { opacity: 0.95 }, at(s[0]) - 0.02, 0.08, "power2.out");
-        go(s[1] + "-o", { opacity: 0 }, at(s[0]) + 0.16, 0.16, "power2.in");
+      go("qa", { opacity: 1, scale: 1 }, q, 0.25, "back.out(2)");
+      go("qb", { opacity: 1, scale: 1 }, q + 0.08, 0.25, "back.out(2)");
+      var step = Math.max(0.16, Math.min(0.3, (DUR - q - 0.15) / 4));
+      ["pa", "pb", "pa", "pb"].forEach(function (p, k) {
+        go(p + "-o", { opacity: 0.95 }, q + 0.1 + k * step, 0.07, "power2.out");
+        go(p + "-o", { opacity: 0 }, q + 0.1 + k * step + step * 0.6, 0.1, "power2.in");
       });
-      cam(0, -14, 1.07, at("bon"), 0.6, "power2.out");
+      cam(0, -14, 1.07, q, 0.6, "power2.out");
     """
     sfx = [("pop", "tu", 1, 0, .14), ("pop", "voitures", 1, 0, .18), ("pop", "deux", 1, 0, .12), ("whoosh-short", "même", 1, -.12, .16),
-           ("pop", "même", 1, 0, .16), ("pop", "même", 2, 0, .16), ("click-soft", "seul", 1, 0, .3), ("click-soft", "est", 1, 0, .3),
-           ("click-soft", "le", 1, 0, .3), ("click-soft", "bon", 1, 0, .3)]
+           ("pop", "même", 1, 0, .16), ("pop", "même", 2, 0, .16), ("pop", "prix", 1, .45, .14)]
     return css, st, hud, js, (540, 840), sfx
 
 

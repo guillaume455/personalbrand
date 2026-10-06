@@ -57,8 +57,8 @@
     .r1-q { position: absolute; width: 190px; text-align: center; font: 100px/1 "Anton", sans-serif; color: #FB8000; opacity: 0; }
       </style>
 
-  <div id="root" data-composition-id="01-hook" data-width="1080" data-height="1920" data-duration="5">
-    <div id="r1-ground" class="clip r1-ground" data-start="0" data-duration="5" data-track-index="0">
+  <div id="root" data-composition-id="01-hook" data-width="1080" data-height="1920" data-duration="5.5">
+    <div id="r1-ground" class="clip r1-ground" data-start="0" data-duration="5.5" data-track-index="0">
       <div id="r1-halo" class="r1-halo" style="left:540px;top:840px"></div>
       <div class="r1-grain"></div>
     </div>
@@ -69,22 +69,22 @@
       <div id="r1-banner"><span class="r1-bw" id="r1-bw0">TU</span><span class="r1-bw" id="r1-bw1">ACHÈTES</span><span class="r1-bw" id="r1-bw2">TES</span><span class="r1-bw" id="r1-bw3">VOITURES ?</span></div><div class="r1-title" id="r1-t1" style="top:285px;font-size:120px;"><span class="r1-tline" id="r1-t1-0">MÊME VOITURE.</span><br><span class="r1-tline" id="r1-t1-1">MÊME PRIX.<i class="r1-stilt"><i class="r1-stk" id="r1-t1-s"></i></i></span></div>
     </div>
     <div id="r1-sub" class="r1-sub">
-      <div class="r1-chunk sub-chunk" data-out="0.821"><span class="r1-w sub-w" data-cue="0.150">Tu</span> <span class="r1-w sub-w" data-cue="0.268">achètes</span> <span class="r1-w sub-w" data-cue="0.504">et</span> <span class="r1-w sub-w" data-cue="0.621">revends</span></div>
-      <div class="r1-chunk sub-chunk" data-out="1.451"><span class="r1-w sub-w" data-cue="0.857">des</span> <span class="r1-w sub-w sub-key" data-cue="0.975">voitures ?</span></div>
-      <div class="r1-chunk sub-chunk" data-out="2.064"><span class="r1-w sub-w" data-cue="1.511">Prenons</span> <span class="r1-w sub-w" data-cue="1.746">le</span> <span class="r1-w sub-w" data-cue="1.864">cas</span></div>
-      <div class="r1-chunk sub-chunk" data-out="2.811"><span class="r1-w sub-w" data-cue="1.982">de</span> <span class="r1-w sub-w" data-cue="2.100">deux</span> <span class="r1-w sub-w sub-key" data-cue="2.218">acheteurs.</span></div>
-      <div class="r1-chunk sub-chunk" data-out="3.465"><span class="r1-w sub-w" data-cue="2.871">Même</span> <span class="r1-w sub-w" data-cue="2.989">voiture.</span></div>
-      <div class="r1-chunk sub-chunk" data-out="4.001"><span class="r1-w sub-w" data-cue="3.525">Même</span> <span class="r1-w sub-w sub-key" data-cue="3.643">prix.</span></div>
-      <div class="r1-chunk sub-chunk"><span class="r1-w sub-w" data-cue="4.061">Un</span> <span class="r1-w sub-w" data-cue="4.179">seul</span> <span class="r1-w sub-w" data-cue="4.296">est</span> <span class="r1-w sub-w" data-cue="4.414">le</span> <span class="r1-w sub-w sub-key" data-cue="4.532">bon.</span></div>
+      <div class="r1-chunk sub-chunk" data-out="1.079"><span class="r1-w sub-w" data-cue="0.040">Tu</span> <span class="r1-w sub-w" data-cue="0.197">achètes</span> <span class="r1-w sub-w" data-cue="0.511">et</span> <span class="r1-w sub-w" data-cue="0.668">tu</span> <span class="r1-w sub-w" data-cue="0.825">revends</span></div>
+      <div class="r1-chunk sub-chunk" data-out="1.860"><span class="r1-w sub-w" data-cue="1.139">des</span> <span class="r1-w sub-w sub-key" data-cue="1.296">voitures ?</span></div>
+      <div class="r1-chunk sub-chunk" data-out="2.390"><span class="r1-w sub-w" data-cue="1.920">OK.</span></div>
+      <div class="r1-chunk sub-chunk" data-out="3.043"><span class="r1-w sub-w" data-cue="2.450">Prenons</span> <span class="r1-w sub-w" data-cue="2.712">le</span> <span class="r1-w sub-w" data-cue="2.843">cas</span></div>
+      <div class="r1-chunk sub-chunk" data-out="3.880"><span class="r1-w sub-w" data-cue="2.974">de</span> <span class="r1-w sub-w" data-cue="3.106">deux</span> <span class="r1-w sub-w sub-key" data-cue="3.237">acheteurs.</span></div>
+      <div class="r1-chunk sub-chunk" data-out="4.427"><span class="r1-w sub-w" data-cue="3.940">Même</span> <span class="r1-w sub-w" data-cue="4.122">voiture</span></div>
+      <div class="r1-chunk sub-chunk"><span class="r1-w sub-w" data-cue="4.487">et</span> <span class="r1-w sub-w" data-cue="4.790">même</span> <span class="r1-w sub-w sub-key" data-cue="5.035">prix.</span></div>
     </div>
   </div>
 
   <script src="assets/vendor/gsap.min.js"></script>
   <script>
     (function () {
-      var FID = "01-hook", P = "r1-", DUR = 5;
+      var FID = "01-hook", P = "r1-", DUR = 5.5;
       // word cues of this scene (local seconds), written by build.py from the voice timings
-      var W = [["tu", 0.15, 0.268], ["achètes", 0.268, 0.504], ["et", 0.504, 0.621], ["revends", 0.621, 0.857], ["des", 0.857, 0.975], ["voitures", 0.975, 1.211], ["prenons", 1.511, 1.746], ["le", 1.746, 1.864], ["cas", 1.864, 1.982], ["de", 1.982, 2.1], ["deux", 2.1, 2.218], ["acheteurs", 2.218, 2.571], ["même", 2.871, 2.989], ["voiture", 2.989, 3.225], ["même", 3.525, 3.643], ["prix", 3.643, 3.761], ["un", 4.061, 4.179], ["seul", 4.179, 4.296], ["est", 4.296, 4.414], ["le", 4.414, 4.532], ["bon", 4.532, 4.65]];
+      var W = [["tu", 0.04, 0.197], ["achètes", 0.197, 0.511], ["et", 0.511, 0.668], ["tu", 0.668, 0.825], ["revends", 0.825, 1.139], ["des", 1.139, 1.296], ["voitures", 1.296, 1.61], ["ok", 1.92, 2.15], ["prenons", 2.45, 2.712], ["le", 2.712, 2.843], ["cas", 2.843, 2.974], ["de", 2.974, 3.106], ["deux", 3.106, 3.237], ["acheteurs", 3.237, 3.63], ["même", 3.94, 4.122], ["voiture", 4.122, 4.487], ["et", 4.487, 4.67], ["même", 4.79, 5.035], ["prix", 5.035, 5.28]];
 
       var root = document.querySelector('[data-composition-id="' + FID + '"]');
       function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
@@ -191,15 +191,17 @@
       go("banner", { y: -170, opacity: 0 }, at("même") - 0.14, 0.2, "power3.in");
       slam("t1-0", at("même")); slam("t1-1", at("même", 2)); stroke("t1", at("prix") + 0.05);
       cam(0, -10, 1.04, at("même") - 0.05, 0.45);
-      // « un seul est le bon » : which one ?
+      // same car, same price: which one ? the light hesitates between the two buyers
+      var q = atEnd("prix") + 0.05;
       pre("qa", { opacity: 0, scale: 0.4 }); pre("qb", { opacity: 0, scale: 0.4 });
-      go("qa", { opacity: 1, scale: 1 }, at("un") - 0.03, 0.25, "back.out(2)");
-      go("qb", { opacity: 1, scale: 1 }, at("un") + 0.07, 0.25, "back.out(2)");
-      [["seul", "pa"], ["est", "pb"], ["le", "pa"], ["bon", "pb"]].forEach(function (s) {
-        go(s[1] + "-o", { opacity: 0.95 }, at(s[0]) - 0.02, 0.08, "power2.out");
-        go(s[1] + "-o", { opacity: 0 }, at(s[0]) + 0.16, 0.16, "power2.in");
+      go("qa", { opacity: 1, scale: 1 }, q, 0.25, "back.out(2)");
+      go("qb", { opacity: 1, scale: 1 }, q + 0.08, 0.25, "back.out(2)");
+      var step = Math.max(0.16, Math.min(0.3, (DUR - q - 0.15) / 4));
+      ["pa", "pb", "pa", "pb"].forEach(function (p, k) {
+        go(p + "-o", { opacity: 0.95 }, q + 0.1 + k * step, 0.07, "power2.out");
+        go(p + "-o", { opacity: 0 }, q + 0.1 + k * step + step * 0.6, 0.1, "power2.in");
       });
-      cam(0, -14, 1.07, at("bon"), 0.6, "power2.out");
+      cam(0, -14, 1.07, q, 0.6, "power2.out");
     
       subs();
       tl.set({}, {}, DUR);

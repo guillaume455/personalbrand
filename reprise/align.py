@@ -5,13 +5,21 @@ whose syllable count matches its duration at the global speech rate; splits on p
 Usage: python3 align.py [assets/audio/voix-montage.wav]  -> writes assets/audio/voix-montage-mots.json
 Then: python3 build.py && bash build-mix.sh && bash assemble.sh"""
 import json, re, subprocess, sys
-from build import all_tokens, syl, display
+from build import all_tokens, syl, display, SCENES
+# chunk (from build.py SCENES) whose first word must start montage phrase n (onsets.py numbering), when the
+# syllable fit alone picks the wrong split. Checked by ear and by the pauses on the voice of 2026-10-06.
+ANCHORS = {"Même *client*,": 16, "deux *marges*.": 17}
 wav = sys.argv[1] if len(sys.argv) > 1 else "assets/audio/voix-montage.wav"
 words = all_tokens()
 out = subprocess.run(["python3", "../.claude/skills/motion-design/scripts/onsets.py", wav, "--no-whisper"],
                      capture_output=True, text=True, check=True).stdout
 spans = [(float(a), float(b)) for a, b in re.findall(r"^#\d+\s+([\d.]+) to\s+([\d.]+)", out, re.M)]
 S = [syl(w) for w in words]
+chunk_start, k = {}, 0
+for sc in SCENES:
+    for ch in sc["chunks"]:
+        chunk_start.setdefault(ch, k); k += len([t for t in ch.split(" ") if t])
+anchor = {chunk_start[c]: n for c, n in ANCHORS.items()}   # token index -> phrase number
 punct = [bool(re.search(r"[.,:?!]$", display(w))) for w in words]
 rate = sum(S) / sum(b - a for a, b in spans)
 N, P = len(words), len(spans)
@@ -26,6 +34,7 @@ for p in range(1, P + 1):
         best, arg = INF, 0
         for j in range(max(0, i - 25), i):
             if cost[j][p - 1] == INF: continue
+            if any((n == p and j != a) or (n != p and j < a < i) or (n != p and j == a) for a, n in anchor.items()): continue
             sy = pre[i] - pre[j]
             c = cost[j][p - 1] + ((sy - rate * d) ** 2) / max(1.0, rate * d) + (0 if punct[i - 1] else 1.5)
             if c < best: best, arg = c, j
