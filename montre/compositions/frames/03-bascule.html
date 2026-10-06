@@ -55,9 +55,11 @@
     #r3-argb { display: inline-block; padding: 26px 60px; border-radius: 70px; border: 6px solid #ffffff; background: #151515;
       font: 120px/1.1 "Anton", sans-serif; color: #ffffff; }
     .r3-shard { position: absolute; left: 530px; top: 840px; width: 26px; height: 26px; background: #FB8000; opacity: 0; border-radius: 4px; }
-    .r3-slot { position: absolute; top: 700px; width: 240px; height: 320px; border-radius: 28px; border: 5px dashed #4a4a4a; opacity: 0;
-      font: 170px/310px "Anton", sans-serif; color: #FB8000; text-align: center; }
-    .r3-slotn { display: inline-block; opacity: 0; }
+    .r3-slot { position: absolute; top: 700px; width: 240px; height: 320px; border-radius: 28px; border: 5px dashed #4a4a4a; opacity: 0; }
+    .r3-slotn { position: absolute; left: -22px; top: -22px; width: 64px; height: 64px; border-radius: 50%; background: #FB8000; color: #0A0A0A;
+      font: 44px/64px "Anton", sans-serif; text-align: center; opacity: 0; }
+    .r3-ico { position: absolute; left: 30px; top: 50px; width: 180px; height: 220px; overflow: visible; opacity: 0; fill: none; stroke: #ffffff;
+      stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
       </style>
 
   <div id="root" data-composition-id="03-bascule" data-width="1080" data-height="1920" data-duration="2.767">
@@ -66,7 +68,7 @@
       <div class="r3-grain"></div>
     </div>
     <div id="r3-push" class="r3-cam"><div id="r3-shk" class="r3-cam"><div id="r3-cran" class="r3-cam">
-      <div id="r3-arg"><span id="r3-argb">ARGUMENT</span></div><div id="r3-sh0" class="r3-shard"></div><div id="r3-sh1" class="r3-shard"></div><div id="r3-sh2" class="r3-shard"></div><div id="r3-sh3" class="r3-shard"></div><div id="r3-sh4" class="r3-shard"></div><div id="r3-sh5" class="r3-shard"></div><div id="r3-sh6" class="r3-shard"></div><div id="r3-sh7" class="r3-shard"></div><div id="r3-sh8" class="r3-shard"></div><div id="r3-sh9" class="r3-shard"></div><div id="r3-s0" class="r3-slot" style="left:140px"><span id="r3-n0" class="r3-slotn">1</span></div><div id="r3-s1" class="r3-slot" style="left:420px"><span id="r3-n1" class="r3-slotn">2</span></div><div id="r3-s2" class="r3-slot" style="left:700px"><span id="r3-n2" class="r3-slotn">3</span></div>
+      <div id="r3-arg"><span id="r3-argb">ARGUMENT</span></div><div id="r3-sh0" class="r3-shard"></div><div id="r3-sh1" class="r3-shard"></div><div id="r3-sh2" class="r3-shard"></div><div id="r3-sh3" class="r3-shard"></div><div id="r3-sh4" class="r3-shard"></div><div id="r3-sh5" class="r3-shard"></div><div id="r3-sh6" class="r3-shard"></div><div id="r3-sh7" class="r3-shard"></div><div id="r3-sh8" class="r3-shard"></div><div id="r3-sh9" class="r3-shard"></div><div id="r3-s0" class="r3-slot" style="left:140px"><svg id="r3-ic0" class="r3-ico" viewBox="0 0 180 220"><path d="M40 20 L120 20 L150 50 L150 200 L40 200 Z"/><path d="M120 20 L120 50 L150 50"/><path d="M62 86 L128 86 M62 116 L128 116 M62 146 L100 146"/><path d="M62 176 L128 176" stroke="#FB8000"/></svg><span id="r3-n0" class="r3-slotn">1</span></div><div id="r3-s1" class="r3-slot" style="left:420px"><svg id="r3-ic1" class="r3-ico" viewBox="0 0 180 220"><g fill="#ffffff" stroke="none"><circle cx="50" cy="96" r="20"/><path d="M18 196 C18 150 34 128 50 128 C66 128 82 150 82 196 Z"/><circle cx="130" cy="96" r="20"/><path d="M98 196 C98 150 114 128 130 128 C146 128 162 150 162 196 Z"/><circle cx="90" cy="66" r="24" fill="#FB8000"/><path d="M52 196 C52 140 70 106 90 106 C110 106 128 140 128 196 Z" fill="#FB8000"/></g></svg><span id="r3-n1" class="r3-slotn">2</span></div><div id="r3-s2" class="r3-slot" style="left:700px"><svg id="r3-ic2" class="r3-ico" viewBox="0 0 180 220"><g fill="#6f6f6f" stroke="none"><circle cx="78" cy="78" r="30"/><path d="M28 200 C28 140 50 116 78 116 C106 116 128 140 128 200 Z"/></g><path d="M120 40 L168 88 M168 40 L120 88" stroke="#FB8000" stroke-width="12"/></svg><span id="r3-n2" class="r3-slotn">3</span></div>
     </div></div></div>
     <div id="r3-hud" class="r3-cam r3-hudcam">
       <div class="r3-title" id="r3-t3" style="top:290px;font-size:116px;"><span class="r3-tline" id="r3-t3-0">MONTRE-LUI</span><br><span class="r3-tline" id="r3-t3-1">TROIS CHOSES<i class="r3-stilt"><i class="r3-stk" id="r3-t3-s"></i></i></span></div>
@@ -189,8 +191,10 @@
       shake("shk", at("d'argumenter") + 0.02, 14);
       slam("t3-0", at("montre-lui") - 0.03); slam("t3-1", at("trois")); stroke("t3", at("choses"));
       for (var k = 0; k < 3; k++) {
-        pre("s" + k, { opacity: 0, y: 50 }); go("s" + k, { opacity: 1, y: 0 }, at("montre-lui") + 0.08 + k * 0.08, 0.3, "back.out(1.6)");
-        slam("n" + k, at("trois") + k * 0.14, { s: 1.6 });
+        pre("s" + k, { opacity: 0, y: 50, borderColor: "#4a4a4a" }); go("s" + k, { opacity: 1, y: 0 }, at("montre-lui") + 0.08 + k * 0.08, 0.3, "back.out(1.6)");
+        slam("ic" + k, at("trois") + k * 0.16, { s: 1.4 });
+        pre("n" + k, { opacity: 0, scale: 0.3 }); go("n" + k, { opacity: 1, scale: 1 }, at("trois") + k * 0.16 + 0.08, 0.22, "back.out(2.4)");
+        go("s" + k, { borderColor: "#FB8000" }, at("trois") + k * 0.16, 0.2);
       }
       cam(0, -10, 1.04, at("montre-lui"), 0.6);
     

@@ -403,13 +403,27 @@ def scene_03():
     #§argb { display: inline-block; padding: 26px 60px; border-radius: 70px; border: 6px solid #ffffff; background: #151515;
       font: 120px/1.1 "Anton", sans-serif; color: #ffffff; }
     .§shard { position: absolute; left: 530px; top: 840px; width: 26px; height: 26px; background: #FB8000; opacity: 0; border-radius: 4px; }
-    .§slot { position: absolute; top: 700px; width: 240px; height: 320px; border-radius: 28px; border: 5px dashed #4a4a4a; opacity: 0;
-      font: 170px/310px "Anton", sans-serif; color: #FB8000; text-align: center; }
-    .§slotn { display: inline-block; opacity: 0; }
+    .§slot { position: absolute; top: 700px; width: 240px; height: 320px; border-radius: 28px; border: 5px dashed #4a4a4a; opacity: 0; }
+    .§slotn { position: absolute; left: -22px; top: -22px; width: 64px; height: 64px; border-radius: 50%; background: #FB8000; color: #0A0A0A;
+      font: 44px/64px "Anton", sans-serif; text-align: center; opacity: 0; }
+    .§ico { position: absolute; left: 30px; top: 50px; width: 180px; height: 220px; overflow: visible; opacity: 0; fill: none; stroke: #ffffff;
+      stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
     """
+    ICONS = [
+      # the bill
+      '<path d="M40 20 L120 20 L150 50 L150 200 L40 200 Z"/><path d="M120 20 L120 50 L150 50"/>'
+      '<path d="M62 86 L128 86 M62 116 L128 116 M62 146 L100 146"/><path d="M62 176 L128 176" stroke="#FB8000"/>',
+      # the others: three customers
+      '<g fill="#ffffff" stroke="none"><circle cx="50" cy="96" r="20"/><path d="M18 196 C18 150 34 128 50 128 C66 128 82 150 82 196 Z"/>'
+      '<circle cx="130" cy="96" r="20"/><path d="M98 196 C98 150 114 128 130 128 C146 128 162 150 162 196 Z"/>'
+      '<circle cx="90" cy="66" r="24" fill="#FB8000"/><path d="M52 196 C52 140 70 106 90 106 C110 106 128 140 128 196 Z" fill="#FB8000"/></g>',
+      # the one who said no
+      '<g fill="#6f6f6f" stroke="none"><circle cx="78" cy="78" r="30"/><path d="M28 200 C28 140 50 116 78 116 C106 116 128 140 128 200 Z"/></g>'
+      '<path d="M120 40 L168 88 M168 40 L120 88" stroke="#FB8000" stroke-width="12"/>',
+    ]
     shards = "".join(f'<div id="§sh{i}" class="§shard"></div>' for i in range(10))
-    slots = "".join(f'<div id="§s{i}" class="§slot" style="left:{140 + i * 280}px"><span id="§n{i}" class="§slotn">{i + 1}</span></div>'
-                    for i in range(3))
+    slots = "".join(f'<div id="§s{i}" class="§slot" style="left:{140 + i * 280}px"><svg id="§ic{i}" class="§ico" viewBox="0 0 180 220">{ICONS[i]}</svg>'
+                    f'<span id="§n{i}" class="§slotn">{i + 1}</span></div>' for i in range(3))
     st = '<div id="§arg"><span id="§argb">ARGUMENT</span></div>' + shards + slots
     hud = title("t3", ["MONTRE-LUI", "TROIS CHOSES"], 290, 116)
     js = """
@@ -425,8 +439,10 @@ def scene_03():
       shake("shk", at("d'argumenter") + 0.02, 14);
       slam("t3-0", at("montre-lui") - 0.03); slam("t3-1", at("trois")); stroke("t3", at("choses"));
       for (var k = 0; k < 3; k++) {
-        pre("s" + k, { opacity: 0, y: 50 }); go("s" + k, { opacity: 1, y: 0 }, at("montre-lui") + 0.08 + k * 0.08, 0.3, "back.out(1.6)");
-        slam("n" + k, at("trois") + k * 0.14, { s: 1.6 });
+        pre("s" + k, { opacity: 0, y: 50, borderColor: "#4a4a4a" }); go("s" + k, { opacity: 1, y: 0 }, at("montre-lui") + 0.08 + k * 0.08, 0.3, "back.out(1.6)");
+        slam("ic" + k, at("trois") + k * 0.16, { s: 1.4 });
+        pre("n" + k, { opacity: 0, scale: 0.3 }); go("n" + k, { opacity: 1, scale: 1 }, at("trois") + k * 0.16 + 0.08, 0.22, "back.out(2.4)");
+        go("s" + k, { borderColor: "#FB8000" }, at("trois") + k * 0.16, 0.2);
       }
       cam(0, -10, 1.04, at("montre-lui"), 0.6);
     """
