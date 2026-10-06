@@ -50,29 +50,31 @@
     /* ===================== end SHARED: subtitle ===================== */
 
     /* ---- camera (two stacked wrappers: continuous push / discrete crans) ---- */
-    .f10-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 960px; }
+    .f10-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 800px; }
 
-    /* ===================== SHARED: card (fallback geometry: 860x1000, centred, top 520, radius 36) ===================== */
-    .f10-card { position: absolute; left: 110px; top: 520px; width: 860px; height: 1000px; box-sizing: border-box;
-      background: #161616; border: 1px solid #2a2a2a; border-radius: 36px; overflow: hidden; transform-origin: 430px 0px; }
+    /* ===================== SHARED: card (CSS) ===================== */
+    /* Card stack geometry for frames 06 / 08 / 10: 860 x 940, left 110, top 300 (ends y 1240, above the subtitle band). */
+    .f10-card { position: absolute; left: 110px; top: 300px; width: 860px; height: 940px; box-sizing: border-box;
+      background: #161616; border: 1px solid #2a2a2a; border-radius: 36px; overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.55); }
+    .f10-badge { position: absolute; left: 48px; top: 52px; width: 96px; height: 96px; border-radius: 50%; background: #FB8000;
+      color: #0A0A0A; font: 900 72px/96px "Big Shoulders", sans-serif; text-align: center; opacity: 0; }
+    .f10-title.f10-ctitle { left: 172px; top: 52px; width: auto; text-align: left; font-size: 96px; transform-origin: 0 50%; opacity: 0; }
+    /* ===================== end SHARED: card (CSS) ===================== */
+    /* the stack behind: cards 1 and 2, scaled 0.94 / 0.97 (centre origin), lifted so their tops peek, darkened */
     .f10-card-dim { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #0A0A0A; pointer-events: none; }
-    .f10-badge { position: absolute; left: 56px; top: 56px; width: 96px; height: 96px; border-radius: 50%; background: #FB8000;
-      color: #111111; font: 900 64px/96px "Big Shoulders", sans-serif; text-align: center; }
-    .f10-ctitle { position: absolute; left: 180px; top: 60px; text-align: left; font: 900 96px/0.95 "Big Shoulders", sans-serif;
-      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
-    /* ===================== end SHARED: card ===================== */
+    .f10-back .f10-badge { opacity: 1; }
 
     #f10-card1 .f10-card-dim { opacity: 0.62; }
     #f10-card2 .f10-card-dim { opacity: 0.45; }
     #f10-card3 { opacity: 0; }
-    #f10-badge3 { opacity: 0; transform-origin: 48px 48px; }
-    #f10-title3 { opacity: 0; transform-origin: 0px 46px; }
+    #f10-badge3 { transform-origin: 48px 48px; }
 
     /* ---- illustration: sidewalk, shopfront, map tile, faded listing ---- */
-    #f10-walk { position: absolute; left: 40px; top: 700px; width: 780px; height: 4px; border-radius: 2px; background: #2c2c2c;
+    #f10-walk { position: absolute; left: 40px; top: 810px; width: 780px; height: 4px; border-radius: 2px; background: #2c2c2c;
       transform-origin: 0 50%; transform: scaleX(0); }
 
-    #f10-shop { position: absolute; left: 330px; top: 210px; width: 480px; height: 490px; }
+    #f10-shop { position: absolute; left: 330px; top: 320px; width: 480px; height: 490px; }
     #f10-shop-fill { position: absolute; left: 0; top: 0; width: 480px; height: 490px; opacity: 0; }
     #f10-sign { position: absolute; left: 0; top: 0; width: 480px; height: 74px; border-radius: 14px 14px 0 0; background: #232323;
       border-bottom: 6px solid #FB8000; box-sizing: border-box; }
@@ -92,7 +94,7 @@
     #f10-shop-svg { position: absolute; left: 0; top: 0; width: 480px; height: 490px; overflow: visible; }
     #f10-shop-svg path { fill: none; stroke: #bdbdbd; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
 
-    #f10-map { position: absolute; left: 44px; top: 222px; width: 290px; height: 250px; border-radius: 22px; overflow: hidden;
+    #f10-map { position: absolute; left: 44px; top: 332px; width: 290px; height: 250px; border-radius: 22px; overflow: hidden;
       background: #101010; border: 2px solid #2a2a2a; box-sizing: border-box; opacity: 0; transform-origin: 145px 125px; }
     #f10-map .f10-roads { position: absolute; left: 0; top: 0; width: 290px; height: 250px; }
     #f10-pinwrap { position: absolute; left: 160px; top: 128px; width: 0; height: 0; }
@@ -101,7 +103,7 @@
     #f10-ring { position: absolute; left: -30px; top: -30px; width: 60px; height: 60px; border-radius: 50%; border: 4px solid #FB8000;
       box-sizing: border-box; opacity: 0; }
 
-    #f10-listing { position: absolute; left: 66px; top: 494px; width: 176px; height: 196px; opacity: 0; transform-origin: 88px 98px; }
+    #f10-listing { position: absolute; left: 66px; top: 604px; width: 176px; height: 196px; opacity: 0; transform-origin: 88px 98px; }
     #f10-ltile { position: absolute; left: 0; top: 0; width: 176px; height: 196px; border-radius: 14px; background: #ffffff; overflow: hidden;
       filter: blur(3px) grayscale(1); }
     #f10-ltile img { position: absolute; left: 0; top: 0; width: 176px; height: 118px; object-fit: cover; }
@@ -125,11 +127,11 @@
       <div id="f10-cran" class="f10-cam">
 
         <!-- the stack: cards 1 and 2 behind, scaled and darkened -->
-        <div id="f10-card1" class="f10-card">
+        <div id="f10-card1" class="f10-card f10-back">
           <div class="f10-badge">1</div>
           <div class="f10-card-dim"></div>
         </div>
-        <div id="f10-card2" class="f10-card">
+        <div id="f10-card2" class="f10-card f10-back">
           <div class="f10-badge">2</div>
           <div class="f10-card-dim"></div>
         </div>
@@ -137,7 +139,7 @@
         <!-- card 3 -->
         <div id="f10-card3" class="f10-card">
           <div id="f10-badge3" class="f10-badge">3</div>
-          <div id="f10-title3" class="f10-ctitle"><span class="f10-tline">SOIS INSTALLÉ<i class="f10-stroke-tilt"><i class="f10-stroke" id="f10-stroke"></i></i></span></div>
+          <div id="f10-title3" class="f10-title f10-ctitle"><span class="f10-tline">SOIS INSTALLÉ<i class="f10-stroke-tilt"><i class="f10-stroke" id="f10-stroke"></i></i></span></div>
 
           <div id="f10-walk"></div>
 
@@ -272,12 +274,12 @@
       tl.fromTo($("f10-cran"), { scale: 1.035, x: 14, y: -6 }, { scale: 1.065, x: 24, y: -24, duration: 0.3, ease: "power3.out", immediateRender: false }, 3.58);
 
       /* ---- 0.00 the stack: cards 1 and 2 behind, card 3 rises from below ---- */
-      tl.fromTo($("f10-card1"), { scale: 0.94, y: -44 }, { scale: 0.94, y: -44, duration: 0.01, ease: "none" }, 0);
-      tl.fromTo($("f10-card2"), { scale: 0.97, y: -22 }, { scale: 0.97, y: -22, duration: 0.01, ease: "none" }, 0);
+      tl.fromTo($("f10-card1"), { scale: 0.94, y: -72 }, { scale: 0.94, y: -72, duration: 0.01, ease: "none" }, 0);
+      tl.fromTo($("f10-card2"), { scale: 0.97, y: -36 }, { scale: 0.97, y: -36, duration: 0.01, ease: "none" }, 0);
       tl.fromTo($("f10-card3"), { opacity: 1, y: 900 }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out" }, 0);
       // the stack recedes a touch more as card 3 lands
-      tl.fromTo($("f10-card2"), { y: -22 }, { y: -30, duration: 0.35, ease: "expo.out", immediateRender: false }, 0.05);
-      tl.fromTo($("f10-card1"), { y: -44 }, { y: -58, duration: 0.35, ease: "expo.out", immediateRender: false }, 0.05);
+      tl.fromTo($("f10-card2"), { y: -36 }, { y: -42, duration: 0.35, ease: "expo.out", immediateRender: false }, 0.05);
+      tl.fromTo($("f10-card1"), { y: -72 }, { y: -84, duration: 0.35, ease: "expo.out", immediateRender: false }, 0.05);
 
       // 0.12 badge « 3 » claps
       tl.fromTo($("f10-badge3"), { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.18, ease: "expo.out", immediateRender: false }, 0.12);

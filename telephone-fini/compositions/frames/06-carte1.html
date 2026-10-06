@@ -6,9 +6,10 @@
     Card: #161616, radius 36, 1 px #2a2a2a border, overflow hidden, box-shadow 0 30px 80px rgba(0,0,0,.55).
     Card-local layout (px from the card's top-left):
       badge   : accent #FB8000 circle 96 x 96 at (48, 52); « 1 » Big Shoulders 900 72 px #0A0A0A, centred.
-      title   : « MONTRE TON TRAVAIL », Big Shoulders 900 96 px caps, line-height 0.95, white, left 172, top 52
-                (one line, ~600 px wide), orange title-stroke under it (SHARED: title, em-sized: 14 px at 96... => 0.11em = 10.6 px).
-      feed    : window left 48, top 196, 764 x 620 (y 196-816), overflow hidden, 44 px fades top and bottom (#161616 -> 0).
+      title   : « MONTRE TON » / « TRAVAIL » (2 lines), Big Shoulders 900 96 px caps, line-height 0.95 (91.2 px), white,
+                left 172, top 52, left-aligned, ends y ~234; orange title-stroke under « TRAVAIL » (SHARED: title, em-sized,
+                0.11em = 10.6 px tall at 96 px, line width + 0.156em, tilt -1.5 deg).
+      feed    : window left 48, top 284, 764 x 532 (y 284-816), overflow hidden, 44 px fades top and bottom (#161616 -> 0).
                 Post = 764 x 350: photo 764 x 280 (radius 18, object-fit cover, object-position 50% 40%), then a row at
                 y 298: accent heart 26 px at x 0, grey bars (#2a2a2a, 14 px tall, radius 7) at x 40: 62 % wide, and at y 326: 38 %.
                 Pitch 374 (350 + 24 gap). Order top -> bottom: post0 ford (no caption), post1 audi « PRÊTE À PARTIR »,
@@ -19,7 +20,8 @@
                 feed-window y -31.2 and post4 top at +342.8. Scroll speed at 4.80: 60 px/s upward, constant (linear drift
                 since 1.83). Continue: list y(t07) = -1153.2 - 60 * t07.
       counter : row at card-local (48, 836), height 64: accent eye icon 44 x 44, « VUES » Space Mono 700 26 px #bdbdbd at x 60,
-                number Space Mono 700 52 px white tabular-nums at x 160 (fixed 260 px box, left aligned).
+                number Space Mono 700 52 px white tabular-nums, word-spacing -0.45em, at x 160 (fixed 260 x 64 box, overflow
+                hidden, left aligned; seek-safe strip of 64 px rows rolled by y with steps(), no onUpdate).
                 Value at 4.80: « 9 800 », still rising: linear 1 240 -> 9 800 between 3.76 and 4.80 (8 231 / s).
   CAMERA @ 4.80 (both wrappers transform-origin 540px 1040px, frame coords): #push scale 1.048 (1 %/s linear from 1.0),
     #cran scale 1.02 (step at 1.80). Net scale 1.06896 about (540, 1040): card on screen x 80.6-999.4, y 248.5-1254.3.
@@ -87,7 +89,7 @@
     .f06-badge { position: absolute; left: 48px; top: 52px; width: 96px; height: 96px; border-radius: 50%; background: #FB8000;
       color: #0A0A0A; font: 900 72px/96px "Big Shoulders", sans-serif; text-align: center; opacity: 0; }
     .f06-title.f06-ctitle { left: 172px; top: 52px; width: auto; text-align: left; font-size: 96px; transform-origin: 0 50%; opacity: 0; }
-    .f06-feed { position: absolute; left: 48px; top: 196px; width: 764px; height: 620px; overflow: hidden; }
+    .f06-feed { position: absolute; left: 48px; top: 284px; width: 764px; height: 532px; overflow: hidden; }
     .f06-feed-fade { position: absolute; left: 0; width: 764px; height: 44px; pointer-events: none; }
     .f06-feed-fade.f06-top { top: 0; background: linear-gradient(#161616, rgba(22,22,22,0)); }
     .f06-feed-fade.f06-bot { bottom: 0; background: linear-gradient(rgba(22,22,22,0), #161616); }
@@ -106,9 +108,10 @@
     .f06-counter { position: absolute; left: 48px; top: 836px; width: 764px; height: 64px; opacity: 0; }
     .f06-eye { position: absolute; left: 0; top: 10px; width: 44px; height: 44px; }
     .f06-vues { position: absolute; left: 60px; top: 15px; font: 700 26px/34px "Space Mono", monospace; color: #bdbdbd; letter-spacing: 0.06em; }
-    .f06-num-box { position: absolute; left: 160px; top: 0; width: 260px; height: 64px; }
-    .f06-num { position: absolute; left: 0; top: 0; font: 700 52px/64px "Space Mono", monospace; color: #ffffff;
-      font-variant-numeric: tabular-nums; white-space: pre; transform-origin: 0 50%; }
+    .f06-num-box { position: absolute; left: 160px; top: 0; width: 260px; height: 64px; overflow: hidden; transform-origin: 0 50%; }
+    .f06-num { position: absolute; left: 0; top: 0; width: 260px; font: 700 52px/64px "Space Mono", monospace; color: #ffffff;
+      font-variant-numeric: tabular-nums; white-space: pre; word-spacing: -0.45em; }
+    .f06-num span { display: block; height: 64px; }
     /* ===================== end SHARED: card (CSS) ===================== */
   </style>
 
@@ -127,7 +130,7 @@
         <!-- ===================== SHARED: card (HTML) ===================== -->
         <div id="f06-card" class="f06-card">
           <div id="f06-badge" class="f06-badge">1</div>
-          <div id="f06-title" class="f06-title f06-ctitle"><span class="f06-tline">MONTRE TON TRAVAIL<i class="f06-stroke-tilt"><i id="f06-stroke" class="f06-stroke"></i></i></span></div>
+          <div id="f06-title" class="f06-title f06-ctitle"><span class="f06-tline">MONTRE TON</span><br><span class="f06-tline">TRAVAIL<i class="f06-stroke-tilt"><i id="f06-stroke" class="f06-stroke"></i></i></span></div>
 
           <div id="f06-feed" class="f06-feed">
             <div id="f06-drift" class="f06-list">
@@ -171,7 +174,7 @@
           <div id="f06-counter" class="f06-counter">
             <svg class="f06-eye" viewBox="0 0 44 44"><path d="M3 22 C 9 12, 15 8, 22 8 C 29 8, 35 12, 41 22 C 35 32, 29 36, 22 36 C 15 36, 9 32, 3 22 Z" fill="none" stroke="#FB8000" stroke-width="3.6" stroke-linejoin="round"></path><circle cx="22" cy="22" r="6.5" fill="#FB8000"></circle></svg>
             <div class="f06-vues">VUES</div>
-            <div class="f06-num-box"><span id="f06-num" class="f06-num">1 240</span></div>
+            <div id="f06-num-box" class="f06-num-box"><div id="f06-num" class="f06-num"><span>1 240</span></div></div>
           </div>
         </div>
         <!-- ===================== end SHARED: card (HTML) ===================== -->
@@ -280,12 +283,18 @@
       });
 
       /* ---- 3.76 the views counter rolls 1 240 -> 9 800 (linear: still rising at 4.80, continues in 07) ---- */
+      // seek-safe count (no onUpdate): a strip of 32 pre-built rows (64 px) rolled by y with steps(31),
+      // one row per video frame, linear 1 240 -> 9 800 over 3.76 -> 4.80 (row 31 = « 9 800 » exactly at 4.80).
       var num = $("f06-num");
-      var st = { v: 1240 };
-      num.textContent = f06Fmt(1240);
-      tl.fromTo(st, { v: 1240 }, { v: 9800, duration: DUR - 3.76, ease: "none", immediateRender: false,
-        onUpdate: function () { num.textContent = f06Fmt(st.v); } }, 3.76);
-      tl.fromTo(num, { scale: 0.7 }, { scale: 1, duration: 0.5, ease: "power3.out", immediateRender: false }, 3.76);
+      var ROWS = 31, html = "";
+      for (var i = 0; i <= ROWS; i++) {
+        var v = 1240 + Math.round(8560 * i / ROWS / 10) * 10;
+        if (i > 0 && i < ROWS) v += (i * 37) % 10;
+        html += "<span>" + f06Fmt(v) + "</span>";
+      }
+      num.innerHTML = html;
+      tl.fromTo(num, { y: 0 }, { y: -ROWS * 64, duration: DUR - 3.76, ease: "steps(" + ROWS + ")", immediateRender: false }, 3.76);
+      tl.fromTo($("f06-num-box"), { scale: 0.7 }, { scale: 1, duration: 0.5, ease: "power3.out", immediateRender: false }, 3.76);
       // 4.11 « contenu »: the halo pulses
       tl.fromTo($("f06-halo"), { scale: 1.05 }, { scale: 1.10, duration: 0.4, ease: "power3.out", immediateRender: false }, 4.11);
 

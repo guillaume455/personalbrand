@@ -53,8 +53,33 @@
     /* ---- camera (two stacked wrappers: continuous push / discrete crans) ---- */
     .f13-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
 
-    /* ---- OLD (end image of 12-louer, leaves upward in 0.2 s) ---- */
+    /* ---- OLD: the 3.92 image of 12-louer (copied from its « SHARED: louer » block), leaves upward in 0.2 s ---- */
     #f13-old { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    #f13-o-t1 { position: absolute; left: 0; top: 266px; width: 1080px; height: 122px; display: flex; justify-content: center;
+      align-items: flex-start; transform: translateY(-6px); }
+    #f13-o-t1 .f13-o-t1-text { font: 900 128px/0.95 "Big Shoulders", sans-serif; text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    #f13-o-phone { position: relative; flex: none; width: 60px; height: 110px; margin-top: 6px; margin-right: 22px; }
+    .f13-o-phone-svg { position: absolute; left: 0; top: 0; width: 60px; height: 110px; overflow: visible; }
+    .f13-o-phone-svg rect, .f13-o-phone-svg line { fill: none; stroke: #ffffff; stroke-linecap: round; }
+    #f13-o-strike { fill: none; stroke: #FB8000; stroke-width: 34; stroke-linecap: round; }
+    #f13-o-t2 { top: 408px; transform-origin: 460px 122px; }
+    #f13-o-stroke { transform: scaleX(1); }
+    #f13-o-meter { position: absolute; left: 290px; top: 780px; width: 500px; height: 190px; box-sizing: border-box;
+      background: #141414; border: 2px solid #2a2a2a; border-radius: 28px; overflow: hidden; transform-origin: 250px 95px; }
+    #f13-o-counter { position: absolute; left: 0; top: 33px; width: 496px; height: 70px; text-align: center; white-space: nowrap;
+      font: 700 56px/70px "Space Mono", monospace; color: #FB8000; font-variant-numeric: tabular-nums; transform-origin: 248px 35px; }
+    #f13-o-num { position: relative; display: inline-block; vertical-align: top; width: 3ch; height: 70px; overflow: hidden; text-align: left; }
+    #f13-o-num-col { position: absolute; left: 0; top: 0; width: 3ch; }
+    #f13-o-num-col span { display: block; height: 70px; }
+    #f13-o-ribbon-win { position: absolute; left: 0; top: 118px; width: 496px; height: 40px; overflow: hidden; }
+    #f13-o-ribbon { position: absolute; left: 0; top: 0; width: 9800px; height: 40px; transform: translateX(-7200px);
+      background-image:
+        repeating-linear-gradient(90deg, #FB8000 0 4px, transparent 4px 100px),
+        repeating-linear-gradient(90deg, #3a3a3a 0 3px, transparent 3px 20px);
+      background-size: 100% 40px, 100% 22px; background-repeat: no-repeat; background-position: 0 0, 0 9px; }
+    .f13-o-fade { position: absolute; top: 118px; width: 90px; height: 40px; }
+    #f13-o-fade-l { left: 0; background: linear-gradient(90deg, #141414, rgba(20,20,20,0)); }
+    #f13-o-fade-r { right: 0; background: linear-gradient(270deg, #141414, rgba(20,20,20,0)); }
 
     /* ---- NEW: three small line icons (feed / star / shopfront) above « CES CANAUX : » ---- */
     .f13-ico { position: absolute; top: 312px; width: 104px; height: 104px; opacity: 0; transform-origin: 52px 52px; }
@@ -110,7 +135,29 @@
 
         <!-- OLD: the end image of 12-louer (copied from its SHARED: louer block) -->
         <div id="f13-old">
-          <!--OLD-PLACEHOLDER-->
+          <div id="f13-o-t1">
+            <div id="f13-o-phone">
+              <svg class="f13-o-phone-svg" viewBox="0 0 240 440" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="10" width="220" height="420" rx="38" ry="38" stroke-width="20"></rect>
+                <line x1="98" y1="46" x2="142" y2="46" stroke-width="18"></line>
+                <line x1="92" y1="396" x2="148" y2="396" stroke-width="18"></line>
+              </svg>
+              <svg class="f13-o-phone-svg" viewBox="0 0 240 440" xmlns="http://www.w3.org/2000/svg">
+                <path id="f13-o-strike" d="M -30 68 L 270 372"></path>
+              </svg>
+            </div>
+            <span class="f13-o-t1-text">LE TÉLÉPHONE&nbsp;:</span>
+          </div>
+          <div id="f13-o-t2" class="f13-title">
+            <span class="f13-tline">TU LOUES</span><br>
+            <span class="f13-tline">TES CLIENTS.<i class="f13-stroke-tilt"><i class="f13-stroke" id="f13-o-stroke"></i></i></span>
+          </div>
+          <div id="f13-o-meter">
+            <div id="f13-o-counter">JOUR <span id="f13-o-num"><span id="f13-o-num-col"></span></span></div>
+            <div id="f13-o-ribbon-win"><div id="f13-o-ribbon"></div></div>
+            <div id="f13-o-fade-l" class="f13-o-fade"></div>
+            <div id="f13-o-fade-r" class="f13-o-fade"></div>
+          </div>
         </div>
 
         <!-- three small line icons: feed / phone-post, star, shopfront -->
@@ -209,8 +256,16 @@
 
       /* ---- Scene 1 (0.00 -> 1.80): ces canaux, tu les possèdes ---- */
       // 0.00 the 12-louer title, phone and counter leave upward (0.2 s)
-      tl.fromTo($("f13-old"), { y: 0, opacity: 1, filter: "blur(0px)" },
-        { y: -260, opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }, 0);
+      // the counter keeps rolling at 12-louer's end speed (~224 days/s) and the ribbon at ~6800 px/s while they leave
+      var ocol = $("f13-o-num-col");
+      for (var d = 214; d <= 259; d++) { var r = document.createElement("span"); r.textContent = String(d); ocol.appendChild(r); }
+      tl.fromTo(ocol, { y: 0 }, { y: -45 * 70, duration: 0.2, ease: "none", snap: { y: 70 } }, 0);
+      tl.fromTo($("f13-o-ribbon"), { x: -7200 }, { x: -8560, duration: 0.2, ease: "none" }, 0);
+      // title block 1, block 2, then the meter go up, 0.02 s apart, gone at 0.20
+      ["f13-o-t1", "f13-o-t2", "f13-o-meter"].forEach(function (id, i) {
+        tl.fromTo($(id), { y: id === "f13-o-t1" ? -6 : 0, opacity: 1, filter: "blur(0px)" },
+          { y: -300 - 40 * i, opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in" }, 0.02 * i);
+      });
       // 0.15 « CES CANAUX : » slams
       f13TitleIn(tl, $("f13-t1"), 0.15);
       // the three icons land above it, 0.08 s apart (drop + sharpen)
@@ -218,8 +273,10 @@
         tl.fromTo($(id), { opacity: 0, y: -40, scale: 0.7, filter: "blur(6px)" },
           { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.24, ease: "expo.out", immediateRender: false }, 0.27 + 0.08 * i);
       });
+      // 0.00 the halo where 12-louer left it (centre y 760, scale 1.10)
+      tl.fromTo($("f13-halo"), { y: -140, scale: 1.1 }, { y: -140, scale: 1.1, duration: 0.01, ease: "none" }, 0);
       // 0.55 the halo rises behind the title
-      tl.fromTo($("f13-halo"), { y: 0, scale: 1 }, { y: -320, scale: 0.9, duration: 0.6, ease: "power3.out", immediateRender: false }, 0.55);
+      tl.fromTo($("f13-halo"), { y: -140, scale: 1.1 }, { y: -320, scale: 0.9, duration: 0.6, ease: "power3.out", immediateRender: false }, 0.55);
       // 1.16 on « possèdes » « TU LES POSSÈDES. » slams (rises from below, distinct from line 1)
       tl.fromTo($("f13-t2"), { opacity: 0, y: 70, scale: 1.18, filter: "blur(10px)" },
         { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out", immediateRender: false }, 1.16);
