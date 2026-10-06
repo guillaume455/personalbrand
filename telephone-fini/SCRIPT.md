@@ -11,7 +11,7 @@ soulignés d'un trait orange. Pas de facecam. Sous-titres de la voix, mot-clé d
 | # | Temps | À l'écran | Voix |
 |---|---|---|---|
 | 1 | 0 à 3 s | « 11 AOÛT 2026 » très gros, puis un téléphone barré d'un trait orange | Si tu trouves tes voitures au téléphone, t'as un problème depuis le 11 août. |
-| 2 | 3 à 9 s | « APPEL SANS ACCORD = INTERDIT », une liste de numéros qui se grise ligne par ligne | La loi est passée : tu n'as plus le droit d'appeler un particulier qui ne t'a pas donné son accord avant. |
+| 2 | 3 à 9 s | « APPEL SANS ACCORD = INTERDIT » (proposé : « DÉMARCHAGE SANS ACCORD = INTERDIT »), une liste de numéros qui se grise ligne par ligne | La loi est passée : tu n'as plus le droit d'appeler un particulier qui ne t'a pas donné son accord avant. |
 | 3 | 9 à 17 s | Courbe qui chute, « 2010 : 9 RDV SUR 10 APPELS » au début, « 2026 : 3 » à la fin, le 3 en orange | Mais soyons honnêtes… Aujourd'hui, c'est 3. |
 | 4 | 17 à 26 s | Mosaïque d'annonces auto identiques qui se multiplient, puis « TOUT LE MONDE PÊCHE AU MÊME ENDROIT » | Le vrai problème, c'est pas la loi… |
 | 5 | 26 à 44 s | 3 cartes qui s'empilent : « MONTRE TON TRAVAIL » (feed, compteur de vues), « TA RÉPUTATION » (étoiles, avis), « SOIS INSTALLÉ » (vitrine, adresse sur une carte) | Un… Deux… Trois… |
@@ -32,11 +32,16 @@ Trois : sois installé. Un point de vente physique, une adresse, une vitrine. Fa
 Le téléphone, c'est comme louer ses clients et devoir chercher de nouvelles locations tous les jours. Ces canaux-là, c'est les posséder. Abonne-toi pour plus de contenu comme celui-ci.
 ```
 
-## Version courte proposée (environ 180 mots, environ 58 s une fois accélérée ×1,08 comme la VSL)
+## Version courte proposée, corrigée sur la loi (environ 180 mots, environ 58 s une fois accélérée ×1,08)
+
+Précision de Guillaume (2026-10-06) : depuis le 11 août 2026, on n'a plus le droit d'appeler un particulier sans son
+accord pour lui proposer un mandat de vente ou un accompagnement pour vendre son véhicule ; on garde le droit de
+l'appeler pour lui ACHETER sa voiture. Le texte vise donc ceux qui trouvent leurs mandats au téléphone.
+À l'écran, scène 2 : « DÉMARCHAGE SANS ACCORD = INTERDIT » (4 mots).
 
 ```
-Si tu trouves tes voitures au téléphone, t'as un problème depuis le onze août.
-La loi est passée : tu n'as plus le droit d'appeler un particulier qui ne t'a pas donné son accord avant.
+Si tu trouves tes mandats au téléphone, t'as un problème depuis le onze août.
+La loi est passée : tu n'as plus le droit d'appeler un particulier pour lui proposer un mandat, sans son accord.
 Mais soyons honnêtes : le téléphone mourait déjà. Quand j'ai commencé, sur dix appels, je décrochais neuf rendez-vous. Aujourd'hui, trois.
 Le vrai problème, c'est pas la loi. Si tu pêches là où pêchent tous tes concurrents, c'est normal d'avoir de la concurrence.
 Un : montre ton travail. Chaque voiture vendue, chaque client livré, c'est un contenu. En organique, pas en pub. On achète à quelqu'un qu'on a déjà vu bosser.
