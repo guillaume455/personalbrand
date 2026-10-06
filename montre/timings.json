@@ -1,0 +1,96 @@
+{
+ "provisional": false,
+ "total": 53.833,
+ "frames": [
+  {
+   "n": 1,
+   "id": "01-hook",
+   "name": "Hook",
+   "start": 0.0,
+   "end": 1.933,
+   "dur": 1.933,
+   "src": "compositions/frames/01-hook.html",
+   "vo": "Arrête de vendre l'extension de garantie."
+  },
+  {
+   "n": 2,
+   "id": "02-probleme",
+   "name": "Le problème",
+   "start": 1.933,
+   "end": 8.4,
+   "dur": 6.467,
+   "src": "compositions/frames/02-probleme.html",
+   "vo": "Tu expliques la couverture, les options, le prix. Le client n'entend qu'une chose : un vendeur qui veut lui vendre un truc en plus."
+  },
+  {
+   "n": 3,
+   "id": "03-bascule",
+   "name": "La bascule",
+   "start": 8.4,
+   "end": 11.167,
+   "dur": 2.767,
+   "src": "compositions/frames/03-bascule.html",
+   "vo": "Alors arrête d'argumenter. Montre-lui trois choses."
+  },
+  {
+   "n": 4,
+   "id": "04-facture",
+   "name": "Preuve 1, la facture",
+   "start": 11.167,
+   "end": 20.733,
+   "dur": 9.566,
+   "src": "compositions/frames/04-facture.html",
+   "vo": "Un : une vraie facture. Un client, un turbo, 2 500 euros de réparation. Reste à charge : zéro. Il ne t'écoute plus décrire une couverture, il regarde ce qu'elle a déjà payé."
+  },
+  {
+   "n": 5,
+   "id": "05-autres",
+   "name": "Preuve 2, les autres",
+   "start": 20.733,
+   "end": 28.6,
+   "dur": 7.867,
+   "src": "compositions/frames/05-autres.html",
+   "vo": "Deux : les autres. 8 clients sur 10 la prennent. Il n'est plus le pigeon à qui on refile une option. Il est celui qui hésite alors que les autres ont tranché."
+  },
+  {
+   "n": 6,
+   "id": "06-refus",
+   "name": "Preuve 3, le refus",
+   "start": 28.6,
+   "end": 37.333,
+   "dur": 8.733,
+   "src": "compositions/frames/06-refus.html",
+   "vo": "Trois : celui qui a dit non. 8 mois plus tard, la boîte de vitesses. 6 700 euros de sa poche. Tu ne le racontes pas pour faire peur. Tu le racontes parce que c'est arrivé."
+  },
+  {
+   "n": 7,
+   "id": "07-closing",
+   "name": "Le closing",
+   "start": 37.333,
+   "end": 44.533,
+   "dur": 7.2,
+   "src": "compositions/frames/07-closing.html",
+   "vo": "À ce stade, la question n'est plus de savoir s'il la prend. C'est de savoir comment il la paie : au comptant ou tous les mois. Tu lui laisses choisir, c'est tout."
+  },
+  {
+   "n": 8,
+   "id": "08-regle",
+   "name": "La règle",
+   "start": 44.533,
+   "end": 48.6,
+   "dur": 4.067,
+   "src": "compositions/frames/08-regle.html",
+   "vo": "Une facture, un chiffre, une histoire. Une preuve vaut dix arguments."
+  },
+  {
+   "n": 9,
+   "id": "09-cta",
+   "name": "CTA",
+   "start": 48.6,
+   "end": 53.833,
+   "dur": 5.233,
+   "src": "compositions/frames/09-cta.html",
+   "vo": "Ne vends pas. Montre. Abonne-toi pour plus de contenu comme celui-ci."
+  }
+ ]
+}
