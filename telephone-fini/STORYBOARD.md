@@ -43,7 +43,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - scene: Les chiffres « 11 AOÛT 2026 » claquent un par un en très gros, puis un téléphone apparaît et se fait barrer d'un trait orange
 - duration: 3.26s
 - transition_in: cut
-- status: outline
+- status: animated
 - src: compositions/frames/01-date.html
 - voiceover: "Si tu trouves tes mandats au téléphone, t'as un problème depuis le onze août."
 - type: hook
