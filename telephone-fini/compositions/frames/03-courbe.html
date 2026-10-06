@@ -1,0 +1,250 @@
+<template>
+  <!--
+    ===================== HANDOFF_OUT GEOMETRY (03-courbe -> 04-trois) =====================
+    Canvas 1080x1920. All chart values are in CHART coordinates = page px when the camera is at x 0.
+    Structure: #f03-cam (camera, transform-origin 0 0) > #f03-chart (svg 1080x1920, viewBox 0 0 1080 1920, at left 0 top 0).
+    Camera transform: translateX only, linear, x(t) = -40 * t px (scale 1, y 0, rotation 0).
+      At 3.50: x = -140 px, still moving at -40 px/s (camera travelling right at +40 px/s). Continue it linearly.
+    Axis box: y-axis line x 170 from y 640 to y 1160; x-axis line y 1160 from x 170 to x 1070 (stroke #6f6f6f, 3 px, round caps).
+      Year ticks: x = 200 + 52.5*(year-2010), from y 1160 to y 1174 (stroke #6f6f6f, 3 px), 2010..2026 all drawn.
+      x of 2010 = 200 ; x of 2026 = 1040 (52.5 px per year).
+      Axis labels (Space Mono 700 30 px, #6f6f6f, centred on their x, top y 1186): « 2010 » at x 200, « 2026 » at x 1040.
+    Y range: y(v) = 1160 - 50*v, v = RDV per 10 calls (v 9 -> y 710 ; v 3 -> y 1010 ; v 0 -> y 1160). No y labels.
+    The curve: ONE path for the whole 2010 -> 2026 line, white #ffffff, stroke-width 10, round caps/joins, fill none,
+      pathLength="1000", stroke-dasharray 1000, revealed by strokeDashoffset (1000 = hidden, 0 = fully drawn):
+      d = "M 200 710 C 225 710 236 710 252 712 C 282 716 318 746 358 746 C 386 746 398 738 410 738
+           C 446 738 482 750 515 772 C 610 836 740 958 1040 1010"
+      (2010 high 9 -> slight dip 2013 -> small recovery 2014 -> 2016 starts falling -> steep fall to 3 in 2026 at (1040,1010)).
+      At 3.50: strokeDashoffset = 715 (= drawn up to ~2016, tip at about x 515 y 772, just starting the steep fall),
+      moving with ease "none" at -100 units/s at 3.50 (keep drawing from 715 -> 0).
+    Start dot: white circle r 11 at (200, 710), fully visible at 3.50.
+    Start label « 2010 : 9 RDV SUR 10 APPELS »: Space Mono 700 38 px, white, left x 200, top y 608 (chart coords),
+      i.e. on screen at 3.50 left x 60 top 608; the « 9 » is accent #FB8000. Opacity 1, scale 1 at 3.50.
+    Title (OUTSIDE the camera, never moves): « LE TÉLÉPHONE / MOURAIT DÉJÀ », Big Shoulders 900 128 px, centred, top y 300,
+      orange stroke under « MOURAIT DÉJÀ » fully drawn (scaleX 1).
+    Ground: #0A0A0A + halo (radial accent 1200x1200, left -420, top 160 => centre (180, 760), on the left) at scale 1.12, opacity 1; grain 4 %.
+    Subtitles: none on screen at 3.50 (last chunk has left by 3.49).
+    ======================================================================================
+  -->
+  <style>
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+
+    /* ===================== SHARED: ground ===================== */
+    /* solid #0A0A0A + one soft accent halo behind the focal element + static grain 4 %.
+       Full-duration class="clip" layer on track 0. Move the halo by tweening its x / y / scale / opacity only. */
+    .f03-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .f03-halo { position: absolute; left: -60px; top: 300px; width: 1200px; height: 1200px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.16) 0%, rgba(251,128,0,0.10) 38%, rgba(251,128,0,0.035) 70%, rgba(251,128,0,0) 100%); }
+    .f03-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    /* ===================== end SHARED: ground ===================== */
+
+    /* ===================== SHARED: title ===================== */
+    /* Scene title: Big Shoulders 900, 128 px, caps, line-height 0.95, white, centred in the title zone (y 260 to 640,
+       side margins 80 px). The orange title-stroke sits under the LAST line: it is sized in em, so it is always
+       "line width + 20 px" (10 px each side at 128 px), 14 px tall, round cap at the left, tapered end, tilted -1.5 deg.
+       Markup:
+         <div class="f03-title" style="top: ...px">
+           <span class="f03-tline">LINE 1</span><br>
+           <span class="f03-tline">LINE 2<i class="f03-stroke-tilt"><i class="f03-stroke" id="f03-..."></i></i></span>
+         </div>
+       The same component scales with font-size (this frame uses it at the jumbo size, 300 px). */
+    .f03-title { position: absolute; left: 80px; width: 920px; text-align: center; font: 900 128px/0.95 "Big Shoulders", sans-serif;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .f03-tline { position: relative; display: inline-block; }
+    .f03-stroke-tilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.085em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .f03-stroke { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%);
+      transform-origin: 0 50%; transform: scaleX(0); }
+    /* ===================== end SHARED: title ===================== */
+
+    /* ===================== SHARED: subtitle ===================== */
+    /* The voice, word by word, in the subtitle band (y 1260 to 1440, nothing else in it): Instrument Sans 700 58/70,
+       centred on y 1350. One .f03-chunk per quoted chunk (2 to 6 words), all chunks stacked at the same place.
+       Every word is a .f03-w with data-cue (frame-local s); the key word also carries .f03-key (turns #FB8000 as it
+       appears, no box). data-out on the chunk = its 0.1 s leave (opacity + blur) before the next chunk. */
+    .f03-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .f03-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 58px/70px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .f03-w { display: inline-block; opacity: 0; }
+    /* ===================== end SHARED: subtitle ===================== */
+
+    /* ---- title of this frame (absent at 0: slams in at 0.00) ---- */
+    #f03-title { top: 300px; opacity: 0; transform-origin: 540px 120px; }
+
+    /* ---- camera: lateral travelling, linear -40 px/s (see handoff comment) ---- */
+    #f03-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; }
+    #f03-chart { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+    .f03-axis { fill: none; stroke: #6f6f6f; stroke-width: 3; stroke-linecap: round; }
+    #f03-ticks { opacity: 0; }
+    #f03-ticks line { stroke: #6f6f6f; stroke-width: 3; stroke-linecap: round; }
+    #f03-curve { fill: none; stroke: #ffffff; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round;
+      stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+    #f03-dot { fill: #ffffff; opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; }
+    #f03-ring { fill: none; stroke: #ffffff; stroke-width: 3; opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; }
+    .f03-year { position: absolute; top: 1186px; width: 160px; margin-left: -80px; text-align: center;
+      font: 700 30px/36px "Space Mono", monospace; color: #6f6f6f; opacity: 0; }
+    #f03-y2010 { left: 200px; }
+    #f03-y2026 { left: 1040px; }
+
+    /* ---- start label « 2010 : 9 RDV SUR 10 APPELS » ---- */
+    #f03-label { position: absolute; left: 200px; top: 608px; white-space: nowrap; opacity: 0;
+      font: 700 38px/56px "Space Mono", monospace; color: #ffffff; transform-origin: 0 50%; }
+    #f03-nine { display: inline-block; width: 0.6em; text-align: center; color: #FB8000; font-variant-numeric: tabular-nums;
+      transform-origin: 50% 70%; }
+  </style>
+
+  <div id="root" data-composition-id="03-courbe" data-width="1080" data-height="1920" data-duration="3.5">
+
+    <!-- SHARED: ground (full-duration clip, lowest track) -->
+    <div id="f03-ground" class="clip f03-ground" data-start="0" data-duration="3.5" data-track-index="0">
+      <div id="f03-halo" class="f03-halo" style="left: -420px; top: 160px;"></div>
+      <div class="f03-grain"></div>
+    </div>
+
+    <!-- camera: travelling right, follows the tip of the line -->
+    <div id="f03-cam">
+      <svg id="f03-chart" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg">
+        <path id="f03-axis-y" class="f03-axis" d="M 170 640 L 170 1160" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"></path>
+        <path id="f03-axis-x" class="f03-axis" d="M 170 1160 L 1070 1160" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"></path>
+        <g id="f03-ticks"></g>
+        <path id="f03-curve" pathLength="1000"
+          d="M 200 710 C 225 710 236 710 252 712 C 282 716 318 746 358 746 C 386 746 398 738 410 738 C 446 738 482 750 515 772 C 610 836 740 958 1040 1010"></path>
+        <circle id="f03-ring" cx="200" cy="710" r="22"></circle>
+        <circle id="f03-dot" cx="200" cy="710" r="11"></circle>
+      </svg>
+      <div id="f03-y2010" class="f03-year">2010</div>
+      <div id="f03-y2026" class="f03-year">2026</div>
+      <div id="f03-label">2010 : <span id="f03-nine">0</span> RDV SUR 10 APPELS</div>
+    </div>
+
+    <!-- title (outside the camera: holds still) -->
+    <div id="f03-title" class="f03-title">
+      <span class="f03-tline">LE TÉLÉPHONE</span><br>
+      <span class="f03-tline">MOURAIT DÉJÀ<i class="f03-stroke-tilt"><i class="f03-stroke" id="f03-stroke"></i></i></span>
+    </div>
+
+    <!-- SHARED: subtitle (outside the camera: it never moves with the scene) -->
+    <div id="f03-sub" class="f03-sub">
+      <div class="f03-chunk" data-out="0.95"><span class="f03-w" data-cue="0.15">Mais</span> <span class="f03-w" data-cue="0.31">soyons</span> <span class="f03-w" data-cue="0.46">honnêtes&nbsp;:</span></div>
+      <div class="f03-chunk" data-out="2.50"><span class="f03-w" data-cue="1.08">le</span> <span class="f03-w" data-cue="1.23">téléphone</span> <span class="f03-w f03-key" data-cue="1.70">mourait</span> <span class="f03-w" data-cue="2.00">déjà.</span></div>
+      <div class="f03-chunk" data-out="3.39"><span class="f03-w" data-cue="2.61">Quand</span> <span class="f03-w" data-cue="2.77">j'ai</span> <span class="f03-w" data-cue="2.92">commencé,</span></div>
+    </div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "03-courbe";
+      var DUR = 3.5;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#" + id); }
+      var tl = gsap.timeline({ paused: true });
+
+      /* ===================== SHARED: title (JS) ===================== */
+      // Title slam: scale 1.25 -> 1, blur 10 -> 0, 0.18 s expo.out (t0 > 0: the element starts at opacity 0 in CSS).
+      function f03TitleIn(tl, el, t0) {
+        tl.fromTo(el, { opacity: 0, scale: 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false }, t0);
+      }
+      // Orange stroke: draws from the left, scaleX 0 -> 1, 0.3 s power3.out.
+      function f03StrokeDraw(tl, el, t0) {
+        tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, t0);
+      }
+      /* ===================== end SHARED: title (JS) ===================== */
+
+      /* ===================== SHARED: subtitle (JS) ===================== */
+      // Each word appears 1 frame before its cue (never late): opacity 0 -> 1, y 14 -> 0, blur 6 -> 0 in 0.12 s.
+      // The key word turns #FB8000 as it appears. A chunk leaves at its data-out in 0.1 s (opacity + blur).
+      var F03_LEAD = 1 / 30;
+      function f03Subtitle(tl, box) {
+        Array.prototype.forEach.call(box.querySelectorAll(".f03-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".f03-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - F03_LEAD);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" },
+              { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("f03-key")) {
+              tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            }
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) {
+            tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" },
+              { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+          }
+        });
+      }
+      /* ===================== end SHARED: subtitle (JS) ===================== */
+
+      /* ---- year ticks (static geometry, built once) ---- */
+      var SVGNS = "http://www.w3.org/2000/svg";
+      var ticks = $("f03-ticks");
+      for (var yr = 2010; yr <= 2026; yr++) {
+        var tx = 200 + 52.5 * (yr - 2010);
+        var ln = document.createElementNS(SVGNS, "line");
+        ln.setAttribute("x1", tx); ln.setAttribute("x2", tx);
+        ln.setAttribute("y1", 1160); ln.setAttribute("y2", 1174);
+        ticks.appendChild(ln);
+      }
+
+      /* ---- camera track: travelling right, linear +40 px/s, carried into 04 ---- */
+      tl.fromTo($("f03-cam"), { x: 0 }, { x: -40 * DUR, duration: DUR, ease: "none" }, 0);
+
+      /* ---- 0.00 the title slams ; 0.30 its stroke ---- */
+      f03TitleIn(tl, $("f03-title"), 0);
+      f03StrokeDraw(tl, $("f03-stroke"), 0.30);
+
+      /* ---- halo (left), swells on the key beats ---- */
+      tl.fromTo($("f03-halo"), { scale: 0.9, opacity: 0.6 }, { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" }, 0);
+      tl.fromTo($("f03-halo"), { scale: 1 }, { scale: 1.12, duration: 0.5, ease: "power3.out", immediateRender: false }, 1.70);
+
+      /* ---- 0.60 the axes draw ; 0.80 ticks + years ---- */
+      tl.fromTo($("f03-axis-y"), { strokeDashoffset: 100 }, { strokeDashoffset: 0, duration: 0.3, ease: "power3.out", immediateRender: false }, 0.60);
+      tl.fromTo($("f03-axis-x"), { strokeDashoffset: 100 }, { strokeDashoffset: 0, duration: 0.45, ease: "power3.out", immediateRender: false }, 0.68);
+      tl.fromTo($("f03-ticks"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 0.80);
+      tl.fromTo($("f03-y2010"), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.25, ease: "power3.out", immediateRender: false }, 0.80);
+      tl.fromTo($("f03-y2026"), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.25, ease: "power3.out", immediateRender: false }, 0.92);
+
+      /* ---- 1.00 the start point lands top-left, the line starts ---- */
+      tl.fromTo($("f03-dot"), { opacity: 0, scale: 2.2 }, { opacity: 1, scale: 1, duration: 0.2, ease: "expo.out", immediateRender: false }, 1.00);
+      tl.fromTo($("f03-ring"), { opacity: 0.9, scale: 0.5 }, { opacity: 0, scale: 2.2, duration: 0.45, ease: "power3.out", immediateRender: false }, 1.00);
+      var curve = $("f03-curve");
+      // 1.00 -> 1.70 the flat start (2010 -> 2011)
+      tl.fromTo(curve, { strokeDashoffset: 1000 }, { strokeDashoffset: 940, duration: 0.70, ease: "power2.inOut", immediateRender: false }, 1.00);
+      // 1.70 on « mourait » the line starts to go down (dip 2011 -> 2014)
+      tl.fromTo(curve, { strokeDashoffset: 940 }, { strokeDashoffset: 818, duration: 1.10, ease: "power3.out", immediateRender: false }, 1.70);
+      // 2.80 -> 3.00 eases back to speed ; 3.00 -> 3.50 constant speed toward 2016 (100 units/s, carried into 04)
+      tl.fromTo(curve, { strokeDashoffset: 818 }, { strokeDashoffset: 765, duration: 0.20, ease: "power1.in", immediateRender: false }, 2.80);
+      tl.fromTo(curve, { strokeDashoffset: 765 }, { strokeDashoffset: 715, duration: 0.50, ease: "none", immediateRender: false }, 3.00);
+
+      /* ---- 2.30 a second pulse on the start point (event under « déjà ») ---- */
+      tl.fromTo($("f03-ring"), { opacity: 0.7, scale: 0.6 }, { opacity: 0, scale: 2, duration: 0.4, ease: "power3.out", immediateRender: false }, 2.30);
+
+      /* ---- 2.61 the label lands near the start, its 9 rolls 0 -> 9 (count + scale, same ease) ---- */
+      tl.fromTo($("f03-label"), { opacity: 0, x: -24, filter: "blur(8px)" },
+        { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.2, ease: "expo.out", immediateRender: false }, 2.60);
+      var nine = $("f03-nine");
+      var cnt = { v: 0 };
+      tl.fromTo(cnt, { v: 0 }, { v: 9, duration: 0.5, ease: "power3.out", immediateRender: false,
+        onUpdate: function () { nine.textContent = String(Math.round(cnt.v)); } }, 2.61);
+      tl.fromTo(nine, { scale: 0.5 }, { scale: 1, duration: 0.5, ease: "power3.out", immediateRender: false }, 2.61);
+
+      /* ---- the voice, word by word ---- */
+      f03Subtitle(tl, $("f03-sub"));
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

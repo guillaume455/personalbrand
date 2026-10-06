@@ -1,0 +1,219 @@
+<template>
+  <style>
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+
+    /* ===================== SHARED: ground ===================== */
+    /* solid #0A0A0A + one soft accent halo behind the focal element + static grain 4 %.
+       Full-duration class="clip" layer on track 0. Move the halo by tweening its x / y / scale / opacity only. */
+    .f02-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .f02-halo { position: absolute; left: -60px; top: 300px; width: 1200px; height: 1200px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.16) 0%, rgba(251,128,0,0.10) 38%, rgba(251,128,0,0.035) 70%, rgba(251,128,0,0) 100%); }
+    .f02-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    /* ===================== end SHARED: ground ===================== */
+
+    /* ===================== SHARED: title ===================== */
+    /* Scene title: Big Shoulders 900, 128 px, caps, line-height 0.95, white, centred in the title zone (y 260 to 640,
+       side margins 80 px). The orange title-stroke sits under the LAST line: it is sized in em, so it is always
+       "line width + 20 px" (10 px each side at 128 px), 14 px tall, round cap at the left, tapered end, tilted -1.5 deg.
+       Markup:
+         <div class="f02-title" style="top: ...px">
+           <span class="f02-tline">LINE 1</span><br>
+           <span class="f02-tline">LINE 2<i class="f02-stroke-tilt"><i class="f02-stroke" id="f02-..."></i></i></span>
+         </div>
+       The same component scales with font-size (this frame uses it at the jumbo size, 300 px). */
+    .f02-title { position: absolute; left: 80px; width: 920px; text-align: center; font: 900 128px/0.95 "Big Shoulders", sans-serif;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .f02-tline { position: relative; display: inline-block; }
+    .f02-stroke-tilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.085em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .f02-stroke { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%);
+      transform-origin: 0 50%; transform: scaleX(0); }
+    /* ===================== end SHARED: title ===================== */
+
+    /* ===================== SHARED: subtitle ===================== */
+    /* The voice, word by word, in the subtitle band (y 1260 to 1440, nothing else in it): Instrument Sans 700 58/70,
+       centred on y 1350. One .f02-chunk per quoted chunk (2 to 6 words), all chunks stacked at the same place.
+       Every word is a .f02-w with data-cue (frame-local s); the key word also carries .f02-key (turns #FB8000 as it
+       appears, no box). data-out on the chunk = its 0.1 s leave (opacity + blur) before the next chunk. */
+    .f02-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .f02-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 58px/70px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .f02-w { display: inline-block; opacity: 0; }
+    /* ===================== end SHARED: subtitle ===================== */
+
+    /* ---- camera (two stacked wrappers: continuous push / discrete cran) ---- */
+    .f02-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    #f02-push { transform-origin: 540px 600px; }
+    #f02-cran { transform-origin: 540px 935px; }
+
+    /* ---- title: 3 lines, each slams on its own beat; « INTERDIT » in accent ---- */
+    #f02-title { top: 290px; }
+    #f02-t2, #f02-t3 { opacity: 0; }
+    .f02-tline { transform-origin: 50% 55%; }
+    .f02-acc { color: #FB8000; }
+
+    /* ---- number-list: 7 masked French mobile numbers, Space Mono 44 px ---- */
+    #f02-list { position: absolute; left: 0; top: 700px; width: 1080px; height: 490px; }
+    .f02-row { position: absolute; left: 340px; width: 400px; height: 70px; opacity: 0; transform-origin: 200px 35px; }
+    .f02-num { position: absolute; left: 0; top: 0; width: 400px; height: 70px; text-align: center; white-space: nowrap;
+      font: 700 44px/70px "Space Mono", monospace; letter-spacing: 0; }
+    .f02-live { color: #ffffff; }
+    .f02-dead { color: #3a3a3a; opacity: 0; }
+    .f02-strike { position: absolute; left: 6px; top: 33px; width: 388px; height: 5px; border-radius: 999px; background: #6f6f6f;
+      transform-origin: 0 50%; transform: scaleX(0); }
+    .f02-strike.f02-strike-acc { top: 30px; height: 10px; background: #FB8000; }
+  </style>
+
+  <div id="root" data-composition-id="02-loi" data-width="1080" data-height="1920" data-duration="4.99">
+
+    <!-- SHARED: ground (full-duration clip, lowest track) -->
+    <div id="f02-ground" class="clip f02-ground" data-start="0" data-duration="4.99" data-track-index="0">
+      <div id="f02-halo" class="f02-halo"></div>
+      <div class="f02-grain"></div>
+    </div>
+
+    <!-- camera: push (continuous +1.5 %/s) > cran (step toward the list at 1.00) > scene -->
+    <div id="f02-push" class="f02-cam">
+      <div id="f02-cran" class="f02-cam">
+
+        <!-- the law, as the scene title -->
+        <div id="f02-title" class="f02-title">
+          <span id="f02-t1" class="f02-tline">DÉMARCHAGE</span><br>
+          <span id="f02-t2" class="f02-tline">SANS ACCORD</span><br>
+          <span id="f02-t3" class="f02-tline">= <span class="f02-acc">INTERDIT</span><i class="f02-stroke-tilt"><i id="f02-stroke" class="f02-stroke"></i></i></span>
+        </div>
+
+        <!-- the numbers, falling in then struck out one by one -->
+        <div id="f02-list">
+          <div id="f02-r1" class="f02-row" style="top: 0px;"><div class="f02-num f02-live">06 12 48 ·· ··</div><div class="f02-num f02-dead">06 12 48 ·· ··</div><i class="f02-strike"></i></div>
+          <div id="f02-r2" class="f02-row" style="top: 70px;"><div class="f02-num f02-live">07 81 23 ·· ··</div><div class="f02-num f02-dead">07 81 23 ·· ··</div><i class="f02-strike"></i></div>
+          <div id="f02-r3" class="f02-row" style="top: 140px;"><div class="f02-num f02-live">06 45 90 ·· ··</div><div class="f02-num f02-dead">06 45 90 ·· ··</div><i class="f02-strike"></i></div>
+          <div id="f02-r4" class="f02-row" style="top: 210px;"><div class="f02-num f02-live">06 73 05 ·· ··</div><div class="f02-num f02-dead">06 73 05 ·· ··</div><i class="f02-strike"></i></div>
+          <div id="f02-r5" class="f02-row" style="top: 280px;"><div class="f02-num f02-live">07 52 16 ·· ··</div><div class="f02-num f02-dead">07 52 16 ·· ··</div><i class="f02-strike"></i></div>
+          <div id="f02-r6" class="f02-row" style="top: 350px;"><div class="f02-num f02-live">06 29 84 ·· ··</div><div class="f02-num f02-dead">06 29 84 ·· ··</div><i class="f02-strike"></i></div>
+          <div id="f02-r7" class="f02-row" style="top: 420px;"><div class="f02-num f02-live">07 68 37 ·· ··</div><div class="f02-num f02-dead">07 68 37 ·· ··</div><i class="f02-strike f02-strike-acc"></i></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SHARED: subtitle (outside the camera: it never moves with the scene) -->
+    <div id="f02-sub" class="f02-sub">
+      <div class="f02-chunk" data-out="0.74"><span class="f02-w" data-cue="0.16">La</span> <span class="f02-w" data-cue="0.30">loi</span> <span class="f02-w" data-cue="0.44">est</span> <span class="f02-w f02-key" data-cue="0.57">passée</span></div>
+      <div class="f02-chunk" data-out="1.66"><span class="f02-w" data-cue="0.85">tu</span> <span class="f02-w" data-cue="1.12">n'as</span> <span class="f02-w" data-cue="1.24">plus</span> <span class="f02-w" data-cue="1.47">le</span> <span class="f02-w" data-cue="1.61">droit</span></div>
+      <div class="f02-chunk" data-out="2.76"><span class="f02-w" data-cue="1.75">d'appeler</span> <span class="f02-w" data-cue="2.18">un</span> <span class="f02-w" data-cue="2.32">particulier</span></div>
+      <div class="f02-chunk" data-out="4.00"><span class="f02-w" data-cue="2.89">pour</span> <span class="f02-w" data-cue="3.03">lui</span> <span class="f02-w" data-cue="3.30">proposer</span> <span class="f02-w" data-cue="3.61">un</span> <span class="f02-w f02-key" data-cue="3.71">mandat,</span></div>
+      <div class="f02-chunk" data-out="4.86"><span class="f02-w" data-cue="4.14">sans</span> <span class="f02-w" data-cue="4.32">son</span> <span class="f02-w" data-cue="4.50">accord.</span></div>
+    </div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "02-loi";
+      var DUR = 4.99;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#" + id); }
+      var tl = gsap.timeline({ paused: true });
+
+      /* ===================== SHARED: title (JS) ===================== */
+      // Title slam: scale 1.25 -> 1, blur 10 -> 0, 0.18 s expo.out (t0 > 0: the element starts at opacity 0 in CSS).
+      function f02TitleIn(tl, el, t0) {
+        tl.fromTo(el, { opacity: 0, scale: 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false }, t0);
+      }
+      // Orange stroke: draws from the left, scaleX 0 -> 1, 0.3 s power3.out.
+      function f02StrokeDraw(tl, el, t0) {
+        tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, t0);
+      }
+      /* ===================== end SHARED: title (JS) ===================== */
+
+      /* ===================== SHARED: subtitle (JS) ===================== */
+      // Each word appears 1 frame before its cue (never late): opacity 0 -> 1, y 14 -> 0, blur 6 -> 0 in 0.12 s.
+      // The key word turns #FB8000 as it appears. A chunk leaves at its data-out in 0.1 s (opacity + blur).
+      var F02_LEAD = 1 / 30;
+      function f02Subtitle(tl, box) {
+        Array.prototype.forEach.call(box.querySelectorAll(".f02-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".f02-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - F02_LEAD);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" },
+              { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("f02-key")) {
+              tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            }
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) {
+            tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" },
+              { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+          }
+        });
+      }
+      /* ===================== end SHARED: subtitle (JS) ===================== */
+
+      /* ---- camera track ---- */
+      // push +1.5 %/s over the whole frame
+      tl.fromTo($("f02-push"), { scale: 1 }, { scale: 1 + 0.015 * DUR, duration: DUR, ease: "none" }, 0);
+      // cran 1.00: a step toward the list as it starts to fall
+      tl.fromTo($("f02-cran"), { scale: 1, y: 0 }, { scale: 1.025, y: -6, duration: 0.3, ease: "power3.out", immediateRender: false }, 1.00);
+      // 4.50: last nudge on the final accent strike
+      tl.fromTo($("f02-cran"), { scale: 1.025 }, { scale: 1.035, duration: 0.45, ease: "power3.out", immediateRender: false }, 4.50);
+
+      /* ---- the title, line by line (0.00 / 0.20 / 0.40), stroke at 0.60 ---- */
+      // 0.00 « DÉMARCHAGE » is on screen at the cut, slamming from x1.25 blurred to sharp
+      tl.fromTo($("f02-t1"), { opacity: 1, scale: 1.25, filter: "blur(10px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out" }, 0);
+      f02TitleIn(tl, $("f02-t2"), 0.20);
+      f02TitleIn(tl, $("f02-t3"), 0.40);
+      f02StrokeDraw(tl, $("f02-stroke"), 0.60);
+      // halo: rises from the title toward the list (0.80), then swells on the strikes
+      tl.fromTo($("f02-halo"), { y: -180, scale: 0.85 }, { y: -180, scale: 0.85, duration: 0.01, ease: "none" }, 0);
+      tl.fromTo($("f02-halo"), { y: -180, scale: 0.85 }, { y: 40, scale: 1, duration: 0.6, ease: "power3.out", immediateRender: false }, 0.80);
+
+      /* ---- 1.00 -> 1.80: the numbers fall in, waterfall (one direction: from above), 0.10 s apart ---- */
+      var rows = [];
+      for (var i = 1; i <= 7; i++) rows.push($("f02-r" + i));
+      rows.forEach(function (r, k) {
+        var t = 1.00 + k * 0.10;
+        var dy = k === 0 ? -80 : -50;
+        var d = k === 0 ? 0.20 : (k === 6 ? 0.13 : 0.15);
+        tl.fromTo(r, { opacity: 0 }, { opacity: 1, duration: 0.001, ease: "none", immediateRender: false }, t);
+        tl.fromTo(r, { y: dy }, { y: 0, duration: d, ease: "expo.out", immediateRender: false }, t);
+      });
+
+      /* ---- 2.20 -> 4.50: each number greys out and gets struck, 0.35 s apart; the last one in accent on « accord » ---- */
+      var strikeTimes = [2.20, 2.55, 2.90, 3.25, 3.60, 3.95, 4.50];
+      rows.forEach(function (r, k) {
+        var t = strikeTimes[k];
+        var live = r.querySelector(".f02-live"), dead = r.querySelector(".f02-dead"), st = r.querySelector(".f02-strike");
+        var last = k === 6;
+        tl.fromTo(st, { scaleX: 0 }, { scaleX: 1, duration: last ? 0.25 : 0.18, ease: "power3.out", immediateRender: false }, t);
+        tl.fromTo(live, { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power3.out", immediateRender: false }, t + 0.04);
+        tl.fromTo(dead, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power3.out", immediateRender: false }, t + 0.04);
+        // small knock as the line dies: x 8 -> 0
+        tl.fromTo(r, { x: last ? 14 : 8 }, { x: 0, duration: last ? 0.3 : 0.22, ease: "expo.out", immediateRender: false }, t);
+      });
+      // the halo answers the final accent strike
+      tl.fromTo($("f02-halo"), { scale: 1, opacity: 1 }, { scale: 1.12, opacity: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, 4.50);
+      tl.fromTo($("f02-halo"), { y: 40 }, { y: 160, duration: 0.5, ease: "power3.out", immediateRender: false }, 4.14);
+
+      /* ---- the voice, word by word ---- */
+      f02Subtitle(tl, $("f02-sub"));
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

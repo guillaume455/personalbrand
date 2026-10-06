@@ -1,0 +1,36 @@
+<template>
+  <style>
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+
+    /* ===================== SHARED: ground ===================== */
+    .f08-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .f08-halo { position: absolute; left: -60px; top: 300px; width: 1200px; height: 1200px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.16) 0%, rgba(251,128,0,0.10) 38%, rgba(251,128,0,0.035) 70%, rgba(251,128,0,0) 100%); }
+    .f08-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    /* ===================== end SHARED: ground ===================== */
+
+    /* draft — card geometry pending 06-carte1 */
+    .f08-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+  </style>
+  <div id="root" data-composition-id="08-carte2" data-width="1080" data-height="1920" data-duration="3.44">
+    <div id="f08-ground" class="clip f08-ground" data-start="0" data-duration="3.44" data-track-index="0">
+      <div id="f08-halo" class="f08-halo"></div>
+      <div class="f08-grain"></div>
+    </div>
+  </div>
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+      tl.set({}, {}, 3.44);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["08-carte2"] = tl;
+    })();
+  </script>
+</template>
