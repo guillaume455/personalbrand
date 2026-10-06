@@ -74,12 +74,21 @@
     var v = fig.querySelector('video');
     var btn = fig.querySelector('[data-vsl-son]');
     if (!v) return;
-    // fichier absent ou illisible : on retire la section plutôt qu'un cadre noir
+    // Fichier absent ou illisible : on retire la section plutôt qu'un cadre noir.
+    // Seule une vraie erreur de chargement compte : Safari sur iPhone peut annoncer
+    // « aucune source » tant qu'il n'a pas commencé à charger (mode économie
+    // d'énergie, données réduites), ce qui masquait la vidéo à tort.
     var masquer = function () { (fig.closest('section') || fig).hidden = true; };
-    v.addEventListener('error', masquer);
-    if (v.error || v.networkState === 3) masquer();
+    var sources = v.querySelectorAll('source');
+    if (sources.length) sources[sources.length - 1].addEventListener('error', masquer);
+    else v.addEventListener('error', masquer);
     v.muted = true;
-    var lancer = function () { var p = v.play(); if (p && p.catch) p.catch(function () {}); };
+    // Lecture automatique refusée (iPhone en économie d'énergie) : on affiche
+    // les commandes pour que le bouton lecture soit là.
+    var lancer = function () {
+      var p = v.play();
+      if (p && p.catch) p.catch(function () { v.controls = true; });
+    };
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entrees) {
         entrees.forEach(function (e) {

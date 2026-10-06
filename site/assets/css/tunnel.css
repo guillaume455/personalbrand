@@ -958,3 +958,8 @@ textarea{min-height:130px;resize:vertical}
   display:flex;align-items:center;justify-content:center;
   background:var(--or);color:#fff;font-size:11px;font-weight:700;
 }
+/* bouton du son plus discret sur téléphone, pour ne pas couvrir l'image */
+@media (max-width:600px){
+  .vsl-son{padding:8px 13px;font-size:13.5px;gap:7px}
+  .vsl-son svg{width:16px;height:16px}
+}

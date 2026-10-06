@@ -91,9 +91,13 @@
 <section class="bloc bloc-vsl">
   <div class="large">
     <figure class="vsl" data-vsl>
-      <video src="../assets/video/vsl-diagnostic.mp4" poster="../assets/video/vsl-diagnostic.jpg"
+      <video poster="../assets/video/vsl-diagnostic.jpg"
              width="1920" height="1080" autoplay muted playsinline preload="metadata"
-             aria-label="Vidéo de présentation du diagnostic, 53 secondes"></video>
+             aria-label="Vidéo de présentation du diagnostic, 53 secondes">
+        <!-- version légère pour les téléphones, version 1080p au-delà -->
+        <source src="../assets/video/vsl-diagnostic-720.mp4" type="video/mp4" media="(max-width: 820px)">
+        <source src="../assets/video/vsl-diagnostic.mp4" type="video/mp4">
+      </video>
       <button type="button" class="vsl-son" data-vsl-son>
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
         Activer le son
