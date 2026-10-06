@@ -1,0 +1,213 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r7-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r7-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r7-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r7-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r7-hudcam { transform-origin: 540px 600px; }
+    .r7-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r7-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r7-tline { position: relative; display: inline-block; opacity: 0; }
+    .r7-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r7-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r7-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r7-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r7-ocol { display: block; }
+    .r7-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r7-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r7-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r7-person { position: absolute; transform-origin: 50% 100%; }
+    .r7-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r7-pgrey { fill: #2b2b2b; }
+    .r7-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r7-porange { fill: #FB8000; opacity: 0; }
+    .r7-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r7-car { position: absolute; transform-origin: 50% 100%; }
+    .r7-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r7-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r7-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r7-w { display: inline-block; opacity: 0; }
+
+    #r7-road { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; fill: none; stroke-linecap: round; }
+    .r7-edge { stroke: #3a3a3a; stroke-width: 6; }
+    #r7-mid { stroke: #6a6a6a; stroke-width: 10; stroke-dasharray: 40 46; }
+    #r7-vp { position: absolute; left: 340px; top: 470px; width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.4), rgba(251,128,0,0)); }
+    #r7-mag { position: absolute; left: 460px; top: 760px; width: 160px; height: 160px; overflow: visible; fill: none; stroke: #ffffff; stroke-linecap: round; opacity: 0; }
+    #r7-carf { position: absolute; left: 240px; top: 770px; width: 600px; height: 450px; transform-origin: 50% 100%; opacity: 0; }
+    #r7-carf svg { position: absolute; left: 0; top: 0; width: 600px; height: 450px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 9; stroke-linejoin: round; stroke-linecap: round; }
+    .r7-hl { fill: #2a2a2a; }
+    .r7-hlon { fill: #fff3e0; opacity: 0; }
+    #r7-flare { position: absolute; left: 140px; top: 760px; width: 800px; height: 400px; opacity: 0; mix-blend-mode: screen;
+      background: radial-gradient(ellipse at 28% 50%, rgba(255,235,210,0.95) 0%, rgba(251,128,0,0.35) 18%, rgba(251,128,0,0) 34%),
+                  radial-gradient(ellipse at 72% 50%, rgba(255,235,210,0.95) 0%, rgba(251,128,0,0.35) 18%, rgba(251,128,0,0) 34%); }
+      </style>
+
+  <div id="root" data-composition-id="07-bonus" data-width="1080" data-height="1920" data-duration="5">
+    <div id="r7-ground" class="clip r7-ground" data-start="0" data-duration="5" data-track-index="0">
+      <div id="r7-halo" class="r7-halo" style="left:540px;top:700px"></div>
+      <div class="r7-grain"></div>
+    </div>
+    <div id="r7-push" class="r7-cam"><div id="r7-shk" class="r7-cam"><div id="r7-cran" class="r7-cam">
+      <div id="r7-vp"></div><svg id="r7-road" viewBox="0 0 1080 1920"><path class="r7-edge" d="M500 660 L60 1230"/><path class="r7-edge" d="M580 660 L1020 1230"/><path id="r7-mid" d="M540 660 L540 1230"/></svg><svg id="r7-mag" viewBox="0 0 160 160"><circle cx="64" cy="64" r="44" stroke-width="12"/><path d="M98 98 L144 144" stroke-width="18"/></svg><div id="r7-carf"><svg viewBox="0 0 400 300"><path d="M92 120 L122 44 Q128 30 144 30 L256 30 Q272 30 278 44 L308 120"/><path d="M40 150 Q40 122 72 120 L328 120 Q360 122 360 150 L360 232 Q360 246 346 246 L54 246 Q40 246 40 232 Z"/><rect x="58" y="246" width="54" height="40" rx="10"/><rect x="288" y="246" width="54" height="40" rx="10"/><rect x="150" y="166" width="100" height="46" rx="10"/><path d="M60 118 L34 106 M340 118 L366 106"/><ellipse class="r7-hl" cx="98" cy="172" rx="34" ry="18"/><ellipse class="r7-hl" cx="302" cy="172" rx="34" ry="18"/><ellipse id="r7-hl1" class="r7-hlon" cx="98" cy="172" rx="34" ry="18" stroke="none"/><ellipse id="r7-hl2" class="r7-hlon" cx="302" cy="172" rx="34" ry="18" stroke="none"/></svg></div><div id="r7-flare"></div>
+    </div></div></div>
+    <div id="r7-hud" class="r7-cam r7-hudcam">
+      <div class="r7-title" id="r7-t7y" style="top:290px;font-size:120px;color:#FB8000"><span class="r7-tline" id="r7-t7y-0" style="font-size:230px"><span id="r7-yr" class="r7-odo " data-to="2026"><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span><i class="r7-stilt"><i class="r7-stk" id="r7-t7y-s"></i></i></span></div><div class="r7-title" id="r7-t7" style="top:280px;font-size:124px;"><span class="r7-tline" id="r7-t7-0">LA VOITURE</span><br><span class="r7-tline" id="r7-t7-1">VIENT À TOI<i class="r7-stilt"><i class="r7-stk" id="r7-t7-s"></i></i></span></div>
+    </div>
+    <div id="r7-sub" class="r7-sub">
+      <div class="r7-chunk sub-chunk" data-out="1.210"><span class="r7-w sub-w" data-cue="0.150">Et</span> <span class="r7-w sub-w" data-cue="0.290">en</span> <span class="r7-w sub-w sub-key" data-cue="0.430">2026,</span></div>
+      <div class="r7-chunk sub-chunk" data-out="2.050"><span class="r7-w sub-w" data-cue="1.270">trouver</span> <span class="r7-w sub-w" data-cue="1.550">des</span> <span class="r7-w sub-w" data-cue="1.690">voitures,</span></div>
+      <div class="r7-chunk sub-chunk" data-out="2.910"><span class="r7-w sub-w" data-cue="2.110">c'est</span> <span class="r7-w sub-w" data-cue="2.250">le</span> <span class="r7-w sub-w" data-cue="2.390">plus</span> <span class="r7-w sub-w sub-key" data-cue="2.530">dur.</span></div>
+      <div class="r7-chunk sub-chunk" data-out="3.470"><span class="r7-w sub-w" data-cue="2.970">La</span> <span class="r7-w sub-w sub-key" data-cue="3.110">reprise,</span></div>
+      <div class="r7-chunk sub-chunk" data-out="4.030"><span class="r7-w sub-w" data-cue="3.530">c'est</span> <span class="r7-w sub-w" data-cue="3.670">une</span> <span class="r7-w sub-w" data-cue="3.810">voiture</span></div>
+      <div class="r7-chunk sub-chunk"><span class="r7-w sub-w" data-cue="4.090">qui</span> <span class="r7-w sub-w" data-cue="4.230">vient</span> <span class="r7-w sub-w" data-cue="4.370">à</span> <span class="r7-w sub-w sub-key" data-cue="4.510">toi.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "07-bonus", P = "r7-", DUR = 5;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["et", 0.15, 0.29], ["en", 0.29, 0.43], ["2026", 0.43, 1.13], ["trouver", 1.27, 1.55], ["des", 1.55, 1.69], ["voitures", 1.69, 1.97], ["c'est", 2.11, 2.25], ["le", 2.25, 2.39], ["plus", 2.39, 2.53], ["dur", 2.53, 2.67], ["la", 2.97, 3.11], ["reprise", 3.11, 3.39], ["c'est", 3.53, 3.67], ["une", 3.67, 3.81], ["voiture", 3.81, 4.09], ["qui", 4.09, 4.23], ["vient", 4.23, 4.37], ["à", 4.37, 4.51], ["toi", 4.51, 4.65]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      tl.fromTo($("mid"), { strokeDashoffset: 0 }, { strokeDashoffset: -86 * Math.round(DUR * 2.5), duration: DUR, ease: "none" }, 0);
+      slam("t7y-0", at("2026") - 0.04, { s: 1.3 }); odo("yr", at("2026") - 0.04, 0.8, { from: "2010" });
+      // finding cars: the search finds nothing
+      pre("mag", { opacity: 0, scale: 0.6 }); go("mag", { opacity: 1, scale: 1 }, at("trouver") - 0.06, 0.25, "back.out(2)");
+      go("mag", { x: -200 }, at("trouver") + 0.12, 0.42, "sine.inOut"); go("mag", { x: 190 }, at("trouver") + 0.56, 0.5, "sine.inOut");
+      go("mag", { x: 0, y: 30, rotation: -14, opacity: 0.35 }, at("dur") - 0.04, 0.3, "power2.out"); shake("shk", at("dur"), 10);
+      // the trade-in: a car that drives to you
+      go("t7y", { opacity: 0, y: -30 }, at("la") - 0.12, 0.13, "power2.in"); go("mag", { opacity: 0 }, at("la") - 0.1, 0.2);
+      slam("t7-0", at("la")); slam("t7-1", at("vient")); stroke("t7", at("toi") - 0.05);
+      pre("carf", { opacity: 0, scale: 0.06, y: -560 }); go("carf", { opacity: 1 }, at("reprise") - 0.08, 0.2);
+      go("carf", { scale: 1, y: 0 }, at("reprise") - 0.08, at("toi") + 0.1 - (at("reprise") - 0.08), "power2.in");
+      pre("hl1", { opacity: 0 }); pre("hl2", { opacity: 0 });
+      go("hl1", { opacity: 1 }, at("voiture") - 0.05, 0.25); go("hl2", { opacity: 1 }, at("voiture") - 0.05, 0.25);
+      pre("flare", { opacity: 0, scale: 0.6 }); go("flare", { opacity: 1, scale: 1.35 }, at("toi") + 0.05, 0.14, "power2.out");
+      go("flare", { opacity: 0.55, scale: 1.1 }, at("toi") + 0.19, 0.6, "power2.inOut");
+      init("carf", { opacity: 1, scale: 1, y: 0 }); go("carf", { scale: 1.06 }, at("toi") + 0.1, 0.5, "power2.out");
+      shake("shk", at("toi") + 0.08, 8);
+      init("vp", { opacity: 1 }); go("vp", { opacity: 0.3 }, at("toi"), 0.6);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

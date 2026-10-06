@@ -1,0 +1,228 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r6-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r6-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r6-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r6-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r6-hudcam { transform-origin: 540px 600px; }
+    .r6-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r6-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r6-tline { position: relative; display: inline-block; opacity: 0; }
+    .r6-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r6-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r6-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r6-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r6-ocol { display: block; }
+    .r6-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r6-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r6-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r6-person { position: absolute; transform-origin: 50% 100%; }
+    .r6-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r6-pgrey { fill: #2b2b2b; }
+    .r6-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r6-porange { fill: #FB8000; opacity: 0; }
+    .r6-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r6-car { position: absolute; transform-origin: 50% 100%; }
+    .r6-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r6-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r6-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r6-w { display: inline-block; opacity: 0; }
+
+    #r6-warn { position: absolute; left: 190px; top: 640px; width: 700px; height: 520px; opacity: 0; }
+    #r6-wtri { position: absolute; left: 200px; top: 0; width: 300px; height: 270px; overflow: visible; }
+    #r6-wlab { position: absolute; left: 0; top: 300px; width: 700px; text-align: center; font: 140px/1.15 "Anton", sans-serif; color: #FB8000; }
+    #r6-card { position: absolute; left: 140px; top: 640px; width: 800px; height: 580px; border-radius: 30px; background: #151515; border: 2px solid #2a2a2a; opacity: 0; }
+    .r6-clab { position: absolute; left: 44px; font: 600 32px/38px "Instrument Sans", sans-serif; color: #9a9a9a; text-transform: uppercase; }
+    #r6-repv { position: absolute; left: 44px; top: 112px; font: 112px "Anton", sans-serif; color: #ffffff; }
+    #r6-marv { position: absolute; left: 44px; top: 352px; font: 76px "Anton", sans-serif; color: #FB8000; }
+    #r6-bar { position: absolute; left: 44px; top: 462px; width: 712px; height: 30px; border-radius: 15px; background: #FB8000; transform-origin: 0 50%; }
+    #r6-bartrack { position: absolute; left: 44px; top: 462px; width: 712px; height: 30px; border-radius: 15px; background: #242424; }
+    .r6-drop { position: absolute; width: 16px; height: 24px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: #FB8000; opacity: 0; }
+    #r6-sig { position: absolute; left: 0; top: 0; width: 800px; height: 580px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+    #r6-chk { position: absolute; left: 640px; top: 120px; width: 112px; height: 112px; border-radius: 50%; background: #FB8000; opacity: 0; }
+    #r6-chk svg { position: absolute; left: 0; top: 0; width: 112px; height: 112px; fill: none; stroke: #0A0A0A; stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; }
+      </style>
+
+  <div id="root" data-composition-id="06-piege" data-width="1080" data-height="1920" data-duration="9">
+    <div id="r6-ground" class="clip r6-ground" data-start="0" data-duration="9" data-track-index="0">
+      <div id="r6-halo" class="r6-halo" style="left:540px;top:880px"></div>
+      <div class="r6-grain"></div>
+    </div>
+    <div id="r6-push" class="r6-cam"><div id="r6-shk" class="r6-cam"><div id="r6-cran" class="r6-cam">
+      <div id="r6-warn"><svg id="r6-wtri" viewBox="0 0 300 270"><path d="M150 22 L282 250 L18 250 Z" fill="#FB8000" stroke="#FB8000" stroke-width="26" stroke-linejoin="round"/><rect x="137" y="88" width="26" height="104" rx="13" fill="#0A0A0A"/><circle cx="150" cy="222" r="16" fill="#0A0A0A"/></svg><div id="r6-wlab">ATTENTION</div></div><div id="r6-card"><div class="r6-clab" style="top:66px">Reprise</div><div id="r6-repv"><span id="r6-rv" class="r6-odo " data-to="6 500,00 €"><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-os">&nbsp;</span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-os">,</span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-os">&nbsp;</span><span class="r6-os">€</span></span></div><div class="r6-clab" style="top:306px">Marge</div><div id="r6-marv"><span id="r6-mv" class="r6-odo " data-to="1 500 €"><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-os">&nbsp;</span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-os">&nbsp;</span><span class="r6-os">€</span></span></div><div id="r6-bartrack"></div><div id="r6-bar"></div><div id="r6-dr0" class="r6-drop" style="left:140px;top:486px"></div><div id="r6-dr1" class="r6-drop" style="left:370px;top:486px"></div><div id="r6-dr2" class="r6-drop" style="left:600px;top:486px"></div><svg id="r6-sig" viewBox="0 0 800 580"><path id="r6-sigp" d="M430 548 C 452 506, 470 568, 494 530 S 528 498, 546 534 S 590 560, 612 526 S 650 504, 676 536 L 744 528"/></svg><div id="r6-chk"><svg viewBox="0 0 112 112"><path d="M30 58 L48 76 L84 38"/></svg></div></div>
+    </div></div></div>
+    <div id="r6-hud" class="r6-cam r6-hudcam">
+      <div class="r6-title" id="r6-t6a" style="top:280px;font-size:108px;"><span class="r6-tline" id="r6-t6a-0">REPRISE SURPAYÉE</span><br><span class="r6-tline" id="r6-t6a-1">= MARGE PERDUE<i class="r6-stilt"><i class="r6-stk" id="r6-t6a-s"></i></i></span></div><div class="r6-title" id="r6-t6b" style="top:360px;font-size:116px;"><span class="r6-tline" id="r6-t6b-0">COMME UN ACHAT<i class="r6-stilt"><i class="r6-stk" id="r6-t6b-s"></i></i></span></div>
+    </div>
+    <div id="r6-sub" class="r6-sub">
+      <div class="r6-chunk sub-chunk" data-out="0.836"><span class="r6-w sub-w" data-cue="0.150">Mais</span> <span class="r6-w sub-w" data-cue="0.337">attention</span></div>
+      <div class="r6-chunk sub-chunk" data-out="1.509"><span class="r6-w sub-w" data-cue="0.896">au</span> <span class="r6-w sub-w sub-key" data-cue="1.083">piège :</span></div>
+      <div class="r6-chunk sub-chunk" data-out="2.442"><span class="r6-w sub-w sub-key" data-cue="1.569">surpayer</span> <span class="r6-w sub-w" data-cue="1.942">la</span> <span class="r6-w sub-w" data-cue="2.129">reprise</span></div>
+      <div class="r6-chunk sub-chunk" data-out="3.674"><span class="r6-w sub-w" data-cue="2.502">pour</span> <span class="r6-w sub-w" data-cue="2.688">signer</span> <span class="r6-w sub-w" data-cue="3.061">la</span> <span class="r6-w sub-w" data-cue="3.248">vente.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="4.680"><span class="r6-w sub-w" data-cue="3.734">Une</span> <span class="r6-w sub-w" data-cue="3.921">reprise</span> <span class="r6-w sub-w" data-cue="4.294">trop</span> <span class="r6-w sub-w sub-key" data-cue="4.480">chère</span></div>
+      <div class="r6-chunk sub-chunk" data-out="5.240"><span class="r6-w sub-w sub-key" data-cue="4.667">mange</span> <span class="r6-w sub-w" data-cue="4.853">la</span> <span class="r6-w sub-w" data-cue="5.040">marge</span></div>
+      <div class="r6-chunk sub-chunk" data-out="6.399"><span class="r6-w sub-w" data-cue="5.226">que</span> <span class="r6-w sub-w" data-cue="5.413">tu</span> <span class="r6-w sub-w" data-cue="5.599">viens</span> <span class="r6-w sub-w" data-cue="5.786">de</span> <span class="r6-w sub-w" data-cue="5.972">faire.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="6.958"><span class="r6-w sub-w" data-cue="6.459">Elle</span> <span class="r6-w sub-w" data-cue="6.645">s'estime</span></div>
+      <div class="r6-chunk sub-chunk" data-out="7.844"><span class="r6-w sub-w" data-cue="7.018">comme</span> <span class="r6-w sub-w" data-cue="7.205">un</span> <span class="r6-w sub-w sub-key" data-cue="7.391">achat,</span></div>
+      <div class="r6-chunk sub-chunk"><span class="r6-w sub-w" data-cue="7.904">au</span> <span class="r6-w sub-w sub-key" data-cue="8.091">centime</span> <span class="r6-w sub-w" data-cue="8.464">près.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "06-piege", P = "r6-", DUR = 9;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["mais", 0.15, 0.337], ["attention", 0.337, 0.896], ["au", 0.896, 1.083], ["piège", 1.083, 1.269], ["surpayer", 1.569, 1.942], ["la", 1.942, 2.129], ["reprise", 2.129, 2.502], ["pour", 2.502, 2.688], ["signer", 2.688, 3.061], ["la", 3.061, 3.248], ["vente", 3.248, 3.434], ["une", 3.734, 3.921], ["reprise", 3.921, 4.294], ["trop", 4.294, 4.48], ["chère", 4.48, 4.667], ["mange", 4.667, 4.853], ["la", 4.853, 5.04], ["marge", 5.04, 5.226], ["que", 5.226, 5.413], ["tu", 5.413, 5.599], ["viens", 5.599, 5.786], ["de", 5.786, 5.972], ["faire", 5.972, 6.159], ["elle", 6.459, 6.645], ["s'estime", 6.645, 7.018], ["comme", 7.018, 7.205], ["un", 7.205, 7.391], ["achat", 7.391, 7.764], ["au", 7.904, 8.091], ["centime", 8.091, 8.464], ["près", 8.464, 8.65]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      slam("warn", 0.02, { s: 1.5, d: 0.22 }); wobble("wtri", at("piège") - 0.03, 6);
+      init("halo", { scale: 1, opacity: 1 }); go("halo", { scale: 1.25 }, 0.02, 0.4);
+      go("warn", { opacity: 0, scale: 0.4, y: -380 }, at("surpayer") - 0.24, 0.26, "power3.in");
+      pre("card", { opacity: 0, y: 90 }); go("card", { opacity: 1, y: 0 }, at("surpayer") - 0.06, 0.38, "expo.out");
+      odo("rv", 0, 0.01, { from: "6 500,00", spinLow: false }); odo("mv", 0, 0.01, { from: "1 500", spinLow: false });
+      // overpaying the trade-in to sign the sale
+      init("repv", { color: "#ffffff" });
+      odo("rv", at("reprise") - 0.05, 0.9, { to: "8 000,00 €" }); go("repv", { color: "#FB8000" }, at("reprise"), 0.3);
+      $("sigp").style.opacity = 1; draw("sigp", at("signer") - 0.04, 0.55, "power1.inOut");
+      slam("t6a-0", at("reprise", 2)); slam("t6a-1", at("mange")); stroke("t6a", at("mange") + 0.12);
+      // the margin melts
+      init("bar", { scaleX: 1 }); go("bar", { scaleX: 0.02 }, at("mange"), 1.1, "power2.in");
+      odo("mv", at("mange"), 1.0, { to: "0 000 €", dimLead: true });
+      for (var i = 0; i < 3; i++) {
+        pre("dr" + i, { opacity: 0, y: 0 });
+        go("dr" + i, { opacity: 1 }, at("mange") + 0.15 + i * 0.2, 0.1);
+        go("dr" + i, { y: 70, opacity: 0 }, at("mange") + 0.25 + i * 0.2, 0.45, "power2.in");
+      }
+      wobble("card", at("faire") - 0.05, 1.5);
+      // estimated like a purchase, to the cent
+      go("t6a", { opacity: 0, y: -30 }, at("s'estime") - 0.12, 0.14, "power2.in");
+      odo("rv", at("s'estime"), 0.9, { to: "6 500,00 €" }); go("repv", { color: "#ffffff" }, at("s'estime"), 0.3);
+      go("sigp", { opacity: 0 }, at("s'estime"), 0.2);
+      go("bar", { scaleX: 1 }, at("s'estime") + 0.2, 0.8, "power3.out");
+      odo("mv", at("s'estime") + 0.2, 0.8, { to: "1 500 €", dimLead: true });
+      slam("t6b-0", at("achat")); stroke("t6b", at("achat") + 0.12);
+      odo("rv", at("centime") - 0.03, 0.7, { to: "6 500,00 €" });
+      pre("chk", { opacity: 0, scale: 2.2 }); go("chk", { opacity: 1, scale: 1 }, at("centime") + 0.45, 0.16, "expo.in");
+      cam(0, -10, 1.04, at("surpayer"), 0.6); cam(0, -20, 1.08, at("centime") - 0.1, 0.8, "power2.out");
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
