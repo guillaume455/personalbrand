@@ -3,9 +3,11 @@
   ===================== HANDOFF_OUT 08-carte2 @ 3.44 s (binding for 09-cadenas) =====================
   CARD STACK (geometry copied from 06-carte1 « SHARED: card »: card 860 x 940, left 110, top 300, ends y 1240 — frame px,
     before camera). Card: #161616, radius 36, 1 px #2a2a2a border, overflow hidden, box-shadow 0 30px 80px rgba(0,0,0,.55).
-    Card 1 (behind, static the whole frame): same box, transform-origin 430px 0 (top centre), scale 0.94, y -44
-      => frame box x 135.8-944.2, y 256-1139.6; darkened by a #0A0A0A overlay at opacity 0.55 (.f08-card-dim).
-      It only peeks as a 44 px strip above card 2 (its contents are hidden behind card 2 at 3.44).
+    Card 1 (behind, static the whole frame; stack convention shared with 10-carte3): same box, transform-origin = its
+      centre (430px 470px, CSS default), scale 0.97, y -42 => frame box x 122.9-957.1, y 272.1-1183.9; darkened by a
+      #0A0A0A overlay at opacity 0.45 (.f08-card-dim); content = its badge « 1 » only. At 3.44 it shows only as a
+      27.9 px strip above card 2 (its badge is hidden behind card 2). In 10-carte3 it continues as the deeper card.
+      (The packet's « 0,94 » was overridden by the coordinator: 0.97 / -42 for the single card behind, so 10 can push it to 0.94.)
     Card 2 (on top, at rest since 0.35 s: y 0, scale 1, opacity 1):
       badge   : accent #FB8000 circle 96 x 96 at card-local (48, 52); « 2 » Big Shoulders 900 72 px #0A0A0A, centred.
       title   : « TA RÉPUTATION », Big Shoulders 900 96 px caps, line-height 0.95, white, card-local left 172, top 52,
@@ -31,7 +33,6 @@
   <style>
     @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
     @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
-    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
 
     #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
       font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
@@ -88,19 +89,8 @@
     .f08-badge { position: absolute; left: 48px; top: 52px; width: 96px; height: 96px; border-radius: 50%; background: #FB8000;
       color: #0A0A0A; font: 900 72px/96px "Big Shoulders", sans-serif; text-align: center; }
     .f08-title.f08-ctitle { left: 172px; top: 52px; width: auto; text-align: left; font-size: 96px; transform-origin: 0 50%; }
-    /* card 1, behind: static, scale 0.94 from its top centre, lifted 44 px, darkened */
-    #f08-card1 { transform-origin: 430px 0px; }
-    .f08-card-dim { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #0A0A0A; opacity: 0.55; pointer-events: none; }
-    .f08-feed { position: absolute; left: 48px; top: 196px; width: 764px; height: 620px; overflow: hidden; }
-    .f08-post { position: absolute; left: 0; width: 764px; height: 350px; }
-    .f08-photo { position: absolute; left: 0; top: 0; width: 764px; height: 280px; border-radius: 18px; overflow: hidden; background: #222222; }
-    .f08-photo img { position: absolute; left: 0; top: 0; width: 764px; height: 280px; object-fit: cover; object-position: 50% 40%; display: block; }
-    .f08-cap { position: absolute; left: 18px; bottom: 18px; padding: 8px 14px; border-radius: 10px; background: rgba(10,10,10,0.82);
-      font: 700 26px/34px "Space Mono", monospace; color: #ffffff; white-space: nowrap; }
-    .f08-bar1 { position: absolute; left: 40px; height: 14px; border-radius: 7px; background: #2a2a2a; }
-    .f08-counter { position: absolute; left: 48px; top: 836px; width: 764px; height: 64px; }
-    .f08-vues { position: absolute; left: 60px; top: 15px; font: 700 26px/34px "Space Mono", monospace; color: #bdbdbd; letter-spacing: 0.06em; }
-    .f08-num { position: absolute; left: 160px; top: 0; font: 700 52px/64px "Space Mono", monospace; color: #ffffff; white-space: pre; }
+    /* card 1, behind: static, scale 0.97 about its centre (default origin 430px 470px), lifted 42 px, darkened, badge only */
+    .f08-card-dim { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #0A0A0A; opacity: 0.45; pointer-events: none; }
     /* ===================== end SHARED: card (CSS) ===================== */
 
     /* ===================== SHARED: card2 (CSS) ===================== */
@@ -137,25 +127,9 @@
     <div id="f08-push" class="f08-cam">
       <div id="f08-cran" class="f08-cam">
 
-        <!-- ===================== SHARED: card — card 1 behind (state of 06 simplified, static) ===================== -->
+        <!-- ===================== SHARED: card — card 1 behind (static: scale 0.97 about its centre, y -42, darkened, badge only) ===================== -->
         <div id="f08-card1" class="f08-card">
           <div class="f08-badge">1</div>
-          <div class="f08-title f08-ctitle"><span class="f08-tline">MONTRE TON TRAVAIL<i class="f08-stroke-tilt"><i class="f08-stroke" style="transform: scaleX(1);"></i></i></span></div>
-          <div class="f08-feed">
-            <div class="f08-post" style="top: -31px;">
-              <div class="f08-photo"><img src="assets/img/thumb-audi.png" alt="" style="object-position: 50% 50%;"><div class="f08-cap">CLIENT LIVRÉ</div></div>
-              <div class="f08-bar1" style="top: 298px; width: 62%;"></div><div class="f08-bar1" style="top: 326px; width: 38%;"></div>
-            </div>
-            <div class="f08-post" style="top: 343px;">
-              <div class="f08-photo"><img src="assets/img/thumb-ford.png" alt="" style="object-position: 50% 45%;"></div>
-              <div class="f08-bar1" style="top: 298px; width: 62%;"></div><div class="f08-bar1" style="top: 326px; width: 38%;"></div>
-            </div>
-          </div>
-          <div class="f08-counter">
-            <svg style="position:absolute;left:0;top:10px;width:44px;height:44px" viewBox="0 0 44 44"><path d="M3 22 C 9 12, 15 8, 22 8 C 29 8, 35 12, 41 22 C 35 32, 29 36, 22 36 C 15 36, 9 32, 3 22 Z" fill="none" stroke="#FB8000" stroke-width="3.6" stroke-linejoin="round"></path><circle cx="22" cy="22" r="6.5" fill="#FB8000"></circle></svg>
-            <div class="f08-vues">VUES</div>
-            <div class="f08-num">9 800</div>
-          </div>
           <div class="f08-card-dim"></div>
         </div>
 
@@ -267,8 +241,8 @@
       // cran 1.30: a step in toward the stars, just before they fill
       tl.fromTo($("f08-cran"), { scale: 1 }, { scale: 1.02, duration: 0.3, ease: "power3.out", immediateRender: false }, 1.30);
 
-      /* ---- 0.00 card 1 already in place behind (static: 0.94, y -44, darkened); card 2 rises from below ---- */
-      tl.fromTo($("f08-card1"), { scale: 0.94, y: -44 }, { scale: 0.94, y: -44, duration: 0.01, ease: "none" }, 0);
+      /* ---- 0.00 card 1 already in place behind (static: 0.97 about its centre, y -42, darkened); card 2 rises from below ---- */
+      tl.fromTo($("f08-card1"), { scale: 0.97, y: -42 }, { scale: 0.97, y: -42, duration: 0.01, ease: "none" }, 0);
       tl.fromTo($("f08-card2"), { opacity: 1, y: 900 }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out" }, 0);
       tl.fromTo($("f08-halo"), { scale: 0.9, opacity: 0.7 }, { scale: 1.05, opacity: 1, duration: 0.6, ease: "power3.out" }, 0);
 

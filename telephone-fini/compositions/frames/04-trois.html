@@ -1,0 +1,271 @@
+<template>
+  <!--
+    ===================== HANDOFF_IN GEOMETRY (03-courbe -> 04-trois) =====================
+    0.00 here == 3.50 of 03-courbe (geometry copied from its HANDOFF_OUT comment and markup):
+      camera #f04-cam x -140 (travelling right, -40 px/s, continued linearly), scale 1 ;
+      chart in chart coords (svg 1080x1920): axes y x170 640->1160, x y1160 170->1070, ticks x = 200 + 52.5*(year-2010),
+      curve path pathLength 1000 at strokeDashoffset 640 (tip at 2016, 515/772), still drawing at 166.7 units/s ;
+      start dot (200,710) r 11 white ; label « 2010 : 9 RDV SUR 10 APPELS » left 200 top 608, the 9 accent (reel at -504) ;
+      title « LE TÉLÉPHONE / MOURAIT DÉJÀ » outside the camera, top 300, stroke drawn ; halo left -420 top 160 scale 1.12 ;
+      no subtitle on screen.
+    This frame: the line keeps drawing, dives to 2026 (3 / 10 at 1040,1010) between 1.90 and 2.80, accent end dot 3.00,
+    end label « 2026 : 3 » (Big Shoulders 900 220 px, right-aligned on chart x 1060, top 676) slams at 3.35, the 3 rolls 9 -> 3.
+    Camera: x -140 -> -242.8 linear (0 -> 2.57), accelerates to -330 (3.20), cran to -400 + scale 1.06 on the end label (3.20 -> 3.88).
+    End: hard cut (no handoff_out).
+    ======================================================================================
+  -->
+  <style>
+    @font-face { font-family: "Big Shoulders"; src: url("assets/fonts/BigShoulders-900.woff2") format("woff2"); font-weight: 900; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+
+    /* ===================== SHARED: ground ===================== */
+    /* solid #0A0A0A + one soft accent halo behind the focal element + static grain 4 %.
+       Full-duration class="clip" layer on track 0. Move the halo by tweening its x / y / scale / opacity only. */
+    .f04-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .f04-halo { position: absolute; left: -60px; top: 300px; width: 1200px; height: 1200px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.16) 0%, rgba(251,128,0,0.10) 38%, rgba(251,128,0,0.035) 70%, rgba(251,128,0,0) 100%); }
+    .f04-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    /* ===================== end SHARED: ground ===================== */
+
+    /* ===================== SHARED: title ===================== */
+    /* Scene title: Big Shoulders 900, 128 px, caps, line-height 0.95, white, centred in the title zone (y 260 to 640,
+       side margins 80 px). The orange title-stroke sits under the LAST line: it is sized in em, so it is always
+       "line width + 20 px" (10 px each side at 128 px), 14 px tall, round cap at the left, tapered end, tilted -1.5 deg.
+       Markup:
+         <div class="f04-title" style="top: ...px">
+           <span class="f04-tline">LINE 1</span><br>
+           <span class="f04-tline">LINE 2<i class="f04-stroke-tilt"><i class="f04-stroke" id="f04-..."></i></i></span>
+         </div>
+       The same component scales with font-size (this frame uses it at the jumbo size, 300 px). */
+    .f04-title { position: absolute; left: 80px; width: 920px; text-align: center; font: 900 128px/0.95 "Big Shoulders", sans-serif;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .f04-tline { position: relative; display: inline-block; }
+    .f04-stroke-tilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.085em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .f04-stroke { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%);
+      transform-origin: 0 50%; transform: scaleX(0); }
+    /* ===================== end SHARED: title ===================== */
+
+    /* ===================== SHARED: subtitle ===================== */
+    /* The voice, word by word, in the subtitle band (y 1260 to 1440, nothing else in it): Instrument Sans 700 58/70,
+       centred on y 1350. One .f04-chunk per quoted chunk (2 to 6 words), all chunks stacked at the same place.
+       Every word is a .f04-w with data-cue (frame-local s); the key word also carries .f04-key (turns #FB8000 as it
+       appears, no box). data-out on the chunk = its 0.1 s leave (opacity + blur) before the next chunk. */
+    .f04-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .f04-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 58px/70px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .f04-w { display: inline-block; opacity: 0; }
+    /* ===================== end SHARED: subtitle ===================== */
+
+    /* ---- title (continues 03: present at 0, stroke drawn, never moves) ---- */
+    #f04-title { top: 300px; }
+    #f04-stroke { transform: scaleX(1); }
+
+    /* ---- camera: travelling (x) > cran (scale on the end label) ---- */
+    #f04-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; }
+    #f04-cran { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 860px 800px; }
+    #f04-chart { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+    .f04-axis { fill: none; stroke: #6f6f6f; stroke-width: 3; stroke-linecap: round; }
+    #f04-ticks line { stroke: #6f6f6f; stroke-width: 3; stroke-linecap: round; }
+    #f04-curve { fill: none; stroke: #ffffff; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round;
+      stroke-dasharray: 1000; stroke-dashoffset: 640; }
+    #f04-shadow { fill: none; stroke: #FB8000; stroke-width: 22; stroke-linecap: round; stroke-linejoin: round;
+      filter: blur(12px); opacity: 0; }
+    #f04-dot { fill: #ffffff; transform-box: fill-box; transform-origin: 50% 50%; }
+    #f04-ring { fill: none; stroke: #ffffff; stroke-width: 3; opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; }
+    #f04-end { fill: #FB8000; opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; }
+    #f04-endring { fill: none; stroke: #FB8000; stroke-width: 4; opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; }
+    .f04-year { position: absolute; top: 1186px; width: 160px; margin-left: -80px; text-align: center;
+      font: 700 30px/36px "Space Mono", monospace; color: #6f6f6f; }
+    #f04-y2010 { left: 200px; }
+    #f04-y2026 { left: 1040px; }
+    #f04-y2026w { left: 1040px; color: #ffffff; opacity: 0; }
+
+    /* ---- start label « 2010 : 9 RDV SUR 10 APPELS » (as left by 03) ---- */
+    #f04-label { position: absolute; left: 200px; top: 608px; white-space: nowrap;
+      font: 700 38px/56px "Space Mono", monospace; color: #ffffff; transform-origin: 0 50%; }
+    #f04-nine { position: relative; display: inline-block; vertical-align: top; width: 0.6em; height: 56px; overflow: hidden;
+      color: #FB8000; font-variant-numeric: tabular-nums; transform-origin: 50% 60%; }
+    #f04-reel { position: absolute; left: 0; top: 0; width: 100%; transform: translateY(-504px); }
+    #f04-reel span { display: block; height: 56px; text-align: center; }
+
+    /* ---- end label « 2026 : 3 » (jumbo 220 px, the 3 in accent rolling 9 -> 3) ---- */
+    #f04-endlabel { position: absolute; left: 460px; top: 676px; width: 600px; text-align: right; white-space: nowrap;
+      font: 900 220px/198px "Big Shoulders", sans-serif; color: #ffffff; opacity: 0; transform-origin: 100% 60%; }
+    #f04-three { position: relative; display: inline-block; vertical-align: top; width: 0.5em; height: 198px; overflow: hidden;
+      color: #FB8000; font-variant-numeric: tabular-nums; transform-origin: 50% 60%; }
+    #f04-reel3 { position: absolute; left: 0; top: 0; width: 100%; }
+    #f04-reel3 span { display: block; height: 198px; text-align: center; }
+  </style>
+
+  <div id="root" data-composition-id="04-trois" data-width="1080" data-height="1920" data-duration="3.88">
+
+    <!-- SHARED: ground (full-duration clip, lowest track) -->
+    <div id="f04-ground" class="clip f04-ground" data-start="0" data-duration="3.88" data-track-index="0">
+      <div id="f04-halo" class="f04-halo" style="left: -420px; top: 160px;"></div>
+      <div class="f04-grain"></div>
+    </div>
+
+    <!-- camera: travelling right (continues 03), then accelerates and steps onto the end label -->
+    <div id="f04-cam">
+      <div id="f04-cran">
+        <svg id="f04-chart" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg">
+          <path id="f04-axis-y" class="f04-axis" d="M 170 640 L 170 1160"></path>
+          <path id="f04-axis-x" class="f04-axis" d="M 170 1160 L 1070 1160"></path>
+          <g id="f04-ticks"></g>
+          <path id="f04-shadow" d="M 200 710 C 225 710 236 710 252 712 C 282 716 318 746 358 746 C 386 746 398 738 410 738 C 446 738 482 750 515 772 C 610 836 740 958 1040 1010"></path>
+          <path id="f04-curve" pathLength="1000"
+            d="M 200 710 C 225 710 236 710 252 712 C 282 716 318 746 358 746 C 386 746 398 738 410 738 C 446 738 482 750 515 772 C 610 836 740 958 1040 1010"></path>
+          <circle id="f04-ring" cx="200" cy="710" r="22"></circle>
+          <circle id="f04-dot" cx="200" cy="710" r="11"></circle>
+          <circle id="f04-endring" cx="1040" cy="1010" r="26"></circle>
+          <circle id="f04-end" cx="1040" cy="1010" r="15"></circle>
+        </svg>
+        <div id="f04-y2010" class="f04-year">2010</div>
+        <div id="f04-y2026" class="f04-year">2026</div>
+        <div id="f04-y2026w" class="f04-year">2026</div>
+        <div id="f04-label">2010 : <span id="f04-nine"><span id="f04-reel"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span> RDV SUR 10 APPELS</div>
+        <div id="f04-endlabel">2026 : <span id="f04-three"><span id="f04-reel3"><span>9</span><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span></span></span></div>
+      </div>
+    </div>
+
+    <!-- title (outside the camera: holds still, as in 03) -->
+    <div id="f04-title" class="f04-title">
+      <span class="f04-tline">LE TÉLÉPHONE</span><br>
+      <span class="f04-tline">MOURAIT DÉJÀ<i class="f04-stroke-tilt"><i class="f04-stroke" id="f04-stroke"></i></i></span>
+    </div>
+
+    <!-- SHARED: subtitle (outside the camera: it never moves with the scene) -->
+    <div id="f04-sub" class="f04-sub">
+      <div class="f04-chunk" data-out="0.70"><span class="f04-w" data-cue="0.11">sur</span> <span class="f04-w f04-key" data-cue="0.29">dix</span> <span class="f04-w" data-cue="0.47">appels,</span></div>
+      <div class="f04-chunk" data-out="2.45"><span class="f04-w" data-cue="0.83">je</span> <span class="f04-w" data-cue="1.01">décrochais</span> <span class="f04-w f04-key" data-cue="1.55">neuf</span> <span class="f04-w" data-cue="1.73">rendez-vous.</span></div>
+      <div class="f04-chunk"><span class="f04-w" data-cue="2.57">Aujourd'hui,</span> <span class="f04-w f04-key" data-cue="3.35">trois.</span></div>
+    </div>
+
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "04-trois";
+      var DUR = 3.88;
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { return root.querySelector("#" + id); }
+      var tl = gsap.timeline({ paused: true });
+
+      /* ===================== SHARED: title (JS) ===================== */
+      // Title slam: scale 1.25 -> 1, blur 10 -> 0, 0.18 s expo.out (t0 > 0: the element starts at opacity 0 in CSS).
+      function f04TitleIn(tl, el, t0) {
+        tl.fromTo(el, { opacity: 0, scale: 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false }, t0);
+      }
+      // Orange stroke: draws from the left, scaleX 0 -> 1, 0.3 s power3.out.
+      function f04StrokeDraw(tl, el, t0) {
+        tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, t0);
+      }
+      /* ===================== end SHARED: title (JS) ===================== */
+
+      /* ===================== SHARED: subtitle (JS) ===================== */
+      // Each word appears 1 frame before its cue (never late): opacity 0 -> 1, y 14 -> 0, blur 6 -> 0 in 0.12 s.
+      // The key word turns #FB8000 as it appears. A chunk leaves at its data-out in 0.1 s (opacity + blur).
+      var F04_LEAD = 1 / 30;
+      function f04Subtitle(tl, box) {
+        Array.prototype.forEach.call(box.querySelectorAll(".f04-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".f04-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - F04_LEAD);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" },
+              { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("f04-key")) {
+              tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            }
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) {
+            tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" },
+              { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+          }
+        });
+      }
+      /* ===================== end SHARED: subtitle (JS) ===================== */
+
+      /* ---- year ticks (static geometry, same as 03) ---- */
+      var SVGNS = "http://www.w3.org/2000/svg";
+      var ticks = $("f04-ticks");
+      for (var yr = 2010; yr <= 2026; yr++) {
+        var tx = 200 + 52.5 * (yr - 2010);
+        var ln = document.createElementNS(SVGNS, "line");
+        ln.setAttribute("x1", tx); ln.setAttribute("x2", tx);
+        ln.setAttribute("y1", 1160); ln.setAttribute("y2", 1174);
+        ticks.appendChild(ln);
+      }
+
+      // eases whose start slope matches the incoming speed (seamless acceleration, no stall)
+      function accel(k) { return function (u) { return k * u + (1 - k) * u * u; }; }
+
+      /* ---- camera track ---- */
+      var cam = $("f04-cam"), cran = $("f04-cran");
+      // 0 -> 2.57 travelling +40 px/s, continued from 03 (x -140 at 0)
+      tl.fromTo(cam, { x: -140 }, { x: -140 - 40 * 2.57, duration: 2.57, ease: "none" }, 0);
+      // 2.57 -> 3.20 the travelling accelerates (start slope 40 px/s: k = 40 / (87.2 / 0.63))
+      tl.fromTo(cam, { x: -242.8 }, { x: -330, duration: 0.63, ease: accel(0.289), immediateRender: false }, 2.57);
+      // 3.20 -> 3.88 cran onto the end label
+      tl.fromTo(cam, { x: -330 }, { x: -400, duration: 0.68, ease: "power3.out", immediateRender: false }, 3.20);
+      tl.fromTo(cran, { scale: 1 }, { scale: 1, duration: 0.01, ease: "none" }, 0);
+      tl.fromTo(cran, { scale: 1 }, { scale: 1.06, duration: 0.68, ease: "power3.out", immediateRender: false }, 3.20);
+
+      /* ---- halo: from the left (as in 03) it follows the fall towards the end label ---- */
+      var halo = $("f04-halo");
+      tl.fromTo(halo, { x: 0, y: 0, scale: 1.12, opacity: 1 }, { x: 0, y: 0, scale: 1.12, opacity: 1, duration: 0.01, ease: "none" }, 0);
+      tl.fromTo(halo, { x: 0, y: 0 }, { x: 620, y: 40, duration: 1.3, ease: "power3.inOut", immediateRender: false }, 1.90);
+      tl.fromTo(halo, { scale: 1.12 }, { scale: 1.3, duration: 0.5, ease: "power3.out", immediateRender: false }, 3.35);
+
+      /* ---- the curve: keeps drawing at 166.7 u/s, then dives to 2026 (1.90 -> 2.80) ---- */
+      var curve = $("f04-curve");
+      tl.fromTo(curve, { strokeDashoffset: 640 }, { strokeDashoffset: 323.3, duration: 1.90, ease: "none" }, 0);
+      // power2.in-like dive whose start slope equals 166.7 u/s (k = 166.7 / (323.3 / 0.9))
+      tl.fromTo(curve, { strokeDashoffset: 323.3 }, { strokeDashoffset: 0, duration: 0.90, ease: accel(0.464), immediateRender: false }, 1.90);
+
+      /* ---- start label: a pulse on « neuf », then it greys back as the line falls ---- */
+      var label = $("f04-label");
+      tl.fromTo($("f04-ring"), { opacity: 0.8, scale: 0.6 }, { opacity: 0, scale: 2.2, duration: 0.45, ease: "power3.out", immediateRender: false }, 0.29);
+      tl.fromTo(label, { scale: 1 }, { scale: 1.1, duration: 0.16, ease: "power3.out", immediateRender: false }, 1.52);
+      tl.fromTo(label, { scale: 1.1 }, { scale: 1, duration: 0.34, ease: "power3.out", immediateRender: false }, 1.68);
+      tl.fromTo($("f04-nine"), { scale: 1 }, { scale: 1.25, duration: 0.16, ease: "power3.out", immediateRender: false }, 1.52);
+      tl.fromTo($("f04-nine"), { scale: 1.25 }, { scale: 1, duration: 0.34, ease: "power3.out", immediateRender: false }, 1.68);
+      tl.fromTo($("f04-ring"), { opacity: 0.8, scale: 0.6 }, { opacity: 0, scale: 2.4, duration: 0.45, ease: "power3.out", immediateRender: false }, 1.55);
+      tl.fromTo(label, { opacity: 1 }, { opacity: 0.35, duration: 0.4, ease: "power3.out", immediateRender: false }, 2.57);
+      tl.fromTo($("f04-dot"), { opacity: 1 }, { opacity: 0.35, duration: 0.4, ease: "power3.out", immediateRender: false }, 2.57);
+
+      /* ---- 2.80 the line lands on 2026 ; 3.00 the accent end point ---- */
+      tl.fromTo($("f04-y2026w"), { opacity: 0, y: 0 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out", immediateRender: false }, 2.80);
+      tl.fromTo($("f04-end"), { opacity: 0, scale: 2.4 }, { opacity: 1, scale: 1, duration: 0.2, ease: "expo.out", immediateRender: false }, 3.00);
+      tl.fromTo($("f04-endring"), { opacity: 0.9, scale: 0.5 }, { opacity: 0, scale: 2.4, duration: 0.5, ease: "power3.out", immediateRender: false }, 3.00);
+
+      /* ---- 3.35 on « trois » : « 2026 : 3 » slams, the 3 rolls 9 -> 3 (count + scale, same ease) ---- */
+      var endl = $("f04-endlabel"), three = $("f04-three");
+      tl.fromTo(endl, { opacity: 0, scale: 1.25, filter: "blur(10px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.18, ease: "expo.out", immediateRender: false }, 3.33);
+      tl.fromTo($("f04-reel3"), { y: 0 }, { y: -6 * 198, duration: 0.3, ease: "power3.out", immediateRender: false }, 3.35);
+      tl.fromTo(three, { scale: 0.6 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, 3.35);
+      // 3.40 -> 3.88 breath: the 3 swells once, the line casts an orange shadow
+      tl.fromTo(three, { scale: 1 }, { scale: 1.05, duration: 0.2, ease: "power3.out", immediateRender: false }, 3.66);
+      tl.fromTo($("f04-shadow"), { opacity: 0 }, { opacity: 0.55, duration: 0.45, ease: "power3.out", immediateRender: false }, 3.40);
+
+      /* ---- the voice, word by word ---- */
+      f04Subtitle(tl, $("f04-sub"));
+
+      // exact frame length
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
