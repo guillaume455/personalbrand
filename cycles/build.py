@@ -396,9 +396,18 @@ def scene_01():
         inner = "".join(f'<div class="§photo" style="left:{0}px;top:{k * (300 / n) + (6 if k else 0)}px;width:{w}px;height:{300 / n - (6 if n > 1 else 0):.0f}px"><img src="assets/img/{p}"></div>'
                         for k, p in enumerate(photos))
         return f'<div id="§c{i}" class="§cfg" style="left:{x}px">{inner}<div class="§cfgn">{i + 1}</div></div>'
-    st = cfg(0, 70, ["mustang.jpg"]) + cfg(1, 395, ["x4.jpg", "mini.jpg"]) + cfg(2, 720, ["golf.jpg", "fiat.jpg", "mini.jpg"])
+    css += """
+    #§bg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
+    #§bg img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: saturate(0.7) brightness(0.32); }
+    """
+    st = ('<div id="§bg">' + "".join(f'<img src="assets/img/parc{k}.jpg">' for k in [1, 3, 4, 2]) + '</div>'
+          + cfg(0, 70, ["mustang.jpg"]) + cfg(1, 395, ["x4.jpg", "mini.jpg"]) + cfg(2, 720, ["golf.jpg", "fiat.jpg", "mini.jpg"]))
     hud = title("t1", [(odo("bud", "30 000 €"), 230), ("<span style='color:#ffffff'>SUR 12 MOIS</span>", 70)], 300, 120, "color:#FB8000")
     js = """
+      // the real stock behind, hard cuts from one shot to the next
+      var bgs = $("bg").querySelectorAll("img"), bs = DUR / bgs.length;
+      for (var b = 0; b < bgs.length; b++) { tl.set(bgs[b], { opacity: 1 }, b * bs); if (b) tl.set(bgs[b - 1], { opacity: 0 }, b * bs + 0.001); }
+      init("bg", { scale: 1 }); go("bg", { scale: 1.12 }, 0, DUR, "none");
       slam("t1-0", Math.max(0.02, at("30000") - 0.05), { s: 1.3 }); odo("bud", Math.max(0.02, at("30000") - 0.05), 0.9);
       stroke("t1", at("douze") + 0.3); slam("t1-1", at("douze") - 0.05, { s: 1.3 });
       ["c0", "c1", "c2"].forEach(function (c, k) { pre(c, { opacity: 0, y: 80 }); go(c, { opacity: 1, y: 0 }, at("façons") - 0.1 + k * 0.14, 0.35, "back.out(1.5)"); });

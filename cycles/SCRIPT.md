@@ -5,7 +5,7 @@ trait orange. Sous-titres de la voix, mot-clé en orange. Jamais plus de 6 mots 
 12 mois en bas d'écran : chaque voiture y avance d'un cycle de vente à la fois, un compteur annuel à droite. Aucun
 billet ni espèce. Fin : « @guillaumeherbin_ ». Musique : même morceau que « Ma pire marge » (coma-media slim).
 
-Photos de Guillaume (plaques floutées, enseigne floutée derrière la Mustang) : Mustang (sportive), BMW X4 (SUV),
+Photos du parc (`rushes/cycles/`, logos BH et plaques floutés) en fond de l'accroche. Photos de Guillaume (plaques floutées, enseigne floutée derrière la Mustang) : Mustang (sportive), BMW X4 (SUV),
 Golf 7, Fiat 500L, Mini (citadines). Document « GARANTIE » inventé (aucun nom). Réparations : 6 000 € / 1 200 €
 (chiffres d'exemple du brief).
 
