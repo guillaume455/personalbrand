@@ -32,7 +32,7 @@ Le texte de la voix est dans `build.py` (SCENES) : c'est la seule source.
 ```
 Ma pire marge en seize ans de métier, c'est sur une Ferrari.
 Septembre deux mille dix-neuf. J'ai trente ans. Ma première Ferrari, une trois cent soixante Modena, quarante-neuf mille euros. Je l'achète sur photos. Les factures d'entretien ? Sur photos aussi. Je me la fais livrer sans l'avoir vue. Le vendeur, je bosse avec lui depuis des années. Alors je ne vérifie rien.
-Je la revends à un particulier en quelques semaines. Puis il m'appelle : le moteur chauffe. Je ne discute pas, je le rembourse intégralement, carte grise comprise, et je rapatrie la voiture dans mon garage.
+Je la revends à un particulier en quelques semaines. Puis il m'appelle pour un problème de moteur qui chauffe. Je ne discute pas, je le rembourse intégralement, carte grise comprise, et je rapatrie la voiture dans mon garage.
 Diagnostic : joint de culasse. Sur une Ferrari, ça veut dire déposer le moteur. Et tant qu'on y est, la distribution.
 Je confie le chantier à un mécano. Il commence. Puis il abandonne, moteur ouvert. Je dois tout reprendre à zéro : trouver quelqu'un capable d'intervenir sur place, dans mon garage, parce que la voiture ne bouge plus. Elle reste plus d'un an immobilisée.
 Le mécano qui reprend le chantier me fait commander l'embrayage en plus, pour anticiper. Cette fois, j'écoute. Avril deux mille vingt-trois, je la revends cinquante mille euros à l'export. Trois ans et demi plus tard. Moins dix-sept mille euros, sans compter l'argent bloqué pendant tout ce temps.

@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "66s"
+duration: "87.567s"
 message: "Ma pire marge en 16 ans : une Ferrari 360 achetée sur photos sans contrôle, moteur déposé, plus d'un an immobilisée, revendue avec 16 800 € de perte ; trois erreurs à ne pas refaire."
 arc: Hook → Setup → Turn → Diagnosis → Struggle → Payoff → Lessons → CTA
 audience: "Marchands et passionnés automobiles"
@@ -21,10 +21,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : aucun billet ni espèce ; jamais plus de 6 mots par bloc de texte ; rouge sombre réservé à la jauge de température et aux culasses ; photos réelles désaturées, cadre orange, plaques floutées.
 
-## Frame 1: Hook · 0.00 → 3.00
+## Frame 1: Hook · 0.00 → 3.07
 
 - scene: Hook
-- duration: 3.00s
+- duration: 3.07s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
@@ -37,10 +37,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: L'achat · 3.00 → 13.00
+## Frame 2: L'achat · 3.07 → 17.93
 
 - scene: L'achat
-- duration: 10.00s
+- duration: 14.87s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-achat.html
@@ -53,14 +53,14 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: Le retour · 13.00 → 22.00
+## Frame 3: Le retour · 17.93 → 28.03
 
 - scene: Le retour
-- duration: 9.00s
+- duration: 10.10s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-retour.html
-- voiceover: "Je la revends à un particulier en quelques semaines. Puis il m'appelle : le moteur chauffe. Je ne discute pas, je le rembourse intégralement, carte grise comprise, et je rapatrie la voiture dans mon garage."
+- voiceover: "Je la revends à un particulier en quelques semaines. Puis il m'appelle pour un problème de moteur qui chauffe. Je ne discute pas, je le rembourse intégralement, carte grise comprise, et je rapatrie la voiture dans mon garage."
 - type: demo
 - blueprint: none
 - focal: Le retour
@@ -69,10 +69,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: Le diagnostic · 22.00 → 28.00
+## Frame 4: Le diagnostic · 28.03 → 34.50
 
 - scene: Le diagnostic
-- duration: 6.00s
+- duration: 6.47s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-diagnostic.html
@@ -85,10 +85,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: Le mécano · 28.00 → 40.00
+## Frame 5: Le mécano · 34.50 → 47.27
 
 - scene: Le mécano
-- duration: 12.00s
+- duration: 12.77s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-mecano.html
@@ -101,10 +101,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 6: La revente · 40.00 → 48.00
+## Frame 6: La revente · 47.27 → 60.43
 
 - scene: La revente
-- duration: 8.00s
+- duration: 13.17s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/06-revente.html
@@ -117,10 +117,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 7: Mes erreurs · 48.00 → 61.00
+## Frame 7: Mes erreurs · 60.43 → 81.07
 
 - scene: Mes erreurs
-- duration: 13.00s
+- duration: 20.63s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/07-erreurs.html
@@ -133,10 +133,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 8: CTA · 61.00 → 66.00
+## Frame 8: CTA · 81.07 → 87.57
 
 - scene: CTA
-- duration: 5.00s
+- duration: 6.50s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/08-cta.html

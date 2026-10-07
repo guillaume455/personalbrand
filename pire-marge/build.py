@@ -30,7 +30,7 @@ SCENES = [
    "Je l'achète sur *photos*.", "Les factures d'entretien~?", "Sur photos *aussi*.", "Je me la fais *livrer*",
    "sans l'avoir vue.", "Le vendeur, je bosse", "avec lui depuis des années.", "Alors je ne vérifie *rien*."]),
  dict(id="03-retour", name="Le retour", window=(13, 22), chunks=[
-   "Je la *revends*", "à un particulier", "en quelques semaines.", "Puis il m'*appelle*~:", "le moteur *chauffe*.",
+   "Je la *revends*", "à un particulier", "en quelques semaines.", "Puis il m'*appelle*", "pour un problème", "de moteur qui *chauffe*.",
    "Je ne discute pas,", "je le *rembourse*", "intégralement,", "carte grise comprise,", "et je *rapatrie*",
    "la voiture", "dans mon garage."]),
  dict(id="04-diagnostic", name="Le diagnostic", window=(22, 28), chunks=[
@@ -398,11 +398,11 @@ MEDIA_JS = """
           if (k > 0) tl.set(imgs[k - 1], { opacity: 0 }, Math.max(0, times[k]) + 0.001);
         }
       }
-      // video as a sprite sheet (cols x rows frames, 12 fps), played from t for dur seconds, looping
+      // video as a sprite sheet (cols x rows frames, 12 fps), played from t for dur seconds, holding its last frame
       function sprite(id, t, dur, n, cols, fps) {
         var el = $(id), rows = Math.ceil(n / cols), step = 1 / (fps || 12), f = 0;
         for (var x = 0; x * step < dur; x++) {
-          var k = f % n, cx = k % cols, cy = Math.floor(k / cols);
+          var k = Math.min(f, n - 1), cx = k % cols, cy = Math.floor(k / cols);
           tl.set(el, { backgroundPosition: (cx * 100 / (cols - 1)) + "% " + (cy * 100 / (rows - 1)) + "%" }, t + x * step);
           f++;
         }
