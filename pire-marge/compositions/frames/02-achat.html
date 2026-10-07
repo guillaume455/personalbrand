@@ -51,8 +51,10 @@
       font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
     .r2-w { display: inline-block; opacity: 0; }
 
-    .r2-photo { position: absolute; border: 4px solid #FB8000; border-radius: 8px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.6); }
-    .r2-photo img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.72) contrast(1.04); }
+    .r2-burst { position: absolute; overflow: hidden; }
+    .r2-burst img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: saturate(0.72) contrast(1.04); }
+    .r2-sprite { position: absolute; border: 4px solid #FB8000; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.6); filter: saturate(0.72); }
 
     #r2-tot { position: absolute; right: 50px; top: 226px; text-align: right; transform-origin: 100% 50%; }
     .r2-totl { font: 600 24px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.16em; }
@@ -63,18 +65,20 @@
 
     #r2-phone { position: absolute; left: 110px; top: 610px; width: 340px; height: 640px; border-radius: 46px; background: #050505; border: 6px solid #3a3a3a;
       box-shadow: 0 30px 80px rgba(0,0,0,0.7); opacity: 0; }
-    #r2-scr { position: absolute; left: 14px; top: 46px; width: 300px; height: 540px; border-radius: 10px; overflow: hidden; background: #141414; }
+    #r2-scr { left: 14px; top: 46px; width: 300px; height: 540px; border-radius: 10px; background: #141414; }
     #r2-notch { position: absolute; left: 120px; top: 16px; width: 88px; height: 14px; border-radius: 7px; background: #222; }
-    #r2-recv { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; }
-    #r2-recv img { position: absolute; left: 0; top: -20px; width: 100%; height: 580px; object-fit: cover; filter: saturate(0.72); }
-    #r2-thumbs { position: absolute; left: 500px; top: 600px; width: 440px; height: 650px; overflow: hidden; opacity: 0;
-      -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 88%, transparent 100%); }
-    #r2-tcol { position: absolute; left: 40px; top: 0; width: 360px; }
-    .r2-th { display: block; width: 300px; height: 210px; margin: 0 auto 26px; border-radius: 8px; overflow: hidden; border: 3px solid #3a3a3a; }
-    .r2-th img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.5); }
+    #r2-carnet { left: 470px; top: 700px; width: 500px; height: 380px; border-radius: 8px; border: 4px solid #FB8000; opacity: 0; background: #1a1a1a; }
+    #r2-carnet img { object-fit: contain; filter: none; }
+    #r2-list { position: absolute; left: 500px; top: 600px; width: 440px; height: 620px; overflow: hidden; opacity: 0;
+      -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%); }
+    #r2-lcol { position: absolute; left: 0; top: 0; width: 440px; }
+    .r2-it { position: relative; height: 92px; margin-bottom: 18px; border-radius: 20px; background: #151515; border: 2px solid #2e2e2e;
+      font: 40px/92px "Anton", sans-serif; color: #ffffff; padding-left: 78px; white-space: nowrap; }
+    .r2-idoc { position: absolute; left: 22px; top: 22px; width: 40px; height: 48px; fill: none; stroke: #9a9a9a; stroke-width: 3.5; stroke-linejoin: round; }
+    .r2-tick { position: absolute; right: 22px; top: 22px; width: 48px; height: 48px; border-radius: 50%; background: #FB8000; }
+    .r2-tick svg { position: absolute; left: 0; top: 0; width: 48px; height: 48px; fill: none; stroke: #0A0A0A; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
     #r2-truck { position: absolute; left: 240px; top: 860px; width: 600px; height: 230px; overflow: visible; fill: none; stroke: #ffffff;
       stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; opacity: 0; transform: scaleX(-1); }
-    #r2-seller { opacity: 0; }
     #r2-nocheck { position: absolute; left: 700px; top: 620px; width: 220px; height: 220px; overflow: visible; fill: none; stroke: #ffffff; stroke-linecap: round; opacity: 0; }
       </style>
 
@@ -84,7 +88,7 @@
       <div class="r2-grain"></div>
     </div>
     <div id="r2-push" class="r2-cam"><div id="r2-shk" class="r2-cam"><div id="r2-cran" class="r2-cam">
-      <div id="r2-phone"><div id="r2-notch"></div><div id="r2-scr"><div id="r2-recv"><img src="assets/img/achat.jpg"></div></div></div><div id="r2-thumbs"><div id="r2-tcol"><div class="r2-th"><img src="assets/img/carnet1.jpg"></div><div class="r2-th"><img src="assets/img/carnet2.jpg"></div><div class="r2-th"><img src="assets/img/carnet3.jpg"></div><div class="r2-th"><img src="assets/img/carnet4.jpg"></div><div class="r2-th"><img src="assets/img/carnet5.jpg"></div><div class="r2-th"><img src="assets/img/carnet6.jpg"></div><div class="r2-th"><img src="assets/img/carnet1.jpg"></div><div class="r2-th"><img src="assets/img/carnet2.jpg"></div></div></div><svg id="r2-truck" viewBox="0 0 600 230"><path d="M440 196 L440 74 Q440 62 452 62 L522 62 L560 112 L588 122 L588 196 Z"/><path d="M456 78 L514 78 L544 114 L456 114 Z"/><path d="M30 160 L440 160 L440 182 L30 182 Z"/><circle cx="110" cy="200" r="24"/><circle cx="370" cy="200" r="24"/><circle cx="520" cy="200" r="24"/><g transform="translate(60 20) scale(0.86)"><path d="M28 128 L24 100 Q26 84 46 80 L118 70 L168 34 Q178 27 192 27 L276 27 Q294 27 306 40 L340 74 L366 80 Q384 85 384 102 L382 128 L336 128"/><path d="M64 128 L24 128"/><path d="M126 128 L274 128"/><circle cx="95" cy="128" r="30"/><circle cx="305" cy="128" r="30"/><circle cx="95" cy="128" r="7"/><circle cx="305" cy="128" r="7"/><path d="M136 70 L174 40 Q180 36 190 36 L234 36 L234 70 Z"/><path d="M248 36 L272 36 Q286 36 296 46 L320 70 L248 70 Z"/></g></svg><div id="r2-sel-glow" class="r2-glow" style="left:-75px;top:768px"></div><div id="r2-sel" class="r2-person" style="left:50px;top:870px;width:170px;height:255px"><svg viewBox="0 0 200 300" class="r2-pl r2-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r2-pl r2-pwhite" id="r2-sel-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r2-pl r2-porange" id="r2-sel-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><svg id="r2-nocheck" viewBox="0 0 160 160"><circle cx="64" cy="64" r="44" stroke-width="12"/><path d="M98 98 L144 144" stroke-width="18"/><path d="M10 150 L150 10" stroke="#FB8000" stroke-width="16"/></svg>
+      <div id="r2-phone"><div id="r2-notch"></div><div id="r2-scr" class="r2-burst"><img src="assets/img/achat.jpg"><img src="assets/img/ph-interieur.jpg"><img src="assets/img/ph-moteur19.jpg"><img src="assets/img/ph-feux.jpg"><img src="assets/img/ph-roue19.jpg"><img src="assets/img/achat.jpg"></div></div><div id="r2-carnet" class="r2-burst"><img src="assets/img/carnet1.jpg"><img src="assets/img/carnet2.jpg"><img src="assets/img/carnet3.jpg"><img src="assets/img/carnet4.jpg"><img src="assets/img/carnet5.jpg"><img src="assets/img/carnet6.jpg"></div><div id="r2-list"><div id="r2-lcol"><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>POMPE À EAU<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>DISTRIBUTION<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>EMBRAYAGE<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>JOINTS<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>VIDANGE HUILE<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>CALORSTAT<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>DURITES<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>SUPPORT MOTEUR<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div></div></div><svg id="r2-truck" viewBox="0 0 600 230"><path d="M440 196 L440 74 Q440 62 452 62 L522 62 L560 112 L588 122 L588 196 Z"/><path d="M456 78 L514 78 L544 114 L456 114 Z"/><path d="M30 160 L440 160 L440 182 L30 182 Z"/><circle cx="110" cy="200" r="24"/><circle cx="370" cy="200" r="24"/><circle cx="520" cy="200" r="24"/><g transform="translate(60 20) scale(0.86)"><path d="M28 128 L24 100 Q26 84 46 80 L118 70 L168 34 Q178 27 192 27 L276 27 Q294 27 306 40 L340 74 L366 80 Q384 85 384 102 L382 128 L336 128"/><path d="M64 128 L24 128"/><path d="M126 128 L274 128"/><circle cx="95" cy="128" r="30"/><circle cx="305" cy="128" r="30"/><circle cx="95" cy="128" r="7"/><circle cx="305" cy="128" r="7"/><path d="M136 70 L174 40 Q180 36 190 36 L234 36 L234 70 Z"/><path d="M248 36 L272 36 Q286 36 296 46 L320 70 L248 70 Z"/></g></svg><div id="r2-sel-glow" class="r2-glow" style="left:-75px;top:768px"></div><div id="r2-sel" class="r2-person" style="left:50px;top:870px;width:170px;height:255px"><svg viewBox="0 0 200 300" class="r2-pl r2-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r2-pl r2-pwhite" id="r2-sel-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r2-pl r2-porange" id="r2-sel-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><svg id="r2-nocheck" viewBox="0 0 160 160"><circle cx="64" cy="64" r="44" stroke-width="12"/><path d="M98 98 L144 144" stroke-width="18"/><path d="M10 150 L150 10" stroke="#FB8000" stroke-width="16"/></svg>
     </div></div></div>
     <div id="r2-hud" class="r2-cam r2-hudcam">
       <div class="r2-title" id="r2-t2" style="top:360px;font-size:96px;"><span class="r2-tline" id="r2-t2-0">2019. 30 ANS.</span><br><span class="r2-tline" id="r2-t2-1">ACHETÉE SUR PHOTOS.<i class="r2-stilt"><i class="r2-stk" id="r2-t2-s"></i></i></span></div><div id="r2-tot"><div class="r2-totl">TOTAL</div><div class="r2-totv"><span id="r2-totv" class="r2-odo " data-to="00 000 €"><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-os">€</span></span></div></div>
@@ -215,20 +219,45 @@
         init("tot", { scale: 1 }); go("tot", { scale: 1.14 }, t + 1.1, 0.12); go("tot", { scale: 1 }, t + 1.22, 0.35);
       }
 
+      // photo burst: hard cuts from one photo to the next (each shown from times[k])
+      function burst(id, times, fade) {
+        var imgs = $(id).querySelectorAll("img");
+        for (var k = 0; k < imgs.length && k < times.length; k++) {
+          tl.set(imgs[k], { opacity: 1 }, Math.max(0, times[k]));
+          if (k > 0) tl.set(imgs[k - 1], { opacity: 0 }, Math.max(0, times[k]) + 0.001);
+        }
+      }
+      // video as a sprite sheet (cols x rows frames, 12 fps), played from t for dur seconds, looping
+      function sprite(id, t, dur, n, cols, fps) {
+        var el = $(id), rows = Math.ceil(n / cols), step = 1 / (fps || 12), f = 0;
+        for (var x = 0; x * step < dur; x++) {
+          var k = f % n, cx = k % cols, cy = Math.floor(k / cols);
+          tl.set(el, { backgroundPosition: (cx * 100 / (cols - 1)) + "% " + (cy * 100 / (rows - 1)) + "%" }, t + x * step);
+          f++;
+        }
+      }
+
       totInit("00 000"); pre("tot", { opacity: 0 });
       slam("t2-0", at("2019") - 0.05, { s: 1.3 });
       pre("phone", { opacity: 0, y: 80, rotation: -4 }); go("phone", { opacity: 1, y: 0, rotation: -2 }, 0.1, 0.45, "expo.out");
-      pre("recv", { opacity: 0, scale: 1.15 }); go("recv", { opacity: 1, scale: 1 }, at("ferrari") - 0.05, 0.35, "power3.out");
+      // the photos received on the phone, one after the other
+      var p0 = at("ferrari") - 0.05, p1 = at("photos", 1), ps = Math.max(0.28, (p1 - p0) / 5);
+      burst("scr", [p0, p0 + ps, p0 + 2 * ps, p0 + 3 * ps, p0 + 4 * ps, p1]);
       slam("tot", at("49000") - 0.1, { s: 1.2 }); odo("totv", at("49000") - 0.05, 0.9, { to: "49 000 €" });
-      slam("t2-1", at("photos") - 0.05);
-      stroke("t2", at("photos") + 0.2);
-      // maintenance invoices, on photos too: they scroll past
-      pre("thumbs", { opacity: 0 }); go("thumbs", { opacity: 1 }, at("factures") - 0.1, 0.3);
-      tl.fromTo($("tcol"), { y: 40 }, { y: -900, duration: Math.max(1.2, at("livrer") - at("factures") + 0.3), ease: "power1.inOut", immediateRender: false }, at("factures") - 0.1);
+      slam("t2-1", at("photos") - 0.05); stroke("t2", at("photos") + 0.2);
+      // the service book, straightened, very fast
+      var c0 = at("factures") - 0.1, c1 = at("aussi") - 0.05, cs = Math.max(0.16, (c1 - c0) / 6);
+      pre("carnet", { opacity: 0, scale: 0.9 }); go("carnet", { opacity: 1, scale: 1 }, c0, 0.15);
+      burst("carnet", [c0, c0 + cs, c0 + 2 * cs, c0 + 3 * cs, c0 + 4 * cs, c0 + 5 * cs]);
+      go("carnet", { opacity: 0, x: 60 }, c0 + 6 * cs, 0.12);
+      // then the maintenance bills, one after the other
+      var l0 = c0 + 6 * cs, l1 = at("livrer") - 0.12, lh = 110;
+      pre("list", { opacity: 0 }); go("list", { opacity: 1 }, l0, 0.12);
+      tl.fromTo($("lcol"), { y: 560 }, { y: -(8 * lh) + 380, duration: Math.max(0.9, l1 - l0), ease: "none", immediateRender: false }, l0);
       // delivered without being seen
-      go("phone", { opacity: 0, x: -500 }, at("livrer") - 0.1, 0.4, "power3.in"); go("thumbs", { opacity: 0, x: 400 }, at("livrer") - 0.1, 0.4, "power3.in");
+      go("phone", { opacity: 0, x: -500 }, at("livrer") - 0.1, 0.4, "power3.in"); go("list", { opacity: 0, x: 400 }, at("livrer") - 0.1, 0.4, "power3.in");
       pre("truck", { opacity: 0, x: 900 }); go("truck", { opacity: 1, x: 0 }, at("livrer"), 0.9, "power3.out");
-      ["sel"].forEach(function (p) { init(p + "-w", { opacity: 0 }); init(p + "-o", { opacity: 0 }); init(p + "-glow", { opacity: 0 }); });
+      init("sel-w", { opacity: 0 }); init("sel-o", { opacity: 0 }); init("sel-glow", { opacity: 0 });
       pre("sel", { opacity: 0, y: 40 }); go("sel", { opacity: 1, y: 0 }, at("vendeur") - 0.05, 0.3, "back.out(1.6)");
       lit("sel", "white", at("bosse"), 0.3);
       pre("nocheck", { opacity: 0, scale: 0.4 }); go("nocheck", { opacity: 1, scale: 1 }, at("rien") - 0.06, 0.25, "back.out(2)");

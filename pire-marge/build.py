@@ -383,66 +383,112 @@ DISTRI = ('<g id="§distri" class="§dist"><circle cx="230" cy="330" r="30"/><ci
 MAG = '<circle cx="64" cy="64" r="44" stroke-width="12"/><path d="M98 98 L144 144" stroke-width="18"/>'
 
 
+MEDIA_CSS = """
+    .§burst { position: absolute; overflow: hidden; }
+    .§burst img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: saturate(0.72) contrast(1.04); }
+    .§sprite { position: absolute; border: 4px solid #FB8000; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.6); filter: saturate(0.72); }
+"""
+MEDIA_JS = """
+      // photo burst: hard cuts from one photo to the next (each shown from times[k])
+      function burst(id, times, fade) {
+        var imgs = $(id).querySelectorAll("img");
+        for (var k = 0; k < imgs.length && k < times.length; k++) {
+          tl.set(imgs[k], { opacity: 1 }, Math.max(0, times[k]));
+          if (k > 0) tl.set(imgs[k - 1], { opacity: 0 }, Math.max(0, times[k]) + 0.001);
+        }
+      }
+      // video as a sprite sheet (cols x rows frames, 12 fps), played from t for dur seconds, looping
+      function sprite(id, t, dur, n, cols, fps) {
+        var el = $(id), rows = Math.ceil(n / cols), step = 1 / (fps || 12), f = 0;
+        for (var x = 0; x * step < dur; x++) {
+          var k = f % n, cx = k % cols, cy = Math.floor(k / cols);
+          tl.set(el, { backgroundPosition: (cx * 100 / (cols - 1)) + "% " + (cy * 100 / (rows - 1)) + "%" }, t + x * step);
+          f++;
+        }
+      }
+"""
+ITEMS = ["POMPE À EAU", "DISTRIBUTION", "EMBRAYAGE", "JOINTS", "VIDANGE HUILE", "CALORSTAT", "DURITES", "SUPPORT MOTEUR"]
+DOC = '<svg viewBox="0 0 40 48" class="§idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>'
+
+
 def scene_01():
-    css = """
+    css = MEDIA_CSS + """
+    #§bg { left: 0; top: 0; width: 1080px; height: 1920px; }
+    #§bg img { filter: saturate(0.6) brightness(0.38); }
     #§sub1 { position: absolute; left: 0; top: 1060px; width: 1080px; text-align: center; font: 600 56px/1.2 "Instrument Sans", sans-serif;
-      color: #bdbdbd; letter-spacing: 0.08em; opacity: 0; }
+      color: #d0d0d0; letter-spacing: 0.08em; opacity: 0; }
     #§sub1 b { color: #FB8000; font-weight: 600; }
     """
+    st = '<div id="§bg" class="§burst">' + "".join(f'<img src="assets/img/{p}">' for p in ["ph-feux.jpg", "ph-badge.jpg", "ph-profil.jpg", "ph-interieur.jpg"]) + '</div>'
     hud = (title("t1", ["MA PIRE", "MARGE."], 480, 200)
            + '<div id="§sub1"><b>' + odo("y16", "16") + '</b> ANS DE MÉTIER</div>')
-    js = """
+    js = MEDIA_JS + """
+      var e = at("ferrari"), n = 4, step = Math.max(0.35, (DUR - 0.05) / n);
+      burst("bg", [0, step, 2 * step, 3 * step]);
+      init("bg", { scale: 1 }); go("bg", { scale: 1.12 }, 0, DUR, "none");
       slam("t1-0", Math.max(0.02, at("ma") - 0.02), { s: 1.4 }); slam("t1-1", at("marge") - 0.04, { s: 1.4 }); stroke("t1", at("marge") + 0.2);
       shake("shk", at("marge") + 0.05, 10);
       pre("sub1", { opacity: 0, y: 30 }); go("sub1", { opacity: 1, y: 0 }, at("16") - 0.06, 0.3); odo("y16", at("16") - 0.06, 0.7);
-      init("halo", { scale: 1, opacity: 1 }); go("halo", { scale: 1.3 }, at("ferrari") - 0.05, 0.5);
-      go("t1", { scale: 1.06 }, at("ferrari") - 0.05, 0.6, "power2.out");
+      go("t1", { scale: 1.06 }, e - 0.05, 0.6, "power2.out");
     """
     sfx = [("impact-bass-1", None, 0, 0.02, .28), ("pop", "marge", 1, -.04, .16), ("typing", "16", 1, -.06, .12),
            ("whoosh-short", "ferrari", 1, -.05, .14)]
-    return css, "", hud, js, (540, 760), sfx
+    return css, st, hud, js, (540, 760), sfx
 
 
 def scene_02():
-    css = PHOTO_CSS + TOT_CSS + """
+    css = MEDIA_CSS + TOT_CSS + """
     #§phone { position: absolute; left: 110px; top: 610px; width: 340px; height: 640px; border-radius: 46px; background: #050505; border: 6px solid #3a3a3a;
       box-shadow: 0 30px 80px rgba(0,0,0,0.7); opacity: 0; }
-    #§scr { position: absolute; left: 14px; top: 46px; width: 300px; height: 540px; border-radius: 10px; overflow: hidden; background: #141414; }
+    #§scr { left: 14px; top: 46px; width: 300px; height: 540px; border-radius: 10px; background: #141414; }
     #§notch { position: absolute; left: 120px; top: 16px; width: 88px; height: 14px; border-radius: 7px; background: #222; }
-    #§recv { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; }
-    #§recv img { position: absolute; left: 0; top: -20px; width: 100%; height: 580px; object-fit: cover; filter: saturate(0.72); }
-    #§thumbs { position: absolute; left: 500px; top: 600px; width: 440px; height: 650px; overflow: hidden; opacity: 0;
-      -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 88%, transparent 100%); }
-    #§tcol { position: absolute; left: 40px; top: 0; width: 360px; }
-    .§th { display: block; width: 300px; height: 210px; margin: 0 auto 26px; border-radius: 8px; overflow: hidden; border: 3px solid #3a3a3a; }
-    .§th img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.5); }
+    #§carnet { left: 470px; top: 700px; width: 500px; height: 380px; border-radius: 8px; border: 4px solid #FB8000; opacity: 0; background: #1a1a1a; }
+    #§carnet img { object-fit: contain; filter: none; }
+    #§list { position: absolute; left: 500px; top: 600px; width: 440px; height: 620px; overflow: hidden; opacity: 0;
+      -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%); }
+    #§lcol { position: absolute; left: 0; top: 0; width: 440px; }
+    .§it { position: relative; height: 92px; margin-bottom: 18px; border-radius: 20px; background: #151515; border: 2px solid #2e2e2e;
+      font: 40px/92px "Anton", sans-serif; color: #ffffff; padding-left: 78px; white-space: nowrap; }
+    .§idoc { position: absolute; left: 22px; top: 22px; width: 40px; height: 48px; fill: none; stroke: #9a9a9a; stroke-width: 3.5; stroke-linejoin: round; }
+    .§tick { position: absolute; right: 22px; top: 22px; width: 48px; height: 48px; border-radius: 50%; background: #FB8000; }
+    .§tick svg { position: absolute; left: 0; top: 0; width: 48px; height: 48px; fill: none; stroke: #0A0A0A; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
     #§truck { position: absolute; left: 240px; top: 860px; width: 600px; height: 230px; overflow: visible; fill: none; stroke: #ffffff;
       stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; opacity: 0; transform: scaleX(-1); }
-    #§seller { opacity: 0; }
     #§nocheck { position: absolute; left: 700px; top: 620px; width: 220px; height: 220px; overflow: visible; fill: none; stroke: #ffffff; stroke-linecap: round; opacity: 0; }
     """
-    thumbs = "".join(f'<div class="§th"><img src="assets/img/carnet{k}.jpg"></div>' for k in [1, 2, 3, 4, 5, 6, 1, 2])
-    st = ('<div id="§phone"><div id="§notch"></div><div id="§scr"><div id="§recv"><img src="assets/img/achat.jpg"></div></div></div>'
-          f'<div id="§thumbs"><div id="§tcol">{thumbs}</div></div>'
+    phones = ["achat.jpg", "ph-interieur.jpg", "ph-moteur19.jpg", "ph-feux.jpg", "ph-roue19.jpg", "achat.jpg"]
+    items = "".join(f'<div class="§it">{DOC}{t}<i class="§tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div>'
+                    for t in ITEMS)
+    st = ('<div id="§phone"><div id="§notch"></div><div id="§scr" class="§burst">' + "".join(f'<img src="assets/img/{p}">' for p in phones) + '</div></div>'
+          '<div id="§carnet" class="§burst">' + "".join(f'<img src="assets/img/carnet{k}.jpg">' for k in [1, 2, 3, 4, 5, 6]) + '</div>'
+          f'<div id="§list"><div id="§lcol">{items}</div></div>'
           f'<svg id="§truck" viewBox="0 0 600 230">{TRUCK}</svg>'
           + person("sel", 50, 870, 170) +
           f'<svg id="§nocheck" viewBox="0 0 160 160">{MAG}<path d="M10 150 L150 10" stroke="#FB8000" stroke-width="16"/></svg>')
     hud = title("t2", ["2019. 30 ANS.", "ACHETÉE SUR PHOTOS."], 360, 96) + total("00 000 €")
-    js = TOT_JS + """
+    js = TOT_JS + MEDIA_JS + """
       totInit("00 000"); pre("tot", { opacity: 0 });
       slam("t2-0", at("2019") - 0.05, { s: 1.3 });
       pre("phone", { opacity: 0, y: 80, rotation: -4 }); go("phone", { opacity: 1, y: 0, rotation: -2 }, 0.1, 0.45, "expo.out");
-      pre("recv", { opacity: 0, scale: 1.15 }); go("recv", { opacity: 1, scale: 1 }, at("ferrari") - 0.05, 0.35, "power3.out");
+      // the photos received on the phone, one after the other
+      var p0 = at("ferrari") - 0.05, p1 = at("photos", 1), ps = Math.max(0.28, (p1 - p0) / 5);
+      burst("scr", [p0, p0 + ps, p0 + 2 * ps, p0 + 3 * ps, p0 + 4 * ps, p1]);
       slam("tot", at("49000") - 0.1, { s: 1.2 }); odo("totv", at("49000") - 0.05, 0.9, { to: "49 000 €" });
-      slam("t2-1", at("photos") - 0.05);
-      stroke("t2", at("photos") + 0.2);
-      // maintenance invoices, on photos too: they scroll past
-      pre("thumbs", { opacity: 0 }); go("thumbs", { opacity: 1 }, at("factures") - 0.1, 0.3);
-      tl.fromTo($("tcol"), { y: 40 }, { y: -900, duration: Math.max(1.2, at("livrer") - at("factures") + 0.3), ease: "power1.inOut", immediateRender: false }, at("factures") - 0.1);
+      slam("t2-1", at("photos") - 0.05); stroke("t2", at("photos") + 0.2);
+      // the service book, straightened, very fast
+      var c0 = at("factures") - 0.1, c1 = at("aussi") - 0.05, cs = Math.max(0.16, (c1 - c0) / 6);
+      pre("carnet", { opacity: 0, scale: 0.9 }); go("carnet", { opacity: 1, scale: 1 }, c0, 0.15);
+      burst("carnet", [c0, c0 + cs, c0 + 2 * cs, c0 + 3 * cs, c0 + 4 * cs, c0 + 5 * cs]);
+      go("carnet", { opacity: 0, x: 60 }, c0 + 6 * cs, 0.12);
+      // then the maintenance bills, one after the other
+      var l0 = c0 + 6 * cs, l1 = at("livrer") - 0.12, lh = 110;
+      pre("list", { opacity: 0 }); go("list", { opacity: 1 }, l0, 0.12);
+      tl.fromTo($("lcol"), { y: 560 }, { y: -(8 * lh) + 380, duration: Math.max(0.9, l1 - l0), ease: "none", immediateRender: false }, l0);
       // delivered without being seen
-      go("phone", { opacity: 0, x: -500 }, at("livrer") - 0.1, 0.4, "power3.in"); go("thumbs", { opacity: 0, x: 400 }, at("livrer") - 0.1, 0.4, "power3.in");
+      go("phone", { opacity: 0, x: -500 }, at("livrer") - 0.1, 0.4, "power3.in"); go("list", { opacity: 0, x: 400 }, at("livrer") - 0.1, 0.4, "power3.in");
       pre("truck", { opacity: 0, x: 900 }); go("truck", { opacity: 1, x: 0 }, at("livrer"), 0.9, "power3.out");
-      ["sel"].forEach(function (p) { init(p + "-w", { opacity: 0 }); init(p + "-o", { opacity: 0 }); init(p + "-glow", { opacity: 0 }); });
+      init("sel-w", { opacity: 0 }); init("sel-o", { opacity: 0 }); init("sel-glow", { opacity: 0 });
       pre("sel", { opacity: 0, y: 40 }); go("sel", { opacity: 1, y: 0 }, at("vendeur") - 0.05, 0.3, "back.out(1.6)");
       lit("sel", "white", at("bosse"), 0.3);
       pre("nocheck", { opacity: 0, scale: 0.4 }); go("nocheck", { opacity: 1, scale: 1 }, at("rien") - 0.06, 0.25, "back.out(2)");
@@ -450,27 +496,33 @@ def scene_02():
     """
     sfx = [("pop", "2019", 1, -.05, .14), ("whoosh-short", None, 0, 0.1, .12), ("notification", "ferrari", 1, -.05, .22),
            ("typing", "49000", 1, -.05, .12), ("pop", "photos", 1, -.05, .14), ("whoosh-short", "factures", 1, -.1, .12),
-           ("whoosh-cinematic", "livrer", 1, 0, .22), ("pop", "vendeur", 1, -.05, .12), ("click", "rien", 1, -.06, .25)]
+           ("typing", "aussi", 1, -.05, .12), ("whoosh-cinematic", "livrer", 1, 0, .22), ("pop", "vendeur", 1, -.05, .12),
+           ("click", "rien", 1, -.06, .25)]
     return css, st, hud, js, (300, 900), sfx
 
 
 def scene_03():
-    css = TOT_CSS + f"""
-    #§hand {{ position: absolute; left: 240px; top: 700px; width: 600px; height: 320px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 12;
+    css = PHOTO_CSS + MEDIA_CSS + TOT_CSS + f"""
+    #§ph {{ left: 90px; top: 620px; width: 900px; height: 470px; }}
+    #§hand {{ position: absolute; left: 330px; top: 1000px; width: 420px; height: 224px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 12;
       stroke-linecap: round; stroke-linejoin: round; opacity: 0; }}
-    #§ring {{ position: absolute; left: 120px; top: 660px; width: 300px; height: 440px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 10;
+    #§handbg {{ position: absolute; left: 300px; top: 980px; width: 480px; height: 260px; border-radius: 30px; background: rgba(10,10,10,0.9); opacity: 0; }}
+    #§dash {{ left: 100px; top: 600px; width: 330px; height: 660px; opacity: 0; }}
+    #§ring {{ position: absolute; left: 600px; top: 590px; width: 240px; height: 352px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 10;
       stroke-linecap: round; stroke-linejoin: round; opacity: 0; }}
     .§wave {{ stroke: #FB8000; }}
-    #§gauge {{ position: absolute; left: 520px; top: 720px; width: 420px; height: 300px; overflow: visible; fill: none; stroke-linecap: round; opacity: 0; }}
-    #§glab {{ position: absolute; left: 520px; top: 1000px; width: 420px; text-align: center; font: 600 30px "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; opacity: 0; }}
+    #§gauge {{ position: absolute; left: 500px; top: 940px; width: 450px; height: 300px; overflow: visible; fill: none; stroke-linecap: round; opacity: 0; }}
+    #§glab {{ position: absolute; left: 500px; top: 1190px; width: 450px; text-align: center; font: 600 28px "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; opacity: 0; }}
     #§truck {{ position: absolute; left: 240px; top: 880px; width: 600px; height: 230px; overflow: visible; fill: none; stroke: #ffffff;
       stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; opacity: 0; }}
     """
-    st = ('<svg id="§hand" viewBox="0 0 300 160">'
+    st = ('<div id="§ph" class="§photo"><img src="assets/img/ph-profil.jpg"></div>'
+          '<div id="§handbg"></div><svg id="§hand" viewBox="0 0 300 160">'
           '<path d="M0 50 L26 50 L26 126 L0 126"/><path d="M300 50 L274 50 L274 126 L300 126"/>'
           '<path d="M26 64 L92 64 Q112 64 128 76 L176 108 Q188 117 180 127 Q172 135 160 128 L132 110"/>'
           '<path d="M274 64 L208 64 Q188 64 172 76 L124 110 Q112 119 120 129 Q128 137 140 130 L170 112"/>'
           '<path d="M120 96 L150 118 M106 106 L136 128" stroke="#FB8000"/></svg>'
+          '<div id="§dash" class="§sprite" style="background-image:url(assets/img/sp-dash.jpg)"></div>'
           '<svg id="§ring" viewBox="0 0 300 440"><g id="§ringph"><rect x="70" y="80" width="160" height="300" rx="28"/><path d="M128 110 L172 110"/>'
           '<path d="M130 350 L170 350"/></g><path class="§wave" d="M260 140 Q290 180 260 220"/><path class="§wave" d="M40 140 Q10 180 40 220"/>'
           '<path class="§wave" d="M280 110 Q330 180 280 250"/><path class="§wave" d="M20 110 Q-30 180 20 250"/></svg>'
@@ -481,30 +533,36 @@ def scene_03():
           f'<svg id="§truck" viewBox="0 0 600 230">{TRUCK}</svg>')
     hud = (title("t3", ["ELLE REVIENT."], 380, 120) + total("49 000 €")
            + chip("c1", 380, 620, "+2 000 €", "CARTE GRISE") + chip("c2", 420, 620, "+800 €", "TRANSPORT"))
-    js = TOT_JS + """
+    js = TOT_JS + MEDIA_JS + """
       totInit("49 000");
-      pre("hand", { opacity: 0, scale: 0.6 }); go("hand", { opacity: 1, scale: 1 }, at("revends") - 0.06, 0.35, "back.out(1.8)");
-      go("hand", { opacity: 0, scale: 0.8, y: -40 }, at("puis") - 0.12, 0.25, "power2.in");
-      // he calls: the engine overheats
+      // sold to a private buyer
+      pre("ph", { opacity: 0, scale: 1.08 }); go("ph", { opacity: 1, scale: 1 }, at("revends") - 0.08, 0.4, "expo.out");
+      init("ph", { opacity: 1, scale: 1, x: 0 }); go("ph", { x: -30 }, at("revends"), 1.6, "none");
+      pre("handbg", { opacity: 0 }); go("handbg", { opacity: 1 }, at("particulier") - 0.1, 0.2);
+      pre("hand", { opacity: 0, scale: 0.6 }); go("hand", { opacity: 1, scale: 1 }, at("particulier") - 0.06, 0.35, "back.out(1.8)");
+      go("ph", { opacity: 0 }, at("puis") - 0.12, 0.2); go("hand", { opacity: 0 }, at("puis") - 0.12, 0.2); go("handbg", { opacity: 0 }, at("puis") - 0.12, 0.2);
+      // he calls: the engine overheats (the real dashboard)
       pre("ring", { opacity: 0, scale: 0.7 }); go("ring", { opacity: 1, scale: 1 }, at("m'appelle") - 0.1, 0.3, "back.out(2)");
       wobble("ringph", at("m'appelle"), 7); wobble("ringph", at("m'appelle") + 0.35, 6);
-      pre("gauge", { opacity: 0, y: 30 }); go("gauge", { opacity: 1, y: 0 }, at("moteur") - 0.1, 0.3); pre("glab", { opacity: 0 }); go("glab", { opacity: 1 }, at("moteur"), 0.3);
+      pre("dash", { opacity: 0, x: -60 }); go("dash", { opacity: 1, x: 0 }, at("moteur") - 0.15, 0.35, "expo.out");
+      sprite("dash", at("moteur") - 0.15, Math.max(1.5, at("rembourse") - at("moteur") + 0.3), 36, 6, 12);
+      go("ring", { opacity: 0, scale: 0.8 }, at("moteur") + 0.1, 0.25);
+      pre("gauge", { opacity: 0, y: 30 }); go("gauge", { opacity: 1, y: 0 }, at("moteur") - 0.05, 0.3); pre("glab", { opacity: 0 }); go("glab", { opacity: 1 }, at("moteur"), 0.3);
       tl.set($("needle"), { svgOrigin: "150 170", rotation: -70 }, 0);
       tl.fromTo($("needle"), { rotation: -70 }, { rotation: 62, duration: 0.9, ease: "power2.in", immediateRender: false }, at("chauffe") - 0.2);
       wobble("gauge", at("chauffe") + 0.7, 2);
       // full refund: the costs go into the TOTAL
-      go("ring", { opacity: 0 }, at("rembourse") - 0.15, 0.25); go("gauge", { opacity: 0.3 }, at("rembourse") - 0.15, 0.3); go("glab", { opacity: 0 }, at("rembourse") - 0.15, 0.3);
+      go("dash", { opacity: 0, x: -60 }, at("rembourse") - 0.15, 0.3); go("gauge", { opacity: 0 }, at("rembourse") - 0.15, 0.3); go("glab", { opacity: 0 }, at("rembourse") - 0.15, 0.3);
       bump("c1", at("carte") - 0.1, "51 000 €");
       // the car comes back on a truck
-      go("gauge", { opacity: 0 }, at("rapatrie") - 0.15, 0.2);
       pre("truck", { opacity: 0, x: 900 }); go("truck", { opacity: 1, x: 0 }, at("rapatrie") - 0.1, 0.9, "power3.out");
       slam("t3-0", at("rapatrie") - 0.04); stroke("t3", at("rapatrie") + 0.2);
       bump("c2", Math.max(at("rapatrie") + 0.2, at("carte") + 1.6), "51 800 €");
       cam(0, -10, 1.04, at("rapatrie"), 0.8);
     """
-    sfx = [("pop", "revends", 1, -.06, .16), ("notification", "m'appelle", 1, -.1, .25), ("whoosh-short", "chauffe", 1, -.2, .12),
-           ("error", "chauffe", 1, .6, .18), ("pop", "carte", 1, -.1, .14), ("typing", "carte", 1, 1.0, .12),
-           ("whoosh-cinematic", "rapatrie", 1, -.1, .2), ("pop", "rapatrie", 1, .2, .14)]
+    sfx = [("pop", "revends", 1, -.08, .14), ("pop", "particulier", 1, -.06, .14), ("notification", "m'appelle", 1, -.1, .25),
+           ("whoosh-short", "moteur", 1, -.15, .12), ("error", "chauffe", 1, .6, .18), ("pop", "carte", 1, -.1, .14),
+           ("typing", "carte", 1, 1.0, .12), ("whoosh-cinematic", "rapatrie", 1, -.1, .2), ("pop", "rapatrie", 1, .2, .14)]
     return css, st, hud, js, (540, 880), sfx
 
 
@@ -516,6 +574,7 @@ def engine_css():
     .§dist circle, .§dist path {{ stroke: #FB8000; stroke-width: 7; fill: none; }}
     #§hoist {{ stroke: #9a9a9a; stroke-width: 6; stroke-dasharray: 10 10; }}
     """
+
 
 
 def scene_04():
@@ -544,9 +603,13 @@ def scene_04():
     return css, st, hud, js, (540, 900), sfx
 
 
+
+
 def scene_05():
-    css = PHOTO_CSS + TOT_CSS + """
+    css = PHOTO_CSS + MEDIA_CSS + TOT_CSS + """
     #§ph { left: 90px; top: 600px; width: 900px; height: 420px; }
+    #§ph2 { left: 140px; top: 620px; width: 800px; height: 560px; opacity: 0; }
+    #§gar { left: 320px; top: 590px; width: 330px; height: 660px; opacity: 0; }
     #§mech { opacity: 0; }
     #§wrench { position: absolute; left: 840px; top: 900px; width: 110px; height: 110px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 10;
       stroke-linecap: round; opacity: 0; }
@@ -556,48 +619,57 @@ def scene_05():
     #§calv { position: absolute; left: 0; top: 76px; width: 100%; text-align: center; font: 140px/1 "Anton", sans-serif; color: #ffffff; }
     #§calm { position: absolute; left: 0; top: 236px; width: 100%; text-align: center; font: 600 32px "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; }
     """
-    st = ('<div id="§ph" class="§photo"><img src="assets/img/moteur.jpg"></div>' + person("mech", 760, 830, 170)
+    st = ('<div id="§ph" class="§photo"><img src="assets/img/moteur.jpg"></div>'
+          '<div id="§ph2" class="§photo"><img src="assets/img/ph-moteur22.jpg"></div>'
+          '<div id="§gar" class="§sprite" style="background-image:url(assets/img/sp-garage.jpg);background-size:900% 300%"></div>'
+          + person("mech", 760, 830, 170)
           + '<svg id="§wrench" viewBox="0 0 110 110"><path d="M20 90 L64 46"/><circle cx="76" cy="34" r="20"/></svg>'
           + f'<svg id="§mag" viewBox="0 0 160 160">{MAG}</svg>'
           + '<div id="§cal"><div id="§calh"></div><div id="§calv">' + odo("mo", "14") + '</div><div id="§calm">MOIS</div></div>')
     hud = (title("t5", ["REPRENDRE À ZÉRO."], 380, 110) + title("t5b", ["PLUS D’UN AN", "IMMOBILISÉE."], 350, 100) + total("51 800 €")
            + chip("c3", 330, 1080, "+15 000 €", "MÉCANIQUE"))
-    js = TOT_JS + """
+    js = TOT_JS + MEDIA_JS + """
       totInit("51 800");
       pre("ph", { opacity: 0, scale: 1.08 }); go("ph", { opacity: 1, scale: 1 }, 0.02, 0.5, "expo.out");
       init("mech-w", { opacity: 0 }); init("mech-o", { opacity: 0 }); init("mech-glow", { opacity: 0 });
       pre("mech", { opacity: 0, y: 40 }); go("mech", { opacity: 1, y: 0 }, at("mécano") - 0.05, 0.3, "back.out(1.6)"); lit("mech", "white", at("mécano"), 0.25);
       pre("wrench", { opacity: 0, rotation: -30 }); go("wrench", { opacity: 1, rotation: 0 }, at("commence") - 0.05, 0.3, "back.out(2)");
       wobble("wrench", at("commence") + 0.3, 12);
-      // he gives up, engine open: he fades away
+      // he gives up, engine open: he fades away; the engine bay, open
       go("mech", { opacity: 0, y: -30 }, at("abandonne"), 0.7, "power2.in"); go("wrench", { opacity: 0, y: 40, rotation: 40 }, at("abandonne") + 0.1, 0.5, "power2.in");
+      go("ph", { opacity: 0 }, at("ouvert") - 0.1, 0.2); pre("ph2", { opacity: 0, scale: 1.1 }); go("ph2", { opacity: 1, scale: 1 }, at("ouvert") - 0.1, 0.4, "expo.out");
       slam("t5-0", at("zéro") - 0.05); stroke("t5", at("zéro") + 0.15);
       bump("c3", at("zéro") + 0.2, "66 800 €");
-      // looking for someone able to work on site
+      // looking for someone able to work on site, in my garage
       pre("mag", { opacity: 0, scale: 0.6, x: 0 }); go("mag", { opacity: 1, scale: 1 }, at("trouver") - 0.05, 0.25, "back.out(2)");
       go("mag", { x: 380 }, at("trouver") + 0.2, 0.7, "sine.inOut"); go("mag", { x: 60 }, at("trouver") + 0.95, 0.7, "sine.inOut");
-      go("mag", { opacity: 0 }, at("voiture") - 0.1, 0.3);
+      go("mag", { opacity: 0 }, at("garage") - 0.15, 0.2); go("ph2", { opacity: 0 }, at("garage") - 0.15, 0.25);
+      pre("gar", { opacity: 0, scale: 0.92 }); go("gar", { opacity: 1, scale: 1 }, at("garage") - 0.15, 0.35, "expo.out");
+      sprite("gar", at("garage") - 0.15, Math.max(1.5, at("elle") - at("garage") + 0.4), 27, 9, 12);
       // more than a year off the road
+      go("gar", { opacity: 0, x: -200 }, at("elle") - 0.1, 0.35, "power2.in");
+      go("ph2", { opacity: 0.55 }, at("elle") - 0.1, 0.4);
       go("t5", { opacity: 0, y: -30 }, at("elle") - 0.12, 0.14, "power2.in");
       pre("cal", { opacity: 0, y: 60 }); go("cal", { opacity: 1, y: 0 }, at("elle") - 0.1, 0.3, "back.out(1.5)");
       odo("mo", at("elle"), Math.max(1.0, at("immobilisée") + 0.3 - at("elle")), { from: "00" });
       slam("t5b-0", at("an") - 0.05); slam("t5b-1", at("immobilisée") - 0.04); stroke("t5b", at("immobilisée") + 0.2);
-      tl.fromTo($("ph").querySelector("img"), { filter: "saturate(0.72) brightness(1)" }, { filter: "saturate(0.2) brightness(0.6)", duration: 0.8, immediateRender: false }, at("immobilisée") - 0.1);
+      tl.fromTo($("ph2").querySelector("img"), { filter: "saturate(0.72) brightness(1)" }, { filter: "saturate(0.2) brightness(0.6)", duration: 0.8, immediateRender: false }, at("immobilisée") - 0.1);
       cam(0, -10, 1.04, at("trouver"), 0.8);
     """
     sfx = [("whoosh-short", None, 0, 0.02, .12), ("pop", "mécano", 1, -.05, .14), ("click-soft", "commence", 1, 0, .25),
-           ("whoosh-short", "abandonne", 1, 0, .12), ("pop", "zéro", 1, -.05, .14), ("typing", "zéro", 1, 1.3, .12),
-           ("whoosh-short", "trouver", 1, .2, .12), ("typing", "elle", 1, 0, .12), ("impact-bass-2", "immobilisée", 1, -.04, .26)]
+           ("whoosh-short", "abandonne", 1, 0, .12), ("whoosh-short", "ouvert", 1, -.1, .12), ("pop", "zéro", 1, -.05, .14),
+           ("typing", "zéro", 1, 1.3, .12), ("whoosh-short", "trouver", 1, .2, .12), ("whoosh-short", "garage", 1, -.15, .12),
+           ("typing", "elle", 1, 0, .12), ("impact-bass-2", "immobilisée", 1, -.04, .26)]
     return css, st, hud, js, (540, 820), sfx
 
 
 def scene_06():
-    css = PHOTO_CSS + TOT_CSS + engine_css() + """
+    css = PHOTO_CSS + MEDIA_CSS + TOT_CSS + engine_css() + """
     #§eng { left: 240px; top: 640px; width: 600px; height: 420px; }
     #§clutch { stroke: #FB8000; stroke-width: 7; fill: none; }
     #§ok { position: absolute; left: 860px; top: 660px; width: 90px; height: 90px; border-radius: 50%; background: #FB8000; opacity: 0; }
     #§ok svg { position: absolute; left: 0; top: 0; width: 90px; height: 90px; fill: none; stroke: #0A0A0A; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
-    #§ph { left: 120px; top: 640px; width: 840px; height: 565px; }
+    #§ph { left: 120px; top: 640px; width: 840px; height: 565px; border: 4px solid #FB8000; border-radius: 8px; box-shadow: 0 30px 70px rgba(0,0,0,0.6); opacity: 0; }
     #§face { position: absolute; left: 80px; top: 620px; width: 920px; height: 600px; opacity: 0; }
     .§col { position: absolute; top: 0; width: 430px; height: 300px; border-radius: 28px; background: #151515; border: 2px solid #2e2e2e; }
     .§coll { position: absolute; left: 0; top: 40px; width: 100%; text-align: center; font: 600 32px "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; }
@@ -609,12 +681,12 @@ def scene_06():
           '<g id="§clg"><circle id="§clutch" cx="520" cy="320" r="62"/><circle cx="520" cy="320" r="22" stroke="#FB8000" stroke-width="7" fill="none"/>'
           '<path d="M520 258 L520 298 M520 342 L520 382 M458 320 L498 320 M542 320 L582 320" stroke="#FB8000" stroke-width="7"/></g></svg>'
           '<div id="§ok"><svg viewBox="0 0 90 90"><path d="M24 46 L39 61 L66 32"/></svg></div>'
-          '<div id="§ph" class="§photo"><img src="assets/img/export.jpg"></div>'
+          '<div id="§ph" class="§burst">' + "".join(f'<img src="assets/img/{p}">' for p in ["ph-retro.jpg", "ph-jante.jpg", "ph-interieur22.jpg", "export.jpg"]) + '</div>'
           '<div id="§face"><div class="§col" style="left:0"><div class="§coll">DÉPENSÉ</div><div class="§colv">' + odo("dep", "66 800 €") + '</div></div>'
           '<div class="§col" style="left:490px"><div class="§coll">ENCAISSÉ</div><div class="§colv">' + odo("enc", "50 000 €") + '</div></div>'
           '<div id="§res"><i class="§minus"></i>' + odo("rv", "16 800 €") + '</div></div>')
     hud = title("t6", ["AVRIL 2023.", "50 000 €. EXPORT."], 360, 104) + total("66 800 €")
-    js = TOT_JS + """
+    js = TOT_JS + MEDIA_JS + """
       totInit("66 800");
       tl.set($("distri"), { opacity: 1 }, 0);
       pre("eng", { opacity: 0, scale: 0.9 }); go("eng", { opacity: 1, scale: 1 }, 0.02, 0.4, "expo.out");
@@ -622,9 +694,11 @@ def scene_06():
       draw("clutch", at("l'embrayage") - 0.1, 0.5, "power2.inOut");
       tl.fromTo($("clg"), { rotation: 0, svgOrigin: "520 320" }, { rotation: 180, svgOrigin: "520 320", duration: 1.6, ease: "power2.out", immediateRender: false }, at("l'embrayage") + 0.3);
       pre("ok", { opacity: 0, scale: 2.2 }); go("ok", { opacity: 1, scale: 1 }, at("j'écoute") - 0.05, 0.16, "expo.in");
-      // April 2023, sold for export
+      // April 2023: one last look at the car, sold for export
       go("eng", { opacity: 0, y: -40 }, at("avril") - 0.2, 0.25, "power2.in"); go("ok", { opacity: 0 }, at("avril") - 0.2, 0.2);
-      pre("ph", { opacity: 0, scale: 1.08 }); go("ph", { opacity: 1, scale: 1 }, at("avril") - 0.1, 0.45, "expo.out");
+      var a0 = at("avril") - 0.1, a1 = at("50000") - 0.05, as = Math.max(0.22, (a1 - a0) / 3);
+      pre("ph", { opacity: 0, scale: 1.06 }); go("ph", { opacity: 1, scale: 1 }, a0, 0.3, "expo.out");
+      burst("ph", [a0, a0 + as, a0 + 2 * as, a1]);
       slam("t6-0", at("avril") - 0.04); slam("t6-1", at("50000") - 0.05); stroke("t6", at("l'export"));
       // spent vs cashed in
       go("t6", { opacity: 0, y: -30 }, at("trois") - 0.12, 0.14, "power2.in");
@@ -676,34 +750,36 @@ def scene_07():
     return css, st, hud, js, (540, 900), sfx
 
 
+
+
 def scene_08():
-    css = PHOTO_CSS + """
-    #§ph { left: 250px; top: 300px; width: 580px; height: 262px; }
-    #§ep { position: absolute; left: 0; top: 640px; width: 1080px; text-align: center; opacity: 0; }
-    #§epi { display: inline-block; padding: 8px 30px; border-radius: 14px; background: #FB8000; color: #0A0A0A; font: 52px/1.2 "Anton", sans-serif; }
-    #§handle { position: absolute; left: 60px; top: 820px; width: 960px; text-align: center; white-space: nowrap; }
-    #§hname { position: relative; display: inline-block; font: 96px/1.2 "Anton", sans-serif; color: #ffffff; opacity: 0; }
+    css = MEDIA_CSS + """
+    #§hap { left: 0; top: 0; width: 1080px; height: 1920px; border: none; border-radius: 0; box-shadow: none; background-size: 1000% 600%; filter: saturate(0.85); }
+    #§shade { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px;
+      background: linear-gradient(180deg, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.25) 30%, rgba(10,10,10,0) 50%, rgba(10,10,10,0.35) 62%, rgba(10,10,10,0.9) 80%, rgba(10,10,10,0.95) 100%); }
+    #§handle { position: absolute; left: 60px; top: 380px; width: 960px; text-align: center; white-space: nowrap; }
+    #§hname { position: relative; display: inline-block; font: 96px/1.2 "Anton", sans-serif; color: #ffffff; opacity: 0; text-shadow: 0 4px 30px rgba(0,0,0,0.6); }
     #§pill { position: absolute; left: 50%; top: 175px; transform: translateX(-50%); }
     #§pilli { display: inline-block; padding: 8px 40px; border-radius: 40px; background: #FB8000; color: #0A0A0A; font: 52px/1.25 "Anton", sans-serif; opacity: 0;
       box-shadow: 0 0 46px rgba(251,128,0,0.45); }
+    .§title { text-shadow: 0 4px 30px rgba(0,0,0,0.6); }
     """
-    hud = ('<div id="§ph" class="§photo"><img src="assets/img/cta.jpg"></div>'
-           '<div id="§ep"><span id="§epi">ÉPISODE 3</span></div>'
-           + title("t8", ["JE ME SUIS", "FAIT AVOIR."], 750, 120)
+    st = '<div id="§hap" class="§sprite" style="background-image:url(assets/img/sp-happy.jpg)"></div><div id="§shade"></div>'
+    hud = (title("t8", ["JE ME SUIS", "FAIT AVOIR."], 330, 130)
            + '<div id="§handle"><span id="§hname">@guillaumeherbin_<i class="§stilt"><i class="§stk" id="§h-s"></i></i></span>'
              '<div id="§pill"><span id="§pilli">S’ABONNER</span></div></div>')
-    js = """
-      pre("ph", { opacity: 0, y: 40, rotation: -3 }); go("ph", { opacity: 1, y: 0, rotation: -2 }, 0.02, 0.45, "expo.out");
-      pre("ep", { opacity: 0, scale: 0.5 }); go("ep", { opacity: 1, scale: 1 }, at("17000") - 0.05, 0.28, "back.out(2)");
+    js = MEDIA_JS + """
+      // happy end: the car on the road, on the day it was sold (plate blurred)
+      tl.set($("hap"), { backgroundPosition: "0% 0%" }, 0);
+      sprite("hap", 0, DUR, 60, 10, Math.max(12, Math.min(15, 60 / DUR)));
       slam("t8-0", at("gardé") - 0.05); slam("t8-1", at("leçons") - 0.05); stroke("t8", at("leçons") + 0.2);
-      go("t8", { opacity: 0, y: -40 }, at("abonne-toi") - 0.14, 0.15, "power2.in"); go("ep", { y: -10 }, at("abonne-toi") - 0.14, 0.3);
+      go("t8", { opacity: 0, y: -40 }, at("abonne-toi") - 0.14, 0.15, "power2.in");
       slam("hname", at("abonne-toi"), { s: 1.3 }); stroke("h", at("abonne-toi") + 0.2);
       pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("d'autres") - 0.06, 0.3, "back.out(2)");
-      init("halo", { scale: 1 }); go("halo", { scale: 1.2 }, at("abonne-toi"), 1.2, "sine.inOut");
     """
-    sfx = [("whoosh-short", None, 0, 0.02, .12), ("pop", "17000", 1, -.05, .14), ("pop", "leçons", 1, -.05, .14),
+    sfx = [("whoosh-cinematic", None, 0, 0.02, .2), ("pop", "gardé", 1, -.05, .14), ("pop", "leçons", 1, -.05, .14),
            ("notification", "abonne-toi", 1, 0, .25), ("pop", "d'autres", 1, -.06, .14)]
-    return css, "", hud, js, (540, 700), sfx
+    return css, st, hud, js, (540, 700), sfx
 
 
 BUILDERS = [scene_01, scene_02, scene_03, scene_04, scene_05, scene_06, scene_07, scene_08]

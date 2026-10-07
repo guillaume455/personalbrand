@@ -54,6 +54,11 @@
     .r5-photo { position: absolute; border: 4px solid #FB8000; border-radius: 8px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.6); }
     .r5-photo img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.72) contrast(1.04); }
 
+    .r5-burst { position: absolute; overflow: hidden; }
+    .r5-burst img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: saturate(0.72) contrast(1.04); }
+    .r5-sprite { position: absolute; border: 4px solid #FB8000; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.6); filter: saturate(0.72); }
+
     #r5-tot { position: absolute; right: 50px; top: 226px; text-align: right; transform-origin: 100% 50%; }
     .r5-totl { font: 600 24px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.16em; }
     .r5-totv { font: 70px "Anton", sans-serif; color: #FB8000; margin-top: 4px; }
@@ -62,6 +67,8 @@
     .r5-chips { display: block; font: 600 24px/1 "Instrument Sans", sans-serif; letter-spacing: 0.04em; text-align: center; margin-top: -2px; padding-bottom: 6px; }
 
     #r5-ph { left: 90px; top: 600px; width: 900px; height: 420px; }
+    #r5-ph2 { left: 140px; top: 620px; width: 800px; height: 560px; opacity: 0; }
+    #r5-gar { left: 320px; top: 590px; width: 330px; height: 660px; opacity: 0; }
     #r5-mech { opacity: 0; }
     #r5-wrench { position: absolute; left: 840px; top: 900px; width: 110px; height: 110px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 10;
       stroke-linecap: round; opacity: 0; }
@@ -78,7 +85,7 @@
       <div class="r5-grain"></div>
     </div>
     <div id="r5-push" class="r5-cam"><div id="r5-shk" class="r5-cam"><div id="r5-cran" class="r5-cam">
-      <div id="r5-ph" class="r5-photo"><img src="assets/img/moteur.jpg"></div><div id="r5-mech-glow" class="r5-glow" style="left:635px;top:728px"></div><div id="r5-mech" class="r5-person" style="left:760px;top:830px;width:170px;height:255px"><svg viewBox="0 0 200 300" class="r5-pl r5-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r5-pl r5-pwhite" id="r5-mech-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r5-pl r5-porange" id="r5-mech-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><svg id="r5-wrench" viewBox="0 0 110 110"><path d="M20 90 L64 46"/><circle cx="76" cy="34" r="20"/></svg><svg id="r5-mag" viewBox="0 0 160 160"><circle cx="64" cy="64" r="44" stroke-width="12"/><path d="M98 98 L144 144" stroke-width="18"/></svg><div id="r5-cal"><div id="r5-calh"></div><div id="r5-calv"><span id="r5-mo" class="r5-odo " data-to="14"><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></div><div id="r5-calm">MOIS</div></div>
+      <div id="r5-ph" class="r5-photo"><img src="assets/img/moteur.jpg"></div><div id="r5-ph2" class="r5-photo"><img src="assets/img/ph-moteur22.jpg"></div><div id="r5-gar" class="r5-sprite" style="background-image:url(assets/img/sp-garage.jpg);background-size:900% 300%"></div><div id="r5-mech-glow" class="r5-glow" style="left:635px;top:728px"></div><div id="r5-mech" class="r5-person" style="left:760px;top:830px;width:170px;height:255px"><svg viewBox="0 0 200 300" class="r5-pl r5-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r5-pl r5-pwhite" id="r5-mech-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r5-pl r5-porange" id="r5-mech-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><svg id="r5-wrench" viewBox="0 0 110 110"><path d="M20 90 L64 46"/><circle cx="76" cy="34" r="20"/></svg><svg id="r5-mag" viewBox="0 0 160 160"><circle cx="64" cy="64" r="44" stroke-width="12"/><path d="M98 98 L144 144" stroke-width="18"/></svg><div id="r5-cal"><div id="r5-calh"></div><div id="r5-calv"><span id="r5-mo" class="r5-odo " data-to="14"><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></div><div id="r5-calm">MOIS</div></div>
     </div></div></div>
     <div id="r5-hud" class="r5-cam r5-hudcam">
       <div class="r5-title" id="r5-t5" style="top:380px;font-size:110px;"><span class="r5-tline" id="r5-t5-0">REPRENDRE À ZÉRO.<i class="r5-stilt"><i class="r5-stk" id="r5-t5-s"></i></i></span></div><div class="r5-title" id="r5-t5b" style="top:350px;font-size:100px;"><span class="r5-tline" id="r5-t5b-0">PLUS D’UN AN</span><br><span class="r5-tline" id="r5-t5b-1">IMMOBILISÉE.<i class="r5-stilt"><i class="r5-stk" id="r5-t5b-s"></i></i></span></div><div id="r5-tot"><div class="r5-totl">TOTAL</div><div class="r5-totv"><span id="r5-totv" class="r5-odo " data-to="51 800 €"><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-os">&nbsp;</span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-os">&nbsp;</span><span class="r5-os">€</span></span></div></div><div id="r5-c3" class="r5-chip" style="left:330px;top:1080px">+15 000 €<span class="r5-chips">MÉCANIQUE</span></div>
@@ -211,26 +218,49 @@
         init("tot", { scale: 1 }); go("tot", { scale: 1.14 }, t + 1.1, 0.12); go("tot", { scale: 1 }, t + 1.22, 0.35);
       }
 
+      // photo burst: hard cuts from one photo to the next (each shown from times[k])
+      function burst(id, times, fade) {
+        var imgs = $(id).querySelectorAll("img");
+        for (var k = 0; k < imgs.length && k < times.length; k++) {
+          tl.set(imgs[k], { opacity: 1 }, Math.max(0, times[k]));
+          if (k > 0) tl.set(imgs[k - 1], { opacity: 0 }, Math.max(0, times[k]) + 0.001);
+        }
+      }
+      // video as a sprite sheet (cols x rows frames, 12 fps), played from t for dur seconds, looping
+      function sprite(id, t, dur, n, cols, fps) {
+        var el = $(id), rows = Math.ceil(n / cols), step = 1 / (fps || 12), f = 0;
+        for (var x = 0; x * step < dur; x++) {
+          var k = f % n, cx = k % cols, cy = Math.floor(k / cols);
+          tl.set(el, { backgroundPosition: (cx * 100 / (cols - 1)) + "% " + (cy * 100 / (rows - 1)) + "%" }, t + x * step);
+          f++;
+        }
+      }
+
       totInit("51 800");
       pre("ph", { opacity: 0, scale: 1.08 }); go("ph", { opacity: 1, scale: 1 }, 0.02, 0.5, "expo.out");
       init("mech-w", { opacity: 0 }); init("mech-o", { opacity: 0 }); init("mech-glow", { opacity: 0 });
       pre("mech", { opacity: 0, y: 40 }); go("mech", { opacity: 1, y: 0 }, at("mécano") - 0.05, 0.3, "back.out(1.6)"); lit("mech", "white", at("mécano"), 0.25);
       pre("wrench", { opacity: 0, rotation: -30 }); go("wrench", { opacity: 1, rotation: 0 }, at("commence") - 0.05, 0.3, "back.out(2)");
       wobble("wrench", at("commence") + 0.3, 12);
-      // he gives up, engine open: he fades away
+      // he gives up, engine open: he fades away; the engine bay, open
       go("mech", { opacity: 0, y: -30 }, at("abandonne"), 0.7, "power2.in"); go("wrench", { opacity: 0, y: 40, rotation: 40 }, at("abandonne") + 0.1, 0.5, "power2.in");
+      go("ph", { opacity: 0 }, at("ouvert") - 0.1, 0.2); pre("ph2", { opacity: 0, scale: 1.1 }); go("ph2", { opacity: 1, scale: 1 }, at("ouvert") - 0.1, 0.4, "expo.out");
       slam("t5-0", at("zéro") - 0.05); stroke("t5", at("zéro") + 0.15);
       bump("c3", at("zéro") + 0.2, "66 800 €");
-      // looking for someone able to work on site
+      // looking for someone able to work on site, in my garage
       pre("mag", { opacity: 0, scale: 0.6, x: 0 }); go("mag", { opacity: 1, scale: 1 }, at("trouver") - 0.05, 0.25, "back.out(2)");
       go("mag", { x: 380 }, at("trouver") + 0.2, 0.7, "sine.inOut"); go("mag", { x: 60 }, at("trouver") + 0.95, 0.7, "sine.inOut");
-      go("mag", { opacity: 0 }, at("voiture") - 0.1, 0.3);
+      go("mag", { opacity: 0 }, at("garage") - 0.15, 0.2); go("ph2", { opacity: 0 }, at("garage") - 0.15, 0.25);
+      pre("gar", { opacity: 0, scale: 0.92 }); go("gar", { opacity: 1, scale: 1 }, at("garage") - 0.15, 0.35, "expo.out");
+      sprite("gar", at("garage") - 0.15, Math.max(1.5, at("elle") - at("garage") + 0.4), 27, 9, 12);
       // more than a year off the road
+      go("gar", { opacity: 0, x: -200 }, at("elle") - 0.1, 0.35, "power2.in");
+      go("ph2", { opacity: 0.55 }, at("elle") - 0.1, 0.4);
       go("t5", { opacity: 0, y: -30 }, at("elle") - 0.12, 0.14, "power2.in");
       pre("cal", { opacity: 0, y: 60 }); go("cal", { opacity: 1, y: 0 }, at("elle") - 0.1, 0.3, "back.out(1.5)");
       odo("mo", at("elle"), Math.max(1.0, at("immobilisée") + 0.3 - at("elle")), { from: "00" });
       slam("t5b-0", at("an") - 0.05); slam("t5b-1", at("immobilisée") - 0.04); stroke("t5b", at("immobilisée") + 0.2);
-      tl.fromTo($("ph").querySelector("img"), { filter: "saturate(0.72) brightness(1)" }, { filter: "saturate(0.2) brightness(0.6)", duration: 0.8, immediateRender: false }, at("immobilisée") - 0.1);
+      tl.fromTo($("ph2").querySelector("img"), { filter: "saturate(0.72) brightness(1)" }, { filter: "saturate(0.2) brightness(0.6)", duration: 0.8, immediateRender: false }, at("immobilisée") - 0.1);
       cam(0, -10, 1.04, at("trouver"), 0.8);
     
       subs();

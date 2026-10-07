@@ -51,6 +51,14 @@
       font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
     .r3-w { display: inline-block; opacity: 0; }
 
+    .r3-photo { position: absolute; border: 4px solid #FB8000; border-radius: 8px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.6); }
+    .r3-photo img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.72) contrast(1.04); }
+
+    .r3-burst { position: absolute; overflow: hidden; }
+    .r3-burst img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: saturate(0.72) contrast(1.04); }
+    .r3-sprite { position: absolute; border: 4px solid #FB8000; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.6); filter: saturate(0.72); }
+
     #r3-tot { position: absolute; right: 50px; top: 226px; text-align: right; transform-origin: 100% 50%; }
     .r3-totl { font: 600 24px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.16em; }
     .r3-totv { font: 70px "Anton", sans-serif; color: #FB8000; margin-top: 4px; }
@@ -58,13 +66,16 @@
       opacity: 0; white-space: nowrap; }
     .r3-chips { display: block; font: 600 24px/1 "Instrument Sans", sans-serif; letter-spacing: 0.04em; text-align: center; margin-top: -2px; padding-bottom: 6px; }
 
-    #r3-hand { position: absolute; left: 240px; top: 700px; width: 600px; height: 320px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 12;
+    #r3-ph { left: 90px; top: 620px; width: 900px; height: 470px; }
+    #r3-hand { position: absolute; left: 330px; top: 1000px; width: 420px; height: 224px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 12;
       stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
-    #r3-ring { position: absolute; left: 120px; top: 660px; width: 300px; height: 440px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 10;
+    #r3-handbg { position: absolute; left: 300px; top: 980px; width: 480px; height: 260px; border-radius: 30px; background: rgba(10,10,10,0.9); opacity: 0; }
+    #r3-dash { left: 100px; top: 600px; width: 330px; height: 660px; opacity: 0; }
+    #r3-ring { position: absolute; left: 600px; top: 590px; width: 240px; height: 352px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 10;
       stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
     .r3-wave { stroke: #FB8000; }
-    #r3-gauge { position: absolute; left: 520px; top: 720px; width: 420px; height: 300px; overflow: visible; fill: none; stroke-linecap: round; opacity: 0; }
-    #r3-glab { position: absolute; left: 520px; top: 1000px; width: 420px; text-align: center; font: 600 30px "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; opacity: 0; }
+    #r3-gauge { position: absolute; left: 500px; top: 940px; width: 450px; height: 300px; overflow: visible; fill: none; stroke-linecap: round; opacity: 0; }
+    #r3-glab { position: absolute; left: 500px; top: 1190px; width: 450px; text-align: center; font: 600 28px "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; opacity: 0; }
     #r3-truck { position: absolute; left: 240px; top: 880px; width: 600px; height: 230px; overflow: visible; fill: none; stroke: #ffffff;
       stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; opacity: 0; }
       </style>
@@ -75,7 +86,7 @@
       <div class="r3-grain"></div>
     </div>
     <div id="r3-push" class="r3-cam"><div id="r3-shk" class="r3-cam"><div id="r3-cran" class="r3-cam">
-      <svg id="r3-hand" viewBox="0 0 300 160"><path d="M0 50 L26 50 L26 126 L0 126"/><path d="M300 50 L274 50 L274 126 L300 126"/><path d="M26 64 L92 64 Q112 64 128 76 L176 108 Q188 117 180 127 Q172 135 160 128 L132 110"/><path d="M274 64 L208 64 Q188 64 172 76 L124 110 Q112 119 120 129 Q128 137 140 130 L170 112"/><path d="M120 96 L150 118 M106 106 L136 128" stroke="#FB8000"/></svg><svg id="r3-ring" viewBox="0 0 300 440"><g id="r3-ringph"><rect x="70" y="80" width="160" height="300" rx="28"/><path d="M128 110 L172 110"/><path d="M130 350 L170 350"/></g><path class="r3-wave" d="M260 140 Q290 180 260 220"/><path class="r3-wave" d="M40 140 Q10 180 40 220"/><path class="r3-wave" d="M280 110 Q330 180 280 250"/><path class="r3-wave" d="M20 110 Q-30 180 20 250"/></svg><svg id="r3-gauge" viewBox="0 0 300 200"><path d="M40 170 A110 110 0 0 1 260 170" stroke="#3a3a3a" stroke-width="20"/><path d="M226 92 A110 110 0 0 1 260 170" stroke="#B3261E" stroke-width="20"/><line id="r3-needle" x1="150" y1="170" x2="150" y2="80" stroke="#ffffff" stroke-width="9"/><circle cx="150" cy="170" r="14" fill="#ffffff"/></svg><div id="r3-glab">TEMPÉRATURE MOTEUR</div><svg id="r3-truck" viewBox="0 0 600 230"><path d="M440 196 L440 74 Q440 62 452 62 L522 62 L560 112 L588 122 L588 196 Z"/><path d="M456 78 L514 78 L544 114 L456 114 Z"/><path d="M30 160 L440 160 L440 182 L30 182 Z"/><circle cx="110" cy="200" r="24"/><circle cx="370" cy="200" r="24"/><circle cx="520" cy="200" r="24"/><g transform="translate(60 20) scale(0.86)"><path d="M28 128 L24 100 Q26 84 46 80 L118 70 L168 34 Q178 27 192 27 L276 27 Q294 27 306 40 L340 74 L366 80 Q384 85 384 102 L382 128 L336 128"/><path d="M64 128 L24 128"/><path d="M126 128 L274 128"/><circle cx="95" cy="128" r="30"/><circle cx="305" cy="128" r="30"/><circle cx="95" cy="128" r="7"/><circle cx="305" cy="128" r="7"/><path d="M136 70 L174 40 Q180 36 190 36 L234 36 L234 70 Z"/><path d="M248 36 L272 36 Q286 36 296 46 L320 70 L248 70 Z"/></g></svg>
+      <div id="r3-ph" class="r3-photo"><img src="assets/img/ph-profil.jpg"></div><div id="r3-handbg"></div><svg id="r3-hand" viewBox="0 0 300 160"><path d="M0 50 L26 50 L26 126 L0 126"/><path d="M300 50 L274 50 L274 126 L300 126"/><path d="M26 64 L92 64 Q112 64 128 76 L176 108 Q188 117 180 127 Q172 135 160 128 L132 110"/><path d="M274 64 L208 64 Q188 64 172 76 L124 110 Q112 119 120 129 Q128 137 140 130 L170 112"/><path d="M120 96 L150 118 M106 106 L136 128" stroke="#FB8000"/></svg><div id="r3-dash" class="r3-sprite" style="background-image:url(assets/img/sp-dash.jpg)"></div><svg id="r3-ring" viewBox="0 0 300 440"><g id="r3-ringph"><rect x="70" y="80" width="160" height="300" rx="28"/><path d="M128 110 L172 110"/><path d="M130 350 L170 350"/></g><path class="r3-wave" d="M260 140 Q290 180 260 220"/><path class="r3-wave" d="M40 140 Q10 180 40 220"/><path class="r3-wave" d="M280 110 Q330 180 280 250"/><path class="r3-wave" d="M20 110 Q-30 180 20 250"/></svg><svg id="r3-gauge" viewBox="0 0 300 200"><path d="M40 170 A110 110 0 0 1 260 170" stroke="#3a3a3a" stroke-width="20"/><path d="M226 92 A110 110 0 0 1 260 170" stroke="#B3261E" stroke-width="20"/><line id="r3-needle" x1="150" y1="170" x2="150" y2="80" stroke="#ffffff" stroke-width="9"/><circle cx="150" cy="170" r="14" fill="#ffffff"/></svg><div id="r3-glab">TEMPÉRATURE MOTEUR</div><svg id="r3-truck" viewBox="0 0 600 230"><path d="M440 196 L440 74 Q440 62 452 62 L522 62 L560 112 L588 122 L588 196 Z"/><path d="M456 78 L514 78 L544 114 L456 114 Z"/><path d="M30 160 L440 160 L440 182 L30 182 Z"/><circle cx="110" cy="200" r="24"/><circle cx="370" cy="200" r="24"/><circle cx="520" cy="200" r="24"/><g transform="translate(60 20) scale(0.86)"><path d="M28 128 L24 100 Q26 84 46 80 L118 70 L168 34 Q178 27 192 27 L276 27 Q294 27 306 40 L340 74 L366 80 Q384 85 384 102 L382 128 L336 128"/><path d="M64 128 L24 128"/><path d="M126 128 L274 128"/><circle cx="95" cy="128" r="30"/><circle cx="305" cy="128" r="30"/><circle cx="95" cy="128" r="7"/><circle cx="305" cy="128" r="7"/><path d="M136 70 L174 40 Q180 36 190 36 L234 36 L234 70 Z"/><path d="M248 36 L272 36 Q286 36 296 46 L320 70 L248 70 Z"/></g></svg>
     </div></div></div>
     <div id="r3-hud" class="r3-cam r3-hudcam">
       <div class="r3-title" id="r3-t3" style="top:380px;font-size:120px;"><span class="r3-tline" id="r3-t3-0">ELLE REVIENT.<i class="r3-stilt"><i class="r3-stk" id="r3-t3-s"></i></i></span></div><div id="r3-tot"><div class="r3-totl">TOTAL</div><div class="r3-totv"><span id="r3-totv" class="r3-odo " data-to="49 000 €"><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-os">€</span></span></div></div><div id="r3-c1" class="r3-chip" style="left:380px;top:620px">+2 000 €<span class="r3-chips">CARTE GRISE</span></div><div id="r3-c2" class="r3-chip" style="left:420px;top:620px">+800 €<span class="r3-chips">TRANSPORT</span></div>
@@ -205,21 +216,45 @@
         init("tot", { scale: 1 }); go("tot", { scale: 1.14 }, t + 1.1, 0.12); go("tot", { scale: 1 }, t + 1.22, 0.35);
       }
 
+      // photo burst: hard cuts from one photo to the next (each shown from times[k])
+      function burst(id, times, fade) {
+        var imgs = $(id).querySelectorAll("img");
+        for (var k = 0; k < imgs.length && k < times.length; k++) {
+          tl.set(imgs[k], { opacity: 1 }, Math.max(0, times[k]));
+          if (k > 0) tl.set(imgs[k - 1], { opacity: 0 }, Math.max(0, times[k]) + 0.001);
+        }
+      }
+      // video as a sprite sheet (cols x rows frames, 12 fps), played from t for dur seconds, looping
+      function sprite(id, t, dur, n, cols, fps) {
+        var el = $(id), rows = Math.ceil(n / cols), step = 1 / (fps || 12), f = 0;
+        for (var x = 0; x * step < dur; x++) {
+          var k = f % n, cx = k % cols, cy = Math.floor(k / cols);
+          tl.set(el, { backgroundPosition: (cx * 100 / (cols - 1)) + "% " + (cy * 100 / (rows - 1)) + "%" }, t + x * step);
+          f++;
+        }
+      }
+
       totInit("49 000");
-      pre("hand", { opacity: 0, scale: 0.6 }); go("hand", { opacity: 1, scale: 1 }, at("revends") - 0.06, 0.35, "back.out(1.8)");
-      go("hand", { opacity: 0, scale: 0.8, y: -40 }, at("puis") - 0.12, 0.25, "power2.in");
-      // he calls: the engine overheats
+      // sold to a private buyer
+      pre("ph", { opacity: 0, scale: 1.08 }); go("ph", { opacity: 1, scale: 1 }, at("revends") - 0.08, 0.4, "expo.out");
+      init("ph", { opacity: 1, scale: 1, x: 0 }); go("ph", { x: -30 }, at("revends"), 1.6, "none");
+      pre("handbg", { opacity: 0 }); go("handbg", { opacity: 1 }, at("particulier") - 0.1, 0.2);
+      pre("hand", { opacity: 0, scale: 0.6 }); go("hand", { opacity: 1, scale: 1 }, at("particulier") - 0.06, 0.35, "back.out(1.8)");
+      go("ph", { opacity: 0 }, at("puis") - 0.12, 0.2); go("hand", { opacity: 0 }, at("puis") - 0.12, 0.2); go("handbg", { opacity: 0 }, at("puis") - 0.12, 0.2);
+      // he calls: the engine overheats (the real dashboard)
       pre("ring", { opacity: 0, scale: 0.7 }); go("ring", { opacity: 1, scale: 1 }, at("m'appelle") - 0.1, 0.3, "back.out(2)");
       wobble("ringph", at("m'appelle"), 7); wobble("ringph", at("m'appelle") + 0.35, 6);
-      pre("gauge", { opacity: 0, y: 30 }); go("gauge", { opacity: 1, y: 0 }, at("moteur") - 0.1, 0.3); pre("glab", { opacity: 0 }); go("glab", { opacity: 1 }, at("moteur"), 0.3);
+      pre("dash", { opacity: 0, x: -60 }); go("dash", { opacity: 1, x: 0 }, at("moteur") - 0.15, 0.35, "expo.out");
+      sprite("dash", at("moteur") - 0.15, Math.max(1.5, at("rembourse") - at("moteur") + 0.3), 36, 6, 12);
+      go("ring", { opacity: 0, scale: 0.8 }, at("moteur") + 0.1, 0.25);
+      pre("gauge", { opacity: 0, y: 30 }); go("gauge", { opacity: 1, y: 0 }, at("moteur") - 0.05, 0.3); pre("glab", { opacity: 0 }); go("glab", { opacity: 1 }, at("moteur"), 0.3);
       tl.set($("needle"), { svgOrigin: "150 170", rotation: -70 }, 0);
       tl.fromTo($("needle"), { rotation: -70 }, { rotation: 62, duration: 0.9, ease: "power2.in", immediateRender: false }, at("chauffe") - 0.2);
       wobble("gauge", at("chauffe") + 0.7, 2);
       // full refund: the costs go into the TOTAL
-      go("ring", { opacity: 0 }, at("rembourse") - 0.15, 0.25); go("gauge", { opacity: 0.3 }, at("rembourse") - 0.15, 0.3); go("glab", { opacity: 0 }, at("rembourse") - 0.15, 0.3);
+      go("dash", { opacity: 0, x: -60 }, at("rembourse") - 0.15, 0.3); go("gauge", { opacity: 0 }, at("rembourse") - 0.15, 0.3); go("glab", { opacity: 0 }, at("rembourse") - 0.15, 0.3);
       bump("c1", at("carte") - 0.1, "51 000 €");
       // the car comes back on a truck
-      go("gauge", { opacity: 0 }, at("rapatrie") - 0.15, 0.2);
       pre("truck", { opacity: 0, x: 900 }); go("truck", { opacity: 1, x: 0 }, at("rapatrie") - 0.1, 0.9, "power3.out");
       slam("t3-0", at("rapatrie") - 0.04); stroke("t3", at("rapatrie") + 0.2);
       bump("c2", Math.max(at("rapatrie") + 0.2, at("carte") + 1.6), "51 800 €");

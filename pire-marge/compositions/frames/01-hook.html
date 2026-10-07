@@ -51,8 +51,15 @@
       font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
     .r1-w { display: inline-block; opacity: 0; }
 
+    .r1-burst { position: absolute; overflow: hidden; }
+    .r1-burst img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: saturate(0.72) contrast(1.04); }
+    .r1-sprite { position: absolute; border: 4px solid #FB8000; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.6); filter: saturate(0.72); }
+
+    #r1-bg { left: 0; top: 0; width: 1080px; height: 1920px; }
+    #r1-bg img { filter: saturate(0.6) brightness(0.38); }
     #r1-sub1 { position: absolute; left: 0; top: 1060px; width: 1080px; text-align: center; font: 600 56px/1.2 "Instrument Sans", sans-serif;
-      color: #bdbdbd; letter-spacing: 0.08em; opacity: 0; }
+      color: #d0d0d0; letter-spacing: 0.08em; opacity: 0; }
     #r1-sub1 b { color: #FB8000; font-weight: 600; }
       </style>
 
@@ -62,7 +69,7 @@
       <div class="r1-grain"></div>
     </div>
     <div id="r1-push" class="r1-cam"><div id="r1-shk" class="r1-cam"><div id="r1-cran" class="r1-cam">
-      
+      <div id="r1-bg" class="r1-burst"><img src="assets/img/ph-feux.jpg"><img src="assets/img/ph-badge.jpg"><img src="assets/img/ph-profil.jpg"><img src="assets/img/ph-interieur.jpg"></div>
     </div></div></div>
     <div id="r1-hud" class="r1-cam r1-hudcam">
       <div class="r1-title" id="r1-t1" style="top:480px;font-size:200px;"><span class="r1-tline" id="r1-t1-0">MA PIRE</span><br><span class="r1-tline" id="r1-t1-1">MARGE.<i class="r1-stilt"><i class="r1-stk" id="r1-t1-s"></i></i></span></div><div id="r1-sub1"><b><span id="r1-y16" class="r1-odo " data-to="16"><span class="r1-oc"><span class="r1-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r1-oc"><span class="r1-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></b> ANS DE MÉTIER</div>
@@ -172,11 +179,31 @@
       tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
       tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
 
+      // photo burst: hard cuts from one photo to the next (each shown from times[k])
+      function burst(id, times, fade) {
+        var imgs = $(id).querySelectorAll("img");
+        for (var k = 0; k < imgs.length && k < times.length; k++) {
+          tl.set(imgs[k], { opacity: 1 }, Math.max(0, times[k]));
+          if (k > 0) tl.set(imgs[k - 1], { opacity: 0 }, Math.max(0, times[k]) + 0.001);
+        }
+      }
+      // video as a sprite sheet (cols x rows frames, 12 fps), played from t for dur seconds, looping
+      function sprite(id, t, dur, n, cols, fps) {
+        var el = $(id), rows = Math.ceil(n / cols), step = 1 / (fps || 12), f = 0;
+        for (var x = 0; x * step < dur; x++) {
+          var k = f % n, cx = k % cols, cy = Math.floor(k / cols);
+          tl.set(el, { backgroundPosition: (cx * 100 / (cols - 1)) + "% " + (cy * 100 / (rows - 1)) + "%" }, t + x * step);
+          f++;
+        }
+      }
+
+      var e = at("ferrari"), n = 4, step = Math.max(0.35, (DUR - 0.05) / n);
+      burst("bg", [0, step, 2 * step, 3 * step]);
+      init("bg", { scale: 1 }); go("bg", { scale: 1.12 }, 0, DUR, "none");
       slam("t1-0", Math.max(0.02, at("ma") - 0.02), { s: 1.4 }); slam("t1-1", at("marge") - 0.04, { s: 1.4 }); stroke("t1", at("marge") + 0.2);
       shake("shk", at("marge") + 0.05, 10);
       pre("sub1", { opacity: 0, y: 30 }); go("sub1", { opacity: 1, y: 0 }, at("16") - 0.06, 0.3); odo("y16", at("16") - 0.06, 0.7);
-      init("halo", { scale: 1, opacity: 1 }); go("halo", { scale: 1.3 }, at("ferrari") - 0.05, 0.5);
-      go("t1", { scale: 1.06 }, at("ferrari") - 0.05, 0.6, "power2.out");
+      go("t1", { scale: 1.06 }, e - 0.05, 0.6, "power2.out");
     
       subs();
       tl.set({}, {}, DUR);

@@ -10,7 +10,16 @@ Photos réelles (branche `claude/vertical-clips-personal-brand-6rv5uf`, `rushes/
   `carnet entretien (1)` à `(6)` en vignettes floues ;
 - scène 5 : `IMG_20210205_174513.jpg` (moteur déposé) ;
 - scène 6 : `742829927-IMG-20230417-WA0023.jpg` (départ export, plaque déjà masquée) ;
-- scène 8 : `IMG_20221216_155808.jpg` (plaque floutée).
+- scène 1 : rafale de photos (feux, écusson, profil, intérieur) derrière le titre ;
+- scène 2 : le téléphone fait défiler les photos de l'achat ; carnet d'entretien redressé, les 2 pages de coupons nettes,
+  les 4 pages avec noms et adresses des anciens propriétaires floutées ; liste des travaux d'entretien qui défile ;
+- scène 3 : photo de profil (mai 2020), vidéo du tableau de bord (`Snapchat-1839739242.mp4`) sur « le moteur chauffe » ;
+- scène 5 : moteur ouvert (`1763778069-IMG-20221030-WA0023.jpg`), vidéo de l'atelier (`Snapchat-1758665886.mp4`,
+  2,25 premières secondes, sans plaque) sur « dans mon garage » ;
+- scène 6 : rafale (rétro, jante, intérieur) puis la photo du départ ;
+- scène 8 : happy end, `Ferrari 360 Modena_1 fait.mp4` plein écran (écusson puis la voiture qui arrive sur la route,
+  18,5 à 22,6 s), plaque floutée image par image, aucun plan avec le logo BH.
+Les vidéos sont jouées en planches d'images (`assets/img/sp-*.jpg`, 12 images/s).
 
 Écarts avec le brief : à l'écran « - 16 800 € » (66 800 - 50 000), la voix garde « moins 17 000 euros » (arrondi) ;
 erreur n° 2 raccourcie en « PAS À N'IMPORTE QUEL MÉCANO. » (6 mots) ; « ÉPISODE 3 : JE ME SUIS FAIT AVOIR » affiché
