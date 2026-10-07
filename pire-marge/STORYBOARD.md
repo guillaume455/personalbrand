@@ -140,7 +140,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - transition_in: cut
 - status: animated
 - src: compositions/frames/08-cta.html
-- voiceover: "J'ai perdu 17 000 euros. J'ai gardé les leçons. Abonne-toi, il y a d'autres épisodes."
+- voiceover: "J'ai perdu 17 000 euros. J'ai gardé les leçons. Abonne-toi pour plus de contenu comme celui-ci."
 - type: cta
 - blueprint: none
 - focal: CTA

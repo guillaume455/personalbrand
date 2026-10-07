@@ -52,7 +52,7 @@ SCENES = [
    "qui pensait en être capable.", "Ce type de mécanique", "ne se confie pas", "à tout le *monde*.",
    "Trois~: j'ai cru", "pouvoir gérer ça *seul*,", "sans demander à ceux", "qui savaient *vraiment*."]),
  dict(id="08-cta", name="CTA", window=(61, 66), chunks=[
-   "J'ai perdu", "*17~000* euros.", "J'ai gardé les *leçons*.", "*Abonne-toi*,", "il y a d'autres épisodes."]),
+   "J'ai perdu", "*17~000* euros.", "J'ai gardé les *leçons*.", "*Abonne-toi*", "pour plus de contenu", "comme celui-ci."]),
 ]
 SPOKEN_SYL = {"16": 1, "2019": 5, "30": 2, "360": 5, "49000": 5, "2023": 5, "50000": 3, "17000": 3}
 RED = "#B3261E"   # dark red: temperature gauge and cylinder heads only
@@ -775,10 +775,10 @@ def scene_08():
       slam("t8-0", at("gardé") - 0.05); slam("t8-1", at("leçons") - 0.05); stroke("t8", at("leçons") + 0.2);
       go("t8", { opacity: 0, y: -40 }, at("abonne-toi") - 0.14, 0.15, "power2.in");
       slam("hname", at("abonne-toi"), { s: 1.3 }); stroke("h", at("abonne-toi") + 0.2);
-      pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("d'autres") - 0.06, 0.3, "back.out(2)");
+      pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("pour") - 0.06, 0.3, "back.out(2)");
     """
     sfx = [("whoosh-cinematic", None, 0, 0.02, .2), ("pop", "gardé", 1, -.05, .14), ("pop", "leçons", 1, -.05, .14),
-           ("notification", "abonne-toi", 1, 0, .25), ("pop", "d'autres", 1, -.06, .14)]
+           ("notification", "abonne-toi", 1, 0, .25), ("pop", "pour", 1, -.06, .14)]
     return css, st, hud, js, (540, 700), sfx
 
 

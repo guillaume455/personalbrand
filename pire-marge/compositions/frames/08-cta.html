@@ -79,11 +79,12 @@
       <div class="r8-title" id="r8-t8" style="top:330px;font-size:130px;"><span class="r8-tline" id="r8-t8-0">JE ME SUIS</span><br><span class="r8-tline" id="r8-t8-1">FAIT AVOIR.<i class="r8-stilt"><i class="r8-stk" id="r8-t8-s"></i></i></span></div><div id="r8-handle"><span id="r8-hname">@guillaumeherbin_<i class="r8-stilt"><i class="r8-stk" id="r8-h-s"></i></i></span><div id="r8-pill"><span id="r8-pilli">S’ABONNER</span></div></div>
     </div>
     <div id="r8-sub" class="r8-sub">
-      <div class="r8-chunk sub-chunk" data-out="0.541"><span class="r8-w sub-w" data-cue="0.150">J'ai</span> <span class="r8-w sub-w" data-cue="0.300">perdu</span></div>
-      <div class="r8-chunk sub-chunk" data-out="1.593"><span class="r8-w sub-w sub-key" data-cue="0.601">17 000</span> <span class="r8-w sub-w" data-cue="1.052">euros.</span></div>
-      <div class="r8-chunk sub-chunk" data-out="2.796"><span class="r8-w sub-w" data-cue="1.653">J'ai</span> <span class="r8-w sub-w" data-cue="1.804">gardé</span> <span class="r8-w sub-w" data-cue="2.104">les</span> <span class="r8-w sub-w sub-key" data-cue="2.255">leçons.</span></div>
-      <div class="r8-chunk sub-chunk" data-out="3.537"><span class="r8-w sub-w sub-key" data-cue="2.856">Abonne-toi,</span></div>
-      <div class="r8-chunk sub-chunk"><span class="r8-w sub-w" data-cue="3.597">il</span> <span class="r8-w sub-w" data-cue="3.748">y</span> <span class="r8-w sub-w" data-cue="3.898">a</span> <span class="r8-w sub-w" data-cue="4.048">d'autres</span> <span class="r8-w sub-w" data-cue="4.199">épisodes.</span></div>
+      <div class="r8-chunk sub-chunk" data-out="0.508"><span class="r8-w sub-w" data-cue="0.150">J'ai</span> <span class="r8-w sub-w" data-cue="0.289">perdu</span></div>
+      <div class="r8-chunk sub-chunk" data-out="1.504"><span class="r8-w sub-w sub-key" data-cue="0.568">17 000</span> <span class="r8-w sub-w" data-cue="0.986">euros.</span></div>
+      <div class="r8-chunk sub-chunk" data-out="2.640"><span class="r8-w sub-w" data-cue="1.564">J'ai</span> <span class="r8-w sub-w" data-cue="1.704">gardé</span> <span class="r8-w sub-w" data-cue="1.982">les</span> <span class="r8-w sub-w sub-key" data-cue="2.121">leçons.</span></div>
+      <div class="r8-chunk sub-chunk" data-out="3.197"><span class="r8-w sub-w sub-key" data-cue="2.700">Abonne-toi</span></div>
+      <div class="r8-chunk sub-chunk" data-out="4.033"><span class="r8-w sub-w" data-cue="3.257">pour</span> <span class="r8-w sub-w" data-cue="3.396">plus</span> <span class="r8-w sub-w" data-cue="3.536">de</span> <span class="r8-w sub-w" data-cue="3.675">contenu</span></div>
+      <div class="r8-chunk sub-chunk"><span class="r8-w sub-w" data-cue="4.093">comme</span> <span class="r8-w sub-w" data-cue="4.232">celui-ci.</span></div>
     </div>
   </div>
 
@@ -92,7 +93,7 @@
     (function () {
       var FID = "08-cta", P = "r8-", DUR = 5;
       // word cues of this scene (local seconds), written by build.py from the voice timings
-      var W = [["j'ai", 0.15, 0.3], ["perdu", 0.3, 0.601], ["17000", 0.601, 1.052], ["euros", 1.052, 1.353], ["j'ai", 1.653, 1.804], ["gardé", 1.804, 2.104], ["les", 2.104, 2.255], ["leçons", 2.255, 2.556], ["abonne-toi", 2.856, 3.457], ["il", 3.597, 3.748], ["y", 3.748, 3.898], ["a", 3.898, 4.048], ["d'autres", 4.048, 4.199], ["épisodes", 4.199, 4.65]];
+      var W = [["j'ai", 0.15, 0.289], ["perdu", 0.289, 0.568], ["17000", 0.568, 0.986], ["euros", 0.986, 1.264], ["j'ai", 1.564, 1.704], ["gardé", 1.704, 1.982], ["les", 1.982, 2.121], ["leçons", 2.121, 2.4], ["abonne-toi", 2.7, 3.257], ["pour", 3.257, 3.396], ["plus", 3.396, 3.536], ["de", 3.536, 3.675], ["contenu", 3.675, 4.093], ["comme", 4.093, 4.232], ["celui-ci", 4.232, 4.65]];
 
       var root = document.querySelector('[data-composition-id="' + FID + '"]');
       function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
@@ -209,7 +210,7 @@
       slam("t8-0", at("gardé") - 0.05); slam("t8-1", at("leçons") - 0.05); stroke("t8", at("leçons") + 0.2);
       go("t8", { opacity: 0, y: -40 }, at("abonne-toi") - 0.14, 0.15, "power2.in");
       slam("hname", at("abonne-toi"), { s: 1.3 }); stroke("h", at("abonne-toi") + 0.2);
-      pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("d'autres") - 0.06, 0.3, "back.out(2)");
+      pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("pour") - 0.06, 0.3, "back.out(2)");
     
       subs();
       tl.set({}, {}, DUR);

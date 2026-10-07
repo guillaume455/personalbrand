@@ -37,7 +37,7 @@ Diagnostic : joint de culasse. Sur une Ferrari, ça veut dire déposer le moteur
 Je confie le chantier à un mécano. Il commence. Puis il abandonne, moteur ouvert. Je dois tout reprendre à zéro : trouver quelqu'un capable d'intervenir sur place, dans mon garage, parce que la voiture ne bouge plus. Elle reste plus d'un an immobilisée.
 Le mécano qui reprend le chantier me fait commander l'embrayage en plus, pour anticiper. Cette fois, j'écoute. Avril deux mille vingt-trois, je la revends cinquante mille euros à l'export. Trois ans et demi plus tard. Moins dix-sept mille euros, sans compter l'argent bloqué pendant tout ce temps.
 Mes trois erreurs. Un : j'ai acheté avec le cœur. Pas d'essai, pas de contrôle, aucune des vérifications que je fais sur n'importe quelle occasion. La confiance, même après des années, ne remplace pas un contrôle. Deux : j'ai confié ce moteur à quelqu'un qui pensait en être capable. Ce type de mécanique ne se confie pas à tout le monde. Trois : j'ai cru pouvoir gérer ça seul, sans demander à ceux qui savaient vraiment.
-J'ai perdu dix-sept mille euros. J'ai gardé les leçons. Abonne-toi, il y a d'autres épisodes.
+J'ai perdu dix-sept mille euros. J'ai gardé les leçons. Abonne-toi pour plus de contenu comme celui-ci.
 ```
 
 ## Recaler sur la prise
