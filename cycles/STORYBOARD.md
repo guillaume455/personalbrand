@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "70s"
+duration: "82.067s"
 message: "Même budget de 30 000 € : la sportive à grosse marge rapporte le moins ; ce qui compte, c'est la rotation de la trésorerie (marge × cycles de vente), et les voitures qui cassent pas cher."
 arc: Hook → Option 1 → Option 2 → Option 3 → Verdict → Risk → Rule + CTA
 audience: "Personnes qui veulent se lancer dans l'achat-revente automobile"
@@ -21,10 +21,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : aucun billet ni espèce ; jamais plus de 6 mots par bloc de texte ; photos réelles de Guillaume, plaques floutées ; frise de 12 mois en bas d'écran, compteur annuel à droite.
 
-## Frame 1: Hook · 0.00 → 4.00
+## Frame 1: Hook · 0.00 → 6.40
 
 - scene: Hook
-- duration: 4.00s
+- duration: 6.40s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
@@ -37,10 +37,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: Option 1, la sportive · 4.00 → 16.00
+## Frame 2: Option 1, la sportive · 6.40 → 17.83
 
 - scene: Option 1, la sportive
-- duration: 12.00s
+- duration: 11.43s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-sportive.html
@@ -53,10 +53,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: Option 2, SUV + citadine · 16.00 → 28.00
+## Frame 3: Option 2, SUV + citadine · 17.83 → 33.27
 
 - scene: Option 2, SUV + citadine
-- duration: 12.00s
+- duration: 15.43s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-suv-citadine.html
@@ -69,10 +69,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: Option 3, trois citadines · 28.00 → 40.00
+## Frame 4: Option 3, trois citadines · 33.27 → 46.60
 
 - scene: Option 3, trois citadines
-- duration: 12.00s
+- duration: 13.33s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-citadines.html
@@ -85,10 +85,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: Le verdict · 40.00 → 49.00
+## Frame 5: Le verdict · 46.60 → 56.70
 
 - scene: Le verdict
-- duration: 9.00s
+- duration: 10.10s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-verdict.html
@@ -101,10 +101,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 6: Le risque · 49.00 → 62.00
+## Frame 6: Le risque · 56.70 → 71.93
 
 - scene: Le risque
-- duration: 13.00s
+- duration: 15.23s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/06-risque.html
@@ -117,10 +117,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 7: La règle et CTA · 62.00 → 70.00
+## Frame 7: La règle et CTA · 71.93 → 82.07
 
 - scene: La règle et CTA
-- duration: 8.00s
+- duration: 10.13s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/07-regle.html

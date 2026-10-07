@@ -3,7 +3,7 @@
 # (musique.mp3 « coma-media slim », first drop on scene 2, second drop on « moins 17 000 »), ducked under the voice, -14 LUFS (social). TOTAL comes from timings.json.
 set -euo pipefail; cd "$(dirname "$0")"
 TOTAL=$(python3 -c "import json;print(json.load(open('timings.json'))['total'])")
-MUS_START=${MUS_START:-12.33}; MUS_GAIN=${MUS_GAIN:-0.30}
+MUS_START=${MUS_START:-9.0}; MUS_GAIN=${MUS_GAIN:-0.30}
 SFX=../.claude/skills/media-use/audio/assets/sfx
 VO=assets/audio/voix-montage.wav
 if [ -f "$VO" ]; then VOIN=(-i "$VO"); else VOIN=(-f lavfi -t "$TOTAL" -i anullsrc=r=44100:cl=mono); echo "mix: no voice yet (silent voice track)"; fi
