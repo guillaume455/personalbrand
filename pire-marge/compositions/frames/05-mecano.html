@@ -1,0 +1,242 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r5-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r5-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r5-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r5-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r5-hudcam { transform-origin: 540px 600px; }
+    .r5-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r5-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r5-tline { position: relative; display: inline-block; opacity: 0; }
+    .r5-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r5-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r5-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r5-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r5-ocol { display: block; }
+    .r5-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r5-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r5-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r5-person { position: absolute; transform-origin: 50% 100%; }
+    .r5-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r5-pgrey { fill: #2b2b2b; }
+    .r5-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r5-porange { fill: #FB8000; opacity: 0; }
+    .r5-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r5-car { position: absolute; transform-origin: 50% 100%; }
+    .r5-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r5-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r5-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r5-w { display: inline-block; opacity: 0; }
+
+    .r5-photo { position: absolute; border: 4px solid #FB8000; border-radius: 8px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.6); }
+    .r5-photo img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.72) contrast(1.04); }
+
+    #r5-tot { position: absolute; right: 50px; top: 226px; text-align: right; transform-origin: 100% 50%; }
+    .r5-totl { font: 600 24px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.16em; }
+    .r5-totv { font: 70px "Anton", sans-serif; color: #FB8000; margin-top: 4px; }
+    .r5-chip { position: absolute; padding: 6px 24px; border-radius: 30px; background: #FB8000; color: #0A0A0A; font: 50px/1.2 "Anton", sans-serif;
+      opacity: 0; white-space: nowrap; }
+    .r5-chips { display: block; font: 600 24px/1 "Instrument Sans", sans-serif; letter-spacing: 0.04em; text-align: center; margin-top: -2px; padding-bottom: 6px; }
+
+    #r5-ph { left: 90px; top: 600px; width: 900px; height: 420px; }
+    #r5-mech { opacity: 0; }
+    #r5-wrench { position: absolute; left: 840px; top: 900px; width: 110px; height: 110px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 10;
+      stroke-linecap: round; opacity: 0; }
+    #r5-mag { position: absolute; left: 200px; top: 720px; width: 170px; height: 170px; overflow: visible; fill: none; stroke: #ffffff; stroke-linecap: round; opacity: 0; }
+    #r5-cal { position: absolute; left: 600px; top: 900px; width: 340px; height: 300px; border-radius: 26px; background: #151515; border: 3px solid #2e2e2e; opacity: 0; overflow: hidden; }
+    #r5-calh { position: absolute; left: 0; top: 0; width: 100%; height: 64px; background: #2a2a2a; }
+    #r5-calv { position: absolute; left: 0; top: 76px; width: 100%; text-align: center; font: 140px/1 "Anton", sans-serif; color: #ffffff; }
+    #r5-calm { position: absolute; left: 0; top: 236px; width: 100%; text-align: center; font: 600 32px "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; }
+      </style>
+
+  <div id="root" data-composition-id="05-mecano" data-width="1080" data-height="1920" data-duration="12">
+    <div id="r5-ground" class="clip r5-ground" data-start="0" data-duration="12" data-track-index="0">
+      <div id="r5-halo" class="r5-halo" style="left:540px;top:820px"></div>
+      <div class="r5-grain"></div>
+    </div>
+    <div id="r5-push" class="r5-cam"><div id="r5-shk" class="r5-cam"><div id="r5-cran" class="r5-cam">
+      <div id="r5-ph" class="r5-photo"><img src="assets/img/moteur.jpg"></div><div id="r5-mech-glow" class="r5-glow" style="left:635px;top:728px"></div><div id="r5-mech" class="r5-person" style="left:760px;top:830px;width:170px;height:255px"><svg viewBox="0 0 200 300" class="r5-pl r5-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r5-pl r5-pwhite" id="r5-mech-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r5-pl r5-porange" id="r5-mech-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><svg id="r5-wrench" viewBox="0 0 110 110"><path d="M20 90 L64 46"/><circle cx="76" cy="34" r="20"/></svg><svg id="r5-mag" viewBox="0 0 160 160"><circle cx="64" cy="64" r="44" stroke-width="12"/><path d="M98 98 L144 144" stroke-width="18"/></svg><div id="r5-cal"><div id="r5-calh"></div><div id="r5-calv"><span id="r5-mo" class="r5-odo " data-to="14"><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></div><div id="r5-calm">MOIS</div></div>
+    </div></div></div>
+    <div id="r5-hud" class="r5-cam r5-hudcam">
+      <div class="r5-title" id="r5-t5" style="top:380px;font-size:110px;"><span class="r5-tline" id="r5-t5-0">REPRENDRE À ZÉRO.<i class="r5-stilt"><i class="r5-stk" id="r5-t5-s"></i></i></span></div><div class="r5-title" id="r5-t5b" style="top:350px;font-size:100px;"><span class="r5-tline" id="r5-t5b-0">PLUS D’UN AN</span><br><span class="r5-tline" id="r5-t5b-1">IMMOBILISÉE.<i class="r5-stilt"><i class="r5-stk" id="r5-t5b-s"></i></i></span></div><div id="r5-tot"><div class="r5-totl">TOTAL</div><div class="r5-totv"><span id="r5-totv" class="r5-odo " data-to="51 800 €"><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-os">&nbsp;</span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-oc"><span class="r5-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r5-os">&nbsp;</span><span class="r5-os">€</span></span></div></div><div id="r5-c3" class="r5-chip" style="left:330px;top:1080px">+15 000 €<span class="r5-chips">MÉCANIQUE</span></div>
+    </div>
+    <div id="r5-sub" class="r5-sub">
+      <div class="r5-chunk sub-chunk" data-out="0.961"><span class="r5-w sub-w" data-cue="0.150">Je</span> <span class="r5-w sub-w" data-cue="0.295">confie</span> <span class="r5-w sub-w" data-cue="0.585">le</span> <span class="r5-w sub-w" data-cue="0.731">chantier</span></div>
+      <div class="r5-chunk sub-chunk" data-out="1.987"><span class="r5-w sub-w" data-cue="1.021">à</span> <span class="r5-w sub-w" data-cue="1.166">un</span> <span class="r5-w sub-w sub-key" data-cue="1.311">mécano.</span></div>
+      <div class="r5-chunk sub-chunk" data-out="2.722"><span class="r5-w sub-w" data-cue="2.047">Il</span> <span class="r5-w sub-w" data-cue="2.192">commence.</span></div>
+      <div class="r5-chunk sub-chunk" data-out="3.588"><span class="r5-w sub-w" data-cue="2.782">Puis</span> <span class="r5-w sub-w" data-cue="2.927">il</span> <span class="r5-w sub-w sub-key" data-cue="3.072">abandonne,</span></div>
+      <div class="r5-chunk sub-chunk" data-out="4.468"><span class="r5-w sub-w" data-cue="3.648">moteur</span> <span class="r5-w sub-w" data-cue="3.938">ouvert.</span></div>
+      <div class="r5-chunk sub-chunk" data-out="5.194"><span class="r5-w sub-w" data-cue="4.528">Je</span> <span class="r5-w sub-w" data-cue="4.674">dois</span> <span class="r5-w sub-w" data-cue="4.819">tout</span> <span class="r5-w sub-w" data-cue="4.964">reprendre</span></div>
+      <div class="r5-chunk sub-chunk" data-out="5.930"><span class="r5-w sub-w" data-cue="5.254">à</span> <span class="r5-w sub-w sub-key" data-cue="5.399">zéro :</span></div>
+      <div class="r5-chunk sub-chunk" data-out="6.655"><span class="r5-w sub-w" data-cue="5.990">trouver</span> <span class="r5-w sub-w" data-cue="6.280">quelqu'un</span></div>
+      <div class="r5-chunk sub-chunk" data-out="7.526"><span class="r5-w sub-w" data-cue="6.715">capable</span> <span class="r5-w sub-w" data-cue="7.006">d'intervenir</span></div>
+      <div class="r5-chunk sub-chunk" data-out="7.957"><span class="r5-w sub-w" data-cue="7.586">sur</span> <span class="r5-w sub-w" data-cue="7.732">place,</span></div>
+      <div class="r5-chunk sub-chunk" data-out="8.677"><span class="r5-w sub-w" data-cue="8.017">dans</span> <span class="r5-w sub-w" data-cue="8.162">mon</span> <span class="r5-w sub-w sub-key" data-cue="8.307">garage,</span></div>
+      <div class="r5-chunk sub-chunk" data-out="9.403"><span class="r5-w sub-w" data-cue="8.737">parce</span> <span class="r5-w sub-w" data-cue="8.882">que</span> <span class="r5-w sub-w" data-cue="9.028">la</span> <span class="r5-w sub-w" data-cue="9.173">voiture</span></div>
+      <div class="r5-chunk sub-chunk" data-out="10.138"><span class="r5-w sub-w" data-cue="9.463">ne</span> <span class="r5-w sub-w" data-cue="9.608">bouge</span> <span class="r5-w sub-w" data-cue="9.753">plus.</span></div>
+      <div class="r5-chunk sub-chunk" data-out="10.979"><span class="r5-w sub-w" data-cue="10.198">Elle</span> <span class="r5-w sub-w" data-cue="10.344">reste</span> <span class="r5-w sub-w" data-cue="10.489">plus</span> <span class="r5-w sub-w" data-cue="10.634">d'un</span> <span class="r5-w sub-w" data-cue="10.779">an</span></div>
+      <div class="r5-chunk sub-chunk"><span class="r5-w sub-w sub-key" data-cue="10.924">immobilisée.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "05-mecano", P = "r5-", DUR = 12;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["je", 0.15, 0.295], ["confie", 0.295, 0.585], ["le", 0.585, 0.731], ["chantier", 0.731, 1.021], ["à", 1.021, 1.166], ["un", 1.166, 1.311], ["mécano", 1.311, 1.747], ["il", 2.047, 2.192], ["commence", 2.192, 2.482], ["puis", 2.782, 2.927], ["il", 2.927, 3.072], ["abandonne", 3.072, 3.508], ["moteur", 3.648, 3.938], ["ouvert", 3.938, 4.228], ["je", 4.528, 4.674], ["dois", 4.674, 4.819], ["tout", 4.819, 4.964], ["reprendre", 4.964, 5.254], ["à", 5.254, 5.399], ["zéro", 5.399, 5.69], ["trouver", 5.99, 6.28], ["quelqu'un", 6.28, 6.715], ["capable", 6.715, 7.006], ["d'intervenir", 7.006, 7.586], ["sur", 7.586, 7.732], ["place", 7.732, 7.877], ["dans", 8.017, 8.162], ["mon", 8.162, 8.307], ["garage", 8.307, 8.597], ["parce", 8.737, 8.882], ["que", 8.882, 9.028], ["la", 9.028, 9.173], ["voiture", 9.173, 9.463], ["ne", 9.463, 9.608], ["bouge", 9.608, 9.753], ["plus", 9.753, 9.898], ["elle", 10.198, 10.344], ["reste", 10.344, 10.489], ["plus", 10.489, 10.634], ["d'un", 10.634, 10.779], ["an", 10.779, 10.924], ["immobilisée", 10.924, 11.65]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      function totInit(v) { odo("totv", 0, 0.01, { from: v, spinLow: false }); }
+      // a cost chip pops, flies into the TOTAL counter, the counter rolls up
+      function bump(chip, t, to) {
+        var el = $(chip), dx = 900 - (el.offsetLeft + el.offsetWidth / 2), dy = 280 - (el.offsetTop + el.offsetHeight / 2);
+        pre(chip, { opacity: 0, scale: 0.5, x: 0, y: 0 });
+        go(chip, { opacity: 1, scale: 1 }, t, 0.25, "back.out(2)");
+        go(chip, { x: dx, y: dy, opacity: 0, scale: 0.5 }, t + 0.75, 0.42, "power3.in");
+        odo("totv", t + 1.1, 0.8, { to: to });
+        init("tot", { scale: 1 }); go("tot", { scale: 1.14 }, t + 1.1, 0.12); go("tot", { scale: 1 }, t + 1.22, 0.35);
+      }
+
+      totInit("51 800");
+      pre("ph", { opacity: 0, scale: 1.08 }); go("ph", { opacity: 1, scale: 1 }, 0.02, 0.5, "expo.out");
+      init("mech-w", { opacity: 0 }); init("mech-o", { opacity: 0 }); init("mech-glow", { opacity: 0 });
+      pre("mech", { opacity: 0, y: 40 }); go("mech", { opacity: 1, y: 0 }, at("mécano") - 0.05, 0.3, "back.out(1.6)"); lit("mech", "white", at("mécano"), 0.25);
+      pre("wrench", { opacity: 0, rotation: -30 }); go("wrench", { opacity: 1, rotation: 0 }, at("commence") - 0.05, 0.3, "back.out(2)");
+      wobble("wrench", at("commence") + 0.3, 12);
+      // he gives up, engine open: he fades away
+      go("mech", { opacity: 0, y: -30 }, at("abandonne"), 0.7, "power2.in"); go("wrench", { opacity: 0, y: 40, rotation: 40 }, at("abandonne") + 0.1, 0.5, "power2.in");
+      slam("t5-0", at("zéro") - 0.05); stroke("t5", at("zéro") + 0.15);
+      bump("c3", at("zéro") + 0.2, "66 800 €");
+      // looking for someone able to work on site
+      pre("mag", { opacity: 0, scale: 0.6, x: 0 }); go("mag", { opacity: 1, scale: 1 }, at("trouver") - 0.05, 0.25, "back.out(2)");
+      go("mag", { x: 380 }, at("trouver") + 0.2, 0.7, "sine.inOut"); go("mag", { x: 60 }, at("trouver") + 0.95, 0.7, "sine.inOut");
+      go("mag", { opacity: 0 }, at("voiture") - 0.1, 0.3);
+      // more than a year off the road
+      go("t5", { opacity: 0, y: -30 }, at("elle") - 0.12, 0.14, "power2.in");
+      pre("cal", { opacity: 0, y: 60 }); go("cal", { opacity: 1, y: 0 }, at("elle") - 0.1, 0.3, "back.out(1.5)");
+      odo("mo", at("elle"), Math.max(1.0, at("immobilisée") + 0.3 - at("elle")), { from: "00" });
+      slam("t5b-0", at("an") - 0.05); slam("t5b-1", at("immobilisée") - 0.04); stroke("t5b", at("immobilisée") + 0.2);
+      tl.fromTo($("ph").querySelector("img"), { filter: "saturate(0.72) brightness(1)" }, { filter: "saturate(0.2) brightness(0.6)", duration: 0.8, immediateRender: false }, at("immobilisée") - 0.1);
+      cam(0, -10, 1.04, at("trouver"), 0.8);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
