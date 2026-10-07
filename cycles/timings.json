@@ -1,0 +1,76 @@
+{
+ "provisional": true,
+ "total": 70,
+ "frames": [
+  {
+   "n": 1,
+   "id": "01-hook",
+   "name": "Hook",
+   "start": 0,
+   "end": 4,
+   "dur": 4,
+   "src": "compositions/frames/01-hook.html",
+   "vo": "Tu as 30 000 euros pour démarrer et douze mois devant toi. Trois façons de les placer. Une seule sort vraiment du lot, je t'explique."
+  },
+  {
+   "n": 2,
+   "id": "02-sportive",
+   "name": "Option 1, la sportive",
+   "start": 4,
+   "end": 16,
+   "dur": 12,
+   "src": "compositions/frames/02-sportive.html",
+   "vo": "Option un : une sportive. Achetée 30 000, revendue 35 000. 5 000 euros de marge, c'est beau. Mais son délai de rotation de stock, c'est quatre mois. Trois cycles de vente sur douze mois. 15 000 euros."
+  },
+  {
+   "n": 3,
+   "id": "03-suv-citadine",
+   "name": "Option 2, SUV + citadine",
+   "start": 16,
+   "end": 28,
+   "dur": 12,
+   "src": "compositions/frames/03-suv-citadine.html",
+   "vo": "Option deux : un SUV à 20 000 et une citadine à 10 000. Le SUV fait 3 000 de marge et tourne en 30 jours : douze cycles de vente, 36 000 euros. La citadine fait 1 500 et tourne en 15 jours : vingt-quatre cycles, 36 000 aussi. Total : 72 000 euros."
+  },
+  {
+   "n": 4,
+   "id": "04-citadines",
+   "name": "Option 3, trois citadines",
+   "start": 28,
+   "end": 40,
+   "dur": 12,
+   "src": "compositions/frames/04-citadines.html",
+   "vo": "Option trois : trois citadines. 1 500 euros de marge chacune, 15 jours de rotation. Sur le papier, 108 000 euros dans l'année. Soyons honnêtes : enchaîner 72 cycles de vente, c'est un vrai métier. Divise par deux. Tu es encore à 54 000."
+  },
+  {
+   "n": 5,
+   "id": "05-verdict",
+   "name": "Le verdict",
+   "start": 40,
+   "end": 49,
+   "dur": 9,
+   "src": "compositions/frames/05-verdict.html",
+   "vo": "Même budget de départ. La voiture à la plus grosse marge est celle qui te rapporte le moins. Ce qui compte, c'est pas la marge d'une vente. C'est la rotation de ta trésorerie : combien de fois ton argent revient dans l'année."
+  },
+  {
+   "n": 6,
+   "id": "06-risque",
+   "name": "Le risque",
+   "start": 49,
+   "end": 62,
+   "dur": 13,
+   "src": "compositions/frames/06-risque.html",
+   "vo": "Et je n'ai pas encore parlé du risque. En tant que pro, tu es tenu par la garantie légale de conformité et par les vices cachés. Une panne sur une sportive, ça se paie au prix d'une sportive. La même panne sur une citadine, c'est cinq fois moins. La voiture la plus chère, c'est aussi celle qui te coûte le plus cher quand ça casse."
+  },
+  {
+   "n": 7,
+   "id": "07-regle",
+   "name": "La règle et CTA",
+   "start": 62,
+   "end": 70,
+   "dur": 8,
+   "src": "compositions/frames/07-regle.html",
+   "vo": "Ce que tu gagnes, c'est ta marge fois ton nombre de cycles de vente. Au début, prends les voitures qui tournent vite et qui cassent pas cher. Abonne-toi pour plus de contenu comme celui-ci."
+  }
+ ]
+}

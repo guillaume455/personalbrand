@@ -1,0 +1,235 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r2-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r2-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r2-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r2-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r2-hudcam { transform-origin: 540px 600px; }
+    .r2-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r2-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r2-tline { position: relative; display: inline-block; opacity: 0; }
+    .r2-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r2-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r2-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r2-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r2-ocol { display: block; }
+    .r2-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r2-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r2-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r2-person { position: absolute; transform-origin: 50% 100%; }
+    .r2-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r2-pgrey { fill: #2b2b2b; }
+    .r2-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r2-porange { fill: #FB8000; opacity: 0; }
+    .r2-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r2-car { position: absolute; transform-origin: 50% 100%; }
+    .r2-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r2-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r2-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r2-w { display: inline-block; opacity: 0; }
+
+    .r2-photo { position: absolute; border: 4px solid #FB8000; border-radius: 10px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.6); }
+    .r2-photo img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.8) contrast(1.04); }
+
+    #r2-fr { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0; }
+    .r2-mo { position: absolute; top: 985px; width: 43.33px; text-align: center; font: 700 28px/1 "Instrument Sans", sans-serif; color: #8a8a8a; }
+    .r2-lane { position: absolute; left: 150px; width: 520px; height: 54px; border-radius: 27px; background: #181818; border: 2px solid #262626; overflow: hidden; }
+    .r2-seg { position: absolute; top: 0; height: 100%; background: #FB8000; transform-origin: 0 50%; transform: scaleX(0); border-right: 3px solid #0A0A0A; }
+    .r2-seg.r2-alt { background: #d96c00; }
+    .r2-tok { position: absolute; width: 76px; height: 76px; border-radius: 50%; border: 3px solid #ffffff; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+    .r2-tok img { width: 100%; height: 100%; object-fit: cover; }
+    .r2-lc { position: absolute; left: 725px; width: 220px; text-align: right; font: 52px/1 "Anton", sans-serif; color: #FB8000; }
+    .r2-lcl { display: block; font: 600 18px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.12em; margin-bottom: 4px; }
+
+    .r2-srow { position: absolute; left: 120px; width: 840px; height: 86px; opacity: 0; border-bottom: 2px solid #222; }
+    .r2-sl { position: absolute; left: 0; top: 22px; font: 600 34px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.08em; }
+    .r2-sv { position: absolute; right: 0; top: 4px; font: 70px/1 "Anton", sans-serif; }
+
+    #r2-ph { left: 120px; top: 600px; width: 840px; height: 360px; }
+      </style>
+
+  <div id="root" data-composition-id="02-sportive" data-width="1080" data-height="1920" data-duration="12">
+    <div id="r2-ground" class="clip r2-ground" data-start="0" data-duration="12" data-track-index="0">
+      <div id="r2-halo" class="r2-halo" style="left:540px;top:800px"></div>
+      <div class="r2-grain"></div>
+    </div>
+    <div id="r2-push" class="r2-cam"><div id="r2-shk" class="r2-cam"><div id="r2-cran" class="r2-cam">
+      <div id="r2-ph" class="r2-photo"><img src="assets/img/mustang.jpg"></div><div id="r2-fr"><div class="r2-mo" style="left:150.0px">J</div><div class="r2-mo" style="left:193.3px">F</div><div class="r2-mo" style="left:236.7px">M</div><div class="r2-mo" style="left:280.0px">A</div><div class="r2-mo" style="left:323.3px">M</div><div class="r2-mo" style="left:366.7px">J</div><div class="r2-mo" style="left:410.0px">J</div><div class="r2-mo" style="left:453.3px">A</div><div class="r2-mo" style="left:496.7px">S</div><div class="r2-mo" style="left:540.0px">O</div><div class="r2-mo" style="left:583.3px">N</div><div class="r2-mo" style="left:626.7px">D</div><div class="r2-lane" style="top:1031px"><i id="r2-l1-s0" class="r2-seg" style="left:0.00px;width:173.33px"></i><i id="r2-l1-s1" class="r2-seg r2-alt" style="left:173.33px;width:173.33px"></i><i id="r2-l1-s2" class="r2-seg" style="left:346.67px;width:173.33px"></i></div><div id="r2-l1-tok" class="r2-tok" style="left:112px;top:1020px"><img src="assets/img/mustang.jpg"></div><div class="r2-lc" style="top:1013px"><span class="r2-lcl">PAR AN</span><span id="r2-c1" class="r2-odo " data-to="15 000 €"><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-os">€</span></span></div></div>
+    </div></div></div>
+    <div id="r2-hud" class="r2-cam r2-hudcam">
+      <div class="r2-title" id="r2-t2" style="top:290px;font-size:110px;"><span class="r2-tline" id="r2-t2-0">OPTION 1</span><br><span class="r2-tline" id="r2-t2-1">LA SPORTIVE<i class="r2-stilt"><i class="r2-stk" id="r2-t2-s"></i></i></span></div><div id="r2-r1" class="r2-srow" style="top:270px"><span class="r2-sl">ACHETÉE</span><span class="r2-sv" style="color:#ffffff"><span id="r2-r1v" class="r2-odo " data-to="30 000 €"><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-os">€</span></span></span></div><div id="r2-r2" class="r2-srow" style="top:366px"><span class="r2-sl">REVENDUE</span><span class="r2-sv" style="color:#ffffff"><span id="r2-r2v" class="r2-odo " data-to="35 000 €"><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-os">€</span></span></span></div><div id="r2-r3" class="r2-srow" style="top:462px"><span class="r2-sl">MARGE</span><span class="r2-sv" style="color:#FB8000"><span id="r2-r3v" class="r2-odo " data-to="5 000 €"><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-os">€</span></span></span></div><div class="r2-title" id="r2-t2b" style="top:330px;font-size:110px;"><span class="r2-tline" id="r2-t2b-0">ROTATION : 4 MOIS<i class="r2-stilt"><i class="r2-stk" id="r2-t2b-s"></i></i></span></div>
+    </div>
+    <div id="r2-sub" class="r2-sub">
+      <div class="r2-chunk sub-chunk" data-out="0.925"><span class="r2-w sub-w" data-cue="0.150">Option</span> <span class="r2-w sub-w" data-cue="0.507">un :</span></div>
+      <div class="r2-chunk sub-chunk" data-out="1.761"><span class="r2-w sub-w" data-cue="0.985">une</span> <span class="r2-w sub-w sub-key" data-cue="1.164">sportive.</span></div>
+      <div class="r2-chunk sub-chunk" data-out="2.972"><span class="r2-w sub-w" data-cue="1.821">Achetée</span> <span class="r2-w sub-w" data-cue="2.356">30 000,</span></div>
+      <div class="r2-chunk sub-chunk" data-out="4.521"><span class="r2-w sub-w" data-cue="3.032">revendue</span> <span class="r2-w sub-w" data-cue="3.567">35 000.</span></div>
+      <div class="r2-chunk sub-chunk" data-out="5.732"><span class="r2-w sub-w sub-key" data-cue="4.581">5 000</span> <span class="r2-w sub-w" data-cue="4.938">euros</span> <span class="r2-w sub-w" data-cue="5.295">de</span> <span class="r2-w sub-w" data-cue="5.473">marge,</span></div>
+      <div class="r2-chunk sub-chunk" data-out="6.388"><span class="r2-w sub-w" data-cue="5.792">c'est</span> <span class="r2-w sub-w" data-cue="5.970">beau.</span></div>
+      <div class="r2-chunk sub-chunk" data-out="7.102"><span class="r2-w sub-w" data-cue="6.448">Mais</span> <span class="r2-w sub-w" data-cue="6.627">son</span> <span class="r2-w sub-w" data-cue="6.805">délai</span></div>
+      <div class="r2-chunk sub-chunk" data-out="8.313"><span class="r2-w sub-w" data-cue="7.162">de</span> <span class="r2-w sub-w sub-key" data-cue="7.341">rotation</span> <span class="r2-w sub-w" data-cue="7.876">de</span> <span class="r2-w sub-w" data-cue="8.055">stock,</span></div>
+      <div class="r2-chunk sub-chunk" data-out="9.148"><span class="r2-w sub-w" data-cue="8.373">c'est</span> <span class="r2-w sub-w" data-cue="8.552">quatre</span> <span class="r2-w sub-w" data-cue="8.730">mois.</span></div>
+      <div class="r2-chunk sub-chunk" data-out="9.944"><span class="r2-w sub-w sub-key" data-cue="9.208">Trois</span> <span class="r2-w sub-w" data-cue="9.387">cycles</span> <span class="r2-w sub-w" data-cue="9.565">de</span> <span class="r2-w sub-w" data-cue="9.744">vente</span></div>
+      <div class="r2-chunk sub-chunk" data-out="10.698"><span class="r2-w sub-w" data-cue="9.922">sur</span> <span class="r2-w sub-w" data-cue="10.101">douze</span> <span class="r2-w sub-w sub-key" data-cue="10.279">mois.</span></div>
+      <div class="r2-chunk sub-chunk"><span class="r2-w sub-w sub-key" data-cue="10.758">15 000</span> <span class="r2-w sub-w" data-cue="11.293">euros.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "02-sportive", P = "r2-", DUR = 12;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["option", 0.15, 0.507], ["un", 0.507, 0.685], ["une", 0.985, 1.164], ["sportive", 1.164, 1.521], ["achetée", 1.821, 2.356], ["30000", 2.356, 2.892], ["revendue", 3.032, 3.567], ["35000", 3.567, 4.281], ["5000", 4.581, 4.938], ["euros", 4.938, 5.295], ["de", 5.295, 5.473], ["marge", 5.473, 5.652], ["c'est", 5.792, 5.97], ["beau", 5.97, 6.148], ["mais", 6.448, 6.627], ["son", 6.627, 6.805], ["délai", 6.805, 7.162], ["de", 7.162, 7.341], ["rotation", 7.341, 7.876], ["de", 7.876, 8.055], ["stock", 8.055, 8.233], ["c'est", 8.373, 8.552], ["quatre", 8.552, 8.73], ["mois", 8.73, 8.908], ["trois", 9.208, 9.387], ["cycles", 9.387, 9.565], ["de", 9.565, 9.744], ["vente", 9.744, 9.922], ["sur", 9.922, 10.101], ["douze", 10.101, 10.279], ["mois", 10.279, 10.458], ["15000", 10.758, 11.293], ["euros", 11.293, 11.65]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      // a lane: n cycles over the year, from t0 for dur seconds; the token rides the head of the fill
+      function lane(L, n, t0, dur, cnt, to) {
+        var segW = 520.000000 / n, step = dur / n, el = $(L + "-tok");
+        for (var k = 0; k < n; k++) {
+          var s = root.querySelector("#" + P + L + "-s" + k);
+          tl.fromTo(s, { scaleX: 0 }, { scaleX: 1, duration: step * 0.92, ease: n > 6 ? "none" : "power1.inOut", immediateRender: false }, t0 + k * step);
+          go(L + "-tok", { x: (k + 1) * segW }, t0 + k * step, step * 0.92, n > 6 ? "none" : "power1.inOut");
+        }
+        if (cnt) odo(cnt, t0, dur, { to: to, spinLow: true });
+      }
+
+      slam("t2-0", Math.max(0.02, at("un") - 0.05)); slam("t2-1", at("sportive") - 0.05); stroke("t2", at("sportive") + 0.15);
+      pre("ph", { opacity: 0, scale: 1.08 }); go("ph", { opacity: 1, scale: 1 }, at("sportive") - 0.1, 0.45, "expo.out");
+      init("ph", { opacity: 1, scale: 1 }); go("ph", { scale: 1.05 }, at("sportive"), 3, "none");
+      go("t2", { opacity: 0, y: -30 }, at("achetée") - 0.32, 0.16, "power2.in");
+      [["r1", "achetée"], ["r2", "revendue"], ["r3", "5000"]].forEach(function (r) {
+        pre(r[0], { opacity: 0, x: -60 }); go(r[0], { opacity: 1, x: 0 }, at(r[1]) - 0.06, 0.3, "expo.out");
+        odo(r[0] + "v", at(r[1]) - 0.02, 0.8, { from: "0" });
+      });
+      init("r3", { scale: 1 }); go("r3", { scale: 1.04 }, at("beau") - 0.05, 0.15); go("r3", { scale: 1 }, at("beau") + 0.1, 0.3);
+      // but the rotation is 4 months: three sale cycles in the year
+      ["r1", "r2", "r3"].forEach(function (r, k) { go(r, { opacity: 0, x: 40 }, at("délai") - 0.1 + k * 0.04, 0.2, "power2.in"); });
+      slam("t2b-0", at("rotation") - 0.05); stroke("t2b", at("mois") + 0.05);
+      pre("fr", { opacity: 0, y: 40 }); go("fr", { opacity: 1, y: 0 }, at("rotation") - 0.1, 0.4, "expo.out");
+      odo("c1", 0, 0.01, { from: "00 000", spinLow: false });
+      var t0 = at("quatre") - 0.05, t1 = at("15000") + 0.25, st = (t1 - t0) / 3;
+      lane("l1", 3, t0, t1 - t0);
+      ["05 000 €", "10 000 €", "15 000 €"].forEach(function (v, k) { odo("c1", t0 + (k + 1) * st - 0.2, 0.5, { to: v, dimLead: true }); });
+      cam(0, -10, 1.04, at("trois"), 1.0);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
