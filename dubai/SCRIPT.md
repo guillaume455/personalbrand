@@ -6,12 +6,12 @@ cadres orange qui se dessinent, trait orange sous les titres. Carte grise « EN 
 fait. Sous-titres en bas. Plaques floutées. Les rushes restent hors du dépôt (trop lourds) : ils sont sur le Drive,
 dossier « Dubai rasso ».
 
-## Texte de la voix (ElevenLabs, proposition à valider)
+## Texte de la voix (ElevenLabs, validé)
 
 ```
 J'ai vécu deux ans à Dubaï. Les rassemblements de voitures là-bas, c'est pas le même sport.
 
-Premier choc : le nombre. Des centaines de voitures, un dimanche comme un autre, sur un simple parking. En France, un bon rassemblement, c'est quarante voitures devant un Leclerc.
+Premier choc : le nombre. Plusieurs centaines de voitures, un dimanche comme un autre, sur un simple parking. En France, un bon rassemblement, c'est quarante voitures devant un Leclerc.
 
 Deuxième choc : le niveau. Bugatti, Rolls, Bentley, des préparations à six chiffres. Là-bas, c'est le parc normal. En France, une Porsche arrive et tout le monde se retourne.
 
