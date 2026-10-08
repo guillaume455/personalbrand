@@ -25,7 +25,7 @@ FPS = 30
 SCENES = [
  dict(id="01-hook", name="Hook", window=(0, 4), chunks=[
    "Tu veux vendre", "des *voitures*.", "OK.", "Mais tu veux porter", "le *stock*, ou pas~?", "Parce que c'est",
-   "deux *métiers*."]),
+   "deux *métiers*", "différents."]),
  dict(id="02-meme-voiture", name="La même voiture", window=(4, 10), chunks=[
    "Prenons la même *voiture*,", "*15~000* euros,", "vendue au même client.", "À gauche, le *marchand*.",
    "À droite, l'*intermédiaire*."]),
@@ -33,10 +33,10 @@ SCENES = [
    "Le marchand *achète*", "la voiture 12~000 euros", "avec son argent.", "Il la *stocke*.", "Et pendant qu'elle dort,",
    "elle lui *coûte*~:", "les frais *bancaires*", "sur l'argent immobilisé,", "et la *place*,", "dépôt, parc ou showroom.",
    "Il la *revend* 15~000.", "3~000 de marge", "sur le papier,", "plutôt *2~300* en vrai.", "Et tout le *risque*",
-   "est pour lui~:", "la garantie légale,", "les vices cachés,", "et la voiture", "qui ne se vend *pas*."]),
+   "est pour lui~:", "la garantie légale,", "les vices cachés,", "et la voiture", "qui peut rester", "immobilisée *plusieurs mois*."]),
  dict(id="04-intermediaire", name="L'intermédiaire", window=(26, 38), chunks=[
    "L'intermédiaire, lui,", "n'achète *rien*.", "Le vendeur lui confie", "un *mandat*.", "Il trouve le *client*,",
-   "il organise la vente.", "Les *15~000*", "vont au vendeur.", "Lui prend une *commission*~:", "*1~500* euros.",
+   "il organise la vente.", "Les *15~000*", "vont au vendeur.", "Lui prend une *commission*~:", "*1~500* euros", "environ.",
    "Zéro *stock*,", "zéro trésorerie bloquée,", "zéro frais de parc.", "Le vendeur reste *propriétaire*",
    "jusqu'à la vente."]),
  dict(id="05-face-a-face", name="Le face-à-face", window=(38, 52), chunks=[
@@ -393,7 +393,7 @@ RISK_CSS = """
 """
 
 
-def risks(prefix, x0, y, labels=("GARANTIE", "VICES CACHÉS", "INVENDUE")):
+def risks(prefix, x0, y, labels=("GARANTIE", "VICES CACHÉS", "IMMOBILISÉE")):
     fns = [icon_shield, icon_bug, icon_wait]
     return "".join(f'<div id="§{prefix}{k}" class="§rk" style="left:{x0 + k * 155}px;top:{y}px"><div class="§rki">{fns[k](RED)}</div><span class="§rkl">{l}</span></div>'
                    for k, l in enumerate(labels))
@@ -506,17 +506,17 @@ def scene_03():
       // and all the risk is his
       ["c1", "c2"].forEach(function (e) { go(e, { opacity: 0 }, at("risque") - 0.15, 0.2); });
       go("mg", { y: -150 }, at("risque") - 0.15, 0.4, "power3.inOut");
-      [["rk0", "garantie"], ["rk1", "vices"], ["rk2", "pas"]].forEach(function (r) {
+      [["rk0", "garantie"], ["rk1", "vices"], ["rk2", "immobilisée"]].forEach(function (r) {
         pre(r[0], { opacity: 0, scale: 0.4 }); go(r[0], { opacity: 1, scale: 1 }, at(r[1]) - 0.08, 0.25, "back.out(2.2)");
       });
-      wobble("rk2", at("pas") + 0.25, 6);
+      wobble("rk2", at("plusieurs") + 0.25, 6);
       cam(10, -10, 1.04, at("risque"), 0.8);
     """
     sfx = [("pop", None, 0, 0.1, .12), ("whoosh-short", "achète", 1, -.05, .14), ("typing", "12000", 1, -.1, .12),
            ("click-soft", "stocke", 1, -.05, .22), ("typing", "bancaires", 1, 0, .1), ("typing", "place", 1, 0, .1),
            ("whoosh-short", "revend", 1, -.05, .14), ("typing", "15000", 1, -.1, .12), ("pop", "3000", 1, -.1, .14),
            ("typing", "2300", 1, -.05, .12), ("error", "garantie", 1, -.08, .14), ("error", "vices", 1, -.08, .14),
-           ("error", "pas", 1, -.08, .14)]
+           ("error", "plusieurs", 1, -.08, .14)]
     return css, st, hud, js, (270, 860), sfx
 
 
@@ -602,7 +602,7 @@ def scene_05():
         sm = " §small" if rid == "r3" else ""
         st += (f'<div class="§row" style="top:{y}px"><div id="§{rid}l" class="§rl">{lab}</div>'
                f'<div id="§{rid}a" class="§rv §L{sm}">{lv}</div><div id="§{rid}b" class="§rv §R{sm}">{rv}</div></div>')
-    st += risks("rk", 70, 875, ("GARANTIE", "VICES", "INVENDUE"))
+    st += risks("rk", 70, 875, ("GARANTIE", "VICES", "IMMOBILISÉE"))
     st += '<div id="§gap"><span id="§gapi">' + odo("gp", "800 €") + ' D’ÉCART</span></div>'
     st = st.replace('<div id="§r2a" class="§rv §L"></div>', '')
     hud = ""

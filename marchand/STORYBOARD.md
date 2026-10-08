@@ -28,7 +28,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
-- voiceover: "Tu veux vendre des voitures. OK. Mais tu veux porter le stock, ou pas ? Parce que c'est deux métiers."
+- voiceover: "Tu veux vendre des voitures. OK. Mais tu veux porter le stock, ou pas ? Parce que c'est deux métiers différents."
 - type: hook
 - blueprint: none
 - focal: Hook
@@ -60,7 +60,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-marchand.html
-- voiceover: "Le marchand achète la voiture 12 000 euros avec son argent. Il la stocke. Et pendant qu'elle dort, elle lui coûte : les frais bancaires sur l'argent immobilisé, et la place, dépôt, parc ou showroom. Il la revend 15 000. 3 000 de marge sur le papier, plutôt 2 300 en vrai. Et tout le risque est pour lui : la garantie légale, les vices cachés, et la voiture qui ne se vend pas."
+- voiceover: "Le marchand achète la voiture 12 000 euros avec son argent. Il la stocke. Et pendant qu'elle dort, elle lui coûte : les frais bancaires sur l'argent immobilisé, et la place, dépôt, parc ou showroom. Il la revend 15 000. 3 000 de marge sur le papier, plutôt 2 300 en vrai. Et tout le risque est pour lui : la garantie légale, les vices cachés, et la voiture qui peut rester immobilisée plusieurs mois."
 - type: demo
 - blueprint: none
 - focal: Le marchand
@@ -76,7 +76,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-intermediaire.html
-- voiceover: "L'intermédiaire, lui, n'achète rien. Le vendeur lui confie un mandat. Il trouve le client, il organise la vente. Les 15 000 vont au vendeur. Lui prend une commission : 1 500 euros. Zéro stock, zéro trésorerie bloquée, zéro frais de parc. Le vendeur reste propriétaire jusqu'à la vente."
+- voiceover: "L'intermédiaire, lui, n'achète rien. Le vendeur lui confie un mandat. Il trouve le client, il organise la vente. Les 15 000 vont au vendeur. Lui prend une commission : 1 500 euros environ. Zéro stock, zéro trésorerie bloquée, zéro frais de parc. Le vendeur reste propriétaire jusqu'à la vente."
 - type: demo
 - blueprint: none
 - focal: L'intermédiaire

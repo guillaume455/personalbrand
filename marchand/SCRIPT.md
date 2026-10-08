@@ -14,13 +14,13 @@ Le texte de la voix est dans `build.py` (SCENES) : c'est la seule source.
 ## Texte de la voix (ElevenLabs)
 
 ```
-Tu veux vendre des voitures. OK. Mais tu veux porter le stock, ou pas? Parce que c'est deux métiers.
+Tu veux vendre des voitures. OK. Mais tu veux porter le stock, ou pas? Parce que c'est deux métiers différents.
 
 Prenons la même voiture, 15000 euros, vendue au même client. À gauche, le marchand. À droite, l'intermédiaire.
 
-Le marchand achète la voiture 12000 euros avec son argent. Il la stocke. Et pendant qu'elle dort, elle lui coûte: les frais bancaires sur l'argent immobilisé, et la place, dépôt, parc ou showroom. Il la revend 15000. 3000 de marge sur le papier, plutôt 2300 en vrai. Et tout le risque est pour lui: la garantie légale, les vices cachés, et la voiture qui ne se vend pas.
+Le marchand achète la voiture 12000 euros avec son argent. Il la stocke. Et pendant qu'elle dort, elle lui coûte: les frais bancaires sur l'argent immobilisé, et la place, dépôt, parc ou showroom. Il la revend 15000. 3000 de marge sur le papier, plutôt 2300 en vrai. Et tout le risque est pour lui: la garantie légale, les vices cachés, et la voiture qui peut rester immobilisée plusieurs mois.
 
-L'intermédiaire, lui, n'achète rien. Le vendeur lui confie un mandat. Il trouve le client, il organise la vente. Les 15000 vont au vendeur. Lui prend une commission: 1500 euros. Zéro stock, zéro trésorerie bloquée, zéro frais de parc. Le vendeur reste propriétaire jusqu'à la vente.
+L'intermédiaire, lui, n'achète rien. Le vendeur lui confie un mandat. Il trouve le client, il organise la vente. Les 15000 vont au vendeur. Lui prend une commission: 1500 euros environ. Zéro stock, zéro trésorerie bloquée, zéro frais de parc. Le vendeur reste propriétaire jusqu'à la vente.
 
 Résumé. Le marchand sort 12000, garde 2300, porte tout le risque. L'intermédiaire sort zéro, garde 1500, porte presque rien. 800 euros d'écart pour 12000 euros immobilisés et tous les risques. L'un a besoin de trésorerie. L'autre a besoin d'un réseau et de savoir vendre.
 

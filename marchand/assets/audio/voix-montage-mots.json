@@ -74,25 +74,30 @@
   {
    "w": "Parce",
    "start": 3.82,
-   "end": 4.12
+   "end": 4.02
   },
   {
    "w": "que",
-   "start": 4.12,
-   "end": 4.42
+   "start": 4.02,
+   "end": 4.22
   },
   {
    "w": "c'est",
-   "start": 4.42,
-   "end": 4.72
+   "start": 4.22,
+   "end": 4.42
   },
   {
    "w": "deux",
-   "start": 4.72,
+   "start": 4.42,
+   "end": 4.62
+  },
+  {
+   "w": "*métiers*",
+   "start": 4.62,
    "end": 5.02
   },
   {
-   "w": "*métiers*.",
+   "w": "différents.",
    "start": 5.02,
    "end": 5.62
   },
@@ -484,41 +489,46 @@
   {
    "w": "et",
    "start": 29.18,
-   "end": 29.414
+   "end": 29.312
   },
   {
    "w": "la",
-   "start": 29.414,
-   "end": 29.649
+   "start": 29.312,
+   "end": 29.444
   },
   {
    "w": "voiture",
-   "start": 29.649,
-   "end": 30.118
+   "start": 29.444,
+   "end": 29.708
   },
   {
    "w": "qui",
-   "start": 30.118,
-   "end": 30.352
+   "start": 29.708,
+   "end": 29.839
   },
   {
-   "w": "ne",
-   "start": 30.352,
-   "end": 30.587
+   "w": "peut",
+   "start": 29.839,
+   "end": 29.971
   },
   {
-   "w": "se",
-   "start": 30.587,
-   "end": 30.821
+   "w": "rester",
+   "start": 29.971,
+   "end": 30.235
   },
   {
-   "w": "vend",
-   "start": 30.821,
-   "end": 31.056
+   "w": "immobilisée",
+   "start": 30.235,
+   "end": 30.894
   },
   {
-   "w": "*pas*.",
-   "start": 31.056,
+   "w": "*plusieurs",
+   "start": 30.894,
+   "end": 31.158
+  },
+  {
+   "w": "mois*.",
+   "start": 31.158,
    "end": 31.29
   },
   {
@@ -659,10 +669,15 @@
   {
    "w": "*1~500*",
    "start": 40.18,
+   "end": 40.624
+  },
+  {
+   "w": "euros",
+   "start": 40.624,
    "end": 40.847
   },
   {
-   "w": "euros.",
+   "w": "environ.",
    "start": 40.847,
    "end": 41.18
   },

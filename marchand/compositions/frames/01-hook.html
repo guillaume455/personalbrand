@@ -71,8 +71,9 @@
       <div class="r1-chunk sub-chunk" data-out="1.800"><span class="r1-w sub-w" data-cue="1.290">OK.</span></div>
       <div class="r1-chunk sub-chunk" data-out="2.722"><span class="r1-w sub-w" data-cue="1.860">Mais</span> <span class="r1-w sub-w" data-cue="2.044">tu</span> <span class="r1-w sub-w" data-cue="2.229">veux</span> <span class="r1-w sub-w" data-cue="2.413">porter</span></div>
       <div class="r1-chunk sub-chunk" data-out="3.760"><span class="r1-w sub-w" data-cue="2.782">le</span> <span class="r1-w sub-w sub-key" data-cue="2.967">stock,</span> <span class="r1-w sub-w" data-cue="3.151">ou</span> <span class="r1-w sub-w" data-cue="3.336">pas ?</span></div>
-      <div class="r1-chunk sub-chunk" data-out="4.660"><span class="r1-w sub-w" data-cue="3.820">Parce</span> <span class="r1-w sub-w" data-cue="4.120">que</span> <span class="r1-w sub-w" data-cue="4.420">c'est</span></div>
-      <div class="r1-chunk sub-chunk"><span class="r1-w sub-w" data-cue="4.720">deux</span> <span class="r1-w sub-w sub-key" data-cue="5.020">métiers.</span></div>
+      <div class="r1-chunk sub-chunk" data-out="4.420"><span class="r1-w sub-w" data-cue="3.820">Parce</span> <span class="r1-w sub-w" data-cue="4.020">que</span> <span class="r1-w sub-w" data-cue="4.220">c'est</span></div>
+      <div class="r1-chunk sub-chunk" data-out="4.960"><span class="r1-w sub-w" data-cue="4.420">deux</span> <span class="r1-w sub-w sub-key" data-cue="4.620">métiers</span></div>
+      <div class="r1-chunk sub-chunk"><span class="r1-w sub-w" data-cue="5.020">différents.</span></div>
     </div>
   </div>
 
@@ -81,7 +82,7 @@
     (function () {
       var FID = "01-hook", P = "r1-", DUR = 5.833;
       // word cues of this scene (local seconds), written by build.py from the voice timings
-      var W = [["tu", 0.07, 0.223], ["veux", 0.223, 0.377], ["vendre", 0.377, 0.53], ["des", 0.53, 0.683], ["voitures", 0.683, 0.99], ["ok", 1.29, 1.56], ["mais", 1.86, 2.044], ["tu", 2.044, 2.229], ["veux", 2.229, 2.413], ["porter", 2.413, 2.782], ["le", 2.782, 2.967], ["stock", 2.967, 3.151], ["ou", 3.151, 3.336], ["pas", 3.336, 3.52], ["parce", 3.82, 4.12], ["que", 4.12, 4.42], ["c'est", 4.42, 4.72], ["deux", 4.72, 5.02], ["métiers", 5.02, 5.62]];
+      var W = [["tu", 0.07, 0.223], ["veux", 0.223, 0.377], ["vendre", 0.377, 0.53], ["des", 0.53, 0.683], ["voitures", 0.683, 0.99], ["ok", 1.29, 1.56], ["mais", 1.86, 2.044], ["tu", 2.044, 2.229], ["veux", 2.229, 2.413], ["porter", 2.413, 2.782], ["le", 2.782, 2.967], ["stock", 2.967, 3.151], ["ou", 3.151, 3.336], ["pas", 3.336, 3.52], ["parce", 3.82, 4.02], ["que", 4.02, 4.22], ["c'est", 4.22, 4.42], ["deux", 4.42, 4.62], ["métiers", 4.62, 5.02], ["différents", 5.02, 5.62]];
 
       var root = document.querySelector('[data-composition-id="' + FID + '"]');
       function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
