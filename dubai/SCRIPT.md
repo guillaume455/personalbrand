@@ -6,7 +6,7 @@ cadres orange qui se dessinent, trait orange sous les titres. Carte grise « EN 
 fait. Sous-titres en bas. Plaques floutées. Les rushes restent hors du dépôt (trop lourds) : ils sont sur le Drive,
 dossier « Dubai rasso ».
 
-## Texte de la voix (ElevenLabs, validé)
+## Texte de la voix (ElevenLabs, scène 5 à valider)
 
 ```
 J'ai vécu deux ans à Dubaï. Les rassemblements de voitures là-bas, c'est pas le même sport.
@@ -17,7 +17,7 @@ Deuxième choc : le niveau. Bugatti, Rolls, Bentley, des préparations à six ch
 
 Troisième choc : personne ne regarde. Une voiture à un million passe, les gens continuent leur café. C'est ça qui m'a le plus marqué : là-bas, l'exceptionnel est banal.
 
-Et puis les détails. Un Defender avec un V8 de Corvette sous le capot. Une 911 avec tout l'intérieur en orange. Une plaque cinq cinq cinq cinq cinq. Et pas une rayure, nulle part.
+Et puis les détails. Personne ne vient avec une voiture d'origine. Couleur sur mesure, intérieur refait, jantes forgées. Et pas une rayure, nulle part.
 
 Seize ans que je vends des voitures. J'en ai vu passer des milliers. Et là-bas, j'ai regardé comme un gamin. Ça fait du bien de redevenir spectateur.
 
