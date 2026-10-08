@@ -1,0 +1,241 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r3-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r3-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r3-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r3-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r3-hudcam { transform-origin: 540px 600px; }
+    .r3-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r3-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r3-tline { position: relative; display: inline-block; opacity: 0; }
+    .r3-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r3-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r3-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r3-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r3-ocol { display: block; }
+    .r3-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r3-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r3-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r3-person { position: absolute; transform-origin: 50% 100%; }
+    .r3-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r3-pgrey { fill: #2b2b2b; }
+    .r3-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r3-porange { fill: #FB8000; opacity: 0; }
+    .r3-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r3-car { position: absolute; transform-origin: 50% 100%; }
+    .r3-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r3-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r3-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r3-w { display: inline-block; opacity: 0; }
+
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+    #r3-main { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 280px; }
+    #r3-kick { position: absolute; left: 0; top: 280px; width: 1080px; text-align: center; font: 700 36px/1 "Space Mono", monospace; color: #FB8000; letter-spacing: 0.1em; opacity: 0; }
+    #r3-bigw { position: absolute; left: 0; top: 330px; width: 1080px; text-align: center; font: 230px/1.15 "Anton", sans-serif; color: #ffffff; white-space: nowrap; opacity: 0; }
+    #r3-src { position: absolute; left: 0; top: 612px; width: 1080px; text-align: center; font: 600 26px/1 "Instrument Sans", sans-serif; color: #8a8a8a; letter-spacing: 0.14em; opacity: 0; }
+    #r3-chg { position: absolute; left: 90px; top: 650px; width: 900px; height: 40px; }
+    #r3-chgl, #r3-chgr { position: absolute; top: 18px; height: 5px; width: 200px; background: #FB8000; border-radius: 3px; transform: scaleX(0); }
+    #r3-chgl { left: 0; transform-origin: 100% 50%; } #r3-chgr { right: 0; transform-origin: 0 50%; }
+    #r3-chgt { position: absolute; left: 0; top: 0; width: 900px; text-align: center; font: 700 36px/40px "Instrument Sans", sans-serif; color: #FB8000; letter-spacing: 0.12em; opacity: 0; }
+    .r3-minus { display: inline-block; width: 0.34em; height: 0.085em; background: currentColor; vertical-align: 0.3em; margin-right: 0.05em; border-radius: 0.04em; }
+    .r3-or { color: #FB8000; }
+    .r3-lab { position: absolute; font: 700 30px/1 "Instrument Sans", sans-serif; letter-spacing: 0.1em; }
+
+    .r3-bar { position: absolute; bottom: 800px; width: 220px; border-radius: 16px 16px 4px 4px; transform-origin: 50% 100%; transform: scaleY(0); }
+    #r3-bP { left: 230px; height: 490px; background: #5a5a5a; } #r3-bR { left: 630px; height: 458px; background: #FB8000; }
+    .r3-pct { position: absolute; width: 360px; text-align: center; font: 120px/1 "Anton", sans-serif; opacity: 0; }
+    #r3-vP { left: 160px; top: 480px; color: #ffffff; } #r3-vR { left: 560px; top: 512px; color: #FB8000; }
+    .r3-bl { position: absolute; top: 1140px; width: 360px; text-align: center; font: 50px/1 "Anton", sans-serif; opacity: 0; }
+    #r3-lP { left: 160px; color: #9a9a9a; } #r3-lR { left: 560px; color: #FB8000; }
+    #r3-src { top: 1215px; }
+      </style>
+
+  <div id="root" data-composition-id="03-qui-vend" data-width="1080" data-height="1920" data-duration="11.266">
+    <div id="r3-ground" class="clip r3-ground" data-start="0" data-duration="11.266" data-track-index="0">
+      <div id="r3-halo" class="r3-halo" style="left:540px;top:760px"></div>
+      <div class="r3-grain"></div>
+    </div>
+    <div id="r3-push" class="r3-cam"><div id="r3-shk" class="r3-cam"><div id="r3-cran" class="r3-cam">
+      <div id="r3-main"><div id="r3-kick">2 / 5</div><div id="r3-src">SOURCE · NGC-DATA, 2025</div><div id="r3-bP" class="r3-bar"></div><div id="r3-bR" class="r3-bar"></div><div id="r3-vP" class="r3-pct"><span id="r3-oP" class="r3-odo " data-to="47 %"><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-os">%</span></span></div><div id="r3-vR" class="r3-pct"><span id="r3-oR" class="r3-odo " data-to="44 %"><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-os">%</span></span></div><div id="r3-lP" class="r3-bl">PARTICULIERS</div><div id="r3-lR" class="r3-bl">PROS</div></div>
+    </div></div></div>
+    <div id="r3-hud" class="r3-cam r3-hudcam">
+      <div id="r3-chg"><i id="r3-chgl"></i><i id="r3-chgr"></i><div id="r3-chgt">CE QUE ÇA CHANGE</div></div><div class="r3-title" id="r3-k1" style="top:740px;font-size:100px;"><span class="r3-tline" id="r3-k1-0">PRÈS D'1 SUR 2</span><br><span class="r3-tline" id="r3-k1-1"><span class="r3-or">SANS</span> PRO.<i class="r3-stilt"><i class="r3-stk" id="r3-k1-s"></i></i></span></div><div class="r3-title" id="r3-k2" style="top:740px;font-size:92px;"><span class="r3-tline" id="r3-k2-0">UN MARCHÉ <span class="r3-or">À PRENDRE</span>.</span><br><span class="r3-tline" id="r3-k2-1">PAS SATURÉ.<i class="r3-stilt"><i class="r3-stk" id="r3-k2-s"></i></i></span></div>
+    </div>
+    <div id="r3-sub" class="r3-sub">
+      <div class="r3-chunk sub-chunk" data-out="0.603"><span class="r3-w sub-w" data-cue="0.083">Deux :</span></div>
+      <div class="r3-chunk sub-chunk" data-out="1.814"><span class="r3-w sub-w sub-key" data-cue="0.663">47 %</span> <span class="r3-w sub-w" data-cue="1.456">des</span> <span class="r3-w sub-w" data-cue="1.614">ventes</span></div>
+      <div class="r3-chunk sub-chunk" data-out="3.133"><span class="r3-w sub-w" data-cue="1.773">se</span> <span class="r3-w sub-w" data-cue="1.932">font</span> <span class="r3-w sub-w" data-cue="2.090">entre</span> <span class="r3-w sub-w sub-key" data-cue="2.249">particuliers.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="3.552"><span class="r3-w sub-w" data-cue="3.193">Les</span> <span class="r3-w sub-w" data-cue="3.352">pros</span></div>
+      <div class="r3-chunk sub-chunk" data-out="4.873"><span class="r3-w sub-w" data-cue="3.511">n'en</span> <span class="r3-w sub-w" data-cue="3.670">font</span> <span class="r3-w sub-w" data-cue="3.829">que</span> <span class="r3-w sub-w sub-key" data-cue="3.987">44.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="5.883"><span class="r3-w sub-w" data-cue="4.933">Ce</span> <span class="r3-w sub-w" data-cue="5.108">que</span> <span class="r3-w sub-w" data-cue="5.283">ça</span> <span class="r3-w sub-w sub-key" data-cue="5.458">change :</span></div>
+      <div class="r3-chunk sub-chunk" data-out="6.961"><span class="r3-w sub-w" data-cue="5.943">près</span> <span class="r3-w sub-w" data-cue="6.107">d'une</span> <span class="r3-w sub-w" data-cue="6.270">voiture</span> <span class="r3-w sub-w" data-cue="6.597">sur</span> <span class="r3-w sub-w" data-cue="6.761">deux</span></div>
+      <div class="r3-chunk sub-chunk" data-out="7.682"><span class="r3-w sub-w" data-cue="6.924">se</span> <span class="r3-w sub-w" data-cue="7.088">vend</span> <span class="r3-w sub-w sub-key" data-cue="7.251">sans</span> <span class="r3-w sub-w" data-cue="7.415">passer</span></div>
+      <div class="r3-chunk sub-chunk" data-out="8.963"><span class="r3-w sub-w" data-cue="7.742">par</span> <span class="r3-w sub-w" data-cue="7.905">un</span> <span class="r3-w sub-w" data-cue="8.069">professionnel.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="9.643"><span class="r3-w sub-w" data-cue="9.023">C'est</span> <span class="r3-w sub-w" data-cue="9.193">un</span> <span class="r3-w sub-w" data-cue="9.363">marché</span></div>
+      <div class="r3-chunk sub-chunk" data-out="10.203"><span class="r3-w sub-w" data-cue="9.703">à</span> <span class="r3-w sub-w sub-key" data-cue="9.873">prendre,</span></div>
+      <div class="r3-chunk sub-chunk"><span class="r3-w sub-w" data-cue="10.263">pas</span> <span class="r3-w sub-w" data-cue="10.380">un</span> <span class="r3-w sub-w" data-cue="10.497">marché</span> <span class="r3-w sub-w" data-cue="10.732">saturé.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "03-qui-vend", P = "r3-", DUR = 11.266;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["deux", 0.083, 0.373], ["47", 0.663, 1.456], ["des", 1.456, 1.614], ["ventes", 1.614, 1.773], ["se", 1.773, 1.932], ["font", 1.932, 2.09], ["entre", 2.09, 2.249], ["particuliers", 2.249, 2.883], ["les", 3.193, 3.352], ["pros", 3.352, 3.511], ["n'en", 3.511, 3.67], ["font", 3.67, 3.829], ["que", 3.829, 3.987], ["44", 3.987, 4.623], ["ce", 4.933, 5.108], ["que", 5.108, 5.283], ["ça", 5.283, 5.458], ["change", 5.458, 5.633], ["près", 5.943, 6.107], ["d'une", 6.107, 6.27], ["voiture", 6.27, 6.597], ["sur", 6.597, 6.761], ["deux", 6.761, 6.924], ["se", 6.924, 7.088], ["vend", 7.088, 7.251], ["sans", 7.251, 7.415], ["passer", 7.415, 7.742], ["par", 7.742, 7.905], ["un", 7.905, 8.069], ["professionnel", 8.069, 8.723], ["c'est", 9.023, 9.193], ["un", 9.193, 9.363], ["marché", 9.363, 9.703], ["à", 9.703, 9.873], ["prendre", 9.873, 10.043], ["pas", 10.263, 10.38], ["un", 10.38, 10.497], ["marché", 10.497, 10.732], ["saturé", 10.732, 11.083]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      // the figure: kicker, counter rolling 0 -> value in 1 s, source
+      function figure(t, oid, from, dim) {
+        pre("kick", { opacity: 0, y: 20 }); go("kick", { opacity: 1, y: 0 }, Math.max(0.02, t - 0.35), 0.3);
+        if (oid) { pre("bigw", { opacity: 0, scale: 0.7 }); go("bigw", { opacity: 1, scale: 1 }, t - 0.08, 0.35, "back.out(1.6)");
+          odo(oid, t - 0.05, 1.0, { from: from, dimLead: !!dim }); }
+        pre("src", { opacity: 0 }); go("src", { opacity: 1 }, t + 0.9, 0.4);
+      }
+      // title line by line (slam), stroke under the last line
+      function tshow(tid, n, cues) { for (var i = 0; i < n; i++) slam(tid + "-" + i, cues[i] - 0.05); stroke(tid, cues[n - 1] + 0.18); init(tid + "-s", { scaleX: 1 }); }
+      function thide(tid, n, t) { for (var i = 0; i < n; i++) go(tid + "-" + i, { opacity: 0 }, t, 0.2); go(tid + "-s", { scaleX: 0 }, t, 0.2); }
+      // « ce que ça change »: the figure shrinks up, the orange line opens under it
+      function change(t, gone) {
+        gone.forEach(function (id) { go(id, { opacity: 0 }, t - 0.2, 0.2); });
+        init("main", { scale: 1, y: 0 }); go("main", { scale: 0.72, y: -10 }, t - 0.15, 0.5, "power3.inOut");
+        tl.fromTo($("chgl"), { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, t + 0.1);
+        tl.fromTo($("chgr"), { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, t + 0.1);
+        pre("chgt", { opacity: 0, y: 10 }); go("chgt", { opacity: 1, y: 0 }, t + 0.05, 0.3);
+      }
+
+      figure(at("47"), null);
+      // two bars: individuals 47 %, pros 44 %
+      tl.fromTo($("bP"), { scaleY: 0 }, { scaleY: 1, duration: 1.0, ease: "power3.out", immediateRender: false }, at("47") - 0.05);
+      pre("vP", { opacity: 0, y: 30 }); go("vP", { opacity: 1, y: 0 }, at("47") - 0.08, 0.3); odo("oP", at("47") - 0.05, 1.0);
+      pre("lP", { opacity: 0 }); go("lP", { opacity: 1 }, at("particuliers") - 0.1, 0.3);
+      tl.fromTo($("bR"), { scaleY: 0 }, { scaleY: 1, duration: 1.0, ease: "power3.out", immediateRender: false }, at("pros") - 0.05);
+      pre("lR", { opacity: 0 }); go("lR", { opacity: 1 }, at("pros") - 0.05, 0.3);
+      pre("vR", { opacity: 0, y: 30 }); go("vR", { opacity: 1, y: 0 }, at("44") - 0.08, 0.3); odo("oR", at("44") - 0.05, 1.0);
+      // what it changes
+      change(at("change"), ["bP", "bR", "vP", "vR", "lP", "lR"]);
+      init("src", { y: 0 }); go("src", { y: -600 }, at("change") - 0.15, 0.5, "power3.inOut");
+      tshow("k1", 2, [at("près"), at("sans")]);
+      thide("k1", 2, at("c'est") - 0.15);
+      tshow("k2", 2, [at("prendre"), at("saturé")]);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

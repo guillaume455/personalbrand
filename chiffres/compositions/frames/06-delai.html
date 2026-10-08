@@ -1,0 +1,248 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r6-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r6-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r6-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r6-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r6-hudcam { transform-origin: 540px 600px; }
+    .r6-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r6-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r6-tline { position: relative; display: inline-block; opacity: 0; }
+    .r6-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r6-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r6-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r6-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r6-ocol { display: block; }
+    .r6-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r6-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r6-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r6-person { position: absolute; transform-origin: 50% 100%; }
+    .r6-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r6-pgrey { fill: #2b2b2b; }
+    .r6-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r6-porange { fill: #FB8000; opacity: 0; }
+    .r6-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r6-car { position: absolute; transform-origin: 50% 100%; }
+    .r6-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r6-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r6-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r6-w { display: inline-block; opacity: 0; }
+
+    @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
+    #r6-main { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 280px; }
+    #r6-kick { position: absolute; left: 0; top: 280px; width: 1080px; text-align: center; font: 700 36px/1 "Space Mono", monospace; color: #FB8000; letter-spacing: 0.1em; opacity: 0; }
+    #r6-bigw { position: absolute; left: 0; top: 330px; width: 1080px; text-align: center; font: 230px/1.15 "Anton", sans-serif; color: #ffffff; white-space: nowrap; opacity: 0; }
+    #r6-src { position: absolute; left: 0; top: 612px; width: 1080px; text-align: center; font: 600 26px/1 "Instrument Sans", sans-serif; color: #8a8a8a; letter-spacing: 0.14em; opacity: 0; }
+    #r6-chg { position: absolute; left: 90px; top: 650px; width: 900px; height: 40px; }
+    #r6-chgl, #r6-chgr { position: absolute; top: 18px; height: 5px; width: 200px; background: #FB8000; border-radius: 3px; transform: scaleX(0); }
+    #r6-chgl { left: 0; transform-origin: 100% 50%; } #r6-chgr { right: 0; transform-origin: 0 50%; }
+    #r6-chgt { position: absolute; left: 0; top: 0; width: 900px; text-align: center; font: 700 36px/40px "Instrument Sans", sans-serif; color: #FB8000; letter-spacing: 0.12em; opacity: 0; }
+    .r6-minus { display: inline-block; width: 0.34em; height: 0.085em; background: currentColor; vertical-align: 0.3em; margin-right: 0.05em; border-radius: 0.04em; }
+    .r6-or { color: #FB8000; }
+    .r6-lab { position: absolute; font: 700 30px/1 "Instrument Sans", sans-serif; letter-spacing: 0.1em; }
+
+    #r6-cal { position: absolute; left: 370px; top: 870px; width: 340px; height: 320px; border-radius: 24px; background: #151515; border: 3px solid #2e2e2e; overflow: hidden; opacity: 0; }
+    #r6-calh { position: absolute; left: 0; top: 0; width: 100%; height: 84px; background: #FB8000; }
+    .r6-mo { position: absolute; left: 0; top: 0; width: 100%; text-align: center; font: 52px/84px "Anton", sans-serif; color: #0A0A0A; opacity: 0; }
+    #r6-cald { position: absolute; left: 0; top: 112px; width: 100%; text-align: center; font: 150px/1.15 "Anton", sans-serif; color: #ffffff; }
+    .r6-rail { position: absolute; left: 260px; height: 64px; border-radius: 10px; transform-origin: 0 50%; transform: scaleX(0); }
+    #r6-rM { top: 760px; width: 600px; background: #5a5a5a; } #r6-rT { top: 860px; width: 122px; background: #FB8000; }
+    .r6-rl { position: absolute; left: 60px; width: 180px; text-align: right; font: 46px/64px "Anton", sans-serif; opacity: 0; }
+    .r6-rv { position: absolute; font: 50px/64px "Anton", sans-serif; opacity: 0; }
+      </style>
+
+  <div id="root" data-composition-id="06-delai" data-width="1080" data-height="1920" data-duration="11.767">
+    <div id="r6-ground" class="clip r6-ground" data-start="0" data-duration="11.767" data-track-index="0">
+      <div id="r6-halo" class="r6-halo" style="left:540px;top:700px"></div>
+      <div class="r6-grain"></div>
+    </div>
+    <div id="r6-push" class="r6-cam"><div id="r6-shk" class="r6-cam"><div id="r6-cran" class="r6-cam">
+      <div id="r6-main"><div id="r6-kick">5 / 5</div><div id="r6-bigw"><span id="r6-days" class="r6-odo " data-to="147"><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span> JOURS</div><div id="r6-src">SOURCE · MOBILIANS / AAA DATA, 2026</div><div class="r6-title" id="r6-c1" style="top:690px;font-size:66px;"><span class="r6-tline" id="r6-c1-0">DÉLAI MOYEN CHEZ UN PRO<i class="r6-stilt"><i class="r6-stk" id="r6-c1-s"></i></i></span></div><div id="r6-cal"><div id="r6-calh"><div id="r6-m0" class="r6-mo">JANVIER</div><div id="r6-m1" class="r6-mo">FÉVRIER</div><div id="r6-m2" class="r6-mo">MARS</div><div id="r6-m3" class="r6-mo">AVRIL</div><div id="r6-m4" class="r6-mo">MAI</div><div id="r6-m5" class="r6-mo">5 MOIS</div></div><div id="r6-cald"><span id="r6-cd" class="r6-odo " data-to="147"><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></div></div></div>
+    </div></div></div>
+    <div id="r6-hud" class="r6-cam r6-hudcam">
+      <div id="r6-chg"><i id="r6-chgl"></i><i id="r6-chgr"></i><div id="r6-chgt">CE QUE ÇA CHANGE</div></div><div id="r6-lM" class="r6-rl" style="top:760px;color:#9a9a9a">MARCHÉ</div><div id="r6-lT" class="r6-rl" style="top:860px;color:#FB8000">TOI</div><div id="r6-rM" class="r6-rail"></div><div id="r6-rT" class="r6-rail"></div><div id="r6-vM" class="r6-rv" style="left:880px;top:760px;color:#9a9a9a">147 J</div><div id="r6-vT" class="r6-rv" style="left:402px;top:860px;color:#FB8000">30 J</div><div class="r6-title" id="r6-k1" style="top:990px;font-size:100px;"><span class="r6-tline" id="r6-k1-0">5 FOIS PLUS <span class="r6-or">RAPIDE</span>.<i class="r6-stilt"><i class="r6-stk" id="r6-k1-s"></i></i></span></div>
+    </div>
+    <div id="r6-sub" class="r6-sub">
+      <div class="r6-chunk sub-chunk" data-out="0.687"><span class="r6-w sub-w" data-cue="0.097">Cinq :</span></div>
+      <div class="r6-chunk sub-chunk" data-out="1.897"><span class="r6-w sub-w sub-key" data-cue="0.747">147 jours.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="2.650"><span class="r6-w sub-w" data-cue="1.957">C'est</span> <span class="r6-w sub-w" data-cue="2.121">le</span> <span class="r6-w sub-w" data-cue="2.286">temps</span> <span class="r6-w sub-w" data-cue="2.450">moyen</span></div>
+      <div class="r6-chunk sub-chunk" data-out="3.704"><span class="r6-w sub-w" data-cue="2.614">qu'une</span> <span class="r6-w sub-w" data-cue="2.943">voiture</span> <span class="r6-w sub-w" data-cue="3.271">thermique</span></div>
+      <div class="r6-chunk sub-chunk" data-out="4.526"><span class="r6-w sub-w" data-cue="3.764">reste</span> <span class="r6-w sub-w" data-cue="3.928">chez</span> <span class="r6-w sub-w" data-cue="4.093">un</span> <span class="r6-w sub-w" data-cue="4.257">marchand</span></div>
+      <div class="r6-chunk sub-chunk" data-out="5.627"><span class="r6-w sub-w" data-cue="4.586">avant</span> <span class="r6-w sub-w" data-cue="4.914">d'être</span> <span class="r6-w sub-w" data-cue="5.078">vendue.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="6.407"><span class="r6-w sub-w" data-cue="5.687">Cinq</span> <span class="r6-w sub-w sub-key" data-cue="5.927">mois.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="7.397"><span class="r6-w sub-w" data-cue="6.467">Ce</span> <span class="r6-w sub-w" data-cue="6.639">que</span> <span class="r6-w sub-w" data-cue="6.812">ça</span> <span class="r6-w sub-w sub-key" data-cue="6.984">change :</span></div>
+      <div class="r6-chunk sub-chunk" data-out="7.957"><span class="r6-w sub-w" data-cue="7.457">si</span> <span class="r6-w sub-w" data-cue="7.607">tu</span> <span class="r6-w sub-w" data-cue="7.757">tournes</span></div>
+      <div class="r6-chunk sub-chunk" data-out="8.657"><span class="r6-w sub-w" data-cue="7.907">en</span> <span class="r6-w sub-w sub-key" data-cue="8.057">30 jours,</span></div>
+      <div class="r6-chunk sub-chunk" data-out="9.345"><span class="r6-w sub-w" data-cue="8.717">tu</span> <span class="r6-w sub-w" data-cue="8.860">es</span> <span class="r6-w sub-w" data-cue="9.002">cinq</span> <span class="r6-w sub-w" data-cue="9.145">fois</span></div>
+      <div class="r6-chunk sub-chunk" data-out="10.487"><span class="r6-w sub-w" data-cue="9.288">plus</span> <span class="r6-w sub-w sub-key" data-cue="9.431">rapide</span> <span class="r6-w sub-w" data-cue="9.716">que</span> <span class="r6-w sub-w" data-cue="9.859">le</span> <span class="r6-w sub-w" data-cue="10.002">marché.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="10.896"><span class="r6-w sub-w" data-cue="10.547">C'est</span> <span class="r6-w sub-w" data-cue="10.696">là</span></div>
+      <div class="r6-chunk sub-chunk"><span class="r6-w sub-w" data-cue="10.844">que</span> <span class="r6-w sub-w" data-cue="10.993">se</span> <span class="r6-w sub-w" data-cue="11.141">fait</span> <span class="r6-w sub-w sub-key" data-cue="11.290">l'écart.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "06-delai", P = "r6-", DUR = 11.767;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["cinq", 0.097, 0.517], ["147jours", 0.747, 1.677], ["c'est", 1.957, 2.121], ["le", 2.121, 2.286], ["temps", 2.286, 2.45], ["moyen", 2.45, 2.614], ["qu'une", 2.614, 2.943], ["voiture", 2.943, 3.271], ["thermique", 3.271, 3.764], ["reste", 3.764, 3.928], ["chez", 3.928, 4.093], ["un", 4.093, 4.257], ["marchand", 4.257, 4.586], ["avant", 4.586, 4.914], ["d'être", 4.914, 5.078], ["vendue", 5.078, 5.407], ["cinq", 5.687, 5.927], ["mois", 5.927, 6.167], ["ce", 6.467, 6.639], ["que", 6.639, 6.812], ["ça", 6.812, 6.984], ["change", 6.984, 7.157], ["si", 7.457, 7.607], ["tu", 7.607, 7.757], ["tournes", 7.757, 7.907], ["en", 7.907, 8.057], ["30jours", 8.057, 8.507], ["tu", 8.717, 8.86], ["es", 8.86, 9.002], ["cinq", 9.002, 9.145], ["fois", 9.145, 9.288], ["plus", 9.288, 9.431], ["rapide", 9.431, 9.716], ["que", 9.716, 9.859], ["le", 9.859, 10.002], ["marché", 10.002, 10.287], ["c'est", 10.547, 10.696], ["là", 10.696, 10.844], ["que", 10.844, 10.993], ["se", 10.993, 11.141], ["fait", 11.141, 11.29], ["l'écart", 11.29, 11.587]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      // the figure: kicker, counter rolling 0 -> value in 1 s, source
+      function figure(t, oid, from, dim) {
+        pre("kick", { opacity: 0, y: 20 }); go("kick", { opacity: 1, y: 0 }, Math.max(0.02, t - 0.35), 0.3);
+        if (oid) { pre("bigw", { opacity: 0, scale: 0.7 }); go("bigw", { opacity: 1, scale: 1 }, t - 0.08, 0.35, "back.out(1.6)");
+          odo(oid, t - 0.05, 1.0, { from: from, dimLead: !!dim }); }
+        pre("src", { opacity: 0 }); go("src", { opacity: 1 }, t + 0.9, 0.4);
+      }
+      // title line by line (slam), stroke under the last line
+      function tshow(tid, n, cues) { for (var i = 0; i < n; i++) slam(tid + "-" + i, cues[i] - 0.05); stroke(tid, cues[n - 1] + 0.18); init(tid + "-s", { scaleX: 1 }); }
+      function thide(tid, n, t) { for (var i = 0; i < n; i++) go(tid + "-" + i, { opacity: 0 }, t, 0.2); go(tid + "-s", { scaleX: 0 }, t, 0.2); }
+      // « ce que ça change »: the figure shrinks up, the orange line opens under it
+      function change(t, gone) {
+        gone.forEach(function (id) { go(id, { opacity: 0 }, t - 0.2, 0.2); });
+        init("main", { scale: 1, y: 0 }); go("main", { scale: 0.72, y: -10 }, t - 0.15, 0.5, "power3.inOut");
+        tl.fromTo($("chgl"), { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, t + 0.1);
+        tl.fromTo($("chgr"), { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, t + 0.1);
+        pre("chgt", { opacity: 0, y: 10 }); go("chgt", { opacity: 1, y: 0 }, t + 0.05, 0.3);
+      }
+
+      figure(at("147jours"), "days", "000");
+      slam("c1-0", at("moyen") - 0.05); stroke("c1", at("moyen") + 0.15);
+      // a calendar runs almost five months
+      thide("c1", 1, at("thermique") - 0.2);
+      pre("cal", { opacity: 0, scale: 0.7 }); go("cal", { opacity: 1, scale: 1 }, at("thermique") - 0.15, 0.35, "back.out(1.6)");
+      var t0 = at("thermique") + 0.1, t1 = at("mois") - 0.1, step = (t1 - t0) / 5;
+      for (var i = 0; i < 5; i++) { pre("m" + i, { opacity: 0 }); go("m" + i, { opacity: 1 }, t0 + i * step, 0.05); if (i < 4) go("m" + i, { opacity: 0 }, t0 + (i + 1) * step, 0.05); }
+      odo("cd", t0, t1 - t0, { from: "000" });
+      go("m4", { opacity: 0 }, at("mois") - 0.05, 0.1); pre("m5", { opacity: 0 }); go("m5", { opacity: 1 }, at("mois") - 0.05, 0.15);
+      init("cal", { scale: 1 }); go("cal", { scale: 1.08 }, at("mois") - 0.05, 0.12); go("cal", { scale: 1 }, at("mois") + 0.07, 0.3);
+      // what it changes: 30 days against 147
+      change(at("change"), ["cal"]);
+      ["lM", "vM"].forEach(function (e) { pre(e, { opacity: 0 }); go(e, { opacity: 1 }, at("tournes") - 0.1, 0.3); });
+      tl.fromTo($("rM"), { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power3.out", immediateRender: false }, at("tournes") - 0.1);
+      ["lT", "vT"].forEach(function (e) { pre(e, { opacity: 0 }); go(e, { opacity: 1 }, at("30jours") - 0.05, 0.3); });
+      tl.fromTo($("rT"), { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, at("30jours") - 0.05);
+      tshow("k1", 1, [at("cinq", 3)]);
+      init("k1", { scale: 1 }); go("k1", { scale: 1.08 }, at("l'écart") - 0.05, 0.15); go("k1", { scale: 1 }, at("l'écart") + 0.1, 0.3);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

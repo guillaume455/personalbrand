@@ -1,0 +1,76 @@
+{
+ "provisional": false,
+ "total": 58.433,
+ "frames": [
+  {
+   "n": 1,
+   "id": "01-hook",
+   "name": "Hook",
+   "start": 0.0,
+   "end": 4.167,
+   "dur": 4.167,
+   "src": "compositions/frames/01-hook.html",
+   "vo": "Cinq chiffres sur le marché de l'occasion en France. Si t'es dans l'auto, tu dois les connaître."
+  },
+  {
+   "n": 2,
+   "id": "02-volume",
+   "name": "Chiffre 1 · le volume",
+   "start": 4.167,
+   "end": 13.467,
+   "dur": 9.3,
+   "src": "compositions/frames/02-volume.html",
+   "vo": "Un : 5,5 millions de voitures d'occasion vendues l'an dernier. Plus de trois occasions pour une neuve. Ce que ça change : le marché est là, il est énorme, et il ne dépend pas des concessions."
+  },
+  {
+   "n": 3,
+   "id": "03-qui-vend",
+   "name": "Chiffre 2 · qui vend",
+   "start": 13.467,
+   "end": 24.733,
+   "dur": 11.266,
+   "src": "compositions/frames/03-qui-vend.html",
+   "vo": "Deux : 47 % des ventes se font entre particuliers. Les pros n'en font que 44. Ce que ça change : près d'une voiture sur deux se vend sans passer par un professionnel. C'est un marché à prendre, pas un marché saturé."
+  },
+  {
+   "n": 4,
+   "id": "04-age",
+   "name": "Chiffre 3 · l'âge",
+   "start": 24.733,
+   "end": 34.133,
+   "dur": 9.4,
+   "src": "compositions/frames/04-age.html",
+   "vo": "Trois : 11 ans d'âge moyen, et ça vieillit chaque année. Près d'une voiture vendue sur trois a plus de 15 ans. Ce que ça change : le vrai volume est sur les voitures pas chères. Pas sur les récentes."
+  },
+  {
+   "n": 5,
+   "id": "05-prix",
+   "name": "Chiffre 4 · le prix",
+   "start": 34.133,
+   "end": 42.933,
+   "dur": 8.8,
+   "src": "compositions/frames/05-prix.html",
+   "vo": "Quatre : 20 200 euros de prix moyen, en baisse de près de 4 % sur un an. Ce que ça change : les prix descendent. Si tu achètes au prix d'hier, tu revends à perte demain."
+  },
+  {
+   "n": 6,
+   "id": "06-delai",
+   "name": "Chiffre 5 · le délai",
+   "start": 42.933,
+   "end": 54.7,
+   "dur": 11.767,
+   "src": "compositions/frames/06-delai.html",
+   "vo": "Cinq : 147 jours. C'est le temps moyen qu'une voiture thermique reste chez un marchand avant d'être vendue. Cinq mois. Ce que ça change : si tu tournes en 30 jours, tu es cinq fois plus rapide que le marché. C'est là que se fait l'écart."
+  },
+  {
+   "n": 7,
+   "id": "07-cta",
+   "name": "Récap et CTA",
+   "start": 54.7,
+   "end": 58.433,
+   "dur": 3.733,
+   "src": "compositions/frames/07-cta.html",
+   "vo": "Abonne-toi pour plus de contenu comme celui-ci."
+  }
+ ]
+}
