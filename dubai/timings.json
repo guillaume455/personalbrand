@@ -1,0 +1,76 @@
+{
+ "provisional": false,
+ "total": 56.467,
+ "frames": [
+  {
+   "n": 1,
+   "id": "01-hook",
+   "name": "Hook",
+   "start": 0.0,
+   "end": 4.767,
+   "dur": 4.767,
+   "src": "compositions/frames/01-hook.html",
+   "vo": "J'ai vécu deux ans à Dubaï. Les rassemblements de voitures là-bas, c'est pas le même délire qu'en France."
+  },
+  {
+   "n": 2,
+   "id": "02-nombre",
+   "name": "Le nombre",
+   "start": 4.767,
+   "end": 17.7,
+   "dur": 12.933,
+   "src": "compositions/frames/02-nombre.html",
+   "vo": "Premier choc : le nombre. Plusieurs centaines de voitures, un dimanche comme un autre dans des lieux prévus pour recevoir : animations, restauration, programme avec des shows... En France, un bon rassemblement, c'est cinquante voitures sur le parking d'un centre commercial."
+  },
+  {
+   "n": 3,
+   "id": "03-niveau",
+   "name": "Le niveau",
+   "start": 17.7,
+   "end": 27.267,
+   "dur": 9.567,
+   "src": "compositions/frames/03-niveau.html",
+   "vo": "Deuxième choc : le niveau. Bugatti, Rolls, Bentley, des préparations à six chiffres. Là-bas, c'est le parc normal. En France, une Porsche arrive et tout le monde se retourne."
+  },
+  {
+   "n": 4,
+   "id": "04-indifference",
+   "name": "L'indifférence",
+   "start": 27.267,
+   "end": 35.867,
+   "dur": 8.6,
+   "src": "compositions/frames/04-indifference.html",
+   "vo": "Troisième choc : personne ne regarde. Une voiture à un million passe, les gens continuent leur café. C'est ça qui m'a le plus marqué : là-bas, l'exceptionnel est banal."
+  },
+  {
+   "n": 5,
+   "id": "05-details",
+   "name": "Les détails",
+   "start": 35.867,
+   "end": 44.433,
+   "dur": 8.566,
+   "src": "compositions/frames/05-details.html",
+   "vo": "Et puis les détails. Personne ne vient avec une voiture d'origine. Couleur sur mesure, intérieur refait, jantes forgées. Et toutes en état concours, comme si elles sortaient d'usine."
+  },
+  {
+   "n": 6,
+   "id": "06-regard",
+   "name": "Le regard du pro",
+   "start": 44.433,
+   "end": 50.9,
+   "dur": 6.467,
+   "src": "compositions/frames/06-regard.html",
+   "vo": "Seize ans que je vends des voitures. J'en ai vu passer des milliers. Et là-bas, j'ai regardé comme un gamin. Ça fait du bien de redevenir spectateur."
+  },
+  {
+   "n": 7,
+   "id": "07-cta",
+   "name": "CTA",
+   "start": 50.9,
+   "end": 56.467,
+   "dur": 5.567,
+   "src": "compositions/frames/07-cta.html",
+   "vo": "Deux ans aux Émirats, j'en ai ramené des souvenirs. Si tu veux les suivantes, abonne-toi."
+  }
+ ]
+}

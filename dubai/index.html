@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #0A0A0A;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="56.48"
+      data-width="1080"
+      data-height="1920"
+    >
+      <video data-footage id="v-00-chiron" class="clip" src="assets/clips/chiron.mp4" data-start="0.0" data-duration="2.554" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-01-rollsrow" class="clip" src="assets/clips/rollsrow.mp4" data-start="2.554" data-duration="2.213" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-02-wide1" class="clip" src="assets/clips/wide1.mp4" data-start="4.767" data-duration="1.673" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-03-lot" class="clip" src="assets/clips/lot.mp4" data-start="6.44" data-duration="1.51" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-04-crowd" class="clip" src="assets/clips/crowd.mp4" data-start="7.95" data-duration="2.73" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-05-anim" class="clip" src="assets/clips/anim.mp4" data-start="10.68" data-duration="0.774" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-06-resto" class="clip" src="assets/clips/resto.mp4" data-start="11.454" data-duration="0.775" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-07-drift" class="clip" src="assets/clips/drift.mp4" data-start="12.229" data-duration="1.481" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-08-wide2" class="clip" src="assets/clips/wide2.mp4" data-start="13.71" data-duration="3.99" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-09-brabus" class="clip" src="assets/clips/brabus.mp4" data-start="17.7" data-duration="1.908" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-10-bugatti" class="clip" src="assets/clips/bugatti.mp4" data-start="19.608" data-duration="0.464" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-11-rolls" class="clip" src="assets/clips/rolls.mp4" data-start="20.072" data-duration="0.464" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-12-bentley" class="clip" src="assets/clips/bentley.mp4" data-start="20.536" data-duration="0.929" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-13-urus" class="clip" src="assets/clips/urus.mp4" data-start="21.465" data-duration="0.929" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-14-sixsix" class="clip" src="assets/clips/sixsix.mp4" data-start="22.394" data-duration="0.929" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-15-parc" class="clip" src="assets/clips/parc.mp4" data-start="23.323" data-duration="1.393" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-16-sf90" class="clip" src="assets/clips/sf90.mp4" data-start="24.716" data-duration="2.551" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-17-walk" class="clip" src="assets/clips/walk.mp4" data-start="27.267" data-duration="2.303" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-18-ferrari" class="clip" src="assets/clips/ferrari.mp4" data-start="29.57" data-duration="0.83" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-19-sunset" class="clip" src="assets/clips/sunset.mp4" data-start="32.52" data-duration="3.347" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-20-lowrider" class="clip" src="assets/clips/lowrider.mp4" data-start="35.867" data-duration="3.063" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-21-gt" class="clip" src="assets/clips/gt.mp4" data-start="38.93" data-duration="1.046" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-22-orange" class="clip" src="assets/clips/orange.mp4" data-start="39.976" data-duration="1.046" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-23-jantes" class="clip" src="assets/clips/jantes.mp4" data-start="41.022" data-duration="0.928" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-24-concours" class="clip" src="assets/clips/concours.mp4" data-start="41.95" data-duration="2.483" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-25-enzo" class="clip" src="assets/clips/enzo.mp4" data-start="44.433" data-duration="1.5" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-26-phantom" class="clip" src="assets/clips/phantom.mp4" data-start="47.33" data-duration="3.57" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <video data-footage id="v-27-fin" class="clip" src="assets/clips/fin.mp4" data-start="50.9" data-duration="5.567" data-track-index="0" muted playsinline style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>
+      <div
+        id="el-01-hook"
+        class="scene"
+        data-composition-id="01-hook"
+        data-composition-src="compositions/frames/01-hook.html"
+        data-start="0"
+        data-duration="4.77"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-02-nombre"
+        class="scene"
+        data-composition-id="02-nombre"
+        data-composition-src="compositions/frames/02-nombre.html"
+        data-start="4.77"
+        data-duration="12.93"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-03-niveau"
+        class="scene"
+        data-composition-id="03-niveau"
+        data-composition-src="compositions/frames/03-niveau.html"
+        data-start="17.7"
+        data-duration="9.57"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-04-indifference"
+        class="scene"
+        data-composition-id="04-indifference"
+        data-composition-src="compositions/frames/04-indifference.html"
+        data-start="27.27"
+        data-duration="8.6"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-05-details"
+        class="scene"
+        data-composition-id="05-details"
+        data-composition-src="compositions/frames/05-details.html"
+        data-start="35.87"
+        data-duration="8.57"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-06-regard"
+        class="scene"
+        data-composition-id="06-regard"
+        data-composition-src="compositions/frames/06-regard.html"
+        data-start="44.44"
+        data-duration="6.47"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-07-cta"
+        class="scene"
+        data-composition-id="07-cta"
+        data-composition-src="compositions/frames/07-cta.html"
+        data-start="50.91"
+        data-duration="5.57"
+        data-track-index="1"
+      ></div>
+      <audio id="mix" data-start="0" data-duration="56.467" data-track-index="11" src="assets/audio/mix.wav" data-volume="1"></audio>
+
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>
