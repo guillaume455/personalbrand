@@ -1,0 +1,241 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r6-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r6-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r6-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r6-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r6-hudcam { transform-origin: 540px 600px; }
+    .r6-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r6-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r6-tline { position: relative; display: inline-block; opacity: 0; }
+    .r6-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r6-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r6-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r6-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r6-ocol { display: block; }
+    .r6-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r6-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r6-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r6-person { position: absolute; transform-origin: 50% 100%; }
+    .r6-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r6-pgrey { fill: #2b2b2b; }
+    .r6-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r6-porange { fill: #FB8000; opacity: 0; }
+    .r6-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r6-car { position: absolute; transform-origin: 50% 100%; }
+    .r6-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r6-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r6-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r6-w { display: inline-block; opacity: 0; }
+
+    .r6-colh { position: absolute; top: 330px; width: 500px; text-align: center; font: 68px/1.2 "Anton", sans-serif; color: #ffffff; opacity: 0; }
+    .r6-colu { position: absolute; left: 50%; bottom: -8px; width: 70%; height: 10px; margin-left: -35%; border-radius: 5px; background: #FB8000;
+      transform: scaleX(0); transform-origin: 0 50%; }
+    #r6-hL { left: 20px; } #r6-hR { left: 560px; }
+    #r6-divl { position: absolute; left: 539px; top: 330px; width: 3px; height: 900px; background: linear-gradient(180deg, rgba(255,255,255,0), #333 12%, #333 88%, rgba(255,255,255,0));
+      transform-origin: 50% 0; transform: scaleY(0); }
+    .r6-flow { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+    .r6-ar { stroke: #FB8000; stroke-width: 9; }
+    .r6-ah { stroke: #FB8000; stroke-width: 9; opacity: 0; }
+    .r6-lab { position: absolute; padding: 6px 18px; border-radius: 24px; background: #FB8000; color: #0A0A0A; font: 34px/1.2 "Anton", sans-serif; white-space: nowrap; opacity: 0; }
+    .r6-lab.r6-ghost { background: #151515; color: #ffffff; border: 2px solid #FB8000; }
+    .r6-ptag { position: absolute; padding: 4px 16px; border-radius: 10px; background: #ffffff; color: #0A0A0A; font: 40px/1.2 "Anton", sans-serif; white-space: nowrap; }
+    .r6-who { position: absolute; width: 200px; text-align: center; font: 600 24px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; opacity: 0; }
+
+    .r6-box { position: absolute; top: 560px; width: 440px; height: 520px; border-radius: 30px; background: #151515; border: 2px solid #2e2e2e; }
+    #r6-bL { left: 50px; } #r6-bR { left: 590px; width: 350px; }
+    #r6-q { position: absolute; left: 0; top: 700px; width: 1080px; text-align: center; font: 220px/1 "Anton", sans-serif; color: #FB8000; opacity: 0; }
+    #r6-qx { position: absolute; left: 400px; top: 800px; width: 280px; height: 14px; border-radius: 7px; background: #ffffff; transform: scaleX(0) rotate(-12deg); transform-origin: 0 50%; }
+    #r6-cashw { position: absolute; left: 0; top: 600px; width: 1080px; text-align: center; opacity: 0; }
+    #r6-cashi { display: inline-block; padding: 8px 30px; border-radius: 40px; background: #ffffff; color: #0A0A0A; font: 54px/1.2 "Anton", sans-serif; }
+    #r6-lock { position: absolute; left: 210px; top: 850px; width: 120px; height: 140px; overflow: visible; opacity: 0; }
+    #r6-go { position: absolute; left: 640px; top: 1000px; width: 250px; text-align: center; font: 50px/1.1 "Anton", sans-serif; color: #FB8000; opacity: 0; }
+      </style>
+
+  <div id="root" data-composition-id="06-vrai-choix" data-width="1080" data-height="1920" data-duration="15.334">
+    <div id="r6-ground" class="clip r6-ground" data-start="0" data-duration="15.334" data-track-index="0">
+      <div id="r6-halo" class="r6-halo" style="left:540px;top:860px"></div>
+      <div class="r6-grain"></div>
+    </div>
+    <div id="r6-push" class="r6-cam"><div id="r6-shk" class="r6-cam"><div id="r6-cran" class="r6-cam">
+      <div id="r6-hL" class="r6-colh" style="opacity:1">MARCHAND<i id="r6-uL" class="r6-colu" style=transform:scaleX(1)></i></div><div id="r6-hR" class="r6-colh" style="opacity:1;font-size:60px;top:338px">INTERMÉDIAIRE<i id="r6-uR" class="r6-colu" style=transform:scaleX(1)></i></div><div id="r6-divl" style=transform:scaleY(1)></div><div id="r6-bL" class="r6-box"></div><div id="r6-bR" class="r6-box"></div><div id="r6-pL-glow" class="r6-glow" style="left:60px;top:665px"></div><div id="r6-pL" class="r6-person" style="left:200px;top:790px;width:140px;height:210px"><svg viewBox="0 0 200 300" class="r6-pl r6-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r6-pl r6-pwhite" id="r6-pL-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r6-pl r6-porange" id="r6-pL-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><div id="r6-pR-glow" class="r6-glow" style="left:555px;top:655px"></div><div id="r6-pR" class="r6-person" style="left:695px;top:780px;width:140px;height:210px"><svg viewBox="0 0 200 300" class="r6-pl r6-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r6-pl r6-pwhite" id="r6-pR-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r6-pl r6-porange" id="r6-pR-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><div id="r6-q">?</div><div id="r6-qx"></div><div id="r6-cashw"><span id="r6-cashi"><span id="r6-cash" class="r6-odo " data-to="5 000 €"><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-os">&nbsp;</span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-os">&nbsp;</span><span class="r6-os">€</span></span> EN POCHE</span></div><svg id="r6-lock" viewBox="0 0 120 140"><path d="M30 64 L30 40 Q30 12 60 12 Q90 12 90 40 L90 64" fill="none" stroke="#B3261E" stroke-width="12"/><rect x="14" y="60" width="92" height="72" rx="12" fill="#B3261E"/></svg><div id="r6-go">DÈS DEMAIN</div><svg class="r6-flow" viewBox="0 0 1080 1920"><path id="r6-f1" class="r6-ar" d="M700 1000 C 640 1160, 440 1160, 300 1000"/><g transform="translate(300 1000) rotate(-130)"><path id="r6-f1h" class="r6-ah" d="M-26 -18 L0 0 L-26 18"/></g><path id="r6-f2" class="r6-ar" d="M765 720 A 90 90 0 1 1 764 721" style="stroke-width:10"/></svg>
+    </div></div></div>
+    <div id="r6-hud" class="r6-cam r6-hudcam">
+      <div class="r6-title" id="r6-t6" style="top:560px;font-size:120px;"><span class="r6-tline" id="r6-t6-0">PAS UNE ÉTAPE.</span><br><span class="r6-tline" id="r6-t6-1">UN AVANTAGE.<i class="r6-stilt"><i class="r6-stk" id="r6-t6-s"></i></i></span></div>
+    </div>
+    <div id="r6-sub" class="r6-sub">
+      <div class="r6-chunk sub-chunk" data-out="1.047"><span class="r6-w sub-w" data-cue="0.097">Lequel</span> <span class="r6-w sub-w" data-cue="0.334">est</span> <span class="r6-w sub-w" data-cue="0.452">le</span> <span class="r6-w sub-w sub-key" data-cue="0.570">meilleur ?</span></div>
+      <div class="r6-chunk sub-chunk" data-out="1.957"><span class="r6-w sub-w" data-cue="1.107">Mauvaise</span> <span class="r6-w sub-w" data-cue="1.412">question.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="3.342"><span class="r6-w sub-w" data-cue="2.017">Avec</span> <span class="r6-w sub-w sub-key" data-cue="2.338">5 000</span> <span class="r6-w sub-w" data-cue="2.660">euros</span> <span class="r6-w sub-w" data-cue="2.981">en</span> <span class="r6-w sub-w" data-cue="3.142">poche,</span></div>
+      <div class="r6-chunk sub-chunk" data-out="4.647"><span class="r6-w sub-w" data-cue="3.302">tu</span> <span class="r6-w sub-w" data-cue="3.463">ne</span> <span class="r6-w sub-w" data-cue="3.624">peux</span> <span class="r6-w sub-w" data-cue="3.784">pas</span> <span class="r6-w sub-w" data-cue="3.945">être</span> <span class="r6-w sub-w" data-cue="4.106">marchand,</span></div>
+      <div class="r6-chunk sub-chunk" data-out="5.709"><span class="r6-w sub-w" data-cue="4.707">mais</span> <span class="r6-w sub-w" data-cue="4.840">tu</span> <span class="r6-w sub-w" data-cue="4.972">peux</span> <span class="r6-w sub-w" data-cue="5.105">être</span> <span class="r6-w sub-w sub-key" data-cue="5.238">intermédiaire</span></div>
+      <div class="r6-chunk sub-chunk" data-out="6.427"><span class="r6-w sub-w" data-cue="5.769">dès</span> <span class="r6-w sub-w" data-cue="5.902">demain.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="7.402"><span class="r6-w sub-w" data-cue="6.487">Certains</span> <span class="r6-w sub-w" data-cue="6.812">passent</span> <span class="r6-w sub-w" data-cue="7.137">marchand</span></div>
+      <div class="r6-chunk sub-chunk" data-out="8.017"><span class="r6-w sub-w" data-cue="7.462">plus</span> <span class="r6-w sub-w" data-cue="7.625">tard.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="8.559"><span class="r6-w sub-w" data-cue="8.077">Mais</span> <span class="r6-w sub-w" data-cue="8.213">la</span> <span class="r6-w sub-w" data-cue="8.348">plupart</span></div>
+      <div class="r6-chunk sub-chunk" data-out="9.238"><span class="r6-w sub-w" data-cue="8.619">des</span> <span class="r6-w sub-w" data-cue="8.755">intermédiaires</span></div>
+      <div class="r6-chunk sub-chunk" data-out="10.477"><span class="r6-w sub-w" data-cue="9.298">font</span> <span class="r6-w sub-w" data-cue="9.433">le</span> <span class="r6-w sub-w" data-cue="9.569">choix</span> <span class="r6-w sub-w" data-cue="9.705">de</span> <span class="r6-w sub-w" data-cue="9.840">le</span> <span class="r6-w sub-w sub-key" data-cue="9.976">rester.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="11.400"><span class="r6-w sub-w" data-cue="10.537">Parce</span> <span class="r6-w sub-w" data-cue="10.691">qu'ils</span> <span class="r6-w sub-w" data-cue="10.999">ont</span> <span class="r6-w sub-w" data-cue="11.152">compris</span></div>
+      <div class="r6-chunk sub-chunk" data-out="12.607"><span class="r6-w sub-w" data-cue="11.460">que</span> <span class="r6-w sub-w" data-cue="11.614">ne</span> <span class="r6-w sub-w" data-cue="11.768">pas</span> <span class="r6-w sub-w" data-cue="11.922">avoir</span> <span class="r6-w sub-w" data-cue="12.229">de</span> <span class="r6-w sub-w" data-cue="12.383">stock,</span></div>
+      <div class="r6-chunk sub-chunk" data-out="14.177"><span class="r6-w sub-w" data-cue="12.667">c'est</span> <span class="r6-w sub-w" data-cue="12.997">pas</span> <span class="r6-w sub-w" data-cue="13.131">une</span> <span class="r6-w sub-w sub-key" data-cue="13.266">étape</span> <span class="r6-w sub-w" data-cue="13.534">nécessaire.</span></div>
+      <div class="r6-chunk sub-chunk"><span class="r6-w sub-w" data-cue="14.237">C'est</span> <span class="r6-w sub-w" data-cue="14.415">un</span> <span class="r6-w sub-w sub-key" data-cue="14.593">avantage.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "06-vrai-choix", P = "r6-", DUR = 15.334;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["lequel", 0.097, 0.334], ["est", 0.334, 0.452], ["le", 0.452, 0.57], ["meilleur", 0.57, 0.807], ["mauvaise", 1.107, 1.412], ["question", 1.412, 1.717], ["avec", 2.017, 2.338], ["5000", 2.338, 2.66], ["euros", 2.66, 2.981], ["en", 2.981, 3.142], ["poche", 3.142, 3.302], ["tu", 3.302, 3.463], ["ne", 3.463, 3.624], ["peux", 3.624, 3.784], ["pas", 3.784, 3.945], ["être", 3.945, 4.106], ["marchand", 4.106, 4.427], ["mais", 4.707, 4.84], ["tu", 4.84, 4.972], ["peux", 4.972, 5.105], ["être", 5.105, 5.238], ["intermédiaire", 5.238, 5.769], ["dès", 5.769, 5.902], ["demain", 5.902, 6.167], ["certains", 6.487, 6.812], ["passent", 6.812, 7.137], ["marchand", 7.137, 7.462], ["plus", 7.462, 7.625], ["tard", 7.625, 7.787], ["mais", 8.077, 8.213], ["la", 8.213, 8.348], ["plupart", 8.348, 8.619], ["des", 8.619, 8.755], ["intermédiaires", 8.755, 9.298], ["font", 9.298, 9.433], ["le", 9.433, 9.569], ["choix", 9.569, 9.705], ["de", 9.705, 9.84], ["le", 9.84, 9.976], ["rester", 9.976, 10.247], ["parce", 10.537, 10.691], ["qu'ils", 10.691, 10.999], ["ont", 10.999, 11.152], ["compris", 11.152, 11.46], ["que", 11.46, 11.614], ["ne", 11.614, 11.768], ["pas", 11.768, 11.922], ["avoir", 11.922, 12.229], ["de", 12.229, 12.383], ["stock", 12.383, 12.537], ["c'est", 12.667, 12.837], ["pas", 12.997, 13.131], ["une", 13.131, 13.266], ["étape", 13.266, 13.534], ["nécessaire", 13.534, 13.937], ["c'est", 14.237, 14.415], ["un", 14.415, 14.593], ["avantage", 14.593, 15.127]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      function heads(t, act) {
+        go("hL", { opacity: act === "R" ? 0.3 : 1 }, t, 0.3); go("hR", { opacity: act === "L" ? 0.3 : 1 }, t, 0.3);
+      }
+      function arrow(id, t, d) { draw(id, t, d || 0.45, "power2.inOut"); pre(id + "h", { opacity: 0 }); go(id + "h", { opacity: 1 }, t + (d || 0.45) - 0.05, 0.1); }
+
+      heads(0.02, "both");
+      [["pL", "grey"], ["pR", "orange"]].forEach(function (p) { init(p[0] + "-w", { opacity: 0 }); init(p[0] + "-o", { opacity: 0 }); init(p[0] + "-glow", { opacity: 0 }); lit(p[0], p[1], 0.02, 0.2); });
+      // which is best? wrong question
+      pre("q", { opacity: 0, scale: 0.4 }); go("q", { opacity: 1, scale: 1 }, Math.max(0.02, at("meilleur") - 0.1), 0.3, "back.out(2)");
+      tl.fromTo($("qx"), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power4.out", immediateRender: false }, at("mauvaise") + 0.05);
+      go("q", { opacity: 0 }, at("5000") - 0.2, 0.2); go("qx", { opacity: 0 }, at("5000") - 0.2, 0.2);
+      // with 5 000: not a dealer, an intermediary tomorrow
+      pre("cashw", { opacity: 0, scale: 0.6 }); go("cashw", { opacity: 1, scale: 1 }, at("5000") - 0.1, 0.3, "back.out(2)"); odo("cash", at("5000") - 0.05, 0.7, { from: "0 000" });
+      pre("lock", { opacity: 0, scale: 0.5 }); go("lock", { opacity: 1, scale: 1 }, at("marchand") - 0.05, 0.25, "back.out(2)");
+      go("bL", { opacity: 0.4 }, at("marchand"), 0.3); go("pL", { opacity: 0.4 }, at("marchand"), 0.3); go("hL", { opacity: 0.4 }, at("marchand"), 0.3);
+      pre("go", { opacity: 0, scale: 0.6 }); go("go", { opacity: 1, scale: 1 }, at("demain") - 0.1, 0.25, "back.out(2)");
+      // some move on to dealer later; most stay intermediaries
+      go("cashw", { opacity: 0 }, at("certains") - 0.15, 0.2); go("lock", { opacity: 0 }, at("certains") - 0.15, 0.2);
+      go("bL", { opacity: 1 }, at("certains") - 0.15, 0.3); go("pL", { opacity: 1 }, at("certains") - 0.15, 0.3); go("hL", { opacity: 1 }, at("certains") - 0.15, 0.3);
+      arrow("f1", at("certains") - 0.05, 0.6);
+      go("go", { opacity: 0 }, at("certains") - 0.15, 0.2);
+      draw("f2", at("rester") - 0.1, 0.7, "power2.inOut");
+      tl.fromTo($("f2"), { rotation: 0, svgOrigin: "765 810" }, { rotation: 360, svgOrigin: "765 810", duration: 2, ease: "none", immediateRender: false }, at("rester") + 0.6);
+      // not a step: an advantage
+      go("f1", { opacity: 0.25 }, at("étape") - 0.2, 0.3); go("f1h", { opacity: 0.25 }, at("étape") - 0.2, 0.3);
+      ["bL", "bR", "pL", "pR"].forEach(function (b) { go(b, { opacity: 0.35 }, at("étape") - 0.2, 0.3); });
+      slam("t6-0", at("étape") - 0.05); slam("t6-1", at("avantage") - 0.05); stroke("t6", at("avantage") + 0.2);
+      cam(0, -10, 1.03, at("étape"), 0.8);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

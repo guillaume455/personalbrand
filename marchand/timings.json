@@ -1,0 +1,76 @@
+{
+ "provisional": false,
+ "total": 81.167,
+ "frames": [
+  {
+   "n": 1,
+   "id": "01-hook",
+   "name": "Hook",
+   "start": 0.0,
+   "end": 5.833,
+   "dur": 5.833,
+   "src": "compositions/frames/01-hook.html",
+   "vo": "Tu veux vendre des voitures. OK. Mais tu veux porter le stock, ou pas ? Parce que c'est deux métiers."
+  },
+  {
+   "n": 2,
+   "id": "02-meme-voiture",
+   "name": "La même voiture",
+   "start": 5.833,
+   "end": 11.667,
+   "dur": 5.834,
+   "src": "compositions/frames/02-meme-voiture.html",
+   "vo": "Prenons la même voiture, 15 000 euros, vendue au même client. À gauche, le marchand. À droite, l'intermédiaire."
+  },
+  {
+   "n": 3,
+   "id": "03-marchand",
+   "name": "Le marchand",
+   "start": 11.667,
+   "end": 31.5,
+   "dur": 19.833,
+   "src": "compositions/frames/03-marchand.html",
+   "vo": "Le marchand achète la voiture 12 000 euros avec son argent. Il la stocke. Et pendant qu'elle dort, elle lui coûte : les frais bancaires sur l'argent immobilisé, et la place, dépôt, parc ou showroom. Il la revend 15 000. 3 000 de marge sur le papier, plutôt 2 300 en vrai. Et tout le risque est pour lui : la garantie légale, les vices cachés, et la voiture qui ne se vend pas."
+  },
+  {
+   "n": 4,
+   "id": "04-intermediaire",
+   "name": "L'intermédiaire",
+   "start": 31.5,
+   "end": 46.8,
+   "dur": 15.3,
+   "src": "compositions/frames/04-intermediaire.html",
+   "vo": "L'intermédiaire, lui, n'achète rien. Le vendeur lui confie un mandat. Il trouve le client, il organise la vente. Les 15 000 vont au vendeur. Lui prend une commission : 1 500 euros. Zéro stock, zéro trésorerie bloquée, zéro frais de parc. Le vendeur reste propriétaire jusqu'à la vente."
+  },
+  {
+   "n": 5,
+   "id": "05-face-a-face",
+   "name": "Le face-à-face",
+   "start": 46.8,
+   "end": 62.133,
+   "dur": 15.333,
+   "src": "compositions/frames/05-face-a-face.html",
+   "vo": "Résumé. Le marchand sort 12 000, garde 2 300, porte tout le risque. L'intermédiaire sort zéro, garde 1 500, porte presque rien. 800 euros d'écart pour 12 000 euros immobilisés et tous les risques. L'un a besoin de trésorerie. L'autre a besoin d'un réseau et de savoir vendre."
+  },
+  {
+   "n": 6,
+   "id": "06-vrai-choix",
+   "name": "Le vrai choix",
+   "start": 62.133,
+   "end": 77.467,
+   "dur": 15.334,
+   "src": "compositions/frames/06-vrai-choix.html",
+   "vo": "Lequel est le meilleur ? Mauvaise question. Avec 5 000 euros en poche, tu ne peux pas être marchand, mais tu peux être intermédiaire dès demain. Certains passent marchand plus tard. Mais la plupart des intermédiaires font le choix de le rester. Parce qu'ils ont compris que ne pas avoir de stock, c'est pas une étape nécessaire. C'est un avantage."
+  },
+  {
+   "n": 7,
+   "id": "07-cta",
+   "name": "CTA",
+   "start": 77.467,
+   "end": 81.167,
+   "dur": 3.7,
+   "src": "compositions/frames/07-cta.html",
+   "vo": "Abonne-toi pour plus de contenu comme celui-ci."
+  }
+ ]
+}

@@ -1,0 +1,264 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r3-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r3-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r3-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r3-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r3-hudcam { transform-origin: 540px 600px; }
+    .r3-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r3-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r3-tline { position: relative; display: inline-block; opacity: 0; }
+    .r3-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r3-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r3-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r3-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r3-ocol { display: block; }
+    .r3-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r3-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r3-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r3-person { position: absolute; transform-origin: 50% 100%; }
+    .r3-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r3-pgrey { fill: #2b2b2b; }
+    .r3-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r3-porange { fill: #FB8000; opacity: 0; }
+    .r3-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r3-car { position: absolute; transform-origin: 50% 100%; }
+    .r3-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r3-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r3-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r3-w { display: inline-block; opacity: 0; }
+
+    .r3-photo { position: absolute; border: 4px solid #FB8000; border-radius: 10px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.6); }
+    .r3-photo img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.8) contrast(1.04); }
+
+    .r3-colh { position: absolute; top: 330px; width: 500px; text-align: center; font: 68px/1.2 "Anton", sans-serif; color: #ffffff; opacity: 0; }
+    .r3-colu { position: absolute; left: 50%; bottom: -8px; width: 70%; height: 10px; margin-left: -35%; border-radius: 5px; background: #FB8000;
+      transform: scaleX(0); transform-origin: 0 50%; }
+    #r3-hL { left: 20px; } #r3-hR { left: 560px; }
+    #r3-divl { position: absolute; left: 539px; top: 330px; width: 3px; height: 900px; background: linear-gradient(180deg, rgba(255,255,255,0), #333 12%, #333 88%, rgba(255,255,255,0));
+      transform-origin: 50% 0; transform: scaleY(0); }
+    .r3-flow { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+    .r3-ar { stroke: #FB8000; stroke-width: 9; }
+    .r3-ah { stroke: #FB8000; stroke-width: 9; opacity: 0; }
+    .r3-lab { position: absolute; padding: 6px 18px; border-radius: 24px; background: #FB8000; color: #0A0A0A; font: 34px/1.2 "Anton", sans-serif; white-space: nowrap; opacity: 0; }
+    .r3-lab.r3-ghost { background: #151515; color: #ffffff; border: 2px solid #FB8000; }
+    .r3-ptag { position: absolute; padding: 4px 16px; border-radius: 10px; background: #ffffff; color: #0A0A0A; font: 40px/1.2 "Anton", sans-serif; white-space: nowrap; }
+    .r3-who { position: absolute; width: 200px; text-align: center; font: 600 24px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; opacity: 0; }
+
+    .r3-rk { position: absolute; width: 140px; text-align: center; opacity: 0; }
+    .r3-rki { width: 84px; height: 84px; margin: 0 auto; }
+    .r3-rkl { display: block; margin-top: 6px; font: 600 20px/1.15 "Instrument Sans", sans-serif; color: #c9584f; letter-spacing: 0.04em; }
+
+    #r3-car { left: 250px; top: 640px; width: 250px; height: 160px; }
+    #r3-stock { position: absolute; left: 228px; top: 600px; width: 294px; height: 228px; border: 5px dashed #FB8000; border-radius: 14px; opacity: 0; }
+    #r3-stockl { position: absolute; left: 10px; top: -30px; padding: 0 12px; background: #0A0A0A; font: 40px/1.2 "Anton", sans-serif; color: #FB8000; }
+    .r3-cost { position: absolute; top: 860px; width: 225px; height: 120px; border-radius: 18px; background: #151515; border: 2px solid #2e2e2e; opacity: 0; }
+    .r3-costl { position: absolute; left: 0; top: 16px; width: 100%; text-align: center; font: 600 20px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.06em; }
+    .r3-costv { position: absolute; left: 0; top: 46px; width: 100%; text-align: center; font: 56px/1 "Anton", sans-serif; color: #c9584f; }
+    #r3-mg { position: absolute; left: 40px; top: 1010px; width: 470px; text-align: center; font: 600 28px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.08em; opacity: 0; }
+    #r3-mgv { display: block; margin-top: 8px; font: 90px/1 "Anton", sans-serif; color: #FB8000; }
+    #r3-mgo { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+    #r3-mgx { position: absolute; left: 110px; top: 70px; width: 250px; height: 8px; background: #FB8000; border-radius: 4px; transform: scaleX(0) rotate(-6deg); transform-origin: 0 50%; }
+      </style>
+
+  <div id="root" data-composition-id="03-marchand" data-width="1080" data-height="1920" data-duration="19.833">
+    <div id="r3-ground" class="clip r3-ground" data-start="0" data-duration="19.833" data-track-index="0">
+      <div id="r3-halo" class="r3-halo" style="left:270px;top:860px"></div>
+      <div class="r3-grain"></div>
+    </div>
+    <div id="r3-push" class="r3-cam"><div id="r3-shk" class="r3-cam"><div id="r3-cran" class="r3-cam">
+      <div id="r3-hL" class="r3-colh" style="opacity:1">MARCHAND<i id="r3-uL" class="r3-colu" style=transform:scaleX(1)></i></div><div id="r3-hR" class="r3-colh" style="opacity:1;font-size:60px;top:338px">INTERMÉDIAIRE<i id="r3-uR" class="r3-colu" style=transform:scaleX(1)></i></div><div id="r3-divl" style=transform:scaleY(1)></div><div id="r3-mch-glow" class="r3-glow" style="left:-85px;top:525px"></div><div id="r3-mch" class="r3-person" style="left:55px;top:650px;width:140px;height:210px"><svg viewBox="0 0 200 300" class="r3-pl r3-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r3-pl r3-pwhite" id="r3-mch-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r3-pl r3-porange" id="r3-mch-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><div id="r3-car" class="r3-photo"><img src="assets/img/golf.jpg"></div><div id="r3-stock"><span id="r3-stockl">STOCK</span></div><svg class="r3-flow" viewBox="0 0 1080 1920"><path id="r3-a1" class="r3-ar" d="M180 700 C 200 640, 220 640, 245 680"/><g transform="translate(245 680) rotate(60)"><path id="r3-a1h" class="r3-ah" d="M-26 -18 L0 0 L-26 18"/></g><path id="r3-a2" class="r3-ar" d="M470 1000 C 420 1060, 220 1060, 140 900"/><g transform="translate(140 900) rotate(-115)"><path id="r3-a2h" class="r3-ah" d="M-26 -18 L0 0 L-26 18"/></g></svg><div id="r3-l1" class="r3-lab" style="left:40px;top:470px">ACHÈTE <span id="r3-buy" class="r3-odo " data-to="12 000 €"><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-os">€</span></span></div><div id="r3-c1" class="r3-cost" style="left:40px"><div class="r3-costl">FRAIS BANCAIRES</div><div class="r3-costv">- <span id="r3-cb" class="r3-odo " data-to="250 €"><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-os">€</span></span></div></div><div id="r3-c2" class="r3-cost" style="left:285px"><div class="r3-costl">STOCKAGE</div><div class="r3-costv">- <span id="r3-cs" class="r3-odo " data-to="450 €"><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-os">€</span></span></div></div><div id="r3-l2" class="r3-lab" style="left:250px;top:1040px">VEND <span id="r3-sell" class="r3-odo " data-to="15 000 €"><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-os">€</span></span></div><div id="r3-mg">MARGE<span id="r3-mgv"><span id="r3-mgn" class="r3-odo " data-to="3 000 €"><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-oc"><span class="r3-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r3-os">&nbsp;</span><span class="r3-os">€</span></span></span></div><div id="r3-rk0" class="r3-rk" style="left:45px;top:1040px"><div class="r3-rki"><svg viewBox="0 0 100 100" style="width:100%;height:100%;fill:none;stroke:#B3261E;stroke-width:8;stroke-linejoin:round;stroke-linecap:round"><path d="M50 8 L86 22 L86 50 Q86 78 50 92 Q14 78 14 50 L14 22 Z"/><path d="M50 32 L50 56 M50 70 L50 72"/></svg></div><span class="r3-rkl">GARANTIE</span></div><div id="r3-rk1" class="r3-rk" style="left:200px;top:1040px"><div class="r3-rki"><svg viewBox="0 0 100 100" style="width:100%;height:100%;fill:none;stroke:#B3261E;stroke-width:8;stroke-linecap:round"><circle cx="42" cy="42" r="28"/><path d="M62 62 L90 90"/><path d="M42 28 L42 46 M42 56 L42 58"/></svg></div><span class="r3-rkl">VICES CACHÉS</span></div><div id="r3-rk2" class="r3-rk" style="left:355px;top:1040px"><div class="r3-rki"><svg viewBox="0 0 100 100" style="width:100%;height:100%;fill:none;stroke:#B3261E;stroke-width:8;stroke-linecap:round;stroke-linejoin:round"><path d="M10 66 L14 52 Q16 44 26 42 L40 30 Q44 26 52 26 L70 26 Q78 26 82 34 L88 46 Q92 48 92 56 L92 66 Z"/><circle cx="28" cy="68" r="9"/><circle cx="74" cy="68" r="9"/><circle cx="74" cy="20" r="0"/></svg></div><span class="r3-rkl">INVENDUE</span></div><div id="r3-rhsph" class="r3-photo" style="left:590px;top:620px;width:340px;height:270px;opacity:0.3"><img src="assets/img/golf.jpg"></div>
+    </div></div></div>
+    <div id="r3-hud" class="r3-cam r3-hudcam">
+      
+    </div>
+    <div id="r3-sub" class="r3-sub">
+      <div class="r3-chunk sub-chunk" data-out="0.796"><span class="r3-w sub-w" data-cue="0.103">Le</span> <span class="r3-w sub-w" data-cue="0.254">marchand</span> <span class="r3-w sub-w sub-key" data-cue="0.555">achète</span></div>
+      <div class="r3-chunk sub-chunk" data-out="2.000"><span class="r3-w sub-w" data-cue="0.856">la</span> <span class="r3-w sub-w" data-cue="1.006">voiture</span> <span class="r3-w sub-w" data-cue="1.307">12 000</span> <span class="r3-w sub-w" data-cue="1.759">euros</span></div>
+      <div class="r3-chunk sub-chunk" data-out="3.053"><span class="r3-w sub-w" data-cue="2.060">avec</span> <span class="r3-w sub-w" data-cue="2.361">son</span> <span class="r3-w sub-w" data-cue="2.512">argent.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="3.903"><span class="r3-w sub-w" data-cue="3.113">Il</span> <span class="r3-w sub-w" data-cue="3.290">la</span> <span class="r3-w sub-w sub-key" data-cue="3.466">stocke.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="4.991"><span class="r3-w sub-w" data-cue="3.963">Et</span> <span class="r3-w sub-w" data-cue="4.129">pendant</span> <span class="r3-w sub-w" data-cue="4.460">qu'elle</span> <span class="r3-w sub-w" data-cue="4.791">dort,</span></div>
+      <div class="r3-chunk sub-chunk" data-out="5.543"><span class="r3-w sub-w" data-cue="4.956">elle</span> <span class="r3-w sub-w" data-cue="5.122">lui</span> <span class="r3-w sub-w sub-key" data-cue="5.287">coûte :</span></div>
+      <div class="r3-chunk sub-chunk" data-out="6.100"><span class="r3-w sub-w" data-cue="5.603">les</span> <span class="r3-w sub-w" data-cue="5.742">frais</span> <span class="r3-w sub-w sub-key" data-cue="5.881">bancaires</span></div>
+      <div class="r3-chunk sub-chunk" data-out="7.503"><span class="r3-w sub-w" data-cue="6.160">sur</span> <span class="r3-w sub-w" data-cue="6.299">l'argent</span> <span class="r3-w sub-w" data-cue="6.577">immobilisé,</span></div>
+      <div class="r3-chunk sub-chunk" data-out="8.185"><span class="r3-w sub-w" data-cue="7.563">et</span> <span class="r3-w sub-w" data-cue="7.774">la</span> <span class="r3-w sub-w sub-key" data-cue="7.985">place,</span></div>
+      <div class="r3-chunk sub-chunk" data-out="9.693"><span class="r3-w sub-w" data-cue="8.196">dépôt,</span> <span class="r3-w sub-w" data-cue="8.619">parc</span> <span class="r3-w sub-w" data-cue="8.830">ou</span> <span class="r3-w sub-w" data-cue="9.041">showroom.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="11.023"><span class="r3-w sub-w" data-cue="9.753">Il</span> <span class="r3-w sub-w" data-cue="9.899">la</span> <span class="r3-w sub-w sub-key" data-cue="10.044">revend</span> <span class="r3-w sub-w" data-cue="10.336">15 000.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="11.786"><span class="r3-w sub-w" data-cue="11.083">3 000</span> <span class="r3-w sub-w" data-cue="11.418">de</span> <span class="r3-w sub-w" data-cue="11.586">marge</span></div>
+      <div class="r3-chunk sub-chunk" data-out="12.503"><span class="r3-w sub-w" data-cue="11.753">sur</span> <span class="r3-w sub-w" data-cue="11.921">le</span> <span class="r3-w sub-w" data-cue="12.088">papier,</span></div>
+      <div class="r3-chunk sub-chunk" data-out="14.103"><span class="r3-w sub-w" data-cue="12.563">plutôt</span> <span class="r3-w sub-w sub-key" data-cue="12.852">2 300</span> <span class="r3-w sub-w" data-cue="13.574">en</span> <span class="r3-w sub-w" data-cue="13.719">vrai.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="14.874"><span class="r3-w sub-w" data-cue="14.163">Et</span> <span class="r3-w sub-w" data-cue="14.403">tout</span> <span class="r3-w sub-w" data-cue="14.536">le</span> <span class="r3-w sub-w sub-key" data-cue="14.669">risque</span></div>
+      <div class="r3-chunk sub-chunk" data-out="15.523"><span class="r3-w sub-w" data-cue="14.934">est</span> <span class="r3-w sub-w" data-cue="15.067">pour</span> <span class="r3-w sub-w" data-cue="15.200">lui :</span></div>
+      <div class="r3-chunk sub-chunk" data-out="16.537"><span class="r3-w sub-w" data-cue="15.583">la</span> <span class="r3-w sub-w" data-cue="15.752">garantie</span> <span class="r3-w sub-w" data-cue="16.259">légale,</span></div>
+      <div class="r3-chunk sub-chunk" data-out="17.453"><span class="r3-w sub-w" data-cue="16.597">les</span> <span class="r3-w sub-w" data-cue="16.766">vices</span> <span class="r3-w sub-w" data-cue="16.935">cachés,</span></div>
+      <div class="r3-chunk sub-chunk" data-out="18.391"><span class="r3-w sub-w" data-cue="17.513">et</span> <span class="r3-w sub-w" data-cue="17.747">la</span> <span class="r3-w sub-w" data-cue="17.982">voiture</span></div>
+      <div class="r3-chunk sub-chunk"><span class="r3-w sub-w" data-cue="18.451">qui</span> <span class="r3-w sub-w" data-cue="18.685">ne</span> <span class="r3-w sub-w" data-cue="18.920">se</span> <span class="r3-w sub-w" data-cue="19.154">vend</span> <span class="r3-w sub-w sub-key" data-cue="19.389">pas.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "03-marchand", P = "r3-", DUR = 19.833;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["le", 0.103, 0.254], ["marchand", 0.254, 0.555], ["achète", 0.555, 0.856], ["la", 0.856, 1.006], ["voiture", 1.006, 1.307], ["12000", 1.307, 1.759], ["euros", 1.759, 2.06], ["avec", 2.06, 2.361], ["son", 2.361, 2.512], ["argent", 2.512, 2.813], ["il", 3.113, 3.29], ["la", 3.29, 3.466], ["stocke", 3.466, 3.643], ["et", 3.963, 4.129], ["pendant", 4.129, 4.46], ["qu'elle", 4.46, 4.791], ["dort", 4.791, 4.956], ["elle", 4.956, 5.122], ["lui", 5.122, 5.287], ["coûte", 5.287, 5.453], ["les", 5.603, 5.742], ["frais", 5.742, 5.881], ["bancaires", 5.881, 6.16], ["sur", 6.16, 6.299], ["l'argent", 6.299, 6.577], ["immobilisé", 6.577, 7.273], ["et", 7.563, 7.774], ["la", 7.774, 7.985], ["place", 7.985, 8.196], ["dépôt", 8.196, 8.619], ["parc", 8.619, 8.83], ["ou", 8.83, 9.041], ["showroom", 9.041, 9.463], ["il", 9.753, 9.899], ["la", 9.899, 10.044], ["revend", 10.044, 10.336], ["15000", 10.336, 10.773], ["3000", 11.083, 11.418], ["de", 11.418, 11.586], ["marge", 11.586, 11.753], ["sur", 11.753, 11.921], ["le", 11.921, 12.088], ["papier", 12.088, 12.423], ["plutôt", 12.563, 12.852], ["2300", 12.852, 13.574], ["en", 13.574, 13.719], ["vrai", 13.719, 13.863], ["et", 14.163, 14.273], ["tout", 14.403, 14.536], ["le", 14.536, 14.669], ["risque", 14.669, 14.934], ["est", 14.934, 15.067], ["pour", 15.067, 15.2], ["lui", 15.2, 15.333], ["la", 15.583, 15.752], ["garantie", 15.752, 16.259], ["légale", 16.259, 16.597], ["les", 16.597, 16.766], ["vices", 16.766, 16.935], ["cachés", 16.935, 17.273], ["et", 17.513, 17.747], ["la", 17.747, 17.982], ["voiture", 17.982, 18.451], ["qui", 18.451, 18.685], ["ne", 18.685, 18.92], ["se", 18.92, 19.154], ["vend", 19.154, 19.389], ["pas", 19.389, 19.623]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      function heads(t, act) {
+        go("hL", { opacity: act === "R" ? 0.3 : 1 }, t, 0.3); go("hR", { opacity: act === "L" ? 0.3 : 1 }, t, 0.3);
+      }
+      function arrow(id, t, d) { draw(id, t, d || 0.45, "power2.inOut"); pre(id + "h", { opacity: 0 }); go(id + "h", { opacity: 1 }, t + (d || 0.45) - 0.05, 0.1); }
+
+      heads(0.05, "L");
+      init("mch-w", { opacity: 0 }); init("mch-o", { opacity: 0 }); init("mch-glow", { opacity: 0 });
+      pre("mch", { opacity: 0, y: 40 }); go("mch", { opacity: 1, y: 0 }, 0.05, 0.3, "back.out(1.6)"); lit("mch", "orange", 0.1, 0.3);
+      pre("car", { opacity: 0, scale: 1.1 }); go("car", { opacity: 1, scale: 1 }, 0.1, 0.35, "expo.out");
+      // he buys with his own money
+      arrow("a1", at("achète") - 0.05, 0.4);
+      pre("l1", { opacity: 0, scale: 0.6 }); go("l1", { opacity: 1, scale: 1 }, at("achète"), 0.25, "back.out(2)"); odo("buy", at("12000") - 0.1, 0.8, { from: "00 000" });
+      // into stock
+      pre("stock", { opacity: 0, scale: 1.15 }); go("stock", { opacity: 1, scale: 1 }, at("stocke") - 0.05, 0.3, "back.out(1.6)");
+      init("car", { opacity: 1, scale: 1 }); go("car", { opacity: 0.6 }, at("dort"), 0.5);
+      // while it sleeps, it costs
+      pre("c1", { opacity: 0, y: 30 }); go("c1", { opacity: 1, y: 0 }, at("bancaires") - 0.1, 0.3, "back.out(1.6)"); odo("cb", at("bancaires"), 1.4, { from: "000" });
+      pre("c2", { opacity: 0, y: 30 }); go("c2", { opacity: 1, y: 0 }, at("place") - 0.1, 0.3, "back.out(1.6)"); odo("cs", at("place"), 1.4, { from: "000" });
+      // sold 15 000
+      go("car", { opacity: 1 }, at("revend") - 0.1, 0.3);
+      arrow("a2", at("revend") - 0.05, 0.5);
+      pre("l2", { opacity: 0, scale: 0.6 }); go("l2", { opacity: 1, scale: 1 }, at("revend"), 0.25, "back.out(2)"); odo("sell", at("15000") - 0.1, 0.8, { from: "00 000" });
+      // margin 3 000 on paper, 2 300 for real
+      ["l1", "l2", "a1", "a1h", "a2", "a2h"].forEach(function (e) { go(e, { opacity: 0 }, at("3000") - 0.15, 0.2); });
+      pre("mg", { opacity: 0, y: 30 }); go("mg", { opacity: 1, y: 0 }, at("3000") - 0.1, 0.3, "back.out(1.6)"); odo("mgn", at("3000") - 0.1, 0.8, { from: "0 000" });
+      odo("mgn", at("2300") - 0.05, 0.9, { to: "2 300 €" });
+      init("c1", { opacity: 1, y: 0, scale: 1 }); init("c2", { opacity: 1, y: 0, scale: 1 });
+      go("c1", { scale: 1.08 }, at("2300") - 0.05, 0.15); go("c1", { scale: 1 }, at("2300") + 0.1, 0.25);
+      go("c2", { scale: 1.08 }, at("2300") - 0.05, 0.15); go("c2", { scale: 1 }, at("2300") + 0.1, 0.25);
+      // and all the risk is his
+      ["c1", "c2"].forEach(function (e) { go(e, { opacity: 0 }, at("risque") - 0.15, 0.2); });
+      go("mg", { y: -150 }, at("risque") - 0.15, 0.4, "power3.inOut");
+      [["rk0", "garantie"], ["rk1", "vices"], ["rk2", "pas"]].forEach(function (r) {
+        pre(r[0], { opacity: 0, scale: 0.4 }); go(r[0], { opacity: 1, scale: 1 }, at(r[1]) - 0.08, 0.25, "back.out(2.2)");
+      });
+      wobble("rk2", at("pas") + 0.25, 6);
+      cam(10, -10, 1.04, at("risque"), 0.8);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
