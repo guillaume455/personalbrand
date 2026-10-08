@@ -430,8 +430,8 @@ def scene_02():
     #§tag { left: 440px; top: 900px; opacity: 0; }
     #§cli { opacity: 0; }
     """
-    st = ('<div id="§ph" class="§photo"><img src="assets/img/golf.jpg"></div>'
-          '<div id="§pL" class="§photo"><img src="assets/img/golf.jpg"></div><div id="§pR" class="§photo"><img src="assets/img/golf.jpg"></div>'
+    st = ('<div id="§ph" class="§photo"><img src="assets/img/mini.jpg"></div>'
+          '<div id="§pL" class="§photo"><img src="assets/img/mini.jpg"></div><div id="§pR" class="§photo"><img src="assets/img/mini.jpg"></div>'
           '<div id="§tag" class="§ptag">' + odo("pv", "15 000 €") + '</div>' + person("cli", 470, 980, 140))
     hud = cols(False)
     js = COLS_JS + """
@@ -466,7 +466,7 @@ def scene_03():
     #§mgx { position: absolute; left: 110px; top: 70px; width: 250px; height: 8px; background: #FB8000; border-radius: 4px; transform: scaleX(0) rotate(-6deg); transform-origin: 0 50%; }
     """
     st = (cols(True) + person("mch", 55, 650, 140)
-          + '<div id="§car" class="§photo"><img src="assets/img/golf.jpg"></div>'
+          + '<div id="§car" class="§photo"><img src="assets/img/mini.jpg"></div>'
           + '<div id="§stock"><span id="§stockl">STOCK</span></div>'
           + '<svg class="§flow" viewBox="0 0 1080 1920"><path id="§a1" class="§ar" d="M180 700 C 200 640, 220 640, 245 680"/>' + head("a1", 245, 680, 60)
           + '<path id="§a2" class="§ar" d="M470 1000 C 420 1060, 220 1060, 140 900"/>' + head("a2", 140, 900, -115) + '</svg>'
@@ -476,7 +476,7 @@ def scene_03():
           + '<div id="§l2" class="§lab" style="left:250px;top:1040px">VEND ' + odo("sell", "15 000 €") + '</div>'
           + '<div id="§mg">MARGE<span id="§mgv">' + odo("mgn", "3 000 €") + '</span></div>'
           + risks("rk", 45, 1040)
-          + '<div id="§rhsph" class="§photo" style="left:590px;top:620px;width:340px;height:270px;opacity:0.3"><img src="assets/img/golf.jpg"></div>')
+          + '<div id="§rhsph" class="§photo" style="left:590px;top:620px;width:340px;height:270px;opacity:0.3"><img src="assets/img/mini.jpg"></div>')
     hud = ""
     js = COLS_JS + """
       heads(0.05, "L");
@@ -528,9 +528,9 @@ def scene_04():
     .§zv { display: block; margin-top: 6px; font: 44px/1 "Anton", sans-serif; color: #FB8000; }
     .§zl { display: block; margin-top: 4px; font: 600 16px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.04em; }
     """
-    st = (cols(True) + '<div id="§lhsph" class="§photo" style="left:60px;top:640px;width:420px;height:260px;opacity:0.3"><img src="assets/img/golf.jpg"></div>'
+    st = (cols(True) + '<div id="§lhsph" class="§photo" style="left:60px;top:640px;width:420px;height:260px;opacity:0.3"><img src="assets/img/mini.jpg"></div>'
           + person("vdr", 590, 640, 120) + '<div id="§whov" class="§who" style="left:550px;top:585px">VENDEUR</div>'
-          + '<div id="§vcar" class="§photo"><img src="assets/img/golf.jpg"></div><div id="§key">PROPRIÉTAIRE</div>'
+          + '<div id="§vcar" class="§photo"><img src="assets/img/mini.jpg"></div><div id="§key">PROPRIÉTAIRE</div>'
           + person("itm", 600, 930, 120) + '<div id="§whoi" class="§who" style="left:560px;top:1120px">TOI</div>'
           + person("cli", 810, 930, 120) + '<div id="§whoc" class="§who" style="left:770px;top:1120px">CLIENT</div>'
           + '<svg class="§flow" viewBox="0 0 1080 1920">'

@@ -3,7 +3,7 @@
 Format : 1080×1920, 30 fps, 81 s (voix du 2026-10-08, montée ×1,08, pauses ramenées à 0,34 s). Fond #0A0A0A, accent
 #FB8000, texte blanc. Titres Anton en capitales avec le trait orange. Sous-titres de la voix, mot-clé en orange. Jamais
 plus de 6 mots par bloc. Montants en compteur. Deux colonnes MARCHAND (gauche) / INTERMÉDIAIRE (droite) dès la scène 2,
-la même voiture (Golf 7 de Guillaume) des deux côtés, flèches d'argent orange, coûts en compteur descendant, risques en
+la même voiture (Mini Clubman rouge, photo fournie par Guillaume) des deux côtés, flèches d'argent orange, coûts en compteur descendant, risques en
 rouge sombre. Aucun billet ni espèce. Fin : « @guillaumeherbin_ » + S'ABONNER. Musique : coma-media slim (même morceau
 que les reels précédents), premier drop calé sur la scène 2.
 
