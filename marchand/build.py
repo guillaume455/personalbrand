@@ -683,24 +683,32 @@ def scene_06():
 
 def scene_07():
     css = """
-    #§handle { position: absolute; left: 60px; top: 920px; width: 960px; text-align: center; white-space: nowrap; }
+    #§handle { position: absolute; left: 60px; top: 1040px; width: 960px; text-align: center; white-space: nowrap; }
     #§hname { position: relative; display: inline-block; font: 96px/1.2 "Anton", sans-serif; color: #ffffff; opacity: 0; }
     #§pill { position: absolute; left: 50%; top: 175px; transform: translateX(-50%); }
     #§pilli { display: inline-block; padding: 8px 40px; border-radius: 40px; background: #FB8000; color: #0A0A0A; font: 52px/1.25 "Anton", sans-serif; opacity: 0;
       box-shadow: 0 0 46px rgba(251,128,0,0.45); }
+    #§me { position: absolute; left: 240px; top: 410px; width: 600px; height: 700px; overflow: hidden; opacity: 0;
+      -webkit-mask-image: linear-gradient(#000 72%, transparent 100%); mask-image: linear-gradient(#000 72%, transparent 100%); }
+    #§me img { position: absolute; left: 0; top: 0; width: 600px; height: auto; }
+    #§meglow { position: absolute; left: 290px; top: 380px; width: 500px; height: 500px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(circle, rgba(251,128,0,0.55) 0%, rgba(251,128,0,0.18) 45%, rgba(251,128,0,0) 70%); }
     """
+    st = '<div id="§meglow"></div><div id="§me"><img src="assets/img/guillaume.png"></div>'
     hud = (title("t7", ["PAS UNE ÉTAPE.", "UN AVANTAGE."], 560, 120)
            + '<div id="§handle"><span id="§hname">@guillaumeherbin_<i class="§stilt"><i class="§stk" id="§h-s"></i></i></span>'
              '<div id="§pill"><span id="§pilli">S’ABONNER</span></div></div>')
     js = """
       tl.set([$("t7-0"), $("t7-1")], { opacity: 1 }, 0); tl.set($("t7-s"), { scaleX: 1 }, 0);
-      init("t7", { y: 0, scale: 1 }); go("t7", { y: -240, scale: 0.8 }, Math.max(0.02, at("abonne-toi") - 0.2), 0.5, "power3.inOut");
+      init("t7", { y: 0, scale: 1 }); go("t7", { y: -440, scale: 0.68 }, Math.max(0.02, at("abonne-toi") - 0.2), 0.5, "power3.inOut");
       slam("hname", at("abonne-toi") + 0.05, { s: 1.3 }); stroke("h", at("abonne-toi") + 0.25);
       pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("pour") - 0.04, 0.3, "back.out(2)");
+      pre("me", { opacity: 0, y: 60 }); go("me", { opacity: 1, y: 0 }, Math.max(0.08, at("abonne-toi") + 0.1), 0.6, "power3.out");
+      pre("meglow", { opacity: 0, scale: 0.6 }); go("meglow", { opacity: 1, scale: 1 }, Math.max(0.15, at("abonne-toi") + 0.2), 0.7, "power2.out");
       init("halo", { scale: 1 }); go("halo", { scale: 1.2 }, 0, DUR, "sine.inOut");
     """
     sfx = [("notification", "abonne-toi", 1, 0, .25), ("pop", "pour", 1, -.04, .14)]
-    return css, "", hud, js, (540, 760), sfx
+    return css, st, hud, js, (540, 760), sfx
 
 
 BUILDERS = [scene_01, scene_02, scene_03, scene_04, scene_05, scene_06, scene_07]
