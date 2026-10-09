@@ -58,11 +58,9 @@ C = {
    hook="MÊME VOITURE, 2 MÉTIERS", title='MARCHAND<br><span style="font-size:0.5em">OU</span><br><i class="u"><b>INTERMÉDIAIRE ?</b></i>', ttop=990, tsize=150,
    sub="", stop=0, extra="",
    k="ACHAT-REVENTE AUTO"),
- "chiffres": dict(hero='<div id="halo"></div>' + "".join(
-     f'<div style="position:absolute;left:0;top:{330 + i * 110}px;width:1080px;text-align:center;font:{100}px/1 Anton;color:{c};opacity:{o}">{v}</div>'
-     for i, (v, c, o) in enumerate([("5 500 000", "#fff", .9), ("47 %", "#fff", .7), ("11,1 ANS", "#fff", .55), ("20 200 €", "#fff", .4), ("147 JOURS", "#FB8000", 1)])),
-   hook="", title='LE MARCHÉ VO<br>EN <i class="u"><b>5 CHIFFRES</b></i>', ttop=1000, tsize=150, sub="SI T'ES DANS L'AUTO, TU DOIS LES CONNAÎTRE",
-   stop=1340, extra="", k="SOURCES : SDES · NGC-DATA · LA CENTRALE · MOBILIANS", ssize=44, ksize=22),
+ "chiffres": dict(hero='<img id="hero" src="parc4.jpg" style="height:1300px;object-position:62% 50%;filter:saturate(1.15) contrast(1.08) brightness(1.05)"><div style="position:absolute;left:40px;top:698px;width:110px;height:44px;border-radius:8px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)"></div><div id="fade"></div>',
+   hook="TU DOIS LES CONNAÎTRE", title='LE MARCHÉ VO<br>EN <i class="u"><b>5 CHIFFRES</b></i>', ttop=880, tsize=160, sub="SI T'ES DANS L'AUTO",
+   stop=1270, extra="", k="SOURCES : SDES · NGC-DATA · LA CENTRALE · MOBILIANS", ssize=44, ksize=22),
 }
 for p, c in C.items():
     d = f"{R}/{p}/cover"
