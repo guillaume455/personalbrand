@@ -1,0 +1,85 @@
+# Publie le contenu de site/ sur l'hébergement OVH, par FTPS.
+#
+# Ce qui déclenche une publication :
+#   - un push sur `main` qui touche à site/ ;
+#   - un clic sur « Run workflow » dans l'onglet Actions, depuis n'importe
+#     quelle branche.
+#
+# Rien ne part automatiquement depuis les branches de travail : c'est la
+# fusion dans `main`, ou le clic, qui vaut accord de mise en ligne.
+#
+# Trois secrets à créer dans Settings → Secrets and variables → Actions :
+#   OVH_FTP_HOST      ftp.cluster0XX.hosting.ovh.net (voir l'espace client)
+#   OVH_FTP_USER      l'identifiant FTP
+#   OVH_FTP_PASSWORD  son mot de passe
+#
+# Une variable facultative, au même endroit, onglet « Variables » :
+#   OVH_SERVER_DIR    le dossier web sur le serveur, ./www/ par défaut
+#
+# Le dépôt étant public, noter que les secrets ne sont jamais exposés : ce
+# workflow ne se déclenche ni sur `pull_request`, ni depuis un fork.
+
+name: Déployer le site sur OVH
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - '.github/workflows/deployer-ovh.yml'
+  workflow_dispatch:
+
+# Deux publications simultanées écriraient par-dessus le même dossier.
+concurrency:
+  group: deploiement-ovh
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deployer:
+    name: Envoyer site/ vers OVH
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v6
+
+      - name: Vérifier que les secrets existent
+        env:
+          HOTE: ${{ secrets.OVH_FTP_HOST }}
+          UTILISATEUR: ${{ secrets.OVH_FTP_USER }}
+          MOTDEPASSE: ${{ secrets.OVH_FTP_PASSWORD }}
+        run: |
+          manquants=""
+          [ -z "$HOTE" ]       && manquants="$manquants OVH_FTP_HOST"
+          [ -z "$UTILISATEUR" ] && manquants="$manquants OVH_FTP_USER"
+          [ -z "$MOTDEPASSE" ]  && manquants="$manquants OVH_FTP_PASSWORD"
+          if [ -n "$manquants" ]; then
+            echo "::error::Secrets manquants :$manquants — à créer dans Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
+      # Un garde-fou : si site/index.html a disparu, c'est que quelque chose
+      # s'est mal passé en amont. Mieux vaut échouer que vider le serveur.
+      - name: Vérifier que le site est bien là
+        run: |
+          test -f site/index.html || { echo "::error::site/index.html est introuvable, publication annulée."; exit 1; }
+          echo "Fichiers à publier : $(find site -type f | wc -l)"
+
+      - name: Envoyer par FTPS
+        # Version épinglée volontairement : cette action reçoit le mot de
+        # passe FTP, elle ne doit pas changer sans qu'on le décide.
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.OVH_FTP_HOST }}
+          username: ${{ secrets.OVH_FTP_USER }}
+          password: ${{ secrets.OVH_FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./site/
+          server-dir: ${{ vars.OVH_SERVER_DIR || './www/' }}
+          # Les .htaccess des quatre dossiers du tunnel partent avec le reste :
+          # c'est ce que les clients FTP oublient en masquant les fichiers
+          # commençant par un point.
+          dangerous-clean-slate: false
+          log-level: standard
