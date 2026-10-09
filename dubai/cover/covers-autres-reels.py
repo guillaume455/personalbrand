@@ -56,7 +56,7 @@ C = {
    k="ACHAT-REVENTE AUTO"),
  "marchand": dict(hero='<div id="halo"></div><div style="position:absolute;left:90px;top:420px;width:900px;height:520px;border-radius:26px;overflow:hidden;border:4px solid #FB8000;box-shadow:0 20px 60px rgba(0,0,0,0.6)"><img src="mini.jpg" style="width:100%;height:100%;object-fit:cover"></div>',
    hook="MÊME VOITURE, 2 MÉTIERS", title='MARCHAND<br><span style="font-size:0.5em">OU</span><br><i class="u"><b>INTERMÉDIAIRE ?</b></i>', ttop=990, tsize=150,
-   sub="", stop=0, extra='<div style="position:absolute;left:0;top:1560px;width:1080px;text-align:center;font:58px/1 Anton;color:#fff">2 300 € <span style="color:#9a9a9a">OU</span> <span style="color:#FB8000">1 500 €</span> ?</div>',
+   sub="", stop=0, extra="",
    k="ACHAT-REVENTE AUTO"),
  "chiffres": dict(hero='<div id="halo"></div>' + "".join(
      f'<div style="position:absolute;left:0;top:{330 + i * 110}px;width:1080px;text-align:center;font:{100}px/1 Anton;color:{c};opacity:{o}">{v}</div>'
