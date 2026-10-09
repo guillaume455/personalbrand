@@ -577,3 +577,167 @@ html:not(.js-anim) [data-reveal]{opacity:1;transform:none}
 .legal p,.legal li{color:var(--ink-2)}
 .legal ul{margin:0 0 0 20px;display:grid;gap:7px}
 .legal p + p{margin-top:.9em}
+
+/* =========================================================================
+   15. HABILLAGE « NUIT + ORANGE »  (06/10/2026)
+   Aligne tout le site sur la page /accompagnement : en-tête et haut de page
+   bleu-nuit, titres en capitales serrées, trait orange dessiné, boutons
+   orange à angles vifs, fond papier légèrement chaud. Tout est en surcharge
+   des sections 1 à 14 : retirer ce bloc rend l'ancien design.
+   ========================================================================= */
+:root{
+  --accent:#FB8000;
+  --accent-ink:#B35A00;
+  --accent-soft:#FDF1E4;
+  --accent-line:#F6D7B4;
+
+  --bg:#FBFAF8;
+  --bg-2:#F3F0EA;
+  --surface:#FFFFFF;
+  --ink:#12100E;
+  --ink-2:#514B43;
+  --ink-3:#7A7269;
+  --line:rgba(18,16,14,.12);
+  --line-2:rgba(18,16,14,.07);
+
+  --inverse-bg:#0C1016;
+  --inverse-ink-2:#C3CAD4;
+  --inverse-ink-3:#A7AEB8;
+
+  --nuit-haut:#141B25;
+  --bleu-lumiere:rgba(46,104,214,.30);
+
+  --r-s:3px;
+  --r-m:4px;
+  --r-l:6px;
+  --section-y:clamp(40px,4.6vw,72px);
+
+  --trait-orange:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 26' fill='none'%3E%3Cpath d='M6 15C48 6 150 3 234 9' stroke='%23FB8000' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M22 23C74 16 158 14 214 18' stroke='%23FB8000' stroke-width='4' stroke-linecap='round' opacity='.85'/%3E%3C/svg%3E");
+}
+::selection{background:var(--accent);color:#14100B}
+
+/* --- titres : capitales serrées pour le titre de page --- */
+h1{text-transform:uppercase;font-weight:800;letter-spacing:-.022em;line-height:1.03}
+h1::after{
+  content:"";display:block;
+  width:min(240px,60%);height:20px;margin-top:18px;
+  background:var(--trait-orange) left center/100% 100% no-repeat;
+}
+
+/* --- en-tête bleu-nuit --- */
+.nav{
+  background:color-mix(in srgb, var(--inverse-bg) 92%, transparent);
+  border-bottom:1px solid rgba(255,255,255,.10);
+}
+@supports not (backdrop-filter: blur(1px)){ .nav{background:var(--inverse-bg)} }
+.nav-nom{color:#F7F5F1}
+.nav-nom:hover{color:var(--accent)}
+.nav-liens a{color:#A7AEB8}
+.nav-liens a:hover{color:#fff;background:rgba(255,255,255,.07)}
+.nav-liens a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.08)}
+.nav-cta,
+.nav-liens a.nav-cta[aria-current="page"]{
+  background:var(--accent);color:#14100B!important;border-radius:var(--r-s);font-weight:700;
+}
+.nav-cta:hover{background:#FF9A33!important;opacity:1}
+.nav-lang{border-color:rgba(255,255,255,.18);color:#C3CAD4;border-radius:var(--r-s)}
+.nav-lang:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+.nav-burger{border-color:rgba(255,255,255,.18);border-radius:var(--r-s)}
+.nav-burger span{background:#F7F5F1}
+@media (max-width:860px){
+  .nav-liens{background:var(--inverse-bg);border-bottom-color:rgba(255,255,255,.10)}
+}
+
+/* --- haut de page sur fond nuit, halo orange à droite, lumière bleue à gauche --- */
+.page-head{
+  position:relative;overflow:hidden;isolation:isolate;
+  background:linear-gradient(170deg, var(--nuit-haut) 0%, var(--inverse-bg) 60%, #090C11 100%);
+  color:#F7F5F1;
+  padding-block:clamp(36px,5vw,72px);
+}
+.page-head::before,.page-head::after{content:"";position:absolute;z-index:-1;pointer-events:none;aspect-ratio:1/1}
+.page-head::before{
+  width:min(900px,120%);top:-45%;right:-22%;
+  background:radial-gradient(closest-side, rgba(251,128,0,.22), transparent 72%);
+}
+.page-head::after{
+  width:min(760px,95%);left:-18%;bottom:-40%;
+  background:radial-gradient(closest-side, var(--bleu-lumiere), transparent 70%);
+  filter:blur(6px);
+}
+.page-head h1{color:#fff}
+.page-head .hero-texte,.page-head .hero-tagline,.page-head p{color:#C3CAD4}
+.page-head mark{
+  background:none;box-shadow:inset 0 -2px 0 var(--accent);color:#fff;
+}
+.hero-sur{color:var(--accent)}
+.page-head + section{padding-top:var(--section-y)}
+
+/* le portrait détouré : pas de cadre, ombre portée sur la forme */
+.hero-cadre::before{display:none}
+.hero-photo{background:none;border-radius:0;filter:drop-shadow(0 22px 40px rgba(0,0,0,.45))}
+
+/* --- boutons : orange, angles vifs, comme les CTA du tunnel --- */
+.btn{
+  background:var(--accent);color:#14100B;border-radius:var(--r-s);
+  font-weight:700;padding:17px 30px;
+}
+.btn:hover{background:#FF9A33;opacity:1}
+
+/* --- bandeau de chiffres --- */
+.stats{background:var(--inverse-bg)}
+.stats-filet{
+  height:22px;background:var(--inverse-bg) var(--trait-orange) center/min(320px,70%) 100% no-repeat;
+  background-image:var(--trait-orange);
+}
+
+/* --- cartes, presse, activités : angles vifs, ombres douces --- */
+.activites a,.carte{border-radius:var(--r-l);box-shadow:0 1px 2px rgba(18,16,14,.04), 0 8px 24px rgba(18,16,14,.06)}
+.carte-visuel{background:linear-gradient(160deg, var(--nuit-haut), var(--inverse-bg))}
+.filtre{border-radius:var(--r-s)}
+.filtre[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#14100B}
+.photos-duo img,.photo-large,.photo-portrait,.photo-officielle,.fiche,.temoin{border-radius:var(--r-l)}
+.liens-sites a,.bientot,.suivre a{border-radius:var(--r-s)}
+.temoin li::before{background:var(--accent)}
+.confirmation{border-radius:var(--r-l)}
+input,textarea{border-radius:var(--r-s);border:1.5px solid rgba(18,16,14,.22)}
+input:focus,textarea:focus{border-color:var(--accent-ink);box-shadow:0 0 0 3px rgba(251,128,0,.10);outline:none}
+
+/* --- sections : une sur deux sur papier doux pour rythmer la lecture --- */
+main > section:nth-of-type(even):not(.sombre){background:var(--bg-2)}
+section + section{border-top:0}
+.nav-liens a.nav-cta{border-radius:var(--r-s)}
+/* titre de page : même chasse que le tunnel, moins étiré */
+h1{font-variation-settings:'wdth' 100}
+.hero-grille h1{font-size:clamp(2.05rem,4.4vw,3.4rem);max-width:none}
+
+/* --- « Qui suis-je » / « About » : texte à gauche, photos à droite,
+       conclusion en encadré sur toute la largeur --- */
+#qui-suis-je .prose,#about .prose{max-width:none}
+#qui-suis-je .prose > p:nth-last-of-type(-n+2),
+#about .prose > p:nth-last-of-type(-n+2){max-width:none}
+#qui-suis-je .prose > p:nth-last-of-type(2),
+#about .prose > p:nth-last-of-type(2){
+  margin-top:clamp(28px,3.4vw,40px);
+  padding:clamp(20px,2.6vw,28px) clamp(22px,2.8vw,32px);
+  background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:var(--r-l);box-shadow:0 1px 2px rgba(18,16,14,.04), 0 8px 24px rgba(18,16,14,.06);
+  font-size:clamp(1.05rem,1.2vw + .6rem,1.25rem);line-height:1.5;color:var(--ink);font-weight:500;
+}
+@media (min-width:900px){
+  #qui-suis-je .prose,#about .prose{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,380px);
+    column-gap:clamp(36px,5vw,64px);
+  }
+  #qui-suis-je .prose > p,#about .prose > p{grid-column:1}
+  #qui-suis-je .prose > p:nth-last-of-type(-n+2),
+  #about .prose > p:nth-last-of-type(-n+2){grid-column:1 / -1}
+  #qui-suis-je .photos-duo,#about .photos-duo{
+    /* pas de position:sticky : son conteneur est toute la grille, encadré compris,
+       et les photos glissaient par-dessus la conclusion en fin de défilement */
+    grid-column:2;grid-row:1 / span 7;align-self:start;
+    grid-template-columns:1fr;margin:6px 0 0;max-width:none;
+  }
+  #qui-suis-je .photos-duo img,#about .photos-duo img{aspect-ratio:4/3}
+}
+#qui-suis-je .prose > p:last-of-type,#about .prose > p:last-of-type{max-width:72ch}

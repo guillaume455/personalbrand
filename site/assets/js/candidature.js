@@ -27,8 +27,8 @@
   var courant = 0;
   var commence = false;
 
-  var jauge = form.querySelector('[data-jauge]');
-  var jaugeTxt = form.querySelector('[data-jauge-txt]');
+  var jauge = document.querySelector('[data-jauge]');
+  var jaugeTxt = document.querySelector('[data-jauge-txt]');
   var suivant = form.querySelector('[data-suivant]');
   var precedent = form.querySelector('[data-precedent]');
   var boiteErreur = form.querySelector('[data-erreur-globale]');
@@ -235,8 +235,10 @@
       // booked, diagnostic_completed) sont posés par le backend, jamais ici.
       statut_lead: 'completed',
       // Suggestion calculée, conservée comme aide au tri. Elle ne décide de
-      // rien côté backend : c'est la lecture humaine qui tranche.
-      statut_suggere: qualif ? qualif.qualifier(d.capital, d.delai) : 'a_revoir',
+      // rien côté backend : c'est la lecture humaine qui tranche. Depuis le
+      // 01/10/2026 la règle porte sur le temps et le délai, plus sur le
+      // capital : voir l'en-tête de qualification.js.
+      statut_suggere: qualif ? qualif.qualifier(d.temps, d.delai) : 'a_revoir',
       marketing: d.marketing === 'on',
       utm_source: u.utm_source || '',
       utm_medium: u.utm_medium || '',

@@ -15,6 +15,14 @@
    Si tes codes couleur actuels diffèrent, ils se changent ici et nulle part
    ailleurs : tout le fichier est construit sur ces variables. */
 :root{
+  /* jetons des formulaires et pages d'issue, rétablis */
+  --vert:#1B6B3A;
+  --vert-voile:#E8F5ED;
+  --rouge:#A3231A;
+  --or-pale:#FDF1E4;         /* aplat orange très pâle, fond d'encadré */
+  --or-ligne:#F6D7B4;
+  --ease:cubic-bezier(.2,.7,.3,1);
+  --t:.22s var(--ease);
   /* fonds */
   --papier:#FBFAF8;          /* fond principal, blanc légèrement chaud */
   --papier-doux:#F3F0EA;     /* sections .bloc-doux */
@@ -25,13 +33,13 @@
   /* texte */
   --encre:#12100E;           /* titres et texte principal */
   --encre-doux:#514B43;      /* texte secondaire */
-  --encre-clair:#726B63;     /* mentions, légendes */
+  --encre-clair:#726B63;     /* mentions, légendes : 5,03:1, le minimum AA */
   --papier-sur-sombre:#F7F5F1;
   --doux-sur-sombre:#A7AEB8;
 
   /* accent : orange de la charte Instagram */
   --or:#FB8000;              /* aplats, traits, boutons */
-  --or-fonce:#AB5600;        /* texte orange sur fond clair, contraste AA */
+  --or-fonce:#AB5600;        /* texte orange sur fond clair : 4,55:1 même sur --papier-doux */
   --or-clair:#FF9A33;        /* survol sur fond sombre */
   --or-voile:rgba(251,128,0,.10);
   --bleu-lumiere:rgba(46,104,214,.30);  /* la lumière bleue de tes photos */
@@ -48,18 +56,8 @@
   /* mesures */
   --lire:min(100% - 40px, 720px);
   --large:min(100% - 40px, 1180px);
-  --rythme:clamp(56px, 7vw, 120px);
+  --rythme:clamp(30px, 3.2vw, 46px);  /* resserré le 05/10 (était 56 à 120 px) */
   --rayon:3px;
-
-  /* états : réussite et erreur, pour les encadrés et les formulaires */
-  --vert:#1B6B3A;
-  --vert-voile:#E8F5ED;
-  --rouge:#A3231A;
-  --or-pale:#FDF1E4;         /* aplat orange très pâle, fond d'encadré */
-  --or-ligne:#F6D7B4;
-
-  --ease:cubic-bezier(.2,.7,.3,1);
-  --t:.22s var(--ease);
 
   --police:"Archivo", "Segoe UI", system-ui, -apple-system, sans-serif;
   color-scheme:light;
@@ -68,16 +66,9 @@
 @font-face{
   font-family:"Archivo";
   src:url("../fonts/archivo-latin.woff2") format("woff2");
-  font-weight:300 800;font-stretch:62% 125%;
-  font-style:normal;font-display:swap;
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
-}
-@font-face{
-  font-family:"Archivo";
-  src:url("../fonts/archivo-latin-ext.woff2") format("woff2");
-  font-weight:300 800;font-stretch:62% 125%;
-  font-style:normal;font-display:swap;
-  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+  font-weight:100 900;
+  font-style:normal;
+  font-display:swap;
 }
 
 /* ============ 01. BASE ET TYPOGRAPHIE =================================== */
@@ -116,9 +107,6 @@ b,strong{font-weight:600}
 a{color:var(--encre);text-underline-offset:3px;text-decoration-thickness:1px}
 a:hover{color:var(--or-fonce)}
 img{max-width:100%;height:auto;display:block}
-/* Sans le !important, `display:grid` ou `flex` l'emporte sur [hidden] : les six
-   étapes du questionnaire s'affichaient toutes en même temps. */
-[hidden]{display:none!important}
 ::selection{background:var(--or);color:#14100B}
 
 :focus-visible{outline:2px solid var(--or-fonce);outline-offset:3px;border-radius:2px}
@@ -169,7 +157,7 @@ img{max-width:100%;height:auto;display:block}
 @media (min-width:760px){.titre-centre{max-width:26ch}}
 .chapo-centre{
   text-align:center;color:var(--encre-doux);max-width:60ch;
-  margin-inline:auto;margin-bottom:clamp(32px,4vw,56px);
+  margin-inline:auto;margin-bottom:clamp(22px,2.6vw,34px);
 }
 
 /* ============ 03. EN-TÊTE ET CTA COLLANT =============================== */
@@ -188,21 +176,15 @@ img{max-width:100%;height:auto;display:block}
 }
 .tete-nom span{color:var(--or)}
 
-/* L'en-tête réagit au défilement, là où le navigateur le permet.
-   Ce qui s'anime ne doit surtout pas toucher à la mise en page : l'en-tête
-   est en `sticky`, il occupe donc sa place dans le flux. Animer son `padding`
-   changeait sa hauteur, ce qui décalait toute la page, ce qui modifiait la
-   position de défilement, ce qui relançait l'animation — une oscillation sans
-   fin qui rendait inclicables les champs situés dans les 220 premiers pixels.
-   Une ombre ne coûte rien au flux. */
+/* l'en-tête se compacte au défilement, là où le navigateur le permet */
 @supports (animation-timeline: scroll()){
   @media (prefers-reduced-motion:no-preference){
-    .tete{
-      animation:poser linear both;
+    .tete .lire{
+      animation:compacter linear both;
       animation-timeline:scroll();
       animation-range:0 220px;
     }
-    @keyframes poser{to{box-shadow:0 6px 24px rgba(0,0,0,.28)}}
+    @keyframes compacter{to{padding-block:10px}}
   }
 }
 
@@ -233,8 +215,7 @@ img{max-width:100%;height:auto;display:block}
 .cta-bloc{margin-top:clamp(26px,3vw,36px)}
 
 .relance{
-  width:var(--lire);margin:clamp(34px,4vw,52px) auto 0;
-  padding-top:clamp(28px,3vw,40px);border-top:1px solid var(--filet);
+  width:var(--lire);margin:clamp(24px,3vw,36px) auto 0;
 }
 
 .cta-collant{
@@ -255,7 +236,7 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
 
 /* ============ 04. HERO ================================================= */
 .accroche{
-  padding-block:clamp(40px,5vw,84px) clamp(48px,6vw,96px);
+  padding-block:clamp(32px,4vw,60px) clamp(36px,4.4vw,64px);
   overflow:hidden;
 }
 /* halo doré lent en fond, pure CSS, aucun fichier à charger */
@@ -274,9 +255,16 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
 .accroche .lire{position:relative;z-index:1}
 
 .accroche h1{margin-bottom:.55em}
+/* la seconde phrase du titre, détachée de la première */
+.h1-suite{display:block;margin-top:.5em}
 .accroche-sous{
   font-size:clamp(17.5px,.6vw + 16px,20.5px);
   color:var(--encre-doux);max-width:58ch;
+}
+.accroche-preuve{
+  margin-top:clamp(28px,3vw,40px);padding-top:18px;
+  border-top:1px solid var(--filet);
+  font-size:15.5px;color:var(--encre-clair);letter-spacing:.005em;
 }
 
 .accroche .media{margin-top:clamp(32px,4vw,52px)}
@@ -289,15 +277,11 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
   .accroche .lire{
     width:var(--large);
     display:grid;grid-template-columns:1.15fr .85fr;
-    /* L'écart ne vaut qu'entre le texte et le portrait. Appliqué aussi aux
-       rangées, il s'insérait entre le titre, le chapô, le bouton et la ligne
-       de preuve, qui ont déjà leurs propres marges : le hero faisait deux
-       fois la hauteur voulue. */
-    column-gap:clamp(36px,4vw,72px);row-gap:0;
-    align-items:center;
+    column-gap:clamp(36px,4vw,72px);row-gap:0;align-items:center;
   }
   .accroche h1,.accroche-sous,.accroche .cta-bloc{grid-column:1}
-  .accroche .media{grid-column:2;grid-row:1 / span 5;margin-top:0;align-self:center}
+  /* le portrait s'aligne sur le titre, pas sur le milieu du bloc de texte */
+  .accroche .media{grid-column:2;grid-row:1 / span 4;margin-top:0;align-self:start}
   .accroche .media img{max-width:none}
 }
 
@@ -343,15 +327,9 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
   display:grid;gap:18px;
   grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));
 }
-/* La section du déroulé tient quatre cartes. En `auto-fit`, il n'en entrait
-   que trois sur la largeur disponible et la quatrième restait seule sur une
-   deuxième ligne, calée à gauche. On fixe donc le nombre de colonnes à chaque
-   palier : la grille est toujours pleine, jamais d'orpheline. */
-.cartes-4{grid-template-columns:repeat(4,1fr)}
-/* En dessous de 1100 px, quatre colonnes tomberaient à 230 px de large :
-   le texte y passerait à huit lignes. On repasse à deux avant d'en arriver là. */
-@media (max-width:1100px){.cartes-4{grid-template-columns:1fr 1fr}}
-@media (max-width:620px){.cartes-4{grid-template-columns:1fr}}
+.cartes-2{grid-template-columns:1fr}
+/* quatre cartes : deux par ligne, jamais une carte seule sur sa ligne */
+@media (min-width:700px){.cartes-2{grid-template-columns:repeat(2,1fr)}}
 .carte-i{
   background:var(--carte);border:1px solid var(--filet);border-radius:var(--rayon);
   padding:28px 26px;min-width:0;box-shadow:var(--ombre-1);
@@ -377,22 +355,60 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
 }
 .preuve-etroite{max-width:520px;margin-inline:auto}
 
-/* pour qui / pas pour qui */
+/* pour qui / pas pour qui : un « oui » sombre et orange qui attire l'œil,
+   un « non » clair en retrait, chacun annoncé par une grosse pastille */
 .duo{
-  display:grid;gap:clamp(20px,3vw,34px);
-  grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));
+  display:grid;gap:clamp(16px,2vw,24px);max-width:1040px;
+  margin:clamp(28px,3.4vw,44px) auto 0;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));
+  align-items:start;
 }
-.duo-col{min-width:0;padding:28px 26px;border-radius:var(--rayon);border:1px solid var(--filet)}
-.duo-col h2{font-size:clamp(20px,1.4vw + 15px,24px);margin-bottom:18px}
-.duo-col ul{margin:0;padding:0;list-style:none;display:grid;gap:11px}
-.duo-col li{font-size:16.5px;padding-left:28px;position:relative;color:var(--encre-doux)}
+.duo-col{min-width:0;border-radius:calc(var(--rayon) + 5px);overflow:hidden;border:1px solid var(--filet)}
+.duo-tete{
+  display:flex;gap:16px;align-items:center;
+  padding:clamp(20px,2.4vw,28px) clamp(22px,2.6vw,32px);
+}
+.duo-icone{
+  flex:none;width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.duo-icone svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.duo-etiquette{
+  margin:0 0 4px;font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+}
+.duo-tete h3{margin:0;font-size:clamp(17px,.7vw + 14.5px,20px);line-height:1.25}
+.duo-col ul{
+  margin:0;padding:clamp(8px,1vw,12px) clamp(22px,2.6vw,32px) clamp(18px,2vw,24px);
+  list-style:none;
+}
+.duo-col li{
+  font-size:16px;line-height:1.45;padding:11px 0 11px 32px;position:relative;
+  border-bottom:1px solid var(--filet);
+}
+.duo-col li:last-child{border-bottom:0}
 .duo-col li::before{
-  position:absolute;left:0;top:0;font-weight:700;font-size:15px;line-height:1.7;
+  position:absolute;left:0;top:12px;width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:11px;line-height:1;
 }
-.duo-pour{background:var(--carte);box-shadow:var(--ombre-1)}
-.duo-pour li::before{content:"✓";color:var(--or-fonce)}
-.duo-pas{background:transparent;border-style:dashed}
-.duo-pas li::before{content:"✕";color:var(--encre-clair)}
+.duo-col li b{font-weight:700}
+
+.duo-pour{background:var(--carte);border-color:rgba(251,128,0,.45);box-shadow:var(--ombre-2)}
+.duo-pour .duo-tete{background:var(--sombre);color:#fff}
+.duo-pour .duo-icone{background:var(--or);color:#14100B;box-shadow:0 0 0 6px rgba(251,128,0,.18)}
+.duo-pour .duo-etiquette{color:var(--or)}
+.duo-pour li{color:var(--encre)}
+.duo-pour li b{color:var(--or-fonce)}
+.duo-pour li::before{content:"✓";background:var(--or);color:#fff}
+
+.duo-pas{background:var(--papier-doux)}
+.duo-pas .duo-tete{background:#E9E5DD}
+.duo-pas .duo-icone{background:#fff;color:#B4322A;border:2px solid #E3B4AE}
+.duo-pas .duo-etiquette{color:#B4322A}
+.duo-pas h3{color:var(--encre-doux)}
+.duo-pas li{color:var(--encre-doux);border-bottom-color:rgba(0,0,0,.07)}
+.duo-pas li b{color:var(--encre)}
+.duo-pas li::before{content:"✕";background:#fff;color:#B4322A;border:1px solid #E3B4AE}
 
 /* ============ 06. TÉMOIGNAGES ========================================== */
 .temoins{
@@ -449,19 +465,19 @@ body[data-barre-basse="actif"] .pied{padding-bottom:clamp(90px,12vw,110px)}
 .prix-bloc .cta{width:100%;max-width:420px}
 .prix-bloc .micro{margin-inline:auto;text-align:center;max-width:none}
 
-.garantie{
-  padding:clamp(28px,3.4vw,44px);border-radius:var(--rayon);
-  background:linear-gradient(180deg, var(--or-voile), transparent);
-  border:1px solid rgba(251,128,0,.38);
-  position:relative;
+/* garantie et disponibilité, sous le prix : icône à gauche, texte à droite */
+.engagements{display:grid;gap:14px;margin-top:clamp(20px,2.4vw,28px)}
+.engagement{
+  display:flex;gap:18px;align-items:flex-start;
+  padding:clamp(20px,2.2vw,26px);background:var(--carte);
+  border:1px solid var(--filet);border-radius:var(--rayon);box-shadow:var(--ombre-1);
 }
-.garantie h2{margin-bottom:.6em}
-.garantie p{color:var(--encre-doux);margin:0}
-
-.dispo{
-  font-size:clamp(17px,.5vw + 16px,19px);color:var(--encre-doux);
-  padding-left:20px;border-left:2px solid var(--filet-fort);max-width:62ch;
-}
+.engagement .pastille{flex:none;margin:0}
+.engagement h3{font-size:clamp(17px,.6vw + 15px,19.5px);margin:2px 0 6px}
+.engagement p{margin:0;font-size:15.5px;color:var(--encre-doux)}
+.engagement-fort{border-color:rgba(251,128,0,.42);border-left:3px solid var(--or)}
+.engagement-fort .pastille{background:var(--or);border-color:var(--or)}
+.engagement-fort .pastille svg{stroke:#fff}
 
 .faq{margin-top:clamp(24px,3vw,36px)}
 .faq details{border-top:1px solid var(--filet)}
@@ -529,34 +545,33 @@ input[type="email"]:focus{
 .pied-liens a{color:var(--encre-doux);text-decoration:none;border-bottom:1px solid var(--filet-fort)}
 .pied-liens a:hover{color:var(--or-fonce);border-color:var(--or)}
 
+/* Masqué par défaut. mesure.js pose data-visible="true" tant qu'aucun choix
+   n'est enregistré, et retire l'attribut au clic sur « Refuser » ou
+   « Accepter ». visibility:hidden sort aussi les deux boutons du parcours
+   au clavier tant que le bandeau n'est pas à l'écran. */
 .cookies{
   position:fixed;left:0;right:0;bottom:0;z-index:60;
   background:var(--sombre);color:var(--papier-sur-sombre);
   border-top:1px solid var(--or-fonce);
   padding:18px 0 calc(18px + env(safe-area-inset-bottom,0px));
   box-shadow:0 -12px 40px rgba(0,0,0,.28);
-  transform:translateY(105%);
-  transition:transform .3s var(--ease);
+  transform:translateY(110%);
+  visibility:hidden;
+  transition:transform .32s cubic-bezier(.4,0,.2,1), visibility 0s linear .32s;
+  will-change:transform;
 }
-/* cookies.js pose data-visible : sans cet état le bandeau ne se retire jamais */
-.cookies[data-visible="true"]{transform:none}
-/* Tant que le bandeau est là, il couvre le pied de page et donc les liens
-   légaux — y compris celui qu'il propose lui-même. On réserve la hauteur. */
-body[data-bandeau="visible"]{padding-bottom:210px}
-@media (min-width:820px){body[data-bandeau="visible"]{padding-bottom:130px}}
-body[data-bandeau="visible"][data-barre-basse="actif"]{padding-bottom:280px}
-@media (min-width:860px){body[data-bandeau="visible"][data-barre-basse="actif"]{padding-bottom:130px}}
+.cookies[data-visible="true"]{
+  transform:translateY(0);
+  visibility:visible;
+  transition:transform .32s cubic-bezier(.4,0,.2,1), visibility 0s;
+}
 .cookies .lire{display:grid;gap:16px}
 @media (min-width:860px){
   .cookies .lire{width:var(--large);grid-template-columns:1fr auto;align-items:center;gap:28px}
 }
 .cookies p{font-size:14.5px;line-height:1.55;color:var(--doux-sur-sombre);margin:0;max-width:78ch}
 .cookies a{color:var(--or)}
-/* Refuser doit être aussi accessible qu'accepter : les deux boutons ont la
-   même largeur et la même graisse, seule la couleur les distingue. En flex,
-   « Refuser » était plus étroit que « Accepter ». */
-.cookies-boutons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.cookies-boutons button{min-height:48px;white-space:nowrap}
+.cookies-boutons{display:flex;gap:10px}
 .cookies-boutons button{
   font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;
   padding:12px 22px;border-radius:var(--rayon);border:1px solid var(--filet-sombre);
@@ -566,6 +581,13 @@ body[data-bandeau="visible"][data-barre-basse="actif"]{padding-bottom:280px}
 .cookies-boutons .b-refus:hover{border-color:var(--papier-sur-sombre)}
 .cookies-boutons .b-accept{background:var(--or);border-color:var(--or);color:#14100B}
 .cookies-boutons .b-accept:hover{background:var(--or-clair)}
+
+/* mesure.js pose data-bandeau sur le body : le pied se dégage pour que le
+   bandeau ne recouvre pas les liens légaux. */
+body[data-bandeau="visible"] .pied{padding-bottom:clamp(180px,34vw,215px)}
+@media (min-width:860px){
+  body[data-bandeau="visible"] .pied{padding-bottom:120px}
+}
 
 /* apparitions au défilement : tunnel.js pose la classe .vu */
 .js-anim [data-reveal]{
@@ -583,11 +605,12 @@ body[data-bandeau="visible"][data-barre-basse="actif"]{padding-bottom:280px}
 .js-anim .temoins [data-reveal]:nth-child(4){transition-delay:.24s}
 @media (prefers-reduced-motion:reduce){
   .js-anim [data-reveal]{opacity:1;transform:none;transition:none}
+  .cookies{transition:none}
 }
 
 /* impression : on retire les habillages inutiles */
 @media print{
-  .tete,.cta-collant,.cookies,.cta,.skip{display:none!important}
+  .tete,.cta-collant,.cookies,.cta{display:none!important}
   body{background:#fff;color:#000}
   .bloc{padding-block:24px}
 }
@@ -604,7 +627,7 @@ body[data-bandeau="visible"][data-barre-basse="actif"]{padding-bottom:280px}
 }
 
 /* --- titres : capitales serrées, plus de présence --- */
-.accroche h1,.titre-centre{
+h1,.titre-centre{
   text-transform:uppercase;
   font-weight:700;
   letter-spacing:-.022em;
@@ -638,6 +661,7 @@ h2{font-weight:700}
 }
 .accroche h1{color:#FFFFFF}
 .accroche-sous{color:#C3CAD4}
+.accroche-preuve{color:#8E96A2;border-top-color:rgba(255,255,255,.14)}
 .accroche .micro{color:#8E96A2}
 .accroche .micro b{color:#D7DCE3}
 .accroche .cta{background:var(--or);border-color:var(--or);color:#14100B}
@@ -664,13 +688,6 @@ h2{font-weight:700}
 .interro{border-left-color:var(--or)}
 .pointe{border-left-color:var(--or)}
 .temoin figcaption b{color:var(--or)}
-.garantie{
-  background:linear-gradient(180deg, rgba(251,128,0,.10), transparent 70%);
-  border-color:rgba(251,128,0,.42);
-}
-.garantie::before{
-  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--or);
-}
 .prix-chiffre{color:var(--encre)}
 .prix-bloc{border-top:3px solid var(--or)}
 .cookies{border-top-color:var(--or)}
@@ -691,14 +708,38 @@ h2{font-weight:700}
 }
 /* --- visuels de preuve : le Kbis et l'aperçu du plan sont des visuels finis,
        on retire le cadre et on garde une ombre douce --- */
-.preuve{border:0;box-shadow:0 18px 44px rgba(18,16,14,.16)}
+/* visuels détourés : l'ombre suit la forme au lieu de dessiner un rectangle */
+.preuve{border:0;box-shadow:none;border-radius:0;filter:drop-shadow(0 18px 30px rgba(18,16,14,.16))}
 .preuve-etroite{max-width:560px}
 
 /* --- portrait circulaire avec halo : ombre plus discrète, le visuel a la sienne --- */
 .accroche .media img{filter:drop-shadow(0 22px 40px rgba(0,0,0,.45))}
 
+/* ============ VSL ======================================================= */
+.bloc-vsl{padding-block:clamp(8px,2vw,24px) var(--rythme)}
+.vsl{
+  position:relative;margin:0 auto;max-width:960px;
+  border-radius:var(--rayon);overflow:hidden;background:#090C11;
+  box-shadow:0 24px 60px rgba(18,16,14,.22);
+}
+.vsl video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#090C11}
+.vsl-son{
+  /* en haut à droite : en bas au centre, il masquait les sous-titres de la vidéo */
+  position:absolute;right:clamp(10px,2vw,20px);top:clamp(10px,2vw,20px);
+  display:inline-flex;align-items:center;gap:10px;
+  padding:12px 20px;border:0;border-radius:999px;cursor:pointer;
+  background:var(--or);color:#14100B;font:inherit;font-weight:700;font-size:15.5px;
+  box-shadow:0 10px 26px rgba(0,0,0,.35);
+  animation:vsl-pouls 2.4s ease-in-out infinite;
+}
+.vsl-son svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.vsl-son:hover{background:var(--or-clair)}
+.vsl-son[hidden]{display:none}
+@keyframes vsl-pouls{50%{transform:scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.vsl-son{animation:none}}
+
 /* =========================================================================
-   11. LES AUTRES PAGES DU TUNNEL
+   11. LES AUTRES PAGES DU TUNNEL (rétabli : perdu lors de la refonte du 30/09)
    tunnel.css est la seule feuille de style de dix pages, pas seulement de
    la page d'accompagnement : le questionnaire, les trois pages d'issue, le
    calculateur de marge, les témoignages et les deux pages juridiques n'en
@@ -763,6 +804,7 @@ mark{
 }
 
 /* --- formulaires : questionnaire et calculateur --- */
+fieldset{border:0;margin:0;padding:0;min-width:0}
 label{display:block;font-weight:600;font-size:15px;margin-bottom:8px}
 /* Le questionnaire empile plusieurs .champ : sans cet écart, l'intitulé d'un
    champ venait se coller au champ précédent. Le bloc de capture n'en a qu'un,
@@ -895,3 +937,29 @@ textarea{min-height:130px;resize:vertical}
 .temoignage-meta{font-size:14px;color:var(--encre-clair)}
 .temoignage-corps p{color:var(--encre-doux)}
 .temoignage-corps p + p{margin-top:1.05em}
+
+/* le message d'erreur global reste masqué tant qu'il est vide ([hidden] l'emporte sur display:flex) */
+.erreur[hidden]{display:none}
+/* dans un .champ, l'écart entre l'intitulé et la case vient déjà de la grille */
+.champ label{margin-bottom:0}
+
+/* le dernier élément d'un bloc ne rajoute pas sa marge basse à celle du bloc */
+.bloc .lire > :last-child,.bloc .large > :last-child,
+.bloc .lire > :last-child > :last-child,.bloc .large > :last-child > :last-child{margin-bottom:0}
+.temoins-note{margin-bottom:0}
+/* microcopie sous un bouton centré (dernier appel) : centrée elle aussi */
+[style*="text-align:center"] .micro{margin-inline:auto}
+/* contenu du document gratuit, dans le bloc de capture */
+.capture-liste{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.capture-liste li{position:relative;padding-left:30px;font-size:16px;line-height:1.5;color:var(--encre-doux)}
+.capture-liste li b{color:var(--encre)}
+.capture-liste li::before{
+  content:"✓";position:absolute;left:0;top:2px;width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--or);color:#fff;font-size:11px;font-weight:700;
+}
+/* bouton du son plus discret sur téléphone, pour ne pas couvrir l'image */
+@media (max-width:600px){
+  .vsl-son{padding:8px 13px;font-size:13.5px;gap:7px}
+  .vsl-son svg{width:16px;height:16px}
+}

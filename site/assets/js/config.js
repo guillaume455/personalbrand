@@ -1,4 +1,22 @@
 /* =========================================================================
+   MODIFIÉ LE 01/10/2026 — deux blocs seulement, le reste est intact.
+
+   1. backend : branché sur le webhook Make qui reçoit les candidatures.
+      L'URL d'un webhook Make n'est pas une clé secrète : elle n'autorise
+      qu'à envoyer des données, jamais à en lire. Elle a donc sa place
+      dans un fichier public, contrairement à une clé d'API Brevo.
+   2. aimant.pdf : chemin du calcul de marge une fois le PDF déposé.
+   3. aimant.webhook : le webhook du second scénario Make, celui qui range
+      l'adresse dans la liste Brevo de l'aimant. Il est distinct de celui
+      des candidatures, et il doit le rester (voir l'en-tête de capture.js).
+      Mis à jour le 01/10/2026.
+
+   preprod est passé à false le 01/10/2026, une fois le tunnel vérifié
+   de bout en bout en conditions réelles : les repères de préproduction
+   et les encarts « à fournir » ne s'affichent plus aux visiteurs.
+   Le repasser à true pour retrouver les traces dans la console.
+   ========================================================================= */
+/* =========================================================================
    Configuration du tunnel — SEUL fichier à modifier quand les comptes
    externes sont ouverts. Aucune clé n'est codée en dur ailleurs.
 
@@ -18,33 +36,20 @@ window.GH = window.GH || {};
 window.GH.config = {
 
   /* --- Repère d'environnement ------------------------------------------ */
-  // Passer à false le jour de la mise en ligne : masque les avertissements
-  // de préproduction et les encarts « à fournir ».
-  preprod: true,
+  // false depuis la mise en ligne du 01/10/2026 : masque les
+  // avertissements de préproduction et les encarts « à fournir ».
+  preprod: false,
 
   /* --- Backend du formulaire -------------------------------------------
      L'hébergement OVH est statique : aucun code ne s'exécute côté serveur.
      Les candidatures partent donc vers un service externe.
-       type : 'formsubmit' | 'supabase' | 'webhook' | ''   ('' = mode démo)
-       url  : selon le type —
-              formsubmit : simplement l'adresse e-mail de réception
-              supabase   : l'adresse du projet (https://xxx.supabase.co)
-              webhook    : le point d'entrée complet
+       type : 'supabase' | 'webhook' | ''      ('' = mode démo)
+       url  : point d'entrée REST complet
        cle  : clé publique anonyme (Supabase) — jamais la service_role
-
-     TANT QUE `type` EST VIDE, RIEN N'EST TRANSMIS. Le tunnel reste
-     parcourable et la candidature est seulement écrite dans la console du
-     navigateur : c'est pour cela qu'aucun e-mail n'arrive.
-
-     Avec 'formsubmit', la toute première candidature envoyée déclenche un
-     e-mail de confirmation de FormSubmit. Tant que son lien n'est pas
-     cliqué, rien n'est délivré. FormSubmit devient alors sous-traitant au
-     sens de l'article 28 du RGPD : il doit être cité dans la politique de
-     confidentialité.
   --------------------------------------------------------------------- */
   backend: {
-    type: '',
-    url: '',
+    type: 'webhook',
+    url: 'https://hook.eu1.make.com/6vnc2did7cxpr6fgvmik7pos3ht6enul',
     cle: '',
     table: 'candidatures',
   },
@@ -90,6 +95,11 @@ window.GH.config = {
   aimant: {
     pdf: '/assets/docs/calcul-marge-guillaume-herbin.pdf',
     listeBrevo: '',             // identifiant de liste Brevo
+
+    // Webhook Make propre à l'aimant, distinct de celui des candidatures.
+    // Branché le 01/10/2026 sur le scénario « FORGE - aimant et decisions ».
+    // L'adresse déposée part dans la liste Brevo « Aimant - calcul de marge ».
+    webhook: 'https://hook.eu1.make.com/muqcspwws27p6gg1gkalkfqvoxgravdu',
   },
 
   /* --- Tunnel ----------------------------------------------------------

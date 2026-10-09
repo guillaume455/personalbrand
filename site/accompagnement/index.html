@@ -46,7 +46,7 @@
 <!-- ============ §13 HERO ============ -->
 <section class="bloc accroche" data-accroche>
   <div class="lire">
-    <h1>Tu veux gagner ta vie dans l'automobile.<br>Reste à savoir comment.</h1>
+    <h1>Tu veux gagner ta vie dans l'automobile.<span class="h1-suite">Reste à savoir comment.</span></h1>
     <p class="accroche-sous">Achat-revente, intermédiation, dépôt-vente, courtage… Il n'existe
        pas une seule façon de se lancer. Et surtout, toutes ne demandent pas 50&nbsp;000&nbsp;€
        de départ.</p>
@@ -56,7 +56,7 @@
 
     <div class="cta-bloc">
       <a class="cta" href="candidature/" data-cta="hero">Voir si mon profil correspond</a>
-      <p class="micro">5 questions &bull; 2 minutes &bull; <b>Aucun paiement à ce stade</b></p>
+      <p class="micro">5 questions &bull; 2 minutes</p>
     </div>
 
     <div class="media"><picture><source type="image/webp" srcset="../assets/img/tunnel/portrait-hero-700.webp 700w, ../assets/img/tunnel/portrait-hero.webp 1000w" sizes="(min-width:1000px) 480px, min(100vw - 40px, 720px)"><img src="../assets/img/tunnel/portrait-hero.png" width="1000" height="1000" alt="Guillaume Herbin" fetchpriority="high"></picture></div>
@@ -85,7 +85,25 @@
     <p>La réalité se trouve rarement dans l'un de ces deux extrêmes.</p>
     <p class="pointe">Et surtout : elle dépend de ta situation.</p>
   </div>
-  <!-- EMPLACEMENT EN ATTENTE : Vidéo de 60 à 120 secondes (§55). Voir TUNNEL.md. -->
+</section>
+
+<!-- ============ VSL ============ -->
+<section class="bloc bloc-vsl">
+  <div class="large">
+    <figure class="vsl" data-vsl>
+      <video poster="../assets/video/vsl-diagnostic.jpg"
+             width="1920" height="1080" autoplay muted playsinline preload="metadata"
+             aria-label="Vidéo de présentation du diagnostic, 53 secondes">
+        <!-- version légère pour les téléphones, version 1080p au-delà -->
+        <source src="../assets/video/vsl-diagnostic-720.mp4" type="video/mp4" media="(max-width: 820px)">
+        <source src="../assets/video/vsl-diagnostic.mp4" type="video/mp4">
+      </video>
+      <button type="button" class="vsl-son" data-vsl-son>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
+        Activer le son
+      </button>
+    </figure>
+  </div>
 </section>
 
 <!-- ============ §15 CHANGEMENT DE CROYANCE ============ -->
@@ -126,7 +144,7 @@
   
     <div class="relance" data-reveal>
       <a class="cta" href="candidature/" data-cta="apres-croyance">Voir si mon profil correspond</a>
-      <p class="micro">5 questions &bull; 2 minutes &bull; <b>Aucun paiement à ce stade</b></p>
+      <p class="micro">5 questions &bull; 2 minutes</p>
     </div>
 </section>
 
@@ -145,7 +163,7 @@
     <p class="pointe">Ce que tu paies, ce n'est pas seulement 1h30. C'est aussi les erreurs que
        tu n'auras pas à refaire.</p>
     
-    <picture><source srcset="../assets/img/tunnel/kbis-2010.webp" type="image/webp"><img class="preuve preuve-etroite" src="../assets/img/tunnel/kbis-2010.jpg" width="1254" height="1254" loading="lazy" decoding="async" alt="Extrait Kbis de la première société créée par Guillaume Herbin en mai 2010 au RCS d'Orléans, capital 6 000 euros, accompagné du compte rendu de l'expert-comptable de l'exercice clos le 30 juin 2011 indiquant 2 502 745 euros de chiffre d'affaires."></picture>
+    <picture><source srcset="../assets/img/tunnel/kbis-2010.webp" type="image/webp"><img class="preuve preuve-etroite" src="../assets/img/tunnel/kbis-2010.png" width="1254" height="1254" loading="lazy" decoding="async" alt="Extrait Kbis de la première société créée par Guillaume Herbin en mai 2010 au RCS d'Orléans, capital 6 000 euros, accompagné du compte rendu de l'expert-comptable de l'exercice clos le 30 juin 2011 indiquant 2 502 745 euros de chiffre d'affaires."></picture>
   </div>
 </section>
 
@@ -185,7 +203,7 @@
        Pas sur de la théorie.</h2>
     <p class="chapo-centre" data-reveal>Le questionnaire me donne l'essentiel avant qu'on se
        parle. On ne perd donc pas la séance à faire connaissance.</p>
-    <div class="cartes cartes-4">
+    <div class="cartes cartes-2">
       <article class="carte-i" data-reveal>
         <span class="pastille"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg></span>
         <h3>On part de là où tu en es</h3>
@@ -228,28 +246,43 @@
 
 <!-- ============ §21 POUR QUI / PAS POUR QUI ============ -->
 <section class="bloc">
-  <div class="lire" data-reveal>
+  <div class="large">
+    <h2 class="titre-centre" data-reveal>Est-ce que le diagnostic est fait pour toi&nbsp;?</h2>
+    <p class="chapo-centre" data-reveal>Je ne l'ouvre pas à tout le monde. Regarde dans quelle
+       colonne tu te reconnais le plus.</p>
     <div class="duo">
-      <div class="duo-col duo-pour">
-        <h2>Le diagnostic peut te correspondre si&nbsp;:</h2>
+      <div class="duo-col duo-pour" data-reveal>
+        <div class="duo-tete">
+          <span class="duo-icone"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <div>
+            <p class="duo-etiquette">Oui, c'est pour toi</p>
+            <h3>Le diagnostic peut te correspondre si&nbsp;:</h3>
+          </div>
+        </div>
         <ul>
-          <li>Tu veux sérieusement gagner ta vie dans l'automobile.</li>
-          <li>Tu envisages une reconversion.</li>
-          <li>Tu souhaites commencer progressivement.</li>
-          <li>Tu as déjà une petite activité que tu veux structurer.</li>
-          <li>Tu hésites entre plusieurs modèles.</li>
-          <li>Tu ne sais pas combien investir.</li>
-          <li>Tu veux comprendre les chiffres avant d'agir.</li>
+          <li>Tu veux <b>sérieusement</b> gagner ta vie dans l'automobile.</li>
+          <li>Tu envisages une <b>reconversion</b>.</li>
+          <li>Tu souhaites commencer <b>progressivement</b>.</li>
+          <li>Tu as déjà une petite activité que tu veux <b>structurer</b>.</li>
+          <li>Tu <b>hésites</b> entre plusieurs modèles.</li>
+          <li>Tu ne sais pas <b>combien investir</b>.</li>
+          <li>Tu veux comprendre <b>les chiffres</b> avant d'agir.</li>
         </ul>
       </div>
-      <div class="duo-col duo-pas">
-        <h2>Il n'est probablement pas pour toi si&nbsp;:</h2>
+      <div class="duo-col duo-pas" data-reveal>
+        <div class="duo-tete">
+          <span class="duo-icone"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span>
+          <div>
+            <p class="duo-etiquette">Passe ton chemin</p>
+            <h3>Il n'est probablement pas pour toi si&nbsp;:</h3>
+          </div>
+        </div>
         <ul>
-          <li>Tu cherches une formule miracle.</li>
-          <li>Tu veux des revenus sans travail.</li>
-          <li>Tu n'as aucun temps à consacrer à ton projet.</li>
-          <li>Tu veux simplement entendre une promesse de rentabilité.</li>
-          <li>Tu n'es pas prêt à remettre tes hypothèses en question.</li>
+          <li>Tu cherches une <b>formule miracle</b>.</li>
+          <li>Tu veux des revenus <b>sans travail</b>.</li>
+          <li>Tu n'as <b>aucun temps</b> à consacrer à ton projet.</li>
+          <li>Tu veux simplement entendre une <b>promesse de rentabilité</b>.</li>
+          <li>Tu n'es pas prêt à <b>remettre tes hypothèses</b> en question.</li>
         </ul>
       </div>
     </div>
@@ -279,27 +312,27 @@
       <div class="cta-bloc"><a class="cta" href="candidature/" data-cta="section-prix">Voir si mon profil correspond</a></div>
       <p class="micro">Aucun paiement avant validation de ton profil.</p>
     </div>
-  </div>
-</section>
 
-<!-- ============ §23 GARANTIE ============ -->
-<section class="bloc">
-  <div class="lire" data-reveal>
-    <div class="garantie">
-      <h2>Si je ne peux pas t'aider, je te le dis et je te rembourse.</h2>
-      <p>Si, dans les 15 premières minutes de notre échange, <strong>je considère que je ne
-         peux pas réellement t'aider</strong>, j'arrête la séance et je te rembourse
-         intégralement les 490&nbsp;€.</p>
+    <!-- §23 GARANTIE et §24 DISPONIBILITÉ, regroupées sous le prix -->
+    <div class="engagements">
+      <div class="engagement engagement-fort">
+        <span class="pastille"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <div>
+          <h3>Si je ne peux pas t'aider, je te le dis et je te rembourse.</h3>
+          <p>Si, dans les 15 premières minutes, <strong>je considère que je ne peux pas
+             réellement t'aider</strong>, j'arrête la séance et je te rembourse
+             intégralement les 490&nbsp;€.</p>
+        </div>
+      </div>
+      <div class="engagement">
+        <span class="pastille"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
+        <div>
+          <h3>Un nombre limité de diagnostics chaque mois</h3>
+          <p>Pour garder le temps de préparer chaque échange et de construire chaque plan
+             personnalisé.</p>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
-
-<!-- ============ §24 DISPONIBILITÉ ============ -->
-<section class="bloc bloc-doux">
-  <div class="lire" data-reveal>
-    <p class="dispo">Je limite volontairement le nombre de diagnostics réalisés chaque mois
-       afin de conserver le temps nécessaire pour préparer chaque échange et construire les
-       plans personnalisés.</p>
   </div>
 </section>
 
@@ -350,7 +383,7 @@
     <h2>Tu n'as pas besoin de tout savoir aujourd'hui.<br>
         Tu as besoin de savoir quelle est ta prochaine étape.</h2>
     <div class="cta-bloc"><a class="cta" href="candidature/" data-cta="final">Voir si mon profil correspond</a></div>
-    <p class="micro">5 questions &bull; 2 minutes &bull; <b>Aucun paiement à ce stade</b></p>
+    <p class="micro">5 questions &bull; 2 minutes</p>
   </div>
 </section>
 
@@ -359,9 +392,14 @@
   <div class="lire" data-reveal>
     <div class="capture">
       <h2>Pas encore prêt pour le diagnostic&nbsp;?</h2>
-      <p>Laisse ton email, je t'envoie le calcul de marge réel sur une voiture, ligne par
-         ligne&nbsp;: achat, frais, marge, résultat. C'est le document que j'aurais aimé avoir
-         avant mon premier achat.</p>
+      <p>Laisse ton email, je t'envoie le document que j'aurais aimé avoir avant mon premier
+         achat. Dedans&nbsp;:</p>
+      <ul class="capture-liste">
+        <li><b>Le calcul de marge réel sur une voiture</b>, ligne par ligne&nbsp;: achat,
+            frais, marge, résultat.</li>
+        <li><b>Une transaction que j'ai réalisée</b>, avec une marge type.</li>
+        <li><b>Un achat qui m'a beaucoup coûté.</b></li>
+      </ul>
       <form data-capture data-merci="../calcul-marge/merci/" style="margin-top:20px" novalidate>
         <input type="text" name="_piege" tabindex="-1" autocomplete="off" aria-hidden="true"
                style="position:absolute;left:-9999px">
