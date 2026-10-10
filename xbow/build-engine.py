@@ -47,21 +47,21 @@ k, th, e = pull(0.6, 2950, [(1.55, 5300), (0.7, 4600)]); RPM += k; THR += th + [
 SPD += [(0, 0.55), (3.0, 0.7)]; LVL += [(0, 0), (2.85, 0)]
 # photos and titles: a distant cruise
 RPM += [(3.3, 2700), (ck - 0.2, 2650)]; THR += [(3.3, 0.3), (ck - 0.2, 0.3)]; SPD += [(3.3, 0.5), (ck, 0.5)]
-LVL += [(3.25, -19), (ck - 0.3, -19)]
+LVL += [(3.25, -21), (ck - 0.3, -21)]
 # the open cockpit, rolling, then idle before the launch
 RPM += [(ck, 3000), (zero - 0.6, 3300), (zero - 0.2, 1500), (launch - 0.45, 1000), (launch - 0.3, 1000)]
 THR += [(ck, 0.4), (zero - 0.6, 0.45), (zero - 0.5, 0.0), (launch - 0.3, 0.0)]
 SPD += [(ck, 0.6), (zero - 0.6, 0.6), (zero, 0.0), (launch, 0.0)]
-LVL += [(ck, -10), (zero - 0.6, -10), (zero - 0.2, -8)]
+LVL += [(ck, -13), (zero - 0.6, -13), (zero - 0.2, -11)]
 # 0 to 100: launch on « en », two shifts, the first frame of the rides keeps pulling
 k, th, e = pull(launch - 0.25, 3800, [(0.85, 6600), (0.95, 6500), (0.9, 6200)]); RPM += k; THR += th
-SPD += [(launch + 0.3, 0.2), (e, 0.95)]; LVL += [(launch - 0.3, -4), (e, -4)]
+SPD += [(launch + 0.3, 0.2), (e, 0.95)]; LVL += [(launch - 0.3, -9), (e, -9)]
 # the rides: cruising, slower in the village, the forest acceleration after the KTM photo, the breath
 v1 = M["b6"][0]
 RPM += [(e + 0.5, 3600), (bal["start"] + 2.0, 3000), (v1, 2700), (v1 + 1.2, 2300), (M["b7"][0], 2900), (b8 + 1.5, 2900)]
 THR += [(e + 0.4, 0.5), (bal["start"] + 2.0, 0.35), (v1, 0.2), (M["b7"][0], 0.45), (b8 + 1.5, 0.45)]
 SPD += [(e + 0.5, 0.85), (bal["start"] + 2.0, 0.75), (v1, 0.55), (v1 + 1.2, 0.45), (M["b7"][0], 0.7), (b8 + 1.5, 0.75)]
-LVL += [(e + 0.5, -2), (bal["start"] + 0.5, 0)]
+LVL += [(e + 0.5, -7), (bal["start"] + 0.5, -7), (br - 0.3, -7), (br + 0.15, -10)]
 k, th, e = pull(b8 + 1.7, 3000, [(1.6, 5800), (1.0, 5000)]); RPM += k; THR += th
 RPM += [(br - 0.15, 3600)]; THR += [(br - 0.3, 0.3)]
 SPD += [(br, 0.9)]

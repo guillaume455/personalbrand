@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""X-Bow mix, no music at all (Guillaume's call). The voice and the sound of the car: the raw GoPro sound if it is ever
+"""X-Bow mix: the voice, the music bed (low, ducked, none on the hook and the breath) and the sound of the car: the raw GoPro sound if it is ever
 supplied, else the synthetic engine of build-engine.py (assets/audio/engine.wav). With the GoPro sound: hook engine alone, cards and photos engine down, « balades » engine up front, lesson engine gone,
 ducked under the voice (attack 200 ms, release 400 ms). Output 48 kHz stereo, -14 LUFS."""
 import json, os, subprocess
@@ -19,7 +19,7 @@ db = lambda d: 10 ** (d / 20)
 ENGINE = {"01-opportunite": 0, "02-cestquoi": -14, "03-balades": 0}
 segs = [(cid, t0[cid], t, d, ENGINE.get(sc, -14)) for cid, t, d, sc in media] if HAS_REAL else []
 # road bed under the photos and the cards (sound of the rush kept everywhere), gone for the lesson
-hook_end = 3.0
+hook_end = HOOK_END = 3.0
 first_cockpit = [t for cid, t, d, sc in media if cid == "cockpit"][0]
 if HAS_REAL: segs += [("bed1", BED, hook_end, first_cockpit - hook_end, -16)]
 if HAS_REAL: rev = F["04-revente"]; segs += [("bed2", BED + 20, rev["start"], rev["dur"], -20)]
@@ -47,15 +47,41 @@ if not segs and os.path.exists(ENGINE_WAV):
     f = ";".join(fl) + ";"
 else:
     f = ""
+# the music bed (« Running Night », alex_makemusic): none on the hook, low under the voice, almost gone on the 3 s
+# breath, a little up on the last frame, faded out; ducked under the voice like the engine
+MUSIC = "assets/music/musique.mp3"
+MUS_IN = 0.6                                  # first note of the track (its file starts with silence)
+bal = F["03-balades"]; les = F["05-lecon"]
+words = json.load(open("assets/audio/voix-montage-mots.json"))["words"] if os.path.exists("assets/audio/voix-montage-mots.json") else []
+last_word = words[-1]["end"] if words else TOTAL - 2.4
+breath = [t for cid, t, d, sc in media if cid == "breath"][0]
+M = [(0, -90), (HOOK_END - 0.05, -90), (HOOK_END + 0.25, -19), (breath - 0.2, -19), (breath + 0.4, -32), (bal["end"] - 0.3, -32),
+     (bal["end"] + 0.3, -19), (last_word + 0.2, -19), (last_word + 0.6, -15), (TOTAL, -15)]
+
+
+def ramp(points):
+    """ffmpeg volume expression, piecewise linear in dB between the points"""
+    e = f"{10 ** (points[-1][1] / 20):.6f}"
+    for (a, da), (b, db_) in reversed(list(zip(points, points[1:]))):
+        e = f"if(lt(t,{b:.3f}),pow(10,({da}+({db_}-({da}))*(t-{a:.3f})/{max(b - a, 1e-3):.3f})/20),{e})"
+    return e
+
+
 if segs:
     if not f:
         f = ";".join(fl) + ";"
         f += "".join(mix) + f"amix=inputs={len(mix)}:normalize=0:duration=longest,apad=whole_dur={TOTAL}[eng];"
-    f += f"[0]aresample=48000,aformat=channel_layouts=stereo,apad=whole_dur={TOTAL},asplit[vo][key];"
-    # the engine ducks under the voice, attack 200 ms, release 400 ms
+    args += ["-i", MUSIC]
+    m_idx = sum(1 for x in args if x == "-i") - 1
+    f += f"[0]aresample=48000,aformat=channel_layouts=stereo,apad=whole_dur={TOTAL},asplit=3[vo][key][key2];"
+    f += (f"[{m_idx}:a]atrim={MUS_IN}:{MUS_IN + TOTAL},asetpts=PTS-STARTPTS,aresample=48000,aformat=channel_layouts=stereo,"
+          f"adelay={int(HOOK_END * 1000)}|{int(HOOK_END * 1000)},atrim=0:{TOTAL},volume='{ramp(M)}':eval=frame,"
+          f"afade=t=out:st={TOTAL - 1.8:.3f}:d=1.8[mus];")
+    # engine and music duck under the voice, attack 200 ms, release 400 ms
     f += "[eng][key]sidechaincompress=threshold=0.03:ratio=4:attack=200:release=400[duck];"
+    f += "[mus][key2]sidechaincompress=threshold=0.03:ratio=5:attack=200:release=400[mduck];"
     norm = "loudnorm=I=-14:TP=-1.5:LRA=11," if os.path.exists(VO) else ""   # no voice yet: keep the engine's own level
-    f += f"[vo][duck]amix=inputs=2:normalize=0:duration=first,{norm}aresample=48000,alimiter=limit=0.85:level=false[out]"
+    f += f"[vo][duck][mduck]amix=inputs=3:normalize=0:duration=first,{norm}aresample=48000,alimiter=limit=0.85:level=false[out]"
 elif os.path.exists(VO):
     f = f"[0]aresample=48000,aformat=channel_layouts=stereo,apad=whole_dur={TOTAL},loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000,alimiter=limit=0.85:level=false[out]"
 else:
@@ -64,3 +90,12 @@ subprocess.run(["ffmpeg", "-v", "error", "-y", *args, "-filter_complex", f, "-ma
                 "-ac", "2", "assets/audio/mix.wav"], check=True)
 src = "real sound" if HAS_REAL else "synthetic engine" if segs else "voice only"
 print(f"mix: assets/audio/mix.wav ({src}, {TOTAL} s)")
+if os.path.exists(VO):
+    # one-pass loudnorm lands within a dB: a last gain puts the film on -14 LUFS
+    out = subprocess.run(["ffmpeg", "-i", "assets/audio/mix.wav", "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True).stderr
+    gain = -14 - float(out.rsplit("I:", 1)[1].split("LUFS")[0])
+    if abs(gain) > 0.2:
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", "assets/audio/mix.wav", "-af", f"volume={gain:.2f}dB,alimiter=limit=0.89:level=false",
+                        "-ar", "48000", "-ac", "2", "assets/audio/mix.tmp.wav"], check=True)
+        os.replace("assets/audio/mix.tmp.wav", "assets/audio/mix.wav")
+        print(f"mix: gain {gain:+.2f} dB to -14 LUFS")

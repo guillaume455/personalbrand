@@ -1,14 +1,14 @@
 {
- "provisional": true,
- "total": 63,
+ "provisional": false,
+ "total": 57.1,
  "frames": [
   {
    "n": 1,
    "id": "01-opportunite",
    "name": "Hook et opportunité",
-   "start": 0,
-   "end": 12,
-   "dur": 12,
+   "start": 0.0,
+   "end": 10.0,
+   "dur": 10.0,
    "src": "compositions/frames/01-opportunite.html",
    "vo": "On me propose une KTM X-Bow. Je n'en cherchais pas, je n'en avais jamais conduit. 40 000 euros. J'ai dit oui."
   },
@@ -16,9 +16,9 @@
    "n": 2,
    "id": "02-cestquoi",
    "name": "C'est quoi",
-   "start": 12,
-   "end": 27,
-   "dur": 15,
+   "start": 10.0,
+   "end": 27.767,
+   "dur": 17.767,
    "src": "compositions/frames/02-cestquoi.html",
    "vo": "KTM fait des motos. Ça, c'est leur première voiture. Monocoque carbone, 790 kilos, pas de toit, pas de pare-brise. Un 2.0L TFSI, similaire à ceux que l'on trouve dans les Audi S3, TT-S ou encore Golf GTI. 0 à 100 km/h en 3,9 s."
   },
@@ -26,9 +26,9 @@
    "n": 3,
    "id": "03-balades",
    "name": "Les balades",
-   "start": 27,
-   "end": 45,
-   "dur": 18,
+   "start": 27.767,
+   "end": 42.433,
+   "dur": 14.666,
    "src": "compositions/frames/03-balades.html",
    "vo": "Je m'en suis servi presque tous les jours, un été entier. Le bureau quand il faisait beau, les bords de Loire, Chambord avec des copains qui suivaient en moto. Une voiture de circuit, utilisée comme une voiture de tous les jours."
   },
@@ -36,9 +36,9 @@
    "n": 4,
    "id": "04-revente",
    "name": "La revente",
-   "start": 45,
-   "end": 53,
-   "dur": 8,
+   "start": 42.433,
+   "end": 47.433,
+   "dur": 5.0,
    "src": "compositions/frames/04-revente.html",
    "vo": "Et puis une société me la rachète 49 000 euros, pour l'exploiter en location sur circuit."
   },
@@ -46,15 +46,15 @@
    "n": 5,
    "id": "05-lecon",
    "name": "La leçon et CTA",
-   "start": 53,
-   "end": 63,
-   "dur": 10,
+   "start": 47.433,
+   "end": 57.1,
+   "dur": 9.667,
    "src": "compositions/frames/05-lecon.html",
    "vo": "Je ne l'ai pas cherchée, elle s'est présentée. Comme presque toutes mes bonnes opérations. Mais on ne propose pas une voiture à quelqu'un qu'on ne connaît pas."
   }
  ],
  "engine_cues": {
-  "launch": 25.491,
-  "zero": 24.187
+  "launch": 26.08,
+  "zero": 24.64
  }
 }

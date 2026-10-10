@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "63s"
+duration: "57.1s"
 message: "Deux ans à Dubaï : les rassemblements auto n'y ont rien à voir avec la France (nombre, niveau, indifférence, détails) ; même après seize ans dans l'auto, on y redevient spectateur."
 arc: Hook → Le nombre → Le niveau → L'indifférence → Les détails → Le regard du pro → CTA
 audience: "Personnes qui veulent se lancer dans l'achat-revente automobile"
@@ -21,10 +21,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : rushes de Guillaume uniquement (pas de facecam) ; plaques floutées ; jamais plus de 6 mots par bloc ; carte grise « EN FRANCE » 1 s à chaque fait.
 
-## Frame 1: Hook et opportunité · 0.00 → 12.00
+## Frame 1: Hook et opportunité · 0.00 → 10.00
 
 - scene: Hook et opportunité
-- duration: 12.00s
+- duration: 10.00s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-opportunite.html
@@ -37,10 +37,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: C'est quoi · 12.00 → 27.00
+## Frame 2: C'est quoi · 10.00 → 27.77
 
 - scene: C'est quoi
-- duration: 15.00s
+- duration: 17.77s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-cestquoi.html
@@ -53,10 +53,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: Les balades · 27.00 → 45.00
+## Frame 3: Les balades · 27.77 → 42.43
 
 - scene: Les balades
-- duration: 18.00s
+- duration: 14.67s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-balades.html
@@ -69,10 +69,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: La revente · 45.00 → 53.00
+## Frame 4: La revente · 42.43 → 47.43
 
 - scene: La revente
-- duration: 8.00s
+- duration: 5.00s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-revente.html
@@ -85,10 +85,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: La leçon et CTA · 53.00 → 63.00
+## Frame 5: La leçon et CTA · 47.43 → 57.10
 
 - scene: La leçon et CTA
-- duration: 10.00s
+- duration: 9.67s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-lecon.html
