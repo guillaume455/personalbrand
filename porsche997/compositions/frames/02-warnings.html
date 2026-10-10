@@ -1,0 +1,230 @@
+<template>
+  <style>
+    @font-face { font-family: "Oswald"; src: url("assets/fonts/Oswald-var.woff2") format("woff2"); font-weight: 200 700; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff; background: #0A0A0A;
+      font-family: "Oswald", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r2-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r2-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r2-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r2-hudcam { transform-origin: 540px 700px; }
+
+    /* title: Oswald bold caps, white, centred, orange stroke drawn under the last line (6 frames) */
+    .r2-title { position: absolute; left: 40px; width: 1000px; text-align: center; font-family: "Oswald", sans-serif; font-weight: 700;
+      line-height: 1.12; text-transform: uppercase; color: #ffffff; white-space: nowrap; text-shadow: 0 4px 26px rgba(0,0,0,0.55); }
+    .r2-tline { position: relative; display: inline-block; opacity: 0; }
+    .r2-stilt { position: absolute; left: -0.06em; right: -0.06em; bottom: -0.04em; height: 0.09em; display: block;
+      transform: rotate(-1.2deg); transform-origin: 0 50%; }
+    .r2-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r2-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r2-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r2-ocol { display: block; }
+    .r2-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r2-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* subtitles: bottom of the text at 12 % of the height from the bottom (y 1690), white, soft shadow, key word orange */
+    .r2-sub { position: absolute; left: 0; top: 1565px; width: 1080px; height: 140px; pointer-events: none; }
+    .r2-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 500 58px/70px "Oswald", sans-serif; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.55), 0 4px 22px rgba(0,0,0,0.6); }
+    .r2-w { display: inline-block; opacity: 0; }
+
+    /* photos: full frame, 90 % desaturated, slow zoom 3 to 5 % */
+    .r2-full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; opacity: 0; }
+    .r2-full img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.1) contrast(1.06); }
+    .r2-shade { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; pointer-events: none;
+      background: linear-gradient(rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.62) 22%, rgba(10,10,10,0.1) 38%, rgba(10,10,10,0) 62%, rgba(10,10,10,0.8) 100%); }
+    .r2-txt { position: absolute; left: 0; width: 1080px; text-align: center; font-family: "Oswald", sans-serif; font-weight: 700;
+      text-transform: uppercase; color: #fff; white-space: nowrap; opacity: 0; }
+    .r2-o { color: #FB8000; }
+
+    .r2-pills { position: absolute; left: 160px; top: 1090px; width: 760px; transform-origin: 0 0; }
+    .r2-pill { position: absolute; left: 0; width: 760px; height: 68px; border-radius: 34px; border: 3px solid #E03131;
+      background: rgba(224,49,49,0.13); opacity: 0; font: 600 40px/62px "Oswald", sans-serif; color: #fff; text-transform: uppercase;
+      white-space: nowrap; box-sizing: border-box; padding-left: 86px; }
+    .r2-pill i { position: absolute; left: 10px; top: 7px; width: 48px; height: 48px; border-radius: 50%; background: #E03131;
+      font: 700 36px/48px "Oswald", sans-serif; font-style: normal; text-align: center; color: #fff; }
+    .r2-ad { position: absolute; left: 140px; top: 300px; width: 800px; height: 700px; border-radius: 26px; background: #161616;
+      border: 3px solid #3a3a3a; overflow: hidden; opacity: 0; }
+    .r2-adph { position: absolute; left: 22px; top: 22px; width: 750px; height: 430px; border-radius: 14px; overflow: hidden; background: #222; }
+    .r2-adph img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.1) blur(9px) brightness(0.85); transform: scale(1.08); }
+    .r2-bar { position: absolute; left: 22px; height: 30px; border-radius: 8px; background: #2c2c2c; }
+    .r2-wc { position: absolute; right: 70px; top: 150px; text-align: right; opacity: 0; font-family: "Oswald", sans-serif; font-weight: 700; }
+    .r2-wcl { display: block; font-size: 40px; letter-spacing: 0.08em; color: #bdbdbd; }
+    .r2-wcn { display: block; font-size: 120px; line-height: 1; color: #E03131; }
+  </style>
+
+  <div id="root" data-composition-id="02-warnings" data-width="1080" data-height="1920" data-duration="14">
+    <div id="r2-ground" class="clip r2-ground" data-start="0" data-duration="14" data-track-index="0">
+      <div class="r2-grain"></div>
+    </div>
+    <div id="r2-push" class="r2-cam"><div id="r2-shk" class="r2-cam"><div id="r2-cran" class="r2-cam">
+      <div id="r2-ad" class="r2-ad"><div class="r2-adph"><img src="assets/img/20140606_174216.jpg"></div><div class="r2-bar" style="top:482px;width:520px"></div><div class="r2-bar" style="top:532px;width:360px;background:#242424"></div><div class="r2-bar" style="top:604px;width:230px;height:46px;background:#333"></div><div class="r2-bar" style="top:614px;left:560px;width:200px;height:26px;background:#242424"></div></div>
+    </div></div></div>
+    <div id="r2-hud" class="r2-cam r2-hudcam">
+      <div id="r2-wc" class="r2-wc"><span class="r2-wcl">WARNINGS</span><span class="r2-wcn"><span id="r2-wn" class="r2-odo " data-to="0"><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></span></span></div><div id="r2-pills" class="r2-pills"><div id="r2-p0" class="r2-pill" style="top:0px"><i>!</i>PHOTOS RATÉES</div><div id="r2-p1" class="r2-pill" style="top:84px"><i>!</i>VENDEUR PRESSÉ</div><div id="r2-p2" class="r2-pill" style="top:168px"><i>!</i>CONNAÎT MAL SA VOITURE</div><div id="r2-p3" class="r2-pill" style="top:252px"><i>!</i>INJOIGNABLE</div><div id="r2-p4" class="r2-pill" style="top:336px"><i>!</i>AUCUN SENS DU COMMERCE</div></div>
+    </div>
+    <div id="r2-sub" class="r2-sub">
+      <div class="r2-chunk sub-chunk" data-out="2.270"><span class="r2-w sub-w" data-cue="0.350">Leboncoin,</span> <span class="r2-w sub-w" data-cue="1.150">2014.</span></div>
+      <div class="r2-chunk sub-chunk" data-out="3.670"><span class="r2-w sub-w" data-cue="2.330">Des</span> <span class="r2-w sub-w" data-cue="2.550">photos</span> <span class="r2-w sub-w" data-cue="2.990">ratées.</span></div>
+      <div class="r2-chunk sub-chunk" data-out="4.910"><span class="r2-w sub-w" data-cue="3.730">Un</span> <span class="r2-w sub-w sub-key" data-cue="3.950">vendeur</span> <span class="r2-w sub-w" data-cue="4.390">pressé,</span></div>
+      <div class="r2-chunk sub-chunk" data-out="5.830"><span class="r2-w sub-w" data-cue="4.970">qui</span> <span class="r2-w sub-w" data-cue="5.190">connaît</span> <span class="r2-w sub-w" data-cue="5.630">mal</span></div>
+      <div class="r2-chunk sub-chunk" data-out="6.590"><span class="r2-w sub-w" data-cue="5.850">sa</span> <span class="r2-w sub-w" data-cue="6.070">voiture,</span></div>
+      <div class="r2-chunk sub-chunk" data-out="7.730"><span class="r2-w sub-w" data-cue="6.650">qu'on</span> <span class="r2-w sub-w" data-cue="7.090">n'arrive</span> <span class="r2-w sub-w" data-cue="7.530">pas</span></div>
+      <div class="r2-chunk sub-chunk" data-out="9.370"><span class="r2-w sub-w" data-cue="7.750">à</span> <span class="r2-w sub-w" data-cue="7.970">avoir</span> <span class="r2-w sub-w" data-cue="8.410">au</span> <span class="r2-w sub-w" data-cue="8.630">téléphone,</span></div>
+      <div class="r2-chunk sub-chunk" data-out="10.290"><span class="r2-w sub-w" data-cue="9.430">et</span> <span class="r2-w sub-w" data-cue="9.650">qui</span> <span class="r2-w sub-w" data-cue="9.870">ne</span> <span class="r2-w sub-w" data-cue="10.090">vend</span></div>
+      <div class="r2-chunk sub-chunk" data-out="11.210"><span class="r2-w sub-w" data-cue="10.310">rien</span> <span class="r2-w sub-w" data-cue="10.530">du</span> <span class="r2-w sub-w" data-cue="10.750">tout.</span></div>
+      <div class="r2-chunk sub-chunk" data-out="11.870"><span class="r2-w sub-w" data-cue="11.270">Cinq</span> <span class="r2-w sub-w" data-cue="11.490">raisons</span></div>
+      <div class="r2-chunk sub-chunk"><span class="r2-w sub-w" data-cue="11.930">de</span> <span class="r2-w sub-w" data-cue="12.150">passer</span> <span class="r2-w sub-w" data-cue="12.590">son</span> <span class="r2-w sub-w" data-cue="12.810">chemin.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "02-warnings", P = "r2-", DUR = 14;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["leboncoin", 0.35, 1.01], ["2014", 1.15, 2.03], ["des", 2.33, 2.55], ["photos", 2.55, 2.99], ["ratées", 2.99, 3.43], ["un", 3.73, 3.95], ["vendeur", 3.95, 4.39], ["pressé", 4.39, 4.83], ["qui", 4.97, 5.19], ["connaît", 5.19, 5.63], ["mal", 5.63, 5.85], ["sa", 5.85, 6.07], ["voiture", 6.07, 6.51], ["qu'on", 6.65, 7.09], ["n'arrive", 7.09, 7.53], ["pas", 7.53, 7.75], ["à", 7.75, 7.97], ["avoir", 7.97, 8.41], ["au", 8.41, 8.63], ["téléphone", 8.63, 9.29], ["et", 9.43, 9.65], ["qui", 9.65, 9.87], ["ne", 9.87, 10.09], ["vend", 10.09, 10.31], ["rien", 10.31, 10.53], ["du", 10.53, 10.75], ["tout", 10.75, 10.97], ["cinq", 11.27, 11.49], ["raisons", 11.49, 11.93], ["de", 11.93, 12.15], ["passer", 12.15, 12.59], ["son", 12.59, 12.81], ["chemin", 12.81, 13.25]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      // text: fast fade (6 frames), the orange stroke draws left to right in 6 frames
+      function fin(id, t, d) { pre(id, { opacity: 0 }); go(id, { opacity: 1 }, t, d || 0.2, "none"); }
+      function fout(id, t, d) { go(id, { opacity: 0 }, t, d || 0.2, "none"); }
+      function stroke6(tid, t) { tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "none", immediateRender: false }, Math.max(0, t)); init(tid + "-s", { scaleX: 1 }); }
+      function tin(tid, n, t, d) { for (var i = 0; i < n; i++) fin(tid + "-" + i, t, d); stroke6(tid, t + (d || 0.2)); }
+      function tout(tid, n, t) { for (var i = 0; i < n; i++) fout(tid + "-" + i, t); go(tid + "-s", { scaleX: 0 }, t, 0.2, "none"); }
+      // photos: fade in, slow zoom (k = 1.03 to 1.05) until t2
+      function photo(id, t, t2, k, op) { pre(id, { opacity: 0, scale: 1 }); go(id, { opacity: op || 1 }, t, 0.25, "none"); go(id, { scale: k || 1.04 }, t, Math.max(0.5, (t2 || DUR) - t), "none"); }
+
+      // a neutral ad mock-up: grey frame, blurred photo, no logo, no brand
+      pre("ad", { opacity: 0, scale: 0.96 }); go("ad", { opacity: 1, scale: 1 }, 0.05, 0.35);
+      fin("wc", at("photos") - 0.1);
+    
+      // warning 1: the red pill pops in, the counter climbs
+      pre("p0", { opacity: 0, x: -50, scale: 1 }); go("p0", { opacity: 1, x: 0 }, at("photos") - 0.05, 0.22);
+      tl.fromTo($("p0"), { scale: 1.12 }, { scale: 1, duration: 0.25, ease: "back.out(2)", immediateRender: false }, at("photos") - 0.05);
+      odo("wn", at("photos") - 0.05, 0.25, { to: "1", spinLow: false });
+      tl.fromTo($("wc"), { scale: 1.25 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, at("photos") - 0.05);
+      // warning 2: the red pill pops in, the counter climbs
+      pre("p1", { opacity: 0, x: -50, scale: 1 }); go("p1", { opacity: 1, x: 0 }, at("vendeur") - 0.05, 0.22);
+      tl.fromTo($("p1"), { scale: 1.12 }, { scale: 1, duration: 0.25, ease: "back.out(2)", immediateRender: false }, at("vendeur") - 0.05);
+      odo("wn", at("vendeur") - 0.05, 0.25, { to: "2", spinLow: false });
+      tl.fromTo($("wc"), { scale: 1.25 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, at("vendeur") - 0.05);
+      // warning 3: the red pill pops in, the counter climbs
+      pre("p2", { opacity: 0, x: -50, scale: 1 }); go("p2", { opacity: 1, x: 0 }, at("connaît") - 0.05, 0.22);
+      tl.fromTo($("p2"), { scale: 1.12 }, { scale: 1, duration: 0.25, ease: "back.out(2)", immediateRender: false }, at("connaît") - 0.05);
+      odo("wn", at("connaît") - 0.05, 0.25, { to: "3", spinLow: false });
+      tl.fromTo($("wc"), { scale: 1.25 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, at("connaît") - 0.05);
+      // warning 4: the red pill pops in, the counter climbs
+      pre("p3", { opacity: 0, x: -50, scale: 1 }); go("p3", { opacity: 1, x: 0 }, at("téléphone") - 0.05, 0.22);
+      tl.fromTo($("p3"), { scale: 1.12 }, { scale: 1, duration: 0.25, ease: "back.out(2)", immediateRender: false }, at("téléphone") - 0.05);
+      odo("wn", at("téléphone") - 0.05, 0.25, { to: "4", spinLow: false });
+      tl.fromTo($("wc"), { scale: 1.25 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, at("téléphone") - 0.05);
+      // warning 5: the red pill pops in, the counter climbs
+      pre("p4", { opacity: 0, x: -50, scale: 1 }); go("p4", { opacity: 1, x: 0 }, at("vend") - 0.05, 0.22);
+      tl.fromTo($("p4"), { scale: 1.12 }, { scale: 1, duration: 0.25, ease: "back.out(2)", immediateRender: false }, at("vend") - 0.05);
+      odo("wn", at("vend") - 0.05, 0.25, { to: "5", spinLow: false });
+      tl.fromTo($("wc"), { scale: 1.25 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, at("vend") - 0.05);
+      // five reasons to walk away: the ad goes dark
+      go("ad", { opacity: 0.35 }, at("cinq") - 0.1, 0.4, "none");
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

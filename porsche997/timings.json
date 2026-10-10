@@ -1,0 +1,96 @@
+{
+ "provisional": true,
+ "total": 89,
+ "frames": [
+  {
+   "n": 1,
+   "id": "01-hook",
+   "name": "Hook",
+   "start": 0,
+   "end": 4,
+   "dur": 4,
+   "src": "compositions/frames/01-hook.html",
+   "vo": "L'annonce que personne ne voulait."
+  },
+  {
+   "n": 2,
+   "id": "02-warnings",
+   "name": "Les warnings",
+   "start": 4,
+   "end": 18,
+   "dur": 14,
+   "src": "compositions/frames/02-warnings.html",
+   "vo": "Leboncoin, 2014. Des photos ratées. Un vendeur pressé, qui connaît mal sa voiture, qu'on n'arrive pas à avoir au téléphone, et qui ne vend rien du tout. Cinq raisons de passer son chemin."
+  },
+  {
+   "n": 3,
+   "id": "03-retournement",
+   "name": "Le retournement",
+   "start": 18,
+   "end": 27,
+   "dur": 9,
+   "src": "compositions/frames/03-retournement.html",
+   "vo": "Sauf que ces cinq warnings portaient tous sur le vendeur. Sur la voiture, il n'y en avait aucun. Encore fallait-il aller vérifier."
+  },
+  {
+   "n": 4,
+   "id": "04-verifie",
+   "name": "Ce que j'ai vérifié",
+   "start": 27,
+   "end": 39,
+   "dur": 12,
+   "src": "compositions/frames/04-verifie.html",
+   "vo": "Carnet d'entretien à jour, dernier passage à 54 000 km. Contrôle technique vierge. Rappel constructeur effectué. Historique complet. Une annonce se juge sur ce qu'il y a dans le dossier, pas sur la qualité des photos."
+  },
+  {
+   "n": 5,
+   "id": "05-voiture",
+   "name": "La voiture",
+   "start": 39,
+   "end": 52,
+   "dur": 13,
+   "src": "compositions/frames/05-voiture.html",
+   "vo": "Une 911 type 997 phase 2 de 2009. Flat six 3,6 litres, 345 chevaux, boîte PDK. Et surtout une phase 2, injection directe, et plus d'arbre intermédiaire. Le fameux problème des phases 1 n'existe plus sur celle-là. C'est ce détail qui fait sa cote aujourd'hui."
+  },
+  {
+   "n": 6,
+   "id": "06-prix",
+   "name": "Le prix",
+   "start": 52,
+   "end": 58,
+   "dur": 6,
+   "src": "compositions/frames/06-prix.html",
+   "vo": "2014. J'ai 25 ans. C'est ma première Porsche. 44 000 euros."
+  },
+  {
+   "n": 7,
+   "id": "07-deux-ans",
+   "name": "Les deux ans",
+   "start": 58,
+   "end": 67,
+   "dur": 9,
+   "src": "compositions/frames/07-deux-ans.html",
+   "vo": "Je la garde deux ans. 1 000 euros d'entretien courant, 450 euros de pneus. Je la revends 52 000. 6 550 euros d'écart, après avoir roulé avec pendant deux ans."
+  },
+  {
+   "n": 8,
+   "id": "08-2026",
+   "name": "2026",
+   "start": 67,
+   "end": 75,
+   "dur": 8,
+   "src": "compositions/frames/08-2026.html",
+   "vo": "Et aujourd'hui, plus de dix ans après, les mêmes s'affichent à partir de 57 000 euros. Il y a des voitures qui décotent, et d'autres qui font l'inverse."
+  },
+  {
+   "n": 9,
+   "id": "09-lecon",
+   "name": "La leçon et CTA",
+   "start": 75,
+   "end": 89,
+   "dur": 14,
+   "src": "compositions/frames/09-lecon.html",
+   "vo": "La vraie leçon n'est pas là. Une mauvaise annonce n'est pas une mauvaise voiture. La plupart des gens éliminent sur la présentation. Moi je vérifie le dossier. C'est exactement là que se trouvent les bonnes affaires, dans les annonces que les autres ne prennent pas la peine d'ouvrir."
+  }
+ ]
+}

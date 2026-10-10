@@ -1,0 +1,192 @@
+<template>
+  <style>
+    @font-face { font-family: "Oswald"; src: url("assets/fonts/Oswald-var.woff2") format("woff2"); font-weight: 200 700; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff; background: #0A0A0A;
+      font-family: "Oswald", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r7-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r7-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r7-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r7-hudcam { transform-origin: 540px 700px; }
+
+    /* title: Oswald bold caps, white, centred, orange stroke drawn under the last line (6 frames) */
+    .r7-title { position: absolute; left: 40px; width: 1000px; text-align: center; font-family: "Oswald", sans-serif; font-weight: 700;
+      line-height: 1.12; text-transform: uppercase; color: #ffffff; white-space: nowrap; text-shadow: 0 4px 26px rgba(0,0,0,0.55); }
+    .r7-tline { position: relative; display: inline-block; opacity: 0; }
+    .r7-stilt { position: absolute; left: -0.06em; right: -0.06em; bottom: -0.04em; height: 0.09em; display: block;
+      transform: rotate(-1.2deg); transform-origin: 0 50%; }
+    .r7-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r7-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r7-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r7-ocol { display: block; }
+    .r7-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r7-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* subtitles: bottom of the text at 12 % of the height from the bottom (y 1690), white, soft shadow, key word orange */
+    .r7-sub { position: absolute; left: 0; top: 1565px; width: 1080px; height: 140px; pointer-events: none; }
+    .r7-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 500 58px/70px "Oswald", sans-serif; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.55), 0 4px 22px rgba(0,0,0,0.6); }
+    .r7-w { display: inline-block; opacity: 0; }
+
+    /* photos: full frame, 90 % desaturated, slow zoom 3 to 5 % */
+    .r7-full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; opacity: 0; }
+    .r7-full img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.1) contrast(1.06); }
+    .r7-shade { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; pointer-events: none;
+      background: linear-gradient(rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.62) 22%, rgba(10,10,10,0.1) 38%, rgba(10,10,10,0) 62%, rgba(10,10,10,0.8) 100%); }
+    .r7-txt { position: absolute; left: 0; width: 1080px; text-align: center; font-family: "Oswald", sans-serif; font-weight: 700;
+      text-transform: uppercase; color: #fff; white-space: nowrap; opacity: 0; }
+    .r7-o { color: #FB8000; }
+
+    .r7-rw { position: absolute; left: 80px; width: 920px; height: 120px; opacity: 0; border-bottom: 2px solid #2e2e2e; }
+    .r7-rl { position: absolute; left: 0; top: 30px; font: 600 50px/60px "Oswald", sans-serif; color: #cfcfcf; white-space: nowrap; }
+    .r7-rv { position: absolute; right: 0; top: 14px; font: 700 80px/1 "Oswald", sans-serif; color: #fff; white-space: nowrap; }
+    #r7-gain { position: absolute; left: 0; top: 1040px; width: 1080px; text-align: center; font: 700 210px/1 "Oswald", sans-serif; color: #FB8000; opacity: 0; }
+      </style>
+
+  <div id="root" data-composition-id="07-deux-ans" data-width="1080" data-height="1920" data-duration="9">
+    <div id="r7-ground" class="clip r7-ground" data-start="0" data-duration="9" data-track-index="0">
+      <div class="r7-grain"></div>
+    </div>
+    <div id="r7-push" class="r7-cam"><div id="r7-shk" class="r7-cam"><div id="r7-cran" class="r7-cam">
+      
+    </div></div></div>
+    <div id="r7-hud" class="r7-cam r7-hudcam">
+      <div id="r7-r0" class="r7-rw" style="top:470px"><span class="r7-rl">ENTRETIEN COURANT :</span><span class="r7-rv"><span id="r7-v0" class="r7-odo " data-to="1 000 €"><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-os">&nbsp;</span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-os">&nbsp;</span><span class="r7-os">€</span></span></span></div><div id="r7-r1" class="r7-rw" style="top:620px"><span class="r7-rl">2 PNEUMATIQUES :</span><span class="r7-rv"><span id="r7-v1" class="r7-odo " data-to="450 €"><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-os">&nbsp;</span><span class="r7-os">€</span></span></span></div><div id="r7-r2" class="r7-rw" style="top:770px"><span class="r7-rl">REVENDUE 2 ANS PLUS TARD :</span><span class="r7-rv"><span id="r7-v2" class="r7-odo " data-to="52 000 €"><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-os">&nbsp;</span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-os">&nbsp;</span><span class="r7-os">€</span></span></span></div><div id="r7-gain">+ <span id="r7-gv" class="r7-odo " data-to="6 550 €"><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-os">&nbsp;</span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-oc"><span class="r7-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r7-os">&nbsp;</span><span class="r7-os">€</span></span></div>
+    </div>
+    <div id="r7-sub" class="r7-sub">
+      <div class="r7-chunk sub-chunk" data-out="1.201"><span class="r7-w sub-w" data-cue="0.350">Je</span> <span class="r7-w sub-w" data-cue="0.472">la</span> <span class="r7-w sub-w" data-cue="0.594">garde</span> <span class="r7-w sub-w" data-cue="0.717">deux</span> <span class="r7-w sub-w" data-cue="0.839">ans.</span></div>
+      <div class="r7-chunk sub-chunk" data-out="1.690"><span class="r7-w sub-w" data-cue="1.261">1 000 euros</span></div>
+      <div class="r7-chunk sub-chunk" data-out="2.441"><span class="r7-w sub-w" data-cue="1.750">d'entretien</span> <span class="r7-w sub-w" data-cue="2.116">courant,</span></div>
+      <div class="r7-chunk sub-chunk" data-out="3.718"><span class="r7-w sub-w" data-cue="2.501">450 euros</span> <span class="r7-w sub-w" data-cue="3.234">de</span> <span class="r7-w sub-w" data-cue="3.356">pneus.</span></div>
+      <div class="r7-chunk sub-chunk" data-out="5.118"><span class="r7-w sub-w" data-cue="3.778">Je</span> <span class="r7-w sub-w" data-cue="3.900">la</span> <span class="r7-w sub-w" data-cue="4.022">revends</span> <span class="r7-w sub-w" data-cue="4.267">52 000.</span></div>
+      <div class="r7-chunk sub-chunk" data-out="6.724"><span class="r7-w sub-w" data-cue="5.178">6 550 euros</span> <span class="r7-w sub-w" data-cue="6.399">d'écart,</span></div>
+      <div class="r7-chunk sub-chunk" data-out="7.717"><span class="r7-w sub-w" data-cue="6.784">après</span> <span class="r7-w sub-w" data-cue="7.028">avoir</span> <span class="r7-w sub-w" data-cue="7.273">roulé</span> <span class="r7-w sub-w" data-cue="7.517">avec</span></div>
+      <div class="r7-chunk sub-chunk"><span class="r7-w sub-w" data-cue="7.761">pendant</span> <span class="r7-w sub-w" data-cue="8.006">deux</span> <span class="r7-w sub-w" data-cue="8.128">ans.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "07-deux-ans", P = "r7-", DUR = 9;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["je", 0.35, 0.472], ["la", 0.472, 0.594], ["garde", 0.594, 0.717], ["deux", 0.717, 0.839], ["ans", 0.839, 0.961], ["1000euros", 1.261, 1.75], ["d'entretien", 1.75, 2.116], ["courant", 2.116, 2.361], ["450euros", 2.501, 3.234], ["de", 3.234, 3.356], ["pneus", 3.356, 3.478], ["je", 3.778, 3.9], ["la", 3.9, 4.022], ["revends", 4.022, 4.267], ["52000", 4.267, 4.878], ["6550euros", 5.178, 6.399], ["d'écart", 6.399, 6.644], ["après", 6.784, 7.028], ["avoir", 7.028, 7.273], ["roulé", 7.273, 7.517], ["avec", 7.517, 7.761], ["pendant", 7.761, 8.006], ["deux", 8.006, 8.128], ["ans", 8.128, 8.25]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      // text: fast fade (6 frames), the orange stroke draws left to right in 6 frames
+      function fin(id, t, d) { pre(id, { opacity: 0 }); go(id, { opacity: 1 }, t, d || 0.2, "none"); }
+      function fout(id, t, d) { go(id, { opacity: 0 }, t, d || 0.2, "none"); }
+      function stroke6(tid, t) { tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "none", immediateRender: false }, Math.max(0, t)); init(tid + "-s", { scaleX: 1 }); }
+      function tin(tid, n, t, d) { for (var i = 0; i < n; i++) fin(tid + "-" + i, t, d); stroke6(tid, t + (d || 0.2)); }
+      function tout(tid, n, t) { for (var i = 0; i < n; i++) fout(tid + "-" + i, t); go(tid + "-s", { scaleX: 0 }, t, 0.2, "none"); }
+      // photos: fade in, slow zoom (k = 1.03 to 1.05) until t2
+      function photo(id, t, t2, k, op) { pre(id, { opacity: 0, scale: 1 }); go(id, { opacity: op || 1 }, t, 0.25, "none"); go(id, { scale: k || 1.04 }, t, Math.max(0.5, (t2 || DUR) - t), "none"); }
+
+      pre("r0", { opacity: 0, y: 30 }); go("r0", { opacity: 1, y: 0 }, at("1000euros") - 0.15, 0.3); odo("v0", at("1000euros") - 0.1, 0.9, { from: "0 000", dimLead: true });
+      pre("r1", { opacity: 0, y: 30 }); go("r1", { opacity: 1, y: 0 }, at("450euros") - 0.15, 0.3); odo("v1", at("450euros") - 0.1, 0.9, { from: "000", dimLead: true });
+      pre("r2", { opacity: 0, y: 30 }); go("r2", { opacity: 1, y: 0 }, at("52000") - 0.15, 0.3); odo("v2", at("52000") - 0.1, 0.9, { from: "00 000", dimLead: true });
+      // the gap, big and orange
+      pre("gain", { opacity: 0, scale: 0.85 }); go("gain", { opacity: 1, scale: 1 }, at("6550euros") - 0.15, 0.3, "back.out(1.6)");
+      odo("gv", at("6550euros") - 0.1, 1.2, { from: "0 000", dimLead: true });
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
