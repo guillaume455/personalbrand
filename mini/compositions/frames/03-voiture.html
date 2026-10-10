@@ -7,7 +7,7 @@
       font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
     .r3-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
     .r3-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
-      background: radial-gradient(closest-side, rgba(201,168,76,0.15) 0%, rgba(201,168,76,0.09) 38%, rgba(201,168,76,0.03) 70%, rgba(201,168,76,0) 100%); }
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
     .r3-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
       background-size: 240px 240px; }
@@ -21,7 +21,7 @@
     .r3-tline { position: relative; display: inline-block; opacity: 0; }
     .r3-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
       transform: rotate(-1.5deg); transform-origin: 0 50%; }
-    .r3-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #C9A84C;
+    .r3-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
       border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
 
     /* cash-register counter: one rolling column per digit */
@@ -38,9 +38,9 @@
     .r3-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
     .r3-pgrey { fill: #2b2b2b; }
     .r3-pwhite { fill: #f2f2f2; opacity: 0; }
-    .r3-porange { fill: #C9A84C; opacity: 0; }
+    .r3-porange { fill: #FB8000; opacity: 0; }
     .r3-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
-      background: radial-gradient(closest-side, rgba(201,168,76,0.55), rgba(201,168,76,0.18) 55%, rgba(201,168,76,0)); }
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
     .r3-car { position: absolute; transform-origin: 50% 100%; }
     .r3-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
       stroke-linecap: round; stroke-linejoin: round; }
@@ -52,17 +52,17 @@
     .r3-w { display: inline-block; opacity: 0; }
 
     @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
-    .r3-ph { position: absolute; overflow: hidden; border: 3px solid #C9A84C; border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); background: #151515; }
+    .r3-ph { position: absolute; overflow: hidden; border: 3px solid #FB8000; border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); background: #151515; }
     .r3-ph img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.78) contrast(1.04); }
     .r3-full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
     .r3-full img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.78) contrast(1.04); }
-    .r3-g { color: #C9A84C; }
+    .r3-g { color: #FB8000; }
     .r3-lab { position: absolute; left: 0; width: 1080px; text-align: center; font: 96px/1.1 "Anton", sans-serif; color: #fff; white-space: nowrap; opacity: 0;
       text-shadow: 0 4px 24px rgba(0,0,0,0.6); }
     .r3-title { text-shadow: 0 4px 24px rgba(0,0,0,0.5); }
     #r3-tot { position: absolute; right: 40px; top: 130px; text-align: right; opacity: 0; }
     #r3-totl { display: block; font: 700 22px/1 "Space Mono", monospace; color: #9a9a9a; letter-spacing: 0.12em; }
-    #r3-totv { display: block; margin-top: 6px; font: 60px/1 "Anton", sans-serif; color: #C9A84C; }
+    #r3-totv { display: block; margin-top: 6px; font: 60px/1 "Anton", sans-serif; color: #FB8000; }
   </style>
 
   <div id="root" data-composition-id="03-voiture" data-width="1080" data-height="1920" data-duration="12.034">
@@ -72,11 +72,11 @@
     </div>
     <div id="r3-push" class="r3-cam"><div id="r3-shk" class="r3-cam"><div id="r3-cran" class="r3-cam">
       <div id="r3-p1" class="r3-ph" style="left:60px;top:450px;width:960px;height:467px;transform:rotate(0deg)"><img src="assets/img/20190228_165907.jpg" style="object-position:50% 50%"></div><svg id="r3-roof" viewBox="0 0 400 700" style="position:absolute;left:340px;top:420px;width:400px;height:700px;opacity:0;overflow:visible">
-  <rect x="40" y="20" width="320" height="660" rx="90" fill="#1f3b2e" stroke="#C9A84C" stroke-width="6"/>
-  <rect x="70" y="150" width="260" height="70" rx="20" fill="#0d1a14" stroke="#C9A84C" stroke-width="3"/>
-  <rect x="80" y="560" width="240" height="44" rx="14" fill="#0d1a14" stroke="#C9A84C" stroke-width="3"/>
+  <rect x="40" y="20" width="320" height="660" rx="90" fill="#1f3b2e" stroke="#FB8000" stroke-width="6"/>
+  <rect x="70" y="150" width="260" height="70" rx="20" fill="#0d1a14" stroke="#FB8000" stroke-width="3"/>
+  <rect x="80" y="560" width="240" height="44" rx="14" fill="#0d1a14" stroke="#FB8000" stroke-width="3"/>
   <rect x="70" y="230" width="260" height="320" rx="16" fill="#d9cfb7" opacity="0.35"/>
-  <g id="r3-canvas"><rect x="70" y="230" width="260" height="320" rx="16" fill="#151515" stroke="#C9A84C" stroke-width="3"/>
+  <g id="r3-canvas"><rect x="70" y="230" width="260" height="320" rx="16" fill="#151515" stroke="#FB8000" stroke-width="3"/>
   <path d="M90 290 H310 M90 350 H310 M90 410 H310 M90 470 H310" stroke="#3a3a3a" stroke-width="4"/></g>
   <text x="200" y="12" text-anchor="middle" font-family="Space Mono" font-size="20" fill="#9a9a9a">AVANT</text>
 </svg>
@@ -186,7 +186,7 @@
           Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
             var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
             tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
-            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#C9A84C", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
           });
           var out = ch.getAttribute("data-out");
           if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));

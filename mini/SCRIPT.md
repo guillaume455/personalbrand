@@ -1,9 +1,9 @@
 # SCRIPT — « 2 000 €, elle ne roulait pas » (reel 9:16)
 
-Format : 1080×1920, 30 fps. Fond #0A0A0A, accent or #C9A84C, texte blanc. Titres Anton en capitales avec le filet or.
-Sous-titres de la voix, mot-clé en or. Jamais plus de 6 mots à l'écran. Montants en compteur ; compteur « TOTAL
+Format : 1080×1920, 30 fps. Fond #0A0A0A, accent orange #FB8000 (comme les autres reels), texte blanc. Titres Anton en capitales avec le trait orange.
+Sous-titres de la voix, mot-clé en orange. Jamais plus de 6 mots à l'écran. Montants en compteur ; compteur « TOTAL
 INVESTI » en haut à droite dès la scène 2. Photos de Guillaume (Mini British Open Classic 1992), légèrement désaturées,
-cadre or fin. Aucun billet ni espèce. Photos sur le Drive (dossier partagé par Guillaume), hors du dépôt.
+cadre orange fin. Aucun billet ni espèce. Photos sur le Drive (dossier partagé par Guillaume), hors du dépôt.
 
 Voix du 2026-10-10 : 87 s après montage. Musique : « coma-media slim » (en attendant un autre morceau), drop sur la scène 2, baissée pendant la scène 8. Pas de photo moteur : la scène 4 montre l'avant de la voiture et la bascule carbu / injection dessinée.
 

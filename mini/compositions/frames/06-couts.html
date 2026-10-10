@@ -7,7 +7,7 @@
       font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
     .r6-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
     .r6-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
-      background: radial-gradient(closest-side, rgba(201,168,76,0.15) 0%, rgba(201,168,76,0.09) 38%, rgba(201,168,76,0.03) 70%, rgba(201,168,76,0) 100%); }
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
     .r6-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
       background-size: 240px 240px; }
@@ -21,7 +21,7 @@
     .r6-tline { position: relative; display: inline-block; opacity: 0; }
     .r6-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
       transform: rotate(-1.5deg); transform-origin: 0 50%; }
-    .r6-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #C9A84C;
+    .r6-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
       border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
 
     /* cash-register counter: one rolling column per digit */
@@ -38,9 +38,9 @@
     .r6-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
     .r6-pgrey { fill: #2b2b2b; }
     .r6-pwhite { fill: #f2f2f2; opacity: 0; }
-    .r6-porange { fill: #C9A84C; opacity: 0; }
+    .r6-porange { fill: #FB8000; opacity: 0; }
     .r6-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
-      background: radial-gradient(closest-side, rgba(201,168,76,0.55), rgba(201,168,76,0.18) 55%, rgba(201,168,76,0)); }
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
     .r6-car { position: absolute; transform-origin: 50% 100%; }
     .r6-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
       stroke-linecap: round; stroke-linejoin: round; }
@@ -52,24 +52,24 @@
     .r6-w { display: inline-block; opacity: 0; }
 
     @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
-    .r6-ph { position: absolute; overflow: hidden; border: 3px solid #C9A84C; border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); background: #151515; }
+    .r6-ph { position: absolute; overflow: hidden; border: 3px solid #FB8000; border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); background: #151515; }
     .r6-ph img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.78) contrast(1.04); }
     .r6-full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
     .r6-full img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.78) contrast(1.04); }
-    .r6-g { color: #C9A84C; }
+    .r6-g { color: #FB8000; }
     .r6-lab { position: absolute; left: 0; width: 1080px; text-align: center; font: 96px/1.1 "Anton", sans-serif; color: #fff; white-space: nowrap; opacity: 0;
       text-shadow: 0 4px 24px rgba(0,0,0,0.6); }
     .r6-title { text-shadow: 0 4px 24px rgba(0,0,0,0.5); }
     #r6-tot { position: absolute; right: 40px; top: 130px; text-align: right; opacity: 0; }
     #r6-totl { display: block; font: 700 22px/1 "Space Mono", monospace; color: #9a9a9a; letter-spacing: 0.12em; }
-    #r6-totv { display: block; margin-top: 6px; font: 60px/1 "Anton", sans-serif; color: #C9A84C; }
+    #r6-totv { display: block; margin-top: 6px; font: 60px/1 "Anton", sans-serif; color: #FB8000; }
 
     .r6-row { position: absolute; left: 70px; width: 940px; height: 120px; border-bottom: 2px solid #2a2a2a; opacity: 0; }
     .r6-rl { position: absolute; left: 0; top: 44px; font: 700 28px/1 "Instrument Sans", sans-serif; color: #b0b0b0; letter-spacing: 0.06em; }
     .r6-rv { position: absolute; right: 0; top: 18px; font: 76px/1 "Anton", sans-serif; color: #ffffff; }
     #r6-big { position: absolute; left: 0; top: 960px; width: 1080px; text-align: center; opacity: 0; }
     #r6-bigl { display: block; font: 700 30px/1 "Space Mono", monospace; color: #9a9a9a; letter-spacing: 0.16em; }
-    #r6-bigv { display: block; margin-top: 14px; font: 190px/1 "Anton", sans-serif; color: #C9A84C; }
+    #r6-bigv { display: block; margin-top: 14px; font: 190px/1 "Anton", sans-serif; color: #FB8000; }
       </style>
 
   <div id="root" data-composition-id="06-couts" data-width="1080" data-height="1920" data-duration="10.033">
@@ -185,7 +185,7 @@
           Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
             var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
             tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
-            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#C9A84C", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
           });
           var out = ch.getAttribute("data-out");
           if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));

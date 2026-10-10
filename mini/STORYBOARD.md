@@ -16,7 +16,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 
 ## Video direction
 
-- **One world** : fond #0A0A0A, accent unique #C9A84C, texte blanc ; titres Anton en capitales avec le trait orange tracé dessous ; sous-titres de la voix mot par mot, mot-clé en orange.
+- **One world** : fond #0A0A0A, accent unique #FB8000, texte blanc ; titres Anton en capitales avec le trait orange tracé dessous ; sous-titres de la voix mot par mot, mot-clé en orange.
 - **Seams** : coupes franches sur la voix à chaque scène (whoosh court).
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : aucun billet ni espèce ; jamais plus de 6 mots à l'écran (sauf les lignes de coûts et la leçon, voulues par le brief) ; photos de Guillaume désaturées en cadre or, plaques floutées ; compteur TOTAL INVESTI en haut à droite des scènes 2 à 7.

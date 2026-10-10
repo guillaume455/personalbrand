@@ -59,7 +59,7 @@ SCENES = [
 SPOKEN_SYL = {"2000euros": 4, "2015": 3, "1300": 2, "1992": 7, "sérielimitée": 5, "1275": 6, "sixmois": 2, "1500euros": 5,
               "500euros": 4, "300euros": 4, "60euros": 4, "4360euros": 8, "quatreans": 3, "8500euros": 6, "4140euros": 7,
               "boncôté": 2, "mille": 1}
-GOLD = "#C9A84C"
+GOLD = "#FB8000"
 
 
 def norm(tok):
@@ -146,7 +146,7 @@ SHARED_CSS = r"""
       font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
     .§ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
     .§halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
-      background: radial-gradient(closest-side, rgba(201,168,76,0.15) 0%, rgba(201,168,76,0.09) 38%, rgba(201,168,76,0.03) 70%, rgba(201,168,76,0) 100%); }
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
     .§grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
       background-size: 240px 240px; }
@@ -160,7 +160,7 @@ SHARED_CSS = r"""
     .§tline { position: relative; display: inline-block; opacity: 0; }
     .§stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
       transform: rotate(-1.5deg); transform-origin: 0 50%; }
-    .§stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #C9A84C;
+    .§stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
       border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
 
     /* cash-register counter: one rolling column per digit */
@@ -177,9 +177,9 @@ SHARED_CSS = r"""
     .§pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
     .§pgrey { fill: #2b2b2b; }
     .§pwhite { fill: #f2f2f2; opacity: 0; }
-    .§porange { fill: #C9A84C; opacity: 0; }
+    .§porange { fill: #FB8000; opacity: 0; }
     .§glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
-      background: radial-gradient(closest-side, rgba(201,168,76,0.55), rgba(201,168,76,0.18) 55%, rgba(201,168,76,0)); }
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
     .§car { position: absolute; transform-origin: 50% 100%; }
     .§car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
       stroke-linecap: round; stroke-linejoin: round; }
@@ -273,7 +273,7 @@ SHARED_JS = r"""
           Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
             var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
             tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
-            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#C9A84C", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
           });
           var out = ch.getAttribute("data-out");
           if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
@@ -343,17 +343,17 @@ def stage(car2=False, extra=""):
 
 PH_CSS = """
     @font-face { font-family: "Space Mono"; src: url("assets/fonts/SpaceMono-700.woff2") format("woff2"); font-weight: 700; }
-    .§ph { position: absolute; overflow: hidden; border: 3px solid #C9A84C; border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); background: #151515; }
+    .§ph { position: absolute; overflow: hidden; border: 3px solid #FB8000; border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); background: #151515; }
     .§ph img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.78) contrast(1.04); }
     .§full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
     .§full img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.78) contrast(1.04); }
-    .§g { color: #C9A84C; }
+    .§g { color: #FB8000; }
     .§lab { position: absolute; left: 0; width: 1080px; text-align: center; font: 96px/1.1 "Anton", sans-serif; color: #fff; white-space: nowrap; opacity: 0;
       text-shadow: 0 4px 24px rgba(0,0,0,0.6); }
     .§title { text-shadow: 0 4px 24px rgba(0,0,0,0.5); }
     #§tot { position: absolute; right: 40px; top: 130px; text-align: right; opacity: 0; }
     #§totl { display: block; font: 700 22px/1 "Space Mono", monospace; color: #9a9a9a; letter-spacing: 0.12em; }
-    #§totv { display: block; margin-top: 6px; font: 60px/1 "Anton", sans-serif; color: #C9A84C; }
+    #§totv { display: block; margin-top: 6px; font: 60px/1 "Anton", sans-serif; color: #FB8000; }
 """
 
 PH_JS = """
@@ -417,11 +417,11 @@ def scene_02():
 
 
 ROOF = """<svg id="§roof" viewBox="0 0 400 700" style="position:absolute;left:340px;top:420px;width:400px;height:700px;opacity:0;overflow:visible">
-  <rect x="40" y="20" width="320" height="660" rx="90" fill="#1f3b2e" stroke="#C9A84C" stroke-width="6"/>
-  <rect x="70" y="150" width="260" height="70" rx="20" fill="#0d1a14" stroke="#C9A84C" stroke-width="3"/>
-  <rect x="80" y="560" width="240" height="44" rx="14" fill="#0d1a14" stroke="#C9A84C" stroke-width="3"/>
+  <rect x="40" y="20" width="320" height="660" rx="90" fill="#1f3b2e" stroke="#FB8000" stroke-width="6"/>
+  <rect x="70" y="150" width="260" height="70" rx="20" fill="#0d1a14" stroke="#FB8000" stroke-width="3"/>
+  <rect x="80" y="560" width="240" height="44" rx="14" fill="#0d1a14" stroke="#FB8000" stroke-width="3"/>
   <rect x="70" y="230" width="260" height="320" rx="16" fill="#d9cfb7" opacity="0.35"/>
-  <g id="§canvas"><rect x="70" y="230" width="260" height="320" rx="16" fill="#151515" stroke="#C9A84C" stroke-width="3"/>
+  <g id="§canvas"><rect x="70" y="230" width="260" height="320" rx="16" fill="#151515" stroke="#FB8000" stroke-width="3"/>
   <path d="M90 290 H310 M90 350 H310 M90 410 H310 M90 470 H310" stroke="#3a3a3a" stroke-width="4"/></g>
   <text x="200" y="12" text-anchor="middle" font-family="Space Mono" font-size="20" fill="#9a9a9a">AVANT</text>
 </svg>"""
@@ -454,10 +454,10 @@ def scene_04():
     css = PH_CSS + """
     #§sw { position: absolute; left: 90px; top: 960px; width: 900px; height: 250px; opacity: 0; }
     #§track { position: absolute; left: 150px; top: 110px; width: 600px; height: 6px; background: #3a3a3a; border-radius: 3px; }
-    #§knob { position: absolute; left: 126px; top: 89px; width: 48px; height: 48px; border-radius: 50%; background: #C9A84C; box-shadow: 0 0 30px rgba(201,168,76,0.6); }
+    #§knob { position: absolute; left: 126px; top: 89px; width: 48px; height: 48px; border-radius: 50%; background: #FB8000; box-shadow: 0 0 30px rgba(251,128,0,0.6); }
     .§swl { position: absolute; top: 0; width: 300px; text-align: center; font: 58px/1 "Anton", sans-serif; color: #ffffff; }
     .§swd { position: absolute; top: 160px; width: 300px; text-align: center; font: 700 22px/1.3 "Space Mono", monospace; color: #9a9a9a; letter-spacing: 0.08em; }
-    #§here { position: absolute; left: 30px; top: -60px; width: 180px; text-align: center; font: 34px/1 "Anton", sans-serif; color: #0A0A0A; background: #C9A84C; border-radius: 30px; padding: 6px 0; opacity: 0; }
+    #§here { position: absolute; left: 30px; top: -60px; width: 180px; text-align: center; font: 34px/1 "Anton", sans-serif; color: #0A0A0A; background: #FB8000; border-radius: 30px; padding: 6px 0; opacity: 0; }
     """
     st = ph("p1", "20190228_165935.jpg", 60, 510, 960, 400, "50% 40%")
     hud = (title("t1", ["1275 CM3", '<span class="§g">CARBURATEUR</span>'], 250, 100) + tot("2 000 €")
@@ -472,10 +472,10 @@ def scene_04():
       pre("sw", { opacity: 0, y: 30 }); go("sw", { opacity: 1, y: 0 }, at("quelques") - 0.1, 0.35);
       go("p1", { opacity: 0.35 }, at("quelques") - 0.1, 0.4);
       init("knob", { x: 0 }); go("knob", { x: 600 }, at("l'injection") - 0.1, 0.6, "power3.inOut");
-      tl.fromTo($("sr"), { color: "#ffffff" }, { color: "#C9A84C", duration: 0.2, immediateRender: false }, at("l'injection") + 0.3);
+      tl.fromTo($("sr"), { color: "#ffffff" }, { color: "#FB8000", duration: 0.2, immediateRender: false }, at("l'injection") + 0.3);
       go("knob", { x: 0 }, at("boncôté") - 0.2, 0.6, "power3.inOut");
-      tl.fromTo($("sr"), { color: "#C9A84C" }, { color: "#ffffff", duration: 0.2, immediateRender: false }, at("boncôté") - 0.2);
-      tl.fromTo($("sl"), { color: "#ffffff" }, { color: "#C9A84C", duration: 0.2, immediateRender: false }, at("boncôté") + 0.3);
+      tl.fromTo($("sr"), { color: "#FB8000" }, { color: "#ffffff", duration: 0.2, immediateRender: false }, at("boncôté") - 0.2);
+      tl.fromTo($("sl"), { color: "#ffffff" }, { color: "#FB8000", duration: 0.2, immediateRender: false }, at("boncôté") + 0.3);
       label("here", at("boncôté") + 0.3);
       thide("t1", 2, at("c'est") - 0.1);
       go("p1", { opacity: 1 }, at("photo") - 0.4, 0.4); go("sw", { opacity: 0 }, at("photo") - 0.4, 0.3);
@@ -487,8 +487,8 @@ def scene_04():
 
 def scene_05():
     css = PH_CSS + """
-    #§cal { position: absolute; left: 790px; top: 500px; width: 190px; height: 190px; border-radius: 18px; background: #151515; border: 3px solid #C9A84C; overflow: hidden; opacity: 0; }
-    #§calh { position: absolute; left: 0; top: 0; width: 100%; height: 48px; background: #C9A84C; text-align: center; font: 700 22px/48px "Space Mono", monospace; color: #0A0A0A; letter-spacing: 0.1em; }
+    #§cal { position: absolute; left: 790px; top: 500px; width: 190px; height: 190px; border-radius: 18px; background: #151515; border: 3px solid #FB8000; overflow: hidden; opacity: 0; }
+    #§calh { position: absolute; left: 0; top: 0; width: 100%; height: 48px; background: #FB8000; text-align: center; font: 700 22px/48px "Space Mono", monospace; color: #0A0A0A; letter-spacing: 0.1em; }
     #§cald { position: absolute; left: 0; top: 56px; width: 100%; text-align: center; font: 110px/1.15 "Anton", sans-serif; color: #fff; }
     """
     st = (ph("p1", "20170225_154834.jpg", 60, 560, 960, 540, "50% 50%") + ph("p2", "20170408_135132.jpg", 60, 560, 960, 540, "50% 50%")
@@ -524,7 +524,7 @@ def scene_06():
     .§rv { position: absolute; right: 0; top: 18px; font: 76px/1 "Anton", sans-serif; color: #ffffff; }
     #§big { position: absolute; left: 0; top: 960px; width: 1080px; text-align: center; opacity: 0; }
     #§bigl { display: block; font: 700 30px/1 "Space Mono", monospace; color: #9a9a9a; letter-spacing: 0.16em; }
-    #§bigv { display: block; margin-top: 14px; font: 190px/1 "Anton", sans-serif; color: #C9A84C; }
+    #§bigv { display: block; margin-top: 14px; font: 190px/1 "Anton", sans-serif; color: #FB8000; }
     """
     hud = (tot("2 000 €") + "".join(
         f'<div id="§r{i}" class="§row" style="top:{360 + i * 140}px"><span class="§rl">{l}</span><span class="§rv">{odo(f"v{i}", v)}</span></div>'
@@ -550,13 +550,13 @@ def scene_07():
     .§box { position: absolute; top: 940px; width: 440px; height: 190px; border-radius: 18px; background: #151515; border: 2px solid #2e2e2e; text-align: center; opacity: 0; }
     .§bl { display: block; margin-top: 26px; font: 700 26px/1 "Space Mono", monospace; color: #9a9a9a; letter-spacing: 0.14em; }
     .§bv { display: block; margin-top: 16px; font: 92px/1 "Anton", sans-serif; color: #fff; }
-    #§gain { position: absolute; left: 0; top: 560px; width: 1080px; text-align: center; font: 170px/1 "Anton", sans-serif; color: #C9A84C; opacity: 0;
+    #§gain { position: absolute; left: 0; top: 560px; width: 1080px; text-align: center; font: 170px/1 "Anton", sans-serif; color: #FB8000; opacity: 0;
       text-shadow: 0 8px 40px rgba(0,0,0,0.75); }
     """
     st = ph("p1", "2.jpg", 60, 520, 960, 380, "50% 55%")
     hud = (title("t1", ["4 ANS", '<span class="§g">PLUS TARD.</span>'], 230, 110) + tot("4 360 €")
            + '<div id="§b1" class="§box" style="left:70px"><span class="§bl">INVESTI</span><span class="§bv">' + odo("bi", "4 360 €") + '</span></div>'
-           + '<div id="§b2" class="§box" style="left:570px;border-color:#C9A84C"><span class="§bl">REVENDUE</span><span class="§bv">' + odo("br", "8 500 €") + '</span></div>'
+           + '<div id="§b2" class="§box" style="left:570px;border-color:#FB8000"><span class="§bl">REVENDUE</span><span class="§bv">' + odo("br", "8 500 €") + '</span></div>'
            + '<div id="§gain">+ ' + odo("gv", "4 140 €") + '</div>')
     js = PH_JS + TOT_ON + """
       tshow("t1", 2, [Math.max(0.05, at("quatreans") - 0.1), at("quatreans") + 0.2]);
@@ -576,7 +576,7 @@ def scene_08():
     css = PH_CSS + """
     #§shade { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px;
       background: linear-gradient(rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.15) 26%, rgba(10,10,10,0) 40%, rgba(10,10,10,0.35) 60%, rgba(10,10,10,0.85) 100%); }
-    #§gain { position: absolute; left: 0; top: 300px; width: 1080px; text-align: center; font: 170px/1 "Anton", sans-serif; color: #C9A84C; }
+    #§gain { position: absolute; left: 0; top: 300px; width: 1080px; text-align: center; font: 170px/1 "Anton", sans-serif; color: #FB8000; }
     """
     st = '<div id="§fp" class="§full"><img src="assets/img/1.jpg" style="object-position:28% 50%"></div><div id="§shade"></div>'
     hud = ('<div id="§gain">+ 4 140 €</div>' + title("t1", ["CE N'ÉTAIT PAS", '<span class="§g">LE BUT</span>.'], 280, 120))
@@ -593,9 +593,9 @@ def scene_08():
 def scene_09():
     css = PH_CSS + """
     #§bg { opacity: 0.22; }
-    #§kick { position: absolute; left: 0; top: 270px; width: 1080px; text-align: center; font: 700 34px/1 "Space Mono", monospace; color: #C9A84C; letter-spacing: 0.14em; opacity: 0; }
+    #§kick { position: absolute; left: 0; top: 270px; width: 1080px; text-align: center; font: 700 34px/1 "Space Mono", monospace; color: #FB8000; letter-spacing: 0.14em; opacity: 0; }
     .§rule { position: absolute; left: 80px; width: 920px; font: 76px/1.12 "Anton", sans-serif; color: #fff; opacity: 0; }
-    .§rule b { font-weight: 400; color: #C9A84C; }
+    .§rule b { font-weight: 400; color: #FB8000; }
     """
     st = '<div id="§bg" class="§full"><img src="assets/img/4.jpg" style="object-position:50% 50%"></div>'
     hud = ('<div id="§kick">CE QUE J\'EN RETIENS</div>'
@@ -752,7 +752,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 
 ## Video direction
 
-- **One world** : fond #0A0A0A, accent unique #C9A84C, texte blanc ; titres Anton en capitales avec le trait orange tracé dessous ; sous-titres de la voix mot par mot, mot-clé en orange.
+- **One world** : fond #0A0A0A, accent unique #FB8000, texte blanc ; titres Anton en capitales avec le trait orange tracé dessous ; sous-titres de la voix mot par mot, mot-clé en orange.
 - **Seams** : coupes franches sur la voix à chaque scène (whoosh court).
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : aucun billet ni espèce ; jamais plus de 6 mots à l'écran (sauf les lignes de coûts et la leçon, voulues par le brief) ; photos de Guillaume désaturées en cadre or, plaques floutées ; compteur TOTAL INVESTI en haut à droite des scènes 2 à 7.
