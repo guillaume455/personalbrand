@@ -408,7 +408,7 @@ def card(fid, src, x, y, w, h, pos="50% 50%"):
 
 
 def scene_01():
-    st = vids([("hook", 0)], end=HOOK) + full("ph1", "p174045.jpg", "55% 50%") + full("ph2", "p174019.jpg", "45% 50%") + '<div class="§shadeT"></div>'
+    st = vids([("hook", 0)], end=HOOK) + full("ph1", "w07.jpg") + full("ph2", "w10.jpg") + '<div class="§shadeT"></div>'
     hud = ('<div id="§c1" class="§cap" style="top:1500px">JE NE CHERCHAIS PAS</div>'
            '<div id="§c2" class="§cap" style="top:1500px">CETTE <span class="§o">VOITURE</span>.</div>'
            + title("t1", ["ON VIENT ME", "LA PROPOSER."], 290, 120)
@@ -438,7 +438,7 @@ def scene_02():
     st = ('<div id="§blk"></div>'
           + f'<svg id="§moto" viewBox="0 0 400 240" style="position:absolute;left:190px;top:700px;width:700px;height:420px;opacity:0;overflow:visible">{MOTO}</svg>'
           + f'<svg id="§xb" viewBox="0 0 400 240" style="position:absolute;left:190px;top:700px;width:700px;height:420px;opacity:0;overflow:visible">{XBOW}</svg>'
-          + card("k1", "w05.jpg", 90, 640, 900, 600) + card("k2", "p173948.jpg", 90, 640, 900, 600) + card("k3", "p174010.jpg", 90, 640, 900, 600)
+          + card("k1", "w05.jpg", 90, 640, 900, 600) + card("k2", "w04.jpg", 90, 640, 900, 600)
           + vids([("cockpit", t_pas - 0.1)]))
     hud = (title("t1", ["KTM FAIT DES MOTOS."], 300, 110) + title("t2", ['790 KG DE <span class="§o">CARBONE</span>.'], 300, 110)
            + title("t3", ["NI TOIT NI PARE-BRISE."], 300, 110))
@@ -469,10 +469,16 @@ def scene_03():
     end_voice = last_end() + 0.3
     ids = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"]
     shots = list(zip(ids, T)) + [("breath", end_voice)]
-    st = vids(shots) + '<div id="§fb" style="position:absolute;left:0;top:0;width:1080px;height:1920px;background:#0A0A0A;opacity:0"></div>'
+    # the photographer's weekend shots, cut in between the rolling shots
+    ins = [("i1", "w03.jpg", False, cue("presque") - 0.05, cue("le") - 0.05),
+           ("i2", "w06.jpg", True, cue("les") - 0.05, cue("chambord") - 0.05),
+           ("i3", "w12.jpg", False, cue("une") - 0.05, cue("une") + 1.6)]
+    st = vids(shots) + "".join(full(i, f, contain=c) for i, f, c, _, _ in ins) + '<div id="§fb" style="position:absolute;left:0;top:0;width:1080px;height:1920px;background:#0A0A0A;opacity:0"></div>'
     hud = ('<div id="§c1" class="§cap" style="top:300px;font-size:70px">LE BUREAU, PAR BEAU TEMPS.</div>'
            '<div id="§c2" class="§cap" style="top:300px;font-size:70px"><span class="§o">CHAMBORD</span>, LES COPAINS EN MOTO.</div>')
-    js = X_JS + """
+    js = X_JS + "".join(f"""
+      pre("{i}", {{ opacity: 0, scale: 1 }}); tl.set($("{i}"), {{ opacity: 1 }}, {a:.3f}); go("{i}", {{ scale: 1.04 }}, {a:.3f}, {b - a:.3f}, "none"); tl.set($("{i}"), {{ opacity: 0 }}, {b:.3f});"""
+                        for i, _, _, a, b in ins) + """
       fin("c1", at("le") + 0.1); fout("c1", at("les") - 0.15);
       fin("c2", at("chambord") - 0.05); fout("c2", at("une") - 0.15);
       // breathing: engine only, then fade to black
@@ -508,7 +514,7 @@ def scene_05():
     #§hn { position: absolute; left: 0; top: 1080px; width: 1080px; text-align: center; font: 70px/1 "Anton", sans-serif; color: #FB8000; opacity: 0; }
     """
     tc = last_end() + 0.35
-    st = ('<div id="§blk"></div>' + full("ph", "p174019.jpg", "50% 50%") + full("fz", "freeze-end.jpg", "50% 50%", contain=False)
+    st = ('<div id="§blk"></div>' + full("ph", "w01.jpg", contain=False) + full("fz", "freeze-end.jpg", "50% 50%", contain=False)
           + '<div class="§shadeT"></div>')
     hud = (title("t1", ["LES BONNES AFFAIRES", '<span class="§o">NE SE CHERCHENT PAS.</span>'], 300, 96)
            + '<div id="§sm">ENCORE FAUT-IL ÊTRE <span class="§o">IDENTIFIÉ</span>.</div>'

@@ -72,7 +72,7 @@
       <div class="r3-grain"></div>
     </div>
     <div id="r3-push" class="r3-cam"><div id="r3-shk" class="r3-cam"><div id="r3-cran" class="r3-cam">
-      <div id="r3-fb" style="position:absolute;left:0;top:0;width:1080px;height:1920px;background:#0A0A0A;opacity:0"></div>
+      <div id="r3-i1" class="r3-full"><img src="assets/img/w03.jpg" style="object-position:50% 50%"></div><div id="r3-i2" class="r3-full"><img src="assets/img/w06.jpg" style="filter:saturate(0.1) blur(28px) brightness(0.45);transform:scale(1.15)"><img src="assets/img/w06.jpg" style="object-fit:contain;object-position:50% 50%"></div><div id="r3-i3" class="r3-full"><img src="assets/img/w12.jpg" style="object-position:50% 50%"></div><div id="r3-fb" style="position:absolute;left:0;top:0;width:1080px;height:1920px;background:#0A0A0A;opacity:0"></div>
     </div></div></div>
     <div id="r3-hud" class="r3-cam r3-hudcam">
       <div id="r3-c1" class="r3-cap" style="top:300px;font-size:70px">LE BUREAU, PAR BEAU TEMPS.</div><div id="r3-c2" class="r3-cap" style="top:300px;font-size:70px"><span class="r3-o">CHAMBORD</span>, LES COPAINS EN MOTO.</div>
@@ -199,6 +199,9 @@
       // photos: full frame or card, slow Ken Burns 4 %
       function photo(id, t, t2) { pre(id, { opacity: 0, scale: 1 }); go(id, { opacity: 1 }, t, 0.2, "none"); go(id, { scale: 1.04 }, t, Math.max(0.5, (t2 || DUR) - t), "none"); }
 
+      pre("i1", { opacity: 0, scale: 1 }); tl.set($("i1"), { opacity: 1 }, 1.341); go("i1", { scale: 1.04 }, 1.341, 2.723, "none"); tl.set($("i1"), { opacity: 0 }, 4.064);
+      pre("i2", { opacity: 0, scale: 1 }); tl.set($("i2"), { opacity: 1 }, 6.030); go("i2", { scale: 1.04 }, 6.030, 1.053, "none"); tl.set($("i2"), { opacity: 0 }, 7.083);
+      pre("i3", { opacity: 0, scale: 1 }); tl.set($("i3"), { opacity: 1 }, 10.351); go("i3", { scale: 1.04 }, 10.351, 1.650, "none"); tl.set($("i3"), { opacity: 0 }, 12.001);
       fin("c1", at("le") + 0.1); fout("c1", at("les") - 0.15);
       fin("c2", at("chambord") - 0.05); fout("c2", at("une") - 0.15);
       // breathing: engine only, then fade to black
