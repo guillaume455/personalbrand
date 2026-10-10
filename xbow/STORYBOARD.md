@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "60s"
+duration: "63s"
 message: "Deux ans à Dubaï : les rassemblements auto n'y ont rien à voir avec la France (nombre, niveau, indifférence, détails) ; même après seize ans dans l'auto, on y redevient spectateur."
 arc: Hook → Le nombre → Le niveau → L'indifférence → Les détails → Le regard du pro → CTA
 audience: "Personnes qui veulent se lancer dans l'achat-revente automobile"
@@ -37,14 +37,14 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: C'est quoi · 12.00 → 24.00
+## Frame 2: C'est quoi · 12.00 → 27.00
 
 - scene: C'est quoi
-- duration: 12.00s
+- duration: 15.00s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-cestquoi.html
-- voiceover: "KTM fait des motos. Ça, c'est leur première voiture. Monocoque carbone, 790 kilos, pas de toit, pas de pare-brise. Et dessous, le moteur d'une Golf GTI."
+- voiceover: "KTM fait des motos. Ça, c'est leur première voiture. Monocoque carbone, 790 kilos, pas de toit, pas de pare-brise. Un 2.0L TFSI, similaire à ceux que l'on trouve dans les Audi S3, TT-S ou encore Golf GTI. 0 à 100 km/h en 3,9 s."
 - type: demo
 - blueprint: none
 - focal: C'est quoi
@@ -53,7 +53,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: Les balades · 24.00 → 42.00
+## Frame 3: Les balades · 27.00 → 45.00
 
 - scene: Les balades
 - duration: 18.00s
@@ -69,7 +69,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: La revente · 42.00 → 50.00
+## Frame 4: La revente · 45.00 → 53.00
 
 - scene: La revente
 - duration: 8.00s
@@ -85,7 +85,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: La leçon et CTA · 50.00 → 60.00
+## Frame 5: La leçon et CTA · 53.00 → 63.00
 
 - scene: La leçon et CTA
 - duration: 10.00s

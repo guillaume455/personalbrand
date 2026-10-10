@@ -26,20 +26,21 @@ SCENES = [
  dict(id="01-opportunite", name="Hook et opportunité", window=(0, 12), speak=(3.1, 12), chunks=[
    "On me propose", "une KTM *X-Bow*.", "Je n'en cherchais pas,", "je n'en avais jamais conduit.", "40~000~euros.",
    "J'ai dit oui."]),
- dict(id="02-cestquoi", name="C'est quoi", window=(12, 24), chunks=[
+ dict(id="02-cestquoi", name="C'est quoi", window=(12, 27), chunks=[
    "KTM fait des motos.", "Ça, c'est leur", "*première~voiture*.", "Monocoque *carbone*,", "790~kilos,", "pas de toit,",
-   "pas de pare-brise.", "Et dessous, le moteur", "d'une Golf~GTI."]),
- dict(id="03-balades", name="Les balades", window=(24, 42), speak=(24.1, 39), chunks=[
+   "pas de pare-brise.", "Un 2.0L~TFSI,", "similaire à ceux", "que l'on trouve", "dans les Audi~S3,", "TT-S ou encore",
+   "Golf~GTI.", "0 à 100~km/h", "en 3,9~s."]),
+ dict(id="03-balades", name="Les balades", window=(27, 45), speak=(27.1, 42), chunks=[
    "Je m'en suis servi", "presque *tous~les~jours*,", "un été entier.", "Le bureau", "quand il faisait beau,",
    "les bords de Loire,", "*Chambord* avec des copains", "qui suivaient en moto.", "Une voiture de circuit,",
    "utilisée comme une voiture", "de tous les jours."]),
- dict(id="04-revente", name="La revente", window=(42, 50), chunks=[
+ dict(id="04-revente", name="La revente", window=(45, 53), chunks=[
    "Et puis une société", "me la rachète", "*49~000~euros*,", "pour l'exploiter", "en location sur circuit."]),
- dict(id="05-lecon", name="La leçon et CTA", window=(50, 60), speak=(50.1, 57.4), chunks=[
+ dict(id="05-lecon", name="La leçon et CTA", window=(53, 63), speak=(53.1, 60.4), chunks=[
    "Je ne l'ai pas cherchée,", "elle s'est présentée.", "Comme presque toutes", "mes bonnes opérations.",
    "Mais on ne propose pas", "une voiture à quelqu'un", "qu'on ne connaît pas."]),
 ]
-SPOKEN_SYL = {"40000euros": 5, "premièrevoiture": 5, "790kilos": 8, "golfgti": 4, "touslesjours": 3, "49000euros": 7,
+SPOKEN_SYL = {"40000euros": 5, "premièrevoiture": 5, "790kilos": 8, "golfgti": 4, "20ltfsi": 7, "audis3": 4, "tt-s": 3, "0": 2, "100kmh": 6, "39s": 7, "touslesjours": 3, "49000euros": 7,
               "x-bow": 2, "ktm": 3}
 HOOK = 3.0        # the hook: raw rush, no voice (the voice montage starts after it)
 BREATH = 3.0      # engine only, no text, at the end of « les balades »
@@ -439,9 +440,11 @@ def scene_02():
           + f'<svg id="§moto" viewBox="0 0 400 240" style="position:absolute;left:190px;top:700px;width:700px;height:420px;opacity:0;overflow:visible">{MOTO}</svg>'
           + f'<svg id="§xb" viewBox="0 0 400 240" style="position:absolute;left:190px;top:700px;width:700px;height:420px;opacity:0;overflow:visible">{XBOW}</svg>'
           + card("k1", "w05.jpg", 90, 640, 900, 600) + card("k2", "w04.jpg", 90, 640, 900, 600)
-          + vids([("cockpit", t_pas - 0.1)]))
+          + vids([("cockpit", t_pas - 0.1), ("cockpit2", t_pas + 4.2)], end=cue("0") - 0.1))
     hud = (title("t1", ["KTM FAIT DES MOTOS."], 300, 110) + title("t2", ['790 KG DE <span class="§o">CARBONE</span>.'], 300, 110)
-           + title("t3", ["NI TOIT NI PARE-BRISE."], 300, 110))
+           + title("t3", ["NI TOIT NI PARE-BRISE."], 300, 110) + title("t4", ["2.0L TFSI."], 300, 110)
+           + title("t5", ["0 À 100 KM/H"], 300, 110)
+           + '<div id="§acc" class="§cap" style="top:820px;font-size:230px;color:#FB8000">' + odo("ac", "3,9 s") + '</div>')
     js = X_JS + """
       // the motorbike silhouette turns into the X-Bow on the first line
       tin("t1", 1, Math.max(0.05, at("ktm") - 0.1));
@@ -457,6 +460,11 @@ def scene_02():
       tout("t2", 1, at("pas") - 0.25); go("k2", { opacity: 0 }, at("pas") - 0.1, 0.2, "none"); go("k1", { opacity: 0 }, at("790kilos"), 0.2, "none");
       tin("t3", 1, at("pas") - 0.1);
       go("blk", { opacity: 0.0 }, at("pas") - 0.1, 0.2, "none");
+      // the engine, then 0 to 100: back on black, counter
+      tout("t3", 1, at("un") - 0.25); tin("t4", 1, at("un") - 0.1);
+      tout("t4", 1, at("0") - 0.25); go("blk", { opacity: 1 }, at("0") - 0.2, 0.2, "none");
+      tin("t5", 1, at("0") - 0.1);
+      fin("acc", at("en") - 0.1); odo("ac", at("en") - 0.05, 1.0, { from: "0,0", dimLead: true });
     """
     sfx = []
     return X_CSS, st, hud, js, (540, 900), sfx
