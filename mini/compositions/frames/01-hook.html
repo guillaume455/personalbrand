@@ -65,8 +65,8 @@
     #r1-totv { display: block; margin-top: 6px; font: 60px/1 "Anton", sans-serif; color: #C9A84C; }
   </style>
 
-  <div id="root" data-composition-id="01-hook" data-width="1080" data-height="1920" data-duration="4">
-    <div id="r1-ground" class="clip r1-ground" data-start="0" data-duration="4" data-track-index="0">
+  <div id="root" data-composition-id="01-hook" data-width="1080" data-height="1920" data-duration="2.3">
+    <div id="r1-ground" class="clip r1-ground" data-start="0" data-duration="2.3" data-track-index="0">
       <div id="r1-halo" class="r1-halo" style="left:540px;top:800px"></div>
       <div class="r1-grain"></div>
     </div>
@@ -77,18 +77,18 @@
       <div class="r1-title" id="r1-t1" style="top:230px;font-size:230px;"><span class="r1-tline" id="r1-t1-0"><span id="r1-big" class="r1-odo " data-to="2 000 €"><span class="r1-oc"><span class="r1-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r1-os">&nbsp;</span><span class="r1-oc"><span class="r1-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r1-oc"><span class="r1-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r1-oc"><span class="r1-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r1-os">&nbsp;</span><span class="r1-os">€</span></span>.<i class="r1-stilt"><i class="r1-stk" id="r1-t1-s"></i></i></span></div><div id="r1-l1" class="r1-lab" style="top:1130px;font-size:84px">ELLE NE <span class="r1-g">ROULAIT</span> PAS.</div>
     </div>
     <div id="r1-sub" class="r1-sub">
-      <div class="r1-chunk sub-chunk" data-out="1.375"><span class="r1-w sub-w sub-key" data-cue="0.150">2 000 euros.</span></div>
-      <div class="r1-chunk sub-chunk" data-out="2.359"><span class="r1-w sub-w" data-cue="1.435">Pour</span> <span class="r1-w sub-w" data-cue="1.681">une</span> <span class="r1-w sub-w" data-cue="1.927">voiture</span></div>
-      <div class="r1-chunk sub-chunk"><span class="r1-w sub-w" data-cue="2.419">qui</span> <span class="r1-w sub-w" data-cue="2.665">ne</span> <span class="r1-w sub-w sub-key" data-cue="2.912">roulait</span> <span class="r1-w sub-w" data-cue="3.404">pas.</span></div>
+      <div class="r1-chunk sub-chunk" data-out="0.830"><span class="r1-w sub-w sub-key" data-cue="0.010">2 000 euros.</span></div>
+      <div class="r1-chunk sub-chunk" data-out="1.368"><span class="r1-w sub-w" data-cue="0.890">Pour</span> <span class="r1-w sub-w" data-cue="1.024">une</span> <span class="r1-w sub-w" data-cue="1.159">voiture</span></div>
+      <div class="r1-chunk sub-chunk"><span class="r1-w sub-w" data-cue="1.428">qui</span> <span class="r1-w sub-w" data-cue="1.562">ne</span> <span class="r1-w sub-w sub-key" data-cue="1.697">roulait</span> <span class="r1-w sub-w" data-cue="1.966">pas.</span></div>
     </div>
   </div>
 
   <script src="assets/vendor/gsap.min.js"></script>
   <script>
     (function () {
-      var FID = "01-hook", P = "r1-", DUR = 4;
+      var FID = "01-hook", P = "r1-", DUR = 2.3;
       // word cues of this scene (local seconds), written by build.py from the voice timings
-      var W = [["2000euros", 0.15, 1.135], ["pour", 1.435, 1.681], ["une", 1.681, 1.927], ["voiture", 1.927, 2.419], ["qui", 2.419, 2.665], ["ne", 2.665, 2.912], ["roulait", 2.912, 3.404], ["pas", 3.404, 3.65]];
+      var W = [["2000euros", 0.01, 0.59], ["pour", 0.89, 1.024], ["une", 1.024, 1.159], ["voiture", 1.159, 1.428], ["qui", 1.428, 1.562], ["ne", 1.562, 1.697], ["roulait", 1.697, 1.966], ["pas", 1.966, 2.1]];
 
       var root = document.querySelector('[data-composition-id="' + FID + '"]');
       function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }

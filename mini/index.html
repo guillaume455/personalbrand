@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #0A0A0A;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="87.32"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div
+        id="el-01-hook"
+        class="scene"
+        data-composition-id="01-hook"
+        data-composition-src="compositions/frames/01-hook.html"
+        data-start="0"
+        data-duration="2.3"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-02-trouvaille"
+        class="scene"
+        data-composition-id="02-trouvaille"
+        data-composition-src="compositions/frames/02-trouvaille.html"
+        data-start="2.3"
+        data-duration="12.73"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-03-voiture"
+        class="scene"
+        data-composition-id="03-voiture"
+        data-composition-src="compositions/frames/03-voiture.html"
+        data-start="15.030000000000001"
+        data-duration="12.03"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-04-detail"
+        class="scene"
+        data-composition-id="04-detail"
+        data-composition-src="compositions/frames/04-detail.html"
+        data-start="27.060000000000002"
+        data-duration="11.4"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-05-chantier"
+        class="scene"
+        data-composition-id="05-chantier"
+        data-composition-src="compositions/frames/05-chantier.html"
+        data-start="38.46"
+        data-duration="6.83"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-06-couts"
+        class="scene"
+        data-composition-id="06-couts"
+        data-composition-src="compositions/frames/06-couts.html"
+        data-start="45.29"
+        data-duration="10.03"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-07-revente"
+        class="scene"
+        data-composition-id="07-revente"
+        data-composition-src="compositions/frames/07-revente.html"
+        data-start="55.32"
+        data-duration="5.03"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-08-retournement"
+        class="scene"
+        data-composition-id="08-retournement"
+        data-composition-src="compositions/frames/08-retournement.html"
+        data-start="60.35"
+        data-duration="10.1"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-09-lecon"
+        class="scene"
+        data-composition-id="09-lecon"
+        data-composition-src="compositions/frames/09-lecon.html"
+        data-start="70.45"
+        data-duration="11.27"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-10-cta"
+        class="scene"
+        data-composition-id="10-cta"
+        data-composition-src="compositions/frames/10-cta.html"
+        data-start="81.72"
+        data-duration="5.6"
+        data-track-index="1"
+      ></div>
+      <audio id="mix" data-start="0" data-duration="87.333" data-track-index="11" src="assets/audio/mix.wav" data-volume="1"></audio>
+
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

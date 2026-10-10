@@ -1,14 +1,14 @@
 {
- "provisional": true,
- "total": 95,
+ "provisional": false,
+ "total": 87.333,
  "frames": [
   {
    "n": 1,
    "id": "01-hook",
    "name": "Hook",
-   "start": 0,
-   "end": 4,
-   "dur": 4,
+   "start": 0.0,
+   "end": 2.3,
+   "dur": 2.3,
    "src": "compositions/frames/01-hook.html",
    "vo": "2 000 euros. Pour une voiture qui ne roulait pas."
   },
@@ -16,19 +16,19 @@
    "n": 2,
    "id": "02-trouvaille",
    "name": "La trouvaille",
-   "start": 4,
-   "end": 14,
-   "dur": 10,
+   "start": 2.3,
+   "end": 15.033,
+   "dur": 12.733,
    "src": "compositions/frames/02-trouvaille.html",
-   "vo": "2015. Une Mini British Open 1300, démontée dans un garage. Le propriétaire avait lancé la restauration, et il avait abandonné en cours de route. C'est ce qui m'a permis de l'acheter à ce prix. Une voiture immobile fait fuir presque tout le monde."
+   "vo": "On remonte en 2015. Une Mini British Open 1300, démontée dans un garage. Le propriétaire avait lancé la restauration, et il avait abandonné en cours de route. C'est ce qui m'a permis de l'acheter à ce prix. Une voiture immobile fait fuir presque tout le monde."
   },
   {
    "n": 3,
    "id": "03-voiture",
    "name": "La voiture",
-   "start": 14,
-   "end": 26,
-   "dur": 12,
+   "start": 15.033,
+   "end": 27.067,
+   "dur": 12.034,
    "src": "compositions/frames/03-voiture.html",
    "vo": "Une série limitée de juin 1992. British Racing Green, sellerie tweed, et un toit en toile électrique sur toute la longueur. Pas un toit ouvrant, un vrai toit qui s'escamote. Mille exemplaires pour le marché anglais."
   },
@@ -36,19 +36,19 @@
    "n": 4,
    "id": "04-detail",
    "name": "Le détail",
-   "start": 26,
-   "end": 36,
-   "dur": 10,
+   "start": 27.067,
+   "end": 38.467,
+   "dur": 11.4,
    "src": "compositions/frames/04-detail.html",
-   "vo": "1275 centimètres cubes, au carburateur. Quelques mois plus tard, la Mini passe à l'injection monopoint. Celle-ci est née du bon côté de la bascule. C'est le genre de détail qui sépare deux voitures identiques sur une photo."
+   "vo": "1275 centimètres cubes avec un carburateur. Quelques mois plus tard, la Mini passe à l'injection monopoint. Celle-ci est née du bon côté de la bascule. C'est le genre de détail qui sépare deux voitures identiques sur une photo."
   },
   {
    "n": 5,
    "id": "05-chantier",
    "name": "Le chantier",
-   "start": 36,
-   "end": 46,
-   "dur": 10,
+   "start": 38.467,
+   "end": 45.3,
+   "dur": 6.833,
    "src": "compositions/frames/05-chantier.html",
    "vo": "Six mois de chantier. Carrosserie, peinture, remontage complet. Six mois à démonter, à comprendre, et à remonter."
   },
@@ -56,9 +56,9 @@
    "n": 6,
    "id": "06-couts",
    "name": "Les coûts",
-   "start": 46,
-   "end": 56,
-   "dur": 10,
+   "start": 45.3,
+   "end": 55.333,
+   "dur": 10.033,
    "src": "compositions/frames/06-couts.html",
    "vo": "1 500 euros de carrosserie, peinture et remontage. 500 euros de pièces neuves. 300 euros de remise en route. 60 euros de contrôle technique. Total : 4 360 euros."
   },
@@ -66,9 +66,9 @@
    "n": 7,
    "id": "07-revente",
    "name": "La revente",
-   "start": 56,
-   "end": 64,
-   "dur": 8,
+   "start": 55.333,
+   "end": 60.367,
+   "dur": 5.034,
    "src": "compositions/frames/07-revente.html",
    "vo": "Je l'ai gardée quatre ans. Revendue 8 500 euros. 4 140 euros d'écart."
   },
@@ -76,9 +76,9 @@
    "n": 8,
    "id": "08-retournement",
    "name": "Le retournement",
-   "start": 64,
-   "end": 78,
-   "dur": 14,
+   "start": 60.367,
+   "end": 70.467,
+   "dur": 10.1,
    "src": "compositions/frames/08-retournement.html",
    "vo": "Sauf que je ne l'ai pas achetée pour ça. Je l'ai achetée pour apprendre à faire des choses que je ne savais pas faire. Et puis j'ai pris goût à la posséder, et à rouler avec. L'argent est arrivé après. Il n'était pas la raison."
   },
@@ -86,21 +86,21 @@
    "n": 9,
    "id": "09-lecon",
    "name": "La leçon",
-   "start": 78,
-   "end": 90,
-   "dur": 12,
+   "start": 70.467,
+   "end": 81.733,
+   "dur": 11.266,
    "src": "compositions/frames/09-lecon.html",
-   "vo": "La marge s'est faite à l'achat. Le jour où j'ai accepté d'acheter un tas de pièces. Et la valeur est venue du modèle, pas du chantier : une restauration ne crée pas de valeur sur une voiture banale, elle la révèle sur une voiture recherchée. Le reste, les six mois, personne ne peut me les reprendre."
+   "vo": "La marge s'est faite à l'achat. Le jour où j'ai accepté d'acheter un tas de pièces. Et la valeur est venue du modèle, pas du chantier : une restauration ne crée pas de valeur sur une voiture banale, elle la révèle sur une voiture recherchée."
   },
   {
    "n": 10,
    "id": "10-cta",
    "name": "CTA",
-   "start": 90,
-   "end": 95,
-   "dur": 5,
+   "start": 81.733,
+   "end": 87.333,
+   "dur": 5.6,
    "src": "compositions/frames/10-cta.html",
-   "vo": "Toi, tu l'aurais achetée démontée ?"
+   "vo": "Toi, tu aurais vu l'opportunité et tu te serais lancé dans ce chantier de restauration ?"
   }
  ]
 }

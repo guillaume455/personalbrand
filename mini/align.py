@@ -8,7 +8,7 @@ import json, re, subprocess, sys
 from build import all_tokens, syl, display, SCENES
 # chunk (from build.py SCENES) whose first word must start montage phrase n (onsets.py numbering), when the
 # syllable fit alone picks the wrong split. Checked by ear and by the pauses on the voice of 2026-10-08.
-ANCHORS = {}
+ANCHORS = {"Une voiture *immobile*": 9, "Toi, tu aurais vu": 47}
 wav = sys.argv[1] if len(sys.argv) > 1 else "assets/audio/voix-montage.wav"
 words = all_tokens()
 out = subprocess.run(["python3", "../.claude/skills/motion-design/scripts/onsets.py", wav, "--no-whisper"],

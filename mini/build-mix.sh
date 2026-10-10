@@ -1,9 +1,11 @@
 #!/bin/bash
 # Reel mix: voice montage (if present) + sound effects (each cut to 1.2 s max with a fade) (assets/audio/sfx-events.json, written by build.py) + music
-# (musique.mp3 « coma-media slim », first drop on scene 2, second drop on « moins 17 000 »), ducked under the voice, -14 LUFS (social). TOTAL comes from timings.json.
+# (musique.mp3 « coma-media slim », first drop on scene 2, lower under scene 8), ducked under the voice, -14 LUFS (social). TOTAL comes from timings.json.
 set -euo pipefail; cd "$(dirname "$0")"
 TOTAL=$(python3 -c "import json;print(json.load(open('timings.json'))['total'])")
-MUS_START=${MUS_START:-11.23}; MUS_GAIN=${MUS_GAIN:-0.30}
+MUS_START=${MUS_START:-13.10}; MUS_GAIN=${MUS_GAIN:-0.30}
+# the music drops back during « le retournement » (scene 8): DIP_A -> DIP_B, 1 s ramps, down to 40 %
+read DIP_A DIP_B < <(python3 -c "import json;f=json.load(open('timings.json'))['frames'][7];print(f['start'],f['end'])")
 SFX=../.claude/skills/media-use/audio/assets/sfx
 VO=assets/audio/voix-montage.wav
 if [ -f "$VO" ]; then VOIN=(-i "$VO"); else VOIN=(-f lavfi -t "$TOTAL" -i anullsrc=r=44100:cl=mono); echo "mix: no voice yet (silent voice track)"; fi
@@ -15,7 +17,7 @@ N=$((i-3))
 ffmpeg -v error -y "${VOIN[@]}" -i assets/music/musique.mp3 "${VOIN[@]}" "${ARGS[@]}" -filter_complex "
 [0]aformat=channel_layouts=stereo,apad=whole_dur=$TOTAL[vo];
 ${G}[vo]${L}amix=inputs=$((N+1)):normalize=0:duration=first[fg];
-[1]atrim=$MUS_START:$(python3 -c "print($MUS_START+$TOTAL)"),asetpts=PTS-STARTPTS,afade=t=in:d=0.8,afade=t=out:st=$(python3 -c "print($TOTAL-2.5)"):d=2.5,volume=$MUS_GAIN,aformat=channel_layouts=stereo[m];
+[1]atrim=$MUS_START:$(python3 -c "print($MUS_START+$TOTAL)"),asetpts=PTS-STARTPTS,afade=t=in:d=0.8,afade=t=out:st=$(python3 -c "print($TOTAL-2.5)"):d=2.5,volume='$MUS_GAIN*(1-0.6*clip(t-$DIP_A+1,0,1)*clip($DIP_B+1-t,0,1))':eval=frame,aformat=channel_layouts=stereo[m];
 [2]aformat=channel_layouts=stereo,apad=whole_dur=$TOTAL[key];
 [m][key]sidechaincompress=threshold=0.02:ratio=8:attack=20:release=300[duck];
 [fg][duck]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=44100,alimiter=limit=0.78:level=false[out]" \

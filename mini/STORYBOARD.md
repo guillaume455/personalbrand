@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "95s"
+duration: "87.333s"
 message: "Une Mini British Open 1992 achetée 2 000 € démontée, restaurée en six mois pour 4 360 € au total, revendue 8 500 € quatre ans plus tard ; mais l'argent n'était pas le but : la marge se fait à l'achat, et la valeur vient du modèle, pas du chantier."
 arc: Hook → Trouvaille → La voiture → Le détail → Chantier → Coûts → Revente → Retournement → Leçon → CTA
 audience: "Personnes qui veulent se lancer dans l'achat-revente automobile"
@@ -21,10 +21,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : aucun billet ni espèce ; jamais plus de 6 mots à l'écran (sauf les lignes de coûts et la leçon, voulues par le brief) ; photos de Guillaume désaturées en cadre or, plaques floutées ; compteur TOTAL INVESTI en haut à droite des scènes 2 à 7.
 
-## Frame 1: Hook · 0.00 → 4.00
+## Frame 1: Hook · 0.00 → 2.30
 
 - scene: Hook
-- duration: 4.00s
+- duration: 2.30s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
@@ -37,14 +37,14 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: La trouvaille · 4.00 → 14.00
+## Frame 2: La trouvaille · 2.30 → 15.03
 
 - scene: La trouvaille
-- duration: 10.00s
+- duration: 12.73s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-trouvaille.html
-- voiceover: "2015. Une Mini British Open 1300, démontée dans un garage. Le propriétaire avait lancé la restauration, et il avait abandonné en cours de route. C'est ce qui m'a permis de l'acheter à ce prix. Une voiture immobile fait fuir presque tout le monde."
+- voiceover: "On remonte en 2015. Une Mini British Open 1300, démontée dans un garage. Le propriétaire avait lancé la restauration, et il avait abandonné en cours de route. C'est ce qui m'a permis de l'acheter à ce prix. Une voiture immobile fait fuir presque tout le monde."
 - type: demo
 - blueprint: none
 - focal: La trouvaille
@@ -53,10 +53,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: La voiture · 14.00 → 26.00
+## Frame 3: La voiture · 15.03 → 27.07
 
 - scene: La voiture
-- duration: 12.00s
+- duration: 12.03s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-voiture.html
@@ -69,14 +69,14 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: Le détail · 26.00 → 36.00
+## Frame 4: Le détail · 27.07 → 38.47
 
 - scene: Le détail
-- duration: 10.00s
+- duration: 11.40s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-detail.html
-- voiceover: "1275 centimètres cubes, au carburateur. Quelques mois plus tard, la Mini passe à l'injection monopoint. Celle-ci est née du bon côté de la bascule. C'est le genre de détail qui sépare deux voitures identiques sur une photo."
+- voiceover: "1275 centimètres cubes avec un carburateur. Quelques mois plus tard, la Mini passe à l'injection monopoint. Celle-ci est née du bon côté de la bascule. C'est le genre de détail qui sépare deux voitures identiques sur une photo."
 - type: demo
 - blueprint: none
 - focal: Le détail
@@ -85,10 +85,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: Le chantier · 36.00 → 46.00
+## Frame 5: Le chantier · 38.47 → 45.30
 
 - scene: Le chantier
-- duration: 10.00s
+- duration: 6.83s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-chantier.html
@@ -101,10 +101,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 6: Les coûts · 46.00 → 56.00
+## Frame 6: Les coûts · 45.30 → 55.33
 
 - scene: Les coûts
-- duration: 10.00s
+- duration: 10.03s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/06-couts.html
@@ -117,10 +117,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 7: La revente · 56.00 → 64.00
+## Frame 7: La revente · 55.33 → 60.37
 
 - scene: La revente
-- duration: 8.00s
+- duration: 5.03s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/07-revente.html
@@ -133,10 +133,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 8: Le retournement · 64.00 → 78.00
+## Frame 8: Le retournement · 60.37 → 70.47
 
 - scene: Le retournement
-- duration: 14.00s
+- duration: 10.10s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/08-retournement.html
@@ -149,14 +149,14 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 9: La leçon · 78.00 → 90.00
+## Frame 9: La leçon · 70.47 → 81.73
 
 - scene: La leçon
-- duration: 12.00s
+- duration: 11.27s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/09-lecon.html
-- voiceover: "La marge s'est faite à l'achat. Le jour où j'ai accepté d'acheter un tas de pièces. Et la valeur est venue du modèle, pas du chantier : une restauration ne crée pas de valeur sur une voiture banale, elle la révèle sur une voiture recherchée. Le reste, les six mois, personne ne peut me les reprendre."
+- voiceover: "La marge s'est faite à l'achat. Le jour où j'ai accepté d'acheter un tas de pièces. Et la valeur est venue du modèle, pas du chantier : une restauration ne crée pas de valeur sur une voiture banale, elle la révèle sur une voiture recherchée."
 - type: demo
 - blueprint: none
 - focal: La leçon
@@ -165,14 +165,14 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 10: CTA · 90.00 → 95.00
+## Frame 10: CTA · 81.73 → 87.33
 
 - scene: CTA
-- duration: 5.00s
+- duration: 5.60s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/10-cta.html
-- voiceover: "Toi, tu l'aurais achetée démontée ?"
+- voiceover: "Toi, tu aurais vu l'opportunité et tu te serais lancé dans ce chantier de restauration ?"
 - type: cta
 - blueprint: none
 - focal: CTA

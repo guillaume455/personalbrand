@@ -26,7 +26,7 @@ SCENES = [
  dict(id="01-hook", name="Hook", window=(0, 4), chunks=[
    "*2~000~euros*.", "Pour une voiture", "qui ne *roulait* pas."]),
  dict(id="02-trouvaille", name="La trouvaille", window=(4, 14), chunks=[
-   "*2015*.", "Une Mini British Open *1300*,", "démontée dans un garage.", "Le propriétaire", "avait lancé la restauration,",
+   "On remonte en *2015*.", "Une Mini British Open *1300*,", "démontée dans un garage.", "Le propriétaire", "avait lancé la restauration,",
    "et il avait *abandonné*", "en cours de route.", "C'est ce qui m'a permis", "de l'acheter à ce *prix*.", "Une voiture *immobile*",
    "fait fuir presque tout le monde."]),
  dict(id="03-voiture", name="La voiture", window=(14, 26), chunks=[
@@ -34,7 +34,7 @@ SCENES = [
    "sur toute la longueur.", "Pas un toit ouvrant,", "un vrai toit qui *s'escamote*.", "*Mille* exemplaires",
    "pour le marché anglais."]),
  dict(id="04-detail", name="Le détail", window=(26, 36), chunks=[
-   "*1275* centimètres cubes,", "au *carburateur*.", "Quelques mois plus tard,", "la Mini passe", "à l'*injection* monopoint.",
+   "*1275* centimètres cubes", "avec un *carburateur*.", "Quelques mois plus tard,", "la Mini passe", "à l'*injection* monopoint.",
    "Celle-ci est née", "du *bon~côté* de la bascule.", "C'est le genre de détail", "qui sépare deux voitures",
    "identiques sur une *photo*."]),
  dict(id="05-chantier", name="Le chantier", window=(36, 46), chunks=[
@@ -52,9 +52,9 @@ SCENES = [
  dict(id="09-lecon", name="La leçon", window=(78, 90), chunks=[
    "La marge s'est faite", "à l'*achat*.", "Le jour où j'ai accepté", "d'acheter un tas de *pièces*.", "Et la valeur est venue",
    "du *modèle*,", "pas du chantier~:", "une restauration", "ne crée pas de valeur", "sur une voiture *banale*,", "elle la *révèle*",
-   "sur une voiture recherchée.", "Le reste, les six mois,", "personne ne peut", "me les *reprendre*."]),
+   "sur une voiture *recherchée*."]),
  dict(id="10-cta", name="CTA", window=(90, 95), chunks=[
-   "Toi, tu l'aurais achetée", "*démontée*~?"]),
+   "Toi, tu aurais vu", "l'*opportunité*", "et tu te serais lancé", "dans ce chantier", "de *restauration*~?"]),
 ]
 SPOKEN_SYL = {"2000euros": 4, "2015": 3, "1300": 2, "1992": 7, "sérielimitée": 5, "1275": 6, "sixmois": 2, "1500euros": 5,
               "500euros": 4, "300euros": 4, "60euros": 4, "4360euros": 8, "quatreans": 3, "8500euros": 6, "4140euros": 7,
@@ -606,7 +606,7 @@ def scene_09():
       pre("a1", { opacity: 0, x: -30 }); go("a1", { opacity: 1, x: 0 }, at("l'achat") - 0.2, 0.35);
       pre("a2", { opacity: 0, x: -30 }); go("a2", { opacity: 1, x: 0 }, at("modèle") - 0.2, 0.35);
       go("a1", { opacity: 0.35 }, at("modèle") - 0.2, 0.3);
-      go("a2", { opacity: 0.35 }, at("reste") - 0.1, 0.4); go("a1", { opacity: 0.35 }, at("reste") - 0.1, 0.01);
+      
     """
     sfx = [("pop", "l'achat", 1, -.2, .14), ("pop", "modèle", 1, -.2, .14)]
     return css, st, hud, js, (540, 800), sfx
@@ -618,14 +618,14 @@ def scene_10():
     #§hname { position: relative; display: inline-block; font: 84px/1.2 "Anton", sans-serif; color: #ffffff; opacity: 0; }
     """
     st = ph("p1", "avant-plq.jpg", 300, 250, 480, 560, "50% 50%")
-    hud = (title("t1", ["TU L'AURAIS ACHETÉE", '<span class="§g">DÉMONTÉE</span>, TOI ?'], 860, 84)
+    hud = (title("t1", ["TU TE SERAIS", '<span class="§g">LANCÉ</span>, TOI ?'], 860, 96)
            + '<div id="§handle"><span id="§hname">@guillaumeherbin_<i class="§stilt"><i class="§stk" id="§h-s"></i></i></span></div>')
     js = PH_JS + """
       photo("p1", 0.02, { s: 0.85, ease: "back.out(1.4)" });
-      tshow("t1", 2, [Math.max(0.05, at("toi")), at("démontée")]);
-      slam("hname", at("démontée") + 0.5, { s: 1.3 }); stroke("h", at("démontée") + 0.7);
+      tshow("t1", 2, [at("lancé"), at("restauration")]);
+      slam("hname", at("restauration") + 0.5, { s: 1.3 }); stroke("h", at("restauration") + 0.7);
     """
-    sfx = [("pop", "démontée", 1, -.05, .14), ("notification", "démontée", 1, .5, .24)]
+    sfx = [("pop", "lancé", 1, -.05, .14), ("notification", "restauration", 1, .5, .24)]
     return css, st, hud, js, (540, 800), sfx
 
 
