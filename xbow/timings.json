@@ -52,5 +52,9 @@
    "src": "compositions/frames/05-lecon.html",
    "vo": "Je ne l'ai pas cherchée, elle s'est présentée. Comme presque toutes mes bonnes opérations. Mais on ne propose pas une voiture à quelqu'un qu'on ne connaît pas."
   }
- ]
+ ],
+ "engine_cues": {
+  "launch": 25.491,
+  "zero": 24.187
+ }
 }

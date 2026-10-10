@@ -351,6 +351,7 @@ def clip_len(cid):
     return _LEN[cid]
 
 
+ENGINE_CUES = {}   # film times the synthetic engine sound follows (build-engine.py)
 MEDIA = []   # root-level videos (clip id, film start, duration, scene id): the assembler wants media in index.html
 
 
@@ -436,6 +437,8 @@ XBOW = ('<path d="M20 160 L40 120 L120 100 L170 60 L230 60 L260 100 L330 110 L37
 
 def scene_02():
     t_pas = cue("pas")
+    ENGINE_CUES["launch"] = round(CUR["a"] + cue("en"), 3)
+    ENGINE_CUES["zero"] = round(CUR["a"] + cue("0"), 3)
     st = ('<div id="§blk"></div>'
           + f'<svg id="§moto" viewBox="0 0 400 240" style="position:absolute;left:190px;top:700px;width:700px;height:420px;opacity:0;overflow:visible">{MOTO}</svg>'
           + f'<svg id="§xb" viewBox="0 0 400 240" style="position:absolute;left:190px;top:700px;width:700px;height:420px;opacity:0;overflow:visible">{XBOW}</svg>'
@@ -635,7 +638,7 @@ def build():
         frames.append(dict(n=n, id=sc["id"], name=sc["name"], start=a, end=b, dur=dur, src=src,
                            vo=" ".join(display(t) for t in toks)))
     total = round(B[-1], 3)
-    json.dump({"provisional": prov, "total": total, "frames": frames}, open("timings.json", "w"), ensure_ascii=False, indent=1)
+    json.dump({"provisional": prov, "total": total, "frames": frames, "engine_cues": ENGINE_CUES}, open("timings.json", "w"), ensure_ascii=False, indent=1)
     json.dump(MEDIA, open("media.json", "w"), indent=0)
     sfx_all.sort(key=lambda x: x[1])
     open("assets/audio/sfx-events.json", "w").write("[" + ",\n ".join(json.dumps(e) for e in sfx_all) + "]\n")

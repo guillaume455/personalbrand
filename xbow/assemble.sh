@@ -16,6 +16,7 @@ export HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1 HYPERFRAMES_SKIP_SKILLS=1 HYPER
 FIRST_FRAME="01-opportunite"
 END_CARD="05-lecon"
 TOTAL="$(python3 -c "import json;print(json.load(open('timings.json'))['total'])")"
+python3 build-engine.py && python3 build-mix.py   # the sound: synthetic engine (or the real one), the voice, no music
 AUDIO="assets/audio/${MIX:-mix.wav}"   # mix from build-audio.sh or build-music-options.py (MIX=mix-M2.wav bash assemble.sh); empty = silent
 
 # Light flash, dark world -> light world (empty LEAK_AT = no flash). The flash covers the screen from
