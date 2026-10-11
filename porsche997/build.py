@@ -18,7 +18,7 @@ os.chdir(HERE)
 REAL = "assets/audio/voix-montage-mots.json"
 TAIL = 2.0          # hold after the last word (end card)
 FPS = 30
-HOOK = 4.0          # the hook lasts 4 s whatever the voice (place-voice.py pads it)
+HOOK = 2.3          # the hook: short and brutal (place-voice.py pads it if the voice is shorter)
 
 # ---------------------------------------------------------------------------------------------------------------------
 # The voice, scene by scene, cut into subtitle chunks (2 to 5 words, 42 characters max). *word* = key word (orange).
@@ -320,6 +320,8 @@ X_JS = """
       function stroke6(tid, t) { tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "none", immediateRender: false }, Math.max(0, t)); init(tid + "-s", { scaleX: 1 }); }
       function tin(tid, n, t, d) { for (var i = 0; i < n; i++) fin(tid + "-" + i, t, d); stroke6(tid, t + (d || 0.2)); }
       function tout(tid, n, t) { for (var i = 0; i < n; i++) fout(tid + "-" + i, t); go(tid + "-s", { scaleX: 0 }, t, 0.2, "none"); }
+      // punch: a short zoom-out kick of the stage and the texts on a beat (Instagram rhythm)
+      function punch(t, k) { k = k || 0.05; ["hp", "shk"].forEach(function (id) { tl.fromTo($(id), { scale: 1 + k }, { scale: 1, duration: 0.32, ease: "expo.out", immediateRender: false }, Math.max(0, t)); }); }
       // photos: fade in, slow zoom (k = 1.03 to 1.05) until t2
       function photo(id, t, t2, k, op) { pre(id, { opacity: 0, scale: 1 }); go(id, { opacity: op || 1 }, t, 0.25, "none"); go(id, { scale: k || 1.04 }, t, Math.max(0.5, (t2 || DUR) - t), "none"); }
 """
@@ -373,9 +375,9 @@ def scene_01():
     js = X_JS + """
       // brutal: the three lines slam in on the voice, the first one from the first frames (works without sound)
       slam("t1-0", 0.0, { s: 1.35, d: 0.16 }); shake("hud", 0.05, 10);
-      slam("t1-1", Math.max(0.35, at("personne") - 0.05), { s: 1.35, d: 0.16 });
-      slam("t1-2", Math.max(0.7, at("ne") - 0.05), { s: 1.35, d: 0.16 }); shake("hud", Math.max(0.7, at("ne") - 0.05), 12);
-      stroke6("t1", Math.max(0.9, at("ne") + 0.15));
+      slam("t1-1", Math.max(0.25, at("personne") - 0.05), { s: 1.35, d: 0.14 }); punch(Math.max(0.25, at("personne") - 0.05), 0.05);
+      slam("t1-2", Math.max(0.5, at("ne") - 0.05), { s: 1.35, d: 0.14 }); shake("hud", Math.max(0.5, at("ne") - 0.05), 12); punch(Math.max(0.5, at("ne") - 0.05), 0.07);
+      stroke6("t1", Math.max(0.7, at("ne") + 0.12));
     """
     return "", "", hud, js, None, [("impact-bass-1", None, 1, 0.0, 0.5)]
 
@@ -387,13 +389,13 @@ def scene_02():
     cues = [("photos", 1), ("vendeur", 1), ("connaît", 1), ("téléphone", 1), ("vend", 1)]
     js = X_JS + """
       // a neutral ad mock-up: grey frame, blurred photo, no logo, no brand
-      pre("ad", { opacity: 0, scale: 0.96 }); go("ad", { opacity: 1, scale: 1 }, 0.05, 0.35);
+      pre("ad", { opacity: 0, scale: 0.9 }); go("ad", { opacity: 1, scale: 1 }, 0.0, 0.25, "expo.out");
       fin("wc", at("photos") - 0.1);
     """
     for i, (w, n) in enumerate(cues):
         js += f"""
       // warning {i + 1}: the red pill pops in, the counter climbs
-      pre("p{i}", {{ opacity: 0, x: -50, scale: 1 }}); go("p{i}", {{ opacity: 1, x: 0 }}, at("{w}") - 0.05, 0.22);
+      pre("p{i}", {{ opacity: 0, x: -50, scale: 1 }}); go("p{i}", {{ opacity: 1, x: 0 }}, at("{w}") - 0.05, 0.18); punch(at("{w}") - 0.05, 0.035);
       tl.fromTo($("p{i}"), {{ scale: 1.12 }}, {{ scale: 1, duration: 0.25, ease: "back.out(2)", immediateRender: false }}, at("{w}") - 0.05);
       odo("wn", at("{w}") - 0.05, 0.25, {{ to: "{i + 1}", spinLow: false }});
       tl.fromTo($("wc"), {{ scale: 1.25 }}, {{ scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }}, at("{w}") - 0.05);"""
@@ -429,7 +431,7 @@ def scene_03():
       pre("div", { scaleY: 0 }); go("div", { scaleY: 1 }, tv + 0.25, 0.4);
       // the right side stays empty under « sur la voiture », then a big orange 0
       tin("tr", 1, at("voiture") - 0.1);
-      slam("zero", at("aucun") - 0.05, { s: 1.5, d: 0.2 });
+      slam("zero", at("aucun") - 0.05, { s: 1.5, d: 0.2 }); punch(at("aucun") - 0.05, 0.07); shake("hud", at("aucun"), 10);
       tl.fromTo($("zero"), { textShadow: "0 0 0px rgba(251,128,0,0)" }, { textShadow: "0 0 60px rgba(251,128,0,0.55)", duration: 0.5, immediateRender: false }, at("vérifier") - 0.1);
     """
     return css, st, hud, js, None, [("impact-bass-2", "aucun", 1, -0.05, 0.45)]
@@ -456,7 +458,7 @@ def scene_04():
                 f'<div id="§rt{i}" class="§rt">{txt}</div>' + (f'<div id="§rs{i}" class="§rs">{sub}</div>' if sub else "") + "</div>")
         js += f"""
       // line {i + 1}: the box draws, the line comes in, the orange tick
-      draw("bx{i}", at("{w}") - 0.1, 0.25, "none"); fin("rt{i}", at("{w}") - 0.05); draw("ck{i}", at("{w}") + 0.2, 0.2, "power2.out");"""
+      draw("bx{i}", at("{w}") - 0.1, 0.25, "none"); fin("rt{i}", at("{w}") - 0.05); punch(at("{w}") - 0.05, 0.03); draw("ck{i}", at("{w}") + 0.2, 0.2, "power2.out");"""
     js += """
       fin("rs0", at("54000km") - 0.1);
       // a listing is judged on the file: the four ticks pulse
@@ -483,13 +485,13 @@ def scene_05():
     js = X_JS + """
       // the first photo full frame, then the side, then the cockpit (the PDK lever)
       tl.set($("ph1"), { opacity: 1 }, 0); photo("ph1", 0, at("flat"), 1.04);
-      tin("t1", 2, Math.max(0.1, at("911") - 0.1));
-      tout("t1", 2, at("flat") - 0.25); photo("ph2", at("flat") - 0.15, at("boîte"), 1.04); tin("t2", 2, at("flat") - 0.05);
-      tout("t2", 2, at("boîte") - 0.25); photo("ph3", at("boîte") - 0.15, DUR, 1.05); tin("t3", 2, at("boîte") - 0.05);
+      tin("t1", 2, Math.max(0.1, at("911") - 0.1)); punch(Math.max(0.1, at("911") - 0.1), 0.04);
+      tout("t1", 2, at("flat") - 0.25); photo("ph2", at("flat") - 0.15, at("boîte"), 1.04); tin("t2", 2, at("flat") - 0.05); punch(at("flat") - 0.15, 0.04);
+      tout("t2", 2, at("boîte") - 0.25); photo("ph3", at("boîte") - 0.15, DUR, 1.05); tin("t3", 2, at("boîte") - 0.05); punch(at("boîte") - 0.15, 0.04);
       // the detached box, traced by the orange line: what makes a phase 2
       tout("t3", 2, at("surtout") - 0.2);
       go("ph3", { opacity: 0.4 }, at("surtout") - 0.1, 0.4, "none");
-      fin("bg", at("surtout")); draw("bx", at("surtout"), 0.45, "power2.inOut");
+      fin("bg", at("surtout")); draw("bx", at("surtout"), 0.35, "power2.inOut"); punch(at("surtout"), 0.03);
       fin("b1", at("injection") - 0.1); fin("b2", at("d'arbreintermédiaire") - 0.1);
     """
     return css, st, hud, js, None, [("whoosh-short", "surtout", 1, 0.0, 0.18)]
@@ -505,13 +507,13 @@ def scene_06():
       // the photo stays dim until the dream, then lights up
       photo("ph", 0, DUR, 1.05, 0.55); tl.set($("ph"), { opacity: 0.55 }, 0);
       tin("y", 1, Math.max(0.05, at("2014") - 0.1));
-      tout("y", 1, at("25ans") - 0.25); tin("a", 1, at("25ans") - 0.1);
-      tout("a", 1, at("rêve") - 0.35); tin("d", 2, at("rêve") - 0.2, 0.3);
+      tout("y", 1, at("25ans") - 0.25); tin("a", 1, at("25ans") - 0.1); punch(at("25ans") - 0.1, 0.05);
+      tout("a", 1, at("rêve") - 0.35); tin("d", 2, at("rêve") - 0.2, 0.25); punch(at("rêve") - 0.2, 0.05);
       // the dream, and the proof: Guillaume at the wheel of this car
       photo("me", at("rêve") - 0.2, DUR, 1.04);
-      tout("d", 2, at("première") - 0.25); tin("p", 2, at("première") - 0.1);
+      tout("d", 2, at("première") - 0.25); tin("p", 2, at("première") - 0.1); punch(at("première") - 0.1, 0.04);
       tout("p", 2, at("44000euros") - 0.25);
-      fin("amt", at("44000euros") - 0.1); odo("am", at("44000euros") - 0.05, 1.1, { from: "00 000", dimLead: true });
+      fin("amt", at("44000euros") - 0.1); punch(at("44000euros") - 0.1, 0.05); odo("am", at("44000euros") - 0.05, 1.1, { from: "00 000", dimLead: true });
       tl.fromTo($("am"), { color: "#ffffff" }, { color: "#FB8000", duration: 0.2, immediateRender: false }, at("44000euros") + 1.05);
     """
     return "", st, hud, js, None, []
@@ -530,14 +532,15 @@ def scene_07():
     """
     hud = "".join(f'<div id="§r{i}" class="§rw" style="top:{470 + i * 150}px"><span class="§rl">{l} :</span><span class="§rv">{odo(f"v{i}", v)}</span></div>'
                   for i, (l, v, _, _) in enumerate(ROWS))
-    hud += '<div id="§gain">+ ' + odo("gv", "6 550 €") + '</div>'
-    js = X_JS
+    hud += '<div id="§gain">+ ' + odo("gv", "6 550 €") + '</div>' + title("g", ["2 ANS."], 260, 130)
+    js = X_JS + """
+      tin("g", 1, Math.max(0.05, at("garde") - 0.1)); punch(Math.max(0.05, at("garde") - 0.1), 0.04);"""
     for i, (_, _, w, fr) in enumerate(ROWS):
         js += f"""
-      pre("r{i}", {{ opacity: 0, y: 30 }}); go("r{i}", {{ opacity: 1, y: 0 }}, at("{w}") - 0.15, 0.3); odo("v{i}", at("{w}") - 0.1, 0.9, {{ from: "{fr}", dimLead: true }});"""
+      pre("r{i}", {{ opacity: 0, y: 30 }}); go("r{i}", {{ opacity: 1, y: 0 }}, at("{w}") - 0.15, 0.25); punch(at("{w}") - 0.15, 0.03); odo("v{i}", at("{w}") - 0.1, 0.9, {{ from: "{fr}", dimLead: true }});"""
     js += """
       // the gap, big and orange
-      pre("gain", { opacity: 0, scale: 0.85 }); go("gain", { opacity: 1, scale: 1 }, at("6550euros") - 0.15, 0.3, "back.out(1.6)");
+      pre("gain", { opacity: 0, scale: 0.85 }); go("gain", { opacity: 1, scale: 1 }, at("6550euros") - 0.15, 0.3, "back.out(1.6)"); punch(at("6550euros") - 0.15, 0.06);
       odo("gv", at("6550euros") - 0.1, 1.2, { from: "0 000", dimLead: true });
     """
     return css, "", hud, js, None, [("pop", "6550euros", 1, -0.1, 0.3)]
@@ -560,12 +563,12 @@ def scene_08():
            + '<div id="§note">prix demandés, France, octobre 2026</div>')
     js = X_JS + """
       // a timeline from 2014 to 2026 draws in orange, one tick per year
-      fin("y0", 0.05); draw("ln", 0.1, 1.3, "power1.inOut");
-      for (var k = 0; k < 13; k++) { pre("tk" + k, { opacity: 0 }); go("tk" + k, { opacity: 1 }, 0.1 + k * 0.1, 0.12, "none"); }
-      fin("y1", 1.35);
-      tin("t1", 2, at("aujourd'hui") - 0.1);
+      fin("y0", 0.05); draw("ln", 0.05, 0.8, "power2.inOut");
+      for (var k = 0; k < 13; k++) { pre("tk" + k, { opacity: 0 }); go("tk" + k, { opacity: 1 }, 0.05 + k * 0.06, 0.1, "none"); }
+      fin("y1", 0.85);
+      tin("t1", 2, at("aujourd'hui") - 0.1); punch(at("aujourd'hui") - 0.1, 0.04);
       fin("since", at("autour") - 0.15);
-      fin("big", at("60000euros") - 0.15); odo("bg", at("60000euros") - 0.1, 1.2, { from: "00 000", dimLead: true });
+      fin("big", at("60000euros") - 0.15); punch(at("60000euros") - 0.15, 0.06); odo("bg", at("60000euros") - 0.1, 1.2, { from: "00 000", dimLead: true });
       fin("note", at("60000euros") + 0.3);
     """
     return css, "", hud, js, None, []
@@ -577,7 +580,7 @@ def scene_09():
     js = X_JS + """
       // the lesson: slower, the last photo held long, the music gone
       pre("ph", { opacity: 0, scale: 1 }); go("ph", { opacity: 0.75 }, 0.05, 0.8, "none"); go("ph", { scale: 1.03 }, 0, DUR, "none");
-      tin("t1", 3, Math.max(0.2, at("mauvaise") - 0.15), 0.45);
+      tin("t1", 3, Math.max(0.2, at("mauvaise") - 0.15), 0.3); punch(Math.max(0.2, at("mauvaise") - 0.15), 0.04);
     """
     return "", st, hud, js, None, []
 
@@ -602,10 +605,10 @@ def scene_10():
       // who I am: the photo, the name, since 2010; then the handle and the button
       pre("me", { opacity: 0, y: 60 }); go("me", { opacity: 1, y: 0 }, 0.05, 0.6, "power3.out");
       pre("meglow", { opacity: 0, scale: 0.6 }); go("meglow", { opacity: 1, scale: 1 }, 0.15, 0.7, "power2.out");
-      tin("nm", 1, Math.max(0.2, at("guillaumeherbin") - 0.1));
+      tin("nm", 1, Math.max(0.2, at("guillaumeherbin") - 0.1)); punch(Math.max(0.2, at("guillaumeherbin") - 0.1), 0.04);
       fin("since", at("depuis") - 0.1);
       fin("hn", at("suis-moi") - 0.1);
-      pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("suis-moi") + 0.1, 0.3, "back.out(2)");
+      pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("suis-moi") + 0.1, 0.3, "back.out(2)"); punch(at("suis-moi") + 0.1, 0.04);
     """
     return css, st, hud, js, None, [("notification", "suis-moi", 1, 0.1, 0.25)]
 
@@ -673,9 +676,9 @@ def build():
     <div id="§push" class="§cam"><div id="§shk" class="§cam"><div id="§cran" class="§cam">
       {st}
     </div></div></div>
-    <div id="§hud" class="§cam §hudcam">
+    <div id="§hud" class="§cam §hudcam"><div id="§hp" class="§cam §hudcam">
       {hud}
-    </div>
+    </div></div>
     <div id="§sub" class="§sub">
       {"" if sc.get("nosubs") else subs_html(cw, dur)}
     </div>

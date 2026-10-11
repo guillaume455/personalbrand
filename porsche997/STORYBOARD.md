@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "89.5s"
+duration: "77.533s"
 message: "Une annonce qui fait fuir tout le monde, un acheteur qui vérifie au lieu de juger : les cinq warnings portaient sur le vendeur, aucun sur la voiture. Une mauvaise annonce n'est pas une mauvaise voiture."
 arc: Hook → Les warnings → Le retournement → Ce que j'ai vérifié → La voiture → Le prix → Les deux ans → 2026 → La leçon → Qui je suis et CTA
 audience: "Personnes qui veulent se lancer dans l'achat-revente automobile"
@@ -21,10 +21,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : les photos de 2014 de Guillaume uniquement, pas d'image générée ; plaques et enseigne du garage floutées ; aucun logo ni capture de site d'annonces ; jamais « vaut 60 000 € », seulement « s'affichent autour de », prix demandés ; pas de billets.
 
-## Frame 1: Hook · 0.00 → 4.00
+## Frame 1: Hook · 0.00 → 2.30
 
 - scene: Hook
-- duration: 4.00s
+- duration: 2.30s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
@@ -37,10 +37,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: Les warnings · 4.00 → 13.73
+## Frame 2: Les warnings · 2.30 → 10.73
 
 - scene: Les warnings
-- duration: 9.73s
+- duration: 8.43s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-warnings.html
@@ -53,10 +53,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: Le retournement · 13.73 → 19.90
+## Frame 3: Le retournement · 10.73 → 16.07
 
 - scene: Le retournement
-- duration: 6.17s
+- duration: 5.33s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-retournement.html
@@ -69,10 +69,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: Ce que j'ai vérifié · 19.90 → 31.73
+## Frame 4: Ce que j'ai vérifié · 16.07 → 26.50
 
 - scene: Ce que j'ai vérifié
-- duration: 11.83s
+- duration: 10.43s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-verifie.html
@@ -85,10 +85,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: La voiture · 31.73 → 47.40
+## Frame 5: La voiture · 26.50 → 40.27
 
 - scene: La voiture
-- duration: 15.67s
+- duration: 13.77s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-voiture.html
@@ -101,10 +101,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 6: Le rêve et le prix · 47.40 → 52.70
+## Frame 6: Le rêve et le prix · 40.27 → 44.73
 
 - scene: Le rêve et le prix
-- duration: 5.30s
+- duration: 4.47s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/06-prix.html
@@ -117,10 +117,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 7: Les deux ans · 52.70 → 61.93
+## Frame 7: Les deux ans · 44.73 → 52.87
 
 - scene: Les deux ans
-- duration: 9.23s
+- duration: 8.13s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/07-deux-ans.html
@@ -133,10 +133,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 8: 2026 · 61.93 → 69.53
+## Frame 8: 2026 · 52.87 → 59.67
 
 - scene: 2026
-- duration: 7.60s
+- duration: 6.80s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/08-2026.html
@@ -149,10 +149,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 9: La leçon · 69.53 → 82.00
+## Frame 9: La leçon · 59.67 → 70.63
 
 - scene: La leçon
-- duration: 12.47s
+- duration: 10.97s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/09-lecon.html
@@ -165,10 +165,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 10: Qui je suis et CTA · 82.00 → 89.50
+## Frame 10: Qui je suis et CTA · 70.63 → 77.53
 
 - scene: Qui je suis et CTA
-- duration: 7.50s
+- duration: 6.90s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/10-cta.html
