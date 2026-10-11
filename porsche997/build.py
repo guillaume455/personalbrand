@@ -16,7 +16,7 @@ import json, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 os.chdir(HERE)
 REAL = "assets/audio/voix-montage-mots.json"
-TAIL = 4.3          # hold after the last word: the CTA, no voice
+TAIL = 2.0          # hold after the last word (end card)
 FPS = 30
 HOOK = 4.0          # the hook lasts 4 s whatever the voice (place-voice.py pads it)
 
@@ -26,36 +26,39 @@ HOOK = 4.0          # the hook lasts 4 s whatever the voice (place-voice.py pads
 SCENES = [
  dict(id="01-hook", name="Hook", window=(0, 4), speak=(0.3, 3.0), nosubs=True, chunks=[
    "L'*annonce* que personne", "ne voulait."]),
- dict(id="02-warnings", name="Les warnings", window=(4, 18), speak=(4.2, 17.6), chunks=[
+ dict(id="02-warnings", name="Les warnings", window=(4, 17), speak=(4.2, 16.6), chunks=[
    "Leboncoin, 2014.", "Des photos ratées.", "Un *vendeur* pressé,", "qui connaît mal", "sa voiture,", "qu'on n'arrive pas",
    "à avoir au téléphone,", "et qui ne vend", "rien du tout.", "Cinq raisons", "de passer son chemin."]),
- dict(id="03-retournement", name="Le retournement", window=(18, 27), speak=(18.2, 26.6), chunks=[
+ dict(id="03-retournement", name="Le retournement", window=(17, 26), speak=(17.2, 25.6), chunks=[
    "Sauf que ces cinq warnings", "portaient tous", "sur le *vendeur*.", "Sur la voiture,", "il n'y en avait aucun.",
    "Encore fallait-il", "aller *vérifier*."]),
- dict(id="04-verifie", name="Ce que j'ai vérifié", window=(27, 39), speak=(27.2, 38.6), chunks=[
+ dict(id="04-verifie", name="Ce que j'ai vérifié", window=(26, 36.5), speak=(26.2, 36.1), chunks=[
    "Carnet d'entretien à jour,", "dernier passage", "à 54~000~km.", "Contrôle technique vierge.",
    "Rappel constructeur effectué.", "Historique complet.", "Une annonce se juge", "sur ce qu'il y a", "dans le *dossier*,",
    "pas sur la qualité", "des photos."]),
- dict(id="05-voiture", name="La voiture", window=(39, 52), speak=(39.2, 51.6), chunks=[
+ dict(id="05-voiture", name="La voiture", window=(36.5, 49.5), speak=(36.7, 49.1), chunks=[
    "Une 911 type 997", "phase 2 de 2009.", "Flat six 3,6~litres,", "345~chevaux,", "boîte PDK.", "Et surtout",
    "une *phase~2*,", "injection directe,", "et plus d'*arbre~intermédiaire*.", "Le fameux problème", "des phases 1",
    "n'existe plus", "sur celle-là.", "C'est ce détail", "qui fait sa cote", "aujourd'hui."]),
- dict(id="06-prix", name="Le prix", window=(52, 58), speak=(52.2, 57.6), chunks=[
-   "2014.", "J'ai *25~ans*.", "C'est ma première Porsche.", "44~000~euros."]),
- dict(id="07-deux-ans", name="Les deux ans", window=(58, 67), speak=(58.2, 66.6), chunks=[
+ dict(id="06-prix", name="Le rêve et le prix", window=(49.5, 56.5), speak=(49.7, 56.1), chunks=[
+   "2014.", "J'ai 25~ans,", "et je réalise un *rêve*,", "ma première Porsche.", "44~000~euros."]),
+ dict(id="07-deux-ans", name="Les deux ans", window=(56.5, 64.5), speak=(56.7, 64.1), chunks=[
    "Je la garde deux ans.", "1~000~euros", "d'entretien courant,", "450~euros de pneus.", "Je la revends 52~000.",
    "6~550~euros d'écart,", "après avoir roulé avec", "pendant deux ans."]),
- dict(id="08-2026", name="2026", window=(67, 75), speak=(67.2, 74.6), chunks=[
+ dict(id="08-2026", name="2026", window=(64.5, 72), speak=(64.7, 71.6), chunks=[
    "Et aujourd'hui,", "plus de dix ans après,", "les mêmes *s'affichent*", "à partir de", "57~000~euros.",
    "Il y a des voitures", "qui décotent,", "et d'autres", "qui font l'inverse."]),
- dict(id="09-lecon", name="La leçon et CTA", window=(75, 89), speak=(75.3, 84.7), chunks=[
+ dict(id="09-lecon", name="La leçon", window=(72, 82.5), speak=(72.3, 82.1), chunks=[
    "La vraie leçon", "n'est pas là.", "Une mauvaise *annonce*", "n'est pas", "une mauvaise voiture.", "La plupart des gens",
    "éliminent sur la *présentation*.", "Moi je vérifie", "le *dossier*.", "C'est exactement là", "que se trouvent",
    "les bonnes affaires,", "dans les annonces", "que les autres", "ne prennent pas la peine", "d'ouvrir."]),
+ dict(id="10-cta", name="Qui je suis et CTA", window=(82.5, 89.5), speak=(82.7, 87.5), chunks=[
+   "Moi c'est Guillaume~Herbin,", "je suis dans l'automobile", "depuis 2010.", "Suis-moi si tu veux voir",
+   "plus de contenus", "comme celui-ci."]),
 ]
 SPOKEN_SYL = {"2014": 4, "54000km": 9, "911": 4, "997": 6, "2009": 4, "36litres": 4, "345chevaux": 8, "pdk": 3, "2": 1,
               "1": 1, "25ans": 4, "44000euros": 7, "1000euros": 4, "450euros": 6, "52000": 5, "6550euros": 10,
-              "57000euros": 7, "leboncoin": 3, "phase2": 2, "d'arbreintermédiaire": 7}
+              "57000euros": 7, "2010": 3, "guillaumeherbin": 4, "leboncoin": 3, "phase2": 2, "d'arbreintermédiaire": 7}
 
 
 def norm(tok):
@@ -327,11 +330,11 @@ def full(fid, src, pos="50% 50%", contain=False):
     if not contain:
         return f'<div id="§{fid}" class="§full"><img src="assets/img/{src}" style="object-position:{pos}"></div>'
     return (f'<div id="§{fid}" class="§full"><img src="assets/img/{src}" style="filter:saturate(0.1) blur(28px) brightness(0.45);transform:scale(1.15)">'
-            f'<img src="assets/img/{src}" style="object-fit:contain;object-position:50% 50%"></div>')
+            f'<img src="assets/img/{src}" style="object-fit:contain;object-position:{pos}"></div>')
 
 
 # ---------------------------------------------------------------------------------------------------------------------
-# the 9 scenes: (css, stage html, hud html [titles, cards], js, halo, sfx [(name, cue word, occurrence, offset, volume)])
+# the 10 scenes: (css, stage html, hud html [titles, cards], js, halo, sfx [(name, cue word, occurrence, offset, volume)])
 
 RED = "#E03131"
 WARN = ["PHOTOS RATÉES", "VENDEUR PRESSÉ", "CONNAÎT MAL SA VOITURE", "INJOIGNABLE", "AUCUN SENS DU COMMERCE"]
@@ -493,14 +496,20 @@ def scene_05():
 
 
 def scene_06():
-    st = full("ph", "20140606_174224.jpg", "38% 50%") + '<div class="§shade"></div>'
-    hud = (title("y", ["2014."], 330, 230) + title("a", ["25 ANS."], 330, 230) + title("p", ["MA PREMIÈRE", "PORSCHE."], 330, 140)
+    st = (full("ph", "20140606_174224.jpg", "38% 50%") + full("me", "20140530_170820.jpg", "50% 64%", contain=True)
+          + '<div class="§shade"></div>')
+    hud = (title("y", ["2014."], 330, 230) + title("a", ["25 ANS."], 330, 230)
+           + title("d", ['UN <span class="§o">RÊVE</span>', "RÉALISÉ."], 330, 170) + title("p", ["MA PREMIÈRE", "PORSCHE."], 330, 140)
            + '<div id="§amt" class="§txt" style="top:360px;font-size:220px">' + odo("am", "44 000 €") + '</div>')
     js = X_JS + """
-      photo("ph", 0, DUR, 1.04); tl.set($("ph"), { opacity: 1 }, 0);
+      // the photo stays dim until the dream, then lights up
+      photo("ph", 0, DUR, 1.05, 0.55); tl.set($("ph"), { opacity: 0.55 }, 0);
       tin("y", 1, Math.max(0.05, at("2014") - 0.1));
       tout("y", 1, at("25ans") - 0.25); tin("a", 1, at("25ans") - 0.1);
-      tout("a", 1, at("première") - 0.25); tin("p", 2, at("première") - 0.1);
+      tout("a", 1, at("rêve") - 0.35); tin("d", 2, at("rêve") - 0.2, 0.3);
+      // the dream, and the proof: Guillaume at the wheel of this car
+      photo("me", at("rêve") - 0.2, DUR, 1.04);
+      tout("d", 2, at("première") - 0.25); tin("p", 2, at("première") - 0.1);
       tout("p", 2, at("44000euros") - 0.25);
       fin("amt", at("44000euros") - 0.1); odo("am", at("44000euros") - 0.05, 1.1, { from: "00 000", dimLead: true });
       tl.fromTo($("am"), { color: "#ffffff" }, { color: "#FB8000", duration: 0.2, immediateRender: false }, at("44000euros") + 1.05);
@@ -563,26 +572,45 @@ def scene_08():
 
 
 def scene_09():
-    css = """
-    #§hn { position: absolute; left: 0; top: 1130px; width: 1080px; text-align: center; font: 700 72px/1 "Oswald", sans-serif; color: #FB8000; opacity: 0; }
-    """
-    tc = last_end() + 0.35
-    st = full("ph", "20140607_183242.jpg", "22% 50%") + '<div class="§shade"></div><div id="§dk" style="position:absolute;left:0;top:0;width:1080px;height:1920px;background:#0A0A0A;opacity:0"></div>'
-    hud = (title("t1", ["UNE MAUVAISE ANNONCE", "N'EST PAS UNE", "MAUVAISE VOITURE."], 760, 100)
-           + title("t2", ["TU SERAIS ALLÉ VOIR", "CETTE ANNONCE, TOI ?"], 780, 104) + '<div id="§hn">@guillaumeherbin_</div>')
-    js = X_JS + f"""
+    st = full("ph", "20140607_183242.jpg", "22% 50%") + '<div class="§shade"></div>'
+    hud = title("t1", ["UNE MAUVAISE ANNONCE", "N'EST PAS UNE", "MAUVAISE VOITURE."], 760, 100)
+    js = X_JS + """
       // the lesson: slower, the last photo held long, the music gone
-      pre("ph", {{ opacity: 0, scale: 1 }}); go("ph", {{ opacity: 0.75 }}, 0.05, 0.8, "none"); go("ph", {{ scale: 1.03 }}, 0, DUR, "none");
+      pre("ph", { opacity: 0, scale: 1 }); go("ph", { opacity: 0.75 }, 0.05, 0.8, "none"); go("ph", { scale: 1.03 }, 0, DUR, "none");
       tin("t1", 3, Math.max(0.2, at("mauvaise") - 0.15), 0.45);
-      // CTA, no voice
-      tout("t1", 3, {tc} - 0.25);
-      go("dk", {{ opacity: 0.6 }}, {tc} - 0.25, 0.4, "none");
-      tin("t2", 2, {tc} + 0.1); fin("hn", {tc} + 0.6);
     """
-    return css, st, hud, js, None, []
+    return "", st, hud, js, None, []
 
 
-BUILDERS = [scene_01, scene_02, scene_03, scene_04, scene_05, scene_06, scene_07, scene_08, scene_09]
+def scene_10():
+    css = """
+    #§me { position: absolute; left: 270px; top: 300px; width: 540px; height: 740px; overflow: hidden; opacity: 0;
+      -webkit-mask-image: linear-gradient(#000 74%, transparent 100%); mask-image: linear-gradient(#000 74%, transparent 100%); }
+    #§me img { position: absolute; left: 0; top: 0; width: 540px; height: auto; filter: saturate(0.35) contrast(1.04); }
+    #§meglow { position: absolute; left: 290px; top: 330px; width: 500px; height: 500px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(circle, rgba(251,128,0,0.5) 0%, rgba(251,128,0,0.16) 45%, rgba(251,128,0,0) 70%); }
+    #§since { position: absolute; left: 0; top: 1196px; width: 1080px; text-align: center; font: 600 52px/1 "Oswald", sans-serif; color: #bdbdbd; opacity: 0; letter-spacing: 0.02em; }
+    #§hn { position: absolute; left: 0; top: 1290px; width: 1080px; text-align: center; font: 700 66px/1 "Oswald", sans-serif; color: #FB8000; opacity: 0; }
+    #§pill { position: absolute; left: 0; top: 1392px; width: 1080px; text-align: center; }
+    #§pilli { display: inline-block; padding: 6px 40px; border-radius: 40px; background: #FB8000; color: #0A0A0A; font: 700 46px/1.3 "Oswald", sans-serif;
+      opacity: 0; box-shadow: 0 0 40px rgba(251,128,0,0.4); }
+    """
+    st = '<div id="§meglow"></div><div id="§me"><img src="assets/img/guillaume.png"></div>'
+    hud = (title("nm", ["GUILLAUME HERBIN"], 1070, 100) + '<div id="§since">DANS L\'AUTO DEPUIS 2010</div>'
+           + '<div id="§hn">@guillaumeherbin_</div><div id="§pill"><span id="§pilli">SUIS-MOI</span></div>')
+    js = X_JS + """
+      // who I am: the photo, the name, since 2010; then the handle and the button
+      pre("me", { opacity: 0, y: 60 }); go("me", { opacity: 1, y: 0 }, 0.05, 0.6, "power3.out");
+      pre("meglow", { opacity: 0, scale: 0.6 }); go("meglow", { opacity: 1, scale: 1 }, 0.15, 0.7, "power2.out");
+      tin("nm", 1, Math.max(0.2, at("guillaumeherbin") - 0.1));
+      fin("since", at("depuis") - 0.1);
+      fin("hn", at("suis-moi") - 0.1);
+      pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("suis-moi") + 0.1, 0.3, "back.out(2)");
+    """
+    return css, st, hud, js, None, [("notification", "suis-moi", 1, 0.1, 0.25)]
+
+
+BUILDERS = [scene_01, scene_02, scene_03, scene_04, scene_05, scene_06, scene_07, scene_08, scene_09, scene_10]
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -691,7 +719,7 @@ def write_storyboard(frames, total):
 format: 1080x1920
 duration: "{total}s"
 message: "Une annonce qui fait fuir tout le monde, un acheteur qui vérifie au lieu de juger : les cinq warnings portaient sur le vendeur, aucun sur la voiture. Une mauvaise annonce n'est pas une mauvaise voiture."
-arc: Hook → Les warnings → Le retournement → Ce que j'ai vérifié → La voiture → Le prix → Les deux ans → 2026 → La leçon et CTA
+arc: Hook → Les warnings → Le retournement → Ce que j'ai vérifié → La voiture → Le prix → Les deux ans → 2026 → La leçon → Qui je suis et CTA
 audience: "Personnes qui veulent se lancer dans l'achat-revente automobile"
 mode: autonomous
 captions: disabled

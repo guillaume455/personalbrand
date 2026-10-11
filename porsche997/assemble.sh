@@ -14,7 +14,7 @@ export HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1 HYPERFRAMES_SKIP_SKILLS=1 HYPER
 
 # ---- settings (times in seconds on the final timeline, see STORYBOARD.md) ------------------------------------------
 FIRST_FRAME="01-hook"
-END_CARD="09-lecon"
+END_CARD="10-cta"
 TOTAL="$(python3 -c "import json;print(json.load(open('timings.json'))['total'])")"
 python3 build-mix.py   # the sound: the voice, the music bed (ducked), the sound effects
 AUDIO="assets/audio/${MIX:-mix.wav}"   # mix from build-mix.py

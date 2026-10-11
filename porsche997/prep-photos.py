@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The five photos of the Porsche (June 2014), ready for the reel: upright, 1600 px max, EXIF and GPS removed, and
+"""The photos of the Porsche (May and June 2014: the five of the brief, and Guillaume at the wheel), ready for the reel: upright, 1600 px max, EXIF and GPS removed, and
 blurred where the brief forbids: the plates, and the garage signs (name, phone number, flag) that would identify the
 seller of 2014. Boxes are in full-resolution pixels (3264 x 2448). Raw photos stay out of the repository (Drive)."""
 import os
@@ -13,6 +13,7 @@ BLUR = {
     "20140606_174216": [(0, 0, 300, 760, 60)],                                           # the dealer's flag
     "20140606_174140": [],
     "20140607_183242": [(1150, 790, 1330, 920, 25)],                                     # the far front plate
+    "20140530_170820": [],                                                               # Guillaume at the wheel (his request)
 }
 os.makedirs("assets/img", exist_ok=True)
 for name, boxes in BLUR.items():

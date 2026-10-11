@@ -23,21 +23,27 @@ Carnet d'entretien à jour, dernier passage à cinquante-quatre mille kilomètre
 
 Une neuf cent onze type neuf cent quatre-vingt-dix-sept phase deux de deux mille neuf. Flat six trois litres six, trois cent quarante-cinq chevaux, boîte PDK. Et surtout une phase deux : injection directe, et plus d'arbre intermédiaire. Le fameux problème des phases un n'existe plus sur celle-là. C'est ce détail qui fait sa cote aujourd'hui.
 
-Deux mille quatorze. J'ai vingt-cinq ans. C'est ma première Porsche. Quarante-quatre mille euros.
+Deux mille quatorze. J'ai vingt-cinq ans, et je réalise un rêve, ma première Porsche. Quarante-quatre mille euros.
 
 Je la garde deux ans. Mille euros d'entretien courant, quatre cent cinquante euros de pneus. Je la revends cinquante-deux mille. Six mille cinq cent cinquante euros d'écart, après avoir roulé avec pendant deux ans.
 
 Et aujourd'hui, plus de dix ans après, les mêmes s'affichent à partir de cinquante-sept mille euros. Il y a des voitures qui décotent, et d'autres qui font l'inverse.
 
 La vraie leçon n'est pas là. Une mauvaise annonce n'est pas une mauvaise voiture. La plupart des gens éliminent sur la présentation. Moi je vérifie le dossier. C'est exactement là que se trouvent les bonnes affaires : dans les annonces que les autres ne prennent pas la peine d'ouvrir.
+
+Moi c'est Guillaume Herbin, je suis dans l'automobile depuis deux mille dix. Suis-moi si tu veux voir plus de contenus comme celui-ci.
 ```
 
-Le CTA (« TU SERAIS ALLÉ VOIR CETTE ANNONCE, TOI ? », @guillaumeherbin_) est sans voix. Le hook dure 4 s quelle que
+La fin (demande de Guillaume, à la place de « TU SERAIS ALLÉ VOIR CETTE ANNONCE, TOI ? ») : sa photo, « GUILLAUME
+HERBIN », « DANS L'AUTO DEPUIS 2010 », @guillaumeherbin_ et un bouton « SUIS-MOI », sur sa voix. Le hook dure 4 s quelle que
 soit la voix (`place-voice.py`). Les scènes prix, deux ans et 2026 s'ajustent à la voix ; le texte ne bouge pas.
 
 ## Écarts au brief
 
+- Scène du prix : « J'ai vingt-cinq ans, et je réalise un rêve, ma première Porsche » (demande de Guillaume : insister
+  sur le rêve), avec « UN RÊVE RÉALISÉ. » à l'écran sur la photo de Guillaume au volant (20140530_170820,
+  demandée par lui comme preuve que c'était bien sa voiture ; hors des 5 photos du brief).
 - Le brief demande 80 s, mais sa timeline va jusqu'à 1:40. La durée finale suit la voix : à débit normal, le texte
-  donne environ 85 à 90 s avec le hook de 4 s et le CTA de 4 s.
+  donne environ 85 à 90 s avec le hook de 4 s et la fin « Moi c'est Guillaume Herbin ».
 - Quelques textes de l'écran dépassent 5 mots parce que le brief les écrit ainsi (« 911 TYPE 997 PHASE 2 — 2009 »,
-  la leçon, le CTA) : ils sont coupés en lignes courtes.
+  la leçon) : ils sont coupés en lignes courtes.

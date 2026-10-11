@@ -2,7 +2,7 @@
 """Mix of the Porsche reel: Guillaume's voice, the music bed and the sound effects (assets/audio/sfx-events.json,
 written by build.py). The music supports and never leads: tension that rises during the warnings (it opens from a
 muffled low-pass to full and comes up), a breath on the turnaround (back down, muffled), a steady bed under the
-facts, a complete fall on the lesson (gone), and the CTA in silence. It ducks under the voice (attack 200 ms, release
+facts, a complete fall on the lesson (gone), back softly under « who I am » and the CTA, faded out at the end. It ducks under the voice (attack 200 ms, release
 400 ms). Output assets/audio/mix.wav, 48 kHz stereo, -14 LUFS once the voice is there.
 Usage: python3 build-mix.py (MUS_START=<s> to start the track elsewhere)"""
 import json, os, subprocess
@@ -13,11 +13,12 @@ VO = "assets/audio/voix-montage.wav"
 MUSIC = "assets/music/musique.mp3"
 SFX = "../.claude/skills/media-use/audio/assets/sfx"
 MUS_START = float(os.environ.get("MUS_START", "0.0"))
-w, r, les = F["02-warnings"], F["03-retournement"], F["09-lecon"]
+w, r, les, cta = F["02-warnings"], F["03-retournement"], F["09-lecon"], F["10-cta"]
 
 # music level (dB) and « openness » (0 = muffled low-pass, 1 = full) along the film, piecewise linear
 LEVEL = [(0, -90), (w["start"] - 0.3, -90), (w["start"] + 0.4, -24), (w["end"] - 0.5, -15), (r["start"] + 0.6, -25),
-         (r["end"] - 0.6, -25), (r["end"] + 0.4, -19), (les["start"] - 0.2, -19), (les["start"] + 1.6, -90), (TOTAL, -90)]
+         (r["end"] - 0.6, -25), (r["end"] + 0.4, -19), (les["start"] - 0.2, -19), (les["start"] + 1.6, -90),
+         (cta["start"] - 0.1, -90), (cta["start"] + 0.9, -21), (TOTAL - 1.3, -21), (TOTAL, -90)]
 OPEN = [(0, 0), (w["start"], 0), (w["end"] - 0.5, 1), (r["start"] + 0.6, 0.15), (r["end"] - 0.6, 0.15), (r["end"] + 0.4, 1), (TOTAL, 1)]
 
 
