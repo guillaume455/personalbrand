@@ -1,0 +1,215 @@
+<template>
+  <style>
+    @font-face { font-family: "Oswald"; src: url("assets/fonts/Oswald-var.woff2") format("woff2"); font-weight: 200 700; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff; background: #0A0A0A;
+      font-family: "Oswald", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r3-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r3-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r3-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r3-hudcam { transform-origin: 540px 700px; }
+
+    /* title: Oswald bold caps, white, centred, orange stroke drawn under the last line (6 frames) */
+    .r3-title { position: absolute; left: 40px; width: 1000px; text-align: center; font-family: "Oswald", sans-serif; font-weight: 700;
+      line-height: 1.12; text-transform: uppercase; color: #ffffff; white-space: nowrap; text-shadow: 0 4px 26px rgba(0,0,0,0.55); }
+    .r3-tline { position: relative; display: inline-block; opacity: 0; }
+    .r3-stilt { position: absolute; left: -0.06em; right: -0.06em; bottom: -0.04em; height: 0.09em; display: block;
+      transform: rotate(-1.2deg); transform-origin: 0 50%; }
+    .r3-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r3-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r3-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r3-ocol { display: block; }
+    .r3-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r3-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* subtitles: bottom of the text at 12 % of the height from the bottom (y 1690), white, soft shadow, key word orange */
+    .r3-sub { position: absolute; left: 0; top: 1565px; width: 1080px; height: 140px; pointer-events: none; }
+    .r3-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 500 58px/70px "Oswald", sans-serif; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.55), 0 4px 22px rgba(0,0,0,0.6); }
+    .r3-w { display: inline-block; opacity: 0; }
+
+    /* photos: full frame, 90 % desaturated, slow zoom 3 to 5 % */
+    .r3-full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; opacity: 0; }
+    .r3-full img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.1) contrast(1.06); }
+    .r3-shade { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; pointer-events: none;
+      background: linear-gradient(rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.62) 22%, rgba(10,10,10,0.1) 38%, rgba(10,10,10,0) 62%, rgba(10,10,10,0.8) 100%); }
+    .r3-txt { position: absolute; left: 0; width: 1080px; text-align: center; font-family: "Oswald", sans-serif; font-weight: 700;
+      text-transform: uppercase; color: #fff; white-space: nowrap; opacity: 0; }
+    .r3-o { color: #FB8000; }
+
+    #r3-doc { position: absolute; left: 150px; top: 430px; width: 780px; height: 860px; border-radius: 22px; background: #ecebe7; opacity: 0;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6); overflow: hidden; }
+    #r3-dh { position: absolute; left: 50px; top: 44px; font: 700 40px/1 "Oswald", sans-serif; color: #2a2a2a; letter-spacing: 0.04em; }
+    #r3-dl { position: absolute; left: 50px; top: 104px; width: 680px; height: 4px; background: #2a2a2a; }
+    .r3-dc { position: absolute; left: 50px; top: 128px; font: 600 26px/1 "Oswald", sans-serif; color: #7a7a7a; letter-spacing: 0.08em; }
+    .r3-dr { position: absolute; left: 50px; width: 680px; height: 74px; border-bottom: 2px solid #cfcdc7; opacity: 0; }
+    .r3-dr span { position: absolute; top: 16px; font: 600 40px/1 "Oswald", sans-serif; color: #2a2a2a; }
+    .r3-dr svg { position: absolute; right: 6px; top: 14px; width: 44px; height: 44px; overflow: visible; }
+    #r3-qr { position: absolute; left: 560px; top: 680px; width: 150px; height: 150px; opacity: 0; }
+    #r3-stmt { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; opacity: 0; }
+      </style>
+
+  <div id="root" data-composition-id="03-carpass" data-width="1080" data-height="1920" data-duration="14.5">
+    <div id="r3-ground" class="clip r3-ground" data-start="0" data-duration="14.5" data-track-index="0">
+      <div class="r3-grain"></div>
+    </div>
+    <div id="r3-push" class="r3-cam"><div id="r3-shk" class="r3-cam"><div id="r3-cran" class="r3-cam">
+      
+    </div></div></div>
+    <div id="r3-hud" class="r3-cam r3-hudcam"><div id="r3-hp" class="r3-cam r3-hudcam">
+      <div class="r3-title" id="r3-t1" style="top:560px;font-size:140px;"><span class="r3-tline" id="r3-t1-0">LE VÉHICULE</span><br><span class="r3-tline" id="r3-t1-1">ÉTAIT BELGE.<i class="r3-stilt"><i class="r3-stk" id="r3-t1-s"></i></i></span></div><div id="r3-doc"><div id="r3-dh">HISTORIQUE KILOMÉTRIQUE</div><div id="r3-dl"></div><div class="r3-dc" style="left:50px">DATE</div><div class="r3-dc" style="left:300px">KILOMÉTRAGE RELEVÉ</div><div id="r3-r0" class="r3-dr" style="top:180px"><span style="left:0">03/2015</span><span style="left:250px">24 518 KM</span><svg viewBox="0 0 44 44"><path id="r3-k0" d="M6 24 L18 36 L38 10" fill="none" stroke="#FB8000" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div id="r3-r1" class="r3-dr" style="top:260px"><span style="left:0">04/2016</span><span style="left:250px">51 207 KM</span><svg viewBox="0 0 44 44"><path id="r3-k1" d="M6 24 L18 36 L38 10" fill="none" stroke="#FB8000" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div id="r3-r2" class="r3-dr" style="top:340px"><span style="left:0">05/2017</span><span style="left:250px">78 934 KM</span><svg viewBox="0 0 44 44"><path id="r3-k2" d="M6 24 L18 36 L38 10" fill="none" stroke="#FB8000" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div id="r3-r3" class="r3-dr" style="top:420px"><span style="left:0">06/2018</span><span style="left:250px">104 662 KM</span><svg viewBox="0 0 44 44"><path id="r3-k3" d="M6 24 L18 36 L38 10" fill="none" stroke="#FB8000" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div id="r3-r4" class="r3-dr" style="top:500px"><span style="left:0">05/2019</span><span style="left:250px">131 045 KM</span><svg viewBox="0 0 44 44"><path id="r3-k4" d="M6 24 L18 36 L38 10" fill="none" stroke="#FB8000" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div id="r3-r5" class="r3-dr" style="top:580px"><span style="left:0">07/2019</span><span style="left:250px">139 891 KM</span><svg viewBox="0 0 44 44"><path id="r3-k5" d="M6 24 L18 36 L38 10" fill="none" stroke="#FB8000" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><svg id="r3-qr" viewBox="0 0 150 150" style="fill:#2a2a2a"><rect x="0" y="0" width="40" height="40" fill="none" stroke="#2a2a2a" stroke-width="6"/><rect x="12" y="12" width="16" height="16"/><rect x="110" y="0" width="40" height="40" fill="none" stroke="#2a2a2a" stroke-width="6"/><rect x="122" y="12" width="16" height="16"/><rect x="0" y="110" width="40" height="40" fill="none" stroke="#2a2a2a" stroke-width="6"/><rect x="12" y="122" width="16" height="16"/><rect x="0" y="0" width="10" height="10"/><rect x="10" y="0" width="10" height="10"/><rect x="20" y="0" width="10" height="10"/><rect x="30" y="0" width="10" height="10"/><rect x="40" y="0" width="10" height="10"/><rect x="50" y="0" width="10" height="10"/><rect x="70" y="0" width="10" height="10"/><rect x="90" y="0" width="10" height="10"/><rect x="100" y="0" width="10" height="10"/><rect x="110" y="0" width="10" height="10"/><rect x="120" y="0" width="10" height="10"/><rect x="130" y="0" width="10" height="10"/><rect x="140" y="0" width="10" height="10"/><rect x="0" y="10" width="10" height="10"/><rect x="10" y="10" width="10" height="10"/><rect x="20" y="10" width="10" height="10"/><rect x="30" y="10" width="10" height="10"/><rect x="50" y="10" width="10" height="10"/><rect x="60" y="10" width="10" height="10"/><rect x="70" y="10" width="10" height="10"/><rect x="80" y="10" width="10" height="10"/><rect x="90" y="10" width="10" height="10"/><rect x="110" y="10" width="10" height="10"/><rect x="120" y="10" width="10" height="10"/><rect x="130" y="10" width="10" height="10"/><rect x="140" y="10" width="10" height="10"/><rect x="0" y="20" width="10" height="10"/><rect x="10" y="20" width="10" height="10"/><rect x="20" y="20" width="10" height="10"/><rect x="30" y="20" width="10" height="10"/><rect x="40" y="20" width="10" height="10"/><rect x="50" y="20" width="10" height="10"/><rect x="90" y="20" width="10" height="10"/><rect x="110" y="20" width="10" height="10"/><rect x="120" y="20" width="10" height="10"/><rect x="130" y="20" width="10" height="10"/><rect x="140" y="20" width="10" height="10"/><rect x="0" y="30" width="10" height="10"/><rect x="10" y="30" width="10" height="10"/><rect x="20" y="30" width="10" height="10"/><rect x="30" y="30" width="10" height="10"/><rect x="40" y="30" width="10" height="10"/><rect x="60" y="30" width="10" height="10"/><rect x="70" y="30" width="10" height="10"/><rect x="80" y="30" width="10" height="10"/><rect x="90" y="30" width="10" height="10"/><rect x="110" y="30" width="10" height="10"/><rect x="120" y="30" width="10" height="10"/><rect x="130" y="30" width="10" height="10"/><rect x="140" y="30" width="10" height="10"/><rect x="0" y="40" width="10" height="10"/><rect x="30" y="40" width="10" height="10"/><rect x="50" y="40" width="10" height="10"/><rect x="60" y="40" width="10" height="10"/><rect x="70" y="40" width="10" height="10"/><rect x="90" y="40" width="10" height="10"/><rect x="100" y="40" width="10" height="10"/><rect x="120" y="40" width="10" height="10"/><rect x="130" y="40" width="10" height="10"/><rect x="10" y="50" width="10" height="10"/><rect x="60" y="50" width="10" height="10"/><rect x="80" y="50" width="10" height="10"/><rect x="90" y="50" width="10" height="10"/><rect x="110" y="50" width="10" height="10"/><rect x="120" y="50" width="10" height="10"/><rect x="130" y="50" width="10" height="10"/><rect x="30" y="60" width="10" height="10"/><rect x="70" y="60" width="10" height="10"/><rect x="100" y="60" width="10" height="10"/><rect x="120" y="60" width="10" height="10"/><rect x="20" y="70" width="10" height="10"/><rect x="30" y="70" width="10" height="10"/><rect x="50" y="70" width="10" height="10"/><rect x="60" y="70" width="10" height="10"/><rect x="70" y="70" width="10" height="10"/><rect x="80" y="70" width="10" height="10"/><rect x="90" y="70" width="10" height="10"/><rect x="110" y="70" width="10" height="10"/><rect x="120" y="70" width="10" height="10"/><rect x="130" y="70" width="10" height="10"/><rect x="0" y="80" width="10" height="10"/><rect x="10" y="80" width="10" height="10"/><rect x="60" y="80" width="10" height="10"/><rect x="70" y="80" width="10" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="120" y="80" width="10" height="10"/><rect x="130" y="80" width="10" height="10"/><rect x="140" y="80" width="10" height="10"/><rect x="0" y="90" width="10" height="10"/><rect x="20" y="90" width="10" height="10"/><rect x="30" y="90" width="10" height="10"/><rect x="40" y="90" width="10" height="10"/><rect x="50" y="90" width="10" height="10"/><rect x="120" y="90" width="10" height="10"/><rect x="20" y="100" width="10" height="10"/><rect x="30" y="100" width="10" height="10"/><rect x="40" y="100" width="10" height="10"/><rect x="60" y="100" width="10" height="10"/><rect x="70" y="100" width="10" height="10"/><rect x="80" y="100" width="10" height="10"/><rect x="90" y="100" width="10" height="10"/><rect x="100" y="100" width="10" height="10"/><rect x="110" y="100" width="10" height="10"/><rect x="120" y="100" width="10" height="10"/><rect x="130" y="100" width="10" height="10"/><rect x="140" y="100" width="10" height="10"/><rect x="0" y="110" width="10" height="10"/><rect x="10" y="110" width="10" height="10"/><rect x="20" y="110" width="10" height="10"/><rect x="30" y="110" width="10" height="10"/><rect x="40" y="110" width="10" height="10"/><rect x="50" y="110" width="10" height="10"/><rect x="80" y="110" width="10" height="10"/><rect x="90" y="110" width="10" height="10"/><rect x="100" y="110" width="10" height="10"/><rect x="0" y="120" width="10" height="10"/><rect x="10" y="120" width="10" height="10"/><rect x="20" y="120" width="10" height="10"/><rect x="30" y="120" width="10" height="10"/><rect x="40" y="120" width="10" height="10"/><rect x="50" y="120" width="10" height="10"/><rect x="80" y="120" width="10" height="10"/><rect x="90" y="120" width="10" height="10"/><rect x="100" y="120" width="10" height="10"/><rect x="0" y="130" width="10" height="10"/><rect x="10" y="130" width="10" height="10"/><rect x="20" y="130" width="10" height="10"/><rect x="30" y="130" width="10" height="10"/><rect x="40" y="130" width="10" height="10"/><rect x="50" y="130" width="10" height="10"/><rect x="60" y="130" width="10" height="10"/><rect x="80" y="130" width="10" height="10"/><rect x="90" y="130" width="10" height="10"/><rect x="0" y="140" width="10" height="10"/><rect x="10" y="140" width="10" height="10"/><rect x="20" y="140" width="10" height="10"/><rect x="30" y="140" width="10" height="10"/><rect x="50" y="140" width="10" height="10"/><rect x="70" y="140" width="10" height="10"/></svg></div><div class="r3-title" id="r3-t2" style="top:270px;font-size:100px;"><span class="r3-tline" id="r3-t2-0">CAR-PASS COMPLET.<i class="r3-stilt"><i class="r3-stk" id="r3-t2-s"></i></i></span></div><div id="r3-stmt"></div><div class="r3-title" id="r3-s1" style="top:560px;font-size:104px;color:#FB8000"><span class="r3-tline" id="r3-s1-0">JE N'AI PAS ACHETÉ</span><br><span class="r3-tline" id="r3-s1-1">UN COMPTEUR.<i class="r3-stilt"><i class="r3-stk" id="r3-s1-s"></i></i></span></div><div class="r3-title" id="r3-s2" style="top:900px;font-size:104px;color:#FB8000"><span class="r3-tline" id="r3-s2-0">J'AI ACHETÉ</span><br><span class="r3-tline" id="r3-s2-1">UN HISTORIQUE.<i class="r3-stilt"><i class="r3-stk" id="r3-s2-s"></i></i></span></div>
+    </div></div>
+    <div id="r3-sub" class="r3-sub">
+      <div class="r3-chunk sub-chunk" data-out="0.862"><span class="r3-w sub-w" data-cue="0.350">Sauf</span> <span class="r3-w sub-w" data-cue="0.454">que</span> <span class="r3-w sub-w" data-cue="0.558">cette</span> <span class="r3-w sub-w" data-cue="0.662">voiture</span></div>
+      <div class="r3-chunk sub-chunk" data-out="1.422"><span class="r3-w sub-w" data-cue="0.870">était</span> <span class="r3-w sub-w sub-key" data-cue="1.078">belge.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="2.081"><span class="r3-w sub-w" data-cue="1.482">Et</span> <span class="r3-w sub-w" data-cue="1.586">en</span> <span class="r3-w sub-w" data-cue="1.690">Belgique,</span></div>
+      <div class="r3-chunk sub-chunk" data-out="2.809"><span class="r3-w sub-w" data-cue="2.141">il</span> <span class="r3-w sub-w" data-cue="2.245">existe</span> <span class="r3-w sub-w" data-cue="2.453">un</span> <span class="r3-w sub-w" data-cue="2.557">document</span></div>
+      <div class="r3-chunk sub-chunk" data-out="3.589"><span class="r3-w sub-w" data-cue="2.869">que</span> <span class="r3-w sub-w" data-cue="2.973">la</span> <span class="r3-w sub-w" data-cue="3.077">plupart</span> <span class="r3-w sub-w" data-cue="3.285">des</span> <span class="r3-w sub-w" data-cue="3.389">Français</span></div>
+      <div class="r3-chunk sub-chunk" data-out="4.213"><span class="r3-w sub-w" data-cue="3.597">ne</span> <span class="r3-w sub-w" data-cue="3.701">connaissent</span> <span class="r3-w sub-w" data-cue="4.013">pas,</span></div>
+      <div class="r3-chunk sub-chunk" data-out="4.808"><span class="r3-w sub-w" data-cue="4.257">le</span> <span class="r3-w sub-w sub-key" data-cue="4.360">Car-Pass.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="5.380"><span class="r3-w sub-w" data-cue="4.868">À</span> <span class="r3-w sub-w" data-cue="4.972">chaque</span> <span class="r3-w sub-w" data-cue="5.180">passage</span></div>
+      <div class="r3-chunk sub-chunk" data-out="6.092"><span class="r3-w sub-w" data-cue="5.388">chez</span> <span class="r3-w sub-w" data-cue="5.492">un</span> <span class="r3-w sub-w" data-cue="5.596">professionnel,</span></div>
+      <div class="r3-chunk sub-chunk" data-out="7.027"><span class="r3-w sub-w" data-cue="6.152">le</span> <span class="r3-w sub-w" data-cue="6.256">kilométrage</span> <span class="r3-w sub-w" data-cue="6.672">est</span> <span class="r3-w sub-w" data-cue="6.776">relevé</span></div>
+      <div class="r3-chunk sub-chunk" data-out="7.847"><span class="r3-w sub-w" data-cue="7.087">et</span> <span class="r3-w sub-w" data-cue="7.191">enregistré.</span></div>
+      <div class="r3-chunk sub-chunk" data-out="8.419"><span class="r3-w sub-w" data-cue="7.907">Le</span> <span class="r3-w sub-w" data-cue="8.011">vendeur</span> <span class="r3-w sub-w" data-cue="8.219">a</span></div>
+      <div class="r3-chunk sub-chunk" data-out="8.887"><span class="r3-w sub-w sub-key" data-cue="8.323">l'obligation légale</span></div>
+      <div class="r3-chunk sub-chunk" data-out="9.858"><span class="r3-w sub-w" data-cue="8.947">de</span> <span class="r3-w sub-w" data-cue="9.051">le</span> <span class="r3-w sub-w" data-cue="9.155">remettre</span> <span class="r3-w sub-w" data-cue="9.363">à</span> <span class="r3-w sub-w" data-cue="9.467">l'acheteur,</span></div>
+      <div class="r3-chunk sub-chunk" data-out="11.250"><span class="r3-w sub-w" data-cue="9.918">et</span> <span class="r3-w sub-w" data-cue="10.022">il</span> <span class="r3-w sub-w" data-cue="10.126">se</span> <span class="r3-w sub-w" data-cue="10.230">vérifie</span> <span class="r3-w sub-w" data-cue="10.542">en</span> <span class="r3-w sub-w" data-cue="10.646">ligne.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "03-carpass", P = "r3-", DUR = 14.5;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["sauf", 0.35, 0.454], ["que", 0.454, 0.558], ["cette", 0.558, 0.662], ["voiture", 0.662, 0.87], ["était", 0.87, 1.078], ["belge", 1.078, 1.182], ["et", 1.482, 1.586], ["en", 1.586, 1.69], ["belgique", 1.69, 2.001], ["il", 2.141, 2.245], ["existe", 2.245, 2.453], ["un", 2.453, 2.557], ["document", 2.557, 2.869], ["que", 2.869, 2.973], ["la", 2.973, 3.077], ["plupart", 3.077, 3.285], ["des", 3.285, 3.389], ["français", 3.389, 3.597], ["ne", 3.597, 3.701], ["connaissent", 3.701, 4.013], ["pas", 4.013, 4.117], ["le", 4.257, 4.36], ["car-pass", 4.36, 4.568], ["à", 4.868, 4.972], ["chaque", 4.972, 5.18], ["passage", 5.18, 5.388], ["chez", 5.388, 5.492], ["un", 5.492, 5.596], ["professionnel", 5.596, 6.012], ["le", 6.152, 6.256], ["kilométrage", 6.256, 6.672], ["est", 6.672, 6.776], ["relevé", 6.776, 7.087], ["et", 7.087, 7.191], ["enregistré", 7.191, 7.607], ["le", 7.907, 8.011], ["vendeur", 8.011, 8.219], ["a", 8.219, 8.323], ["l'obligationlégale", 8.323, 8.947], ["de", 8.947, 9.051], ["le", 9.051, 9.155], ["remettre", 9.155, 9.363], ["à", 9.363, 9.467], ["l'acheteur", 9.467, 9.778], ["et", 9.918, 10.022], ["il", 10.022, 10.126], ["se", 10.126, 10.23], ["vérifie", 10.23, 10.542], ["en", 10.542, 10.646], ["ligne", 10.646, 10.75]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      // text: fast fade (6 frames), the orange stroke draws left to right in 6 frames
+      function fin(id, t, d) { pre(id, { opacity: 0 }); go(id, { opacity: 1 }, t, d || 0.2, "none"); }
+      function fout(id, t, d) { go(id, { opacity: 0 }, t, d || 0.2, "none"); }
+      function stroke6(tid, t) { tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "none", immediateRender: false }, Math.max(0, t)); init(tid + "-s", { scaleX: 1 }); }
+      function tin(tid, n, t, d) { for (var i = 0; i < n; i++) fin(tid + "-" + i, t, d); stroke6(tid, t + (d || 0.2)); }
+      function tout(tid, n, t) { for (var i = 0; i < n; i++) fout(tid + "-" + i, t); go(tid + "-s", { scaleX: 0 }, t, 0.2, "none"); }
+      // punch: a short zoom-out kick of the stage and the texts on a beat (Instagram rhythm)
+      function punch(t, k) { k = k || 0.05; ["hp", "shk"].forEach(function (id) { tl.fromTo($(id), { scale: 1 + k }, { scale: 1, duration: 0.32, ease: "expo.out", immediateRender: false }, Math.max(0, t)); }); }
+      // photos: fade in, slow zoom (k = 1.03 to 1.05) until t2
+      function photo(id, t, t2, k, op) { pre(id, { opacity: 0, scale: 1 }); go(id, { opacity: op || 1 }, t, 0.25, "none"); go(id, { scale: k || 1.04 }, t, Math.max(0.5, (t2 || DUR) - t), "none"); }
+
+      // the turn: the car was Belgian
+      tin("t1", 2, at("belge") - 0.1); punch(at("belge") - 0.1, 0.05);
+      // the Car-Pass: a neutral mock-up, fictitious dates and mileages, each line ticked in orange
+      tout("t1", 2, at("car-pass") - 0.3);
+      pre("doc", { opacity: 0, y: 80, scale: 0.94 }); go("doc", { opacity: 1, y: 0, scale: 1 }, at("car-pass") - 0.15, 0.35, "expo.out"); punch(at("car-pass") - 0.15, 0.04);
+      var a = at("chaque") - 0.1, b = atEnd("enregistré"), step = Math.max(0.22, (b - a) / 6);
+      for (var i = 0; i < 6; i++) { pre("r" + i, { opacity: 0, x: -30 }); go("r" + i, { opacity: 1, x: 0 }, a + i * step, 0.2); draw("k" + i, a + i * step + 0.12, 0.18, "power2.out"); }
+      tin("t2", 1, at("vendeur") - 0.1); punch(at("vendeur") - 0.1, 0.04);
+      pre("qr", { opacity: 0, scale: 0.6 }); go("qr", { opacity: 1, scale: 1 }, at("ligne") - 0.15, 0.3, "back.out(2)");
+      // in the pause after the voice: what I really bought
+      var e = atEnd("ligne") + 0.25;
+      go("stmt", { opacity: 1 }, e, 0.25, "none"); tout("t2", 1, e);
+      tin("s1", 2, e + 0.15); punch(e + 0.15, 0.04);
+      tin("s2", 2, e + 1.15); punch(e + 1.15, 0.05);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

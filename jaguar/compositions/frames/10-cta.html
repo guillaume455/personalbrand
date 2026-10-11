@@ -1,0 +1,199 @@
+<template>
+  <style>
+    @font-face { font-family: "Oswald"; src: url("assets/fonts/Oswald-var.woff2") format("woff2"); font-weight: 200 700; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff; background: #0A0A0A;
+      font-family: "Oswald", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r10-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r10-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r10-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r10-hudcam { transform-origin: 540px 700px; }
+
+    /* title: Oswald bold caps, white, centred, orange stroke drawn under the last line (6 frames) */
+    .r10-title { position: absolute; left: 40px; width: 1000px; text-align: center; font-family: "Oswald", sans-serif; font-weight: 700;
+      line-height: 1.12; text-transform: uppercase; color: #ffffff; white-space: nowrap; text-shadow: 0 4px 26px rgba(0,0,0,0.55); }
+    .r10-tline { position: relative; display: inline-block; opacity: 0; }
+    .r10-stilt { position: absolute; left: -0.06em; right: -0.06em; bottom: -0.04em; height: 0.09em; display: block;
+      transform: rotate(-1.2deg); transform-origin: 0 50%; }
+    .r10-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r10-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r10-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r10-ocol { display: block; }
+    .r10-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r10-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* subtitles: bottom of the text at 12 % of the height from the bottom (y 1690), white, soft shadow, key word orange */
+    .r10-sub { position: absolute; left: 0; top: 1565px; width: 1080px; height: 140px; pointer-events: none; }
+    .r10-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 500 58px/70px "Oswald", sans-serif; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.55), 0 4px 22px rgba(0,0,0,0.6); }
+    .r10-w { display: inline-block; opacity: 0; }
+
+    /* photos: full frame, 90 % desaturated, slow zoom 3 to 5 % */
+    .r10-full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; opacity: 0; }
+    .r10-full img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.1) contrast(1.06); }
+    .r10-shade { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; pointer-events: none;
+      background: linear-gradient(rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.62) 22%, rgba(10,10,10,0.1) 38%, rgba(10,10,10,0) 62%, rgba(10,10,10,0.8) 100%); }
+    .r10-txt { position: absolute; left: 0; width: 1080px; text-align: center; font-family: "Oswald", sans-serif; font-weight: 700;
+      text-transform: uppercase; color: #fff; white-space: nowrap; opacity: 0; }
+    .r10-o { color: #FB8000; }
+
+    #r10-me { position: absolute; left: 270px; top: 300px; width: 540px; height: 740px; overflow: hidden; opacity: 0;
+      -webkit-mask-image: linear-gradient(#000 74%, transparent 100%); mask-image: linear-gradient(#000 74%, transparent 100%); }
+    #r10-me img { position: absolute; left: 0; top: 0; width: 540px; height: auto; filter: saturate(0.35) contrast(1.04); }
+    #r10-meglow { position: absolute; left: 290px; top: 330px; width: 500px; height: 500px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(circle, rgba(251,128,0,0.5) 0%, rgba(251,128,0,0.16) 45%, rgba(251,128,0,0) 70%); }
+    #r10-since { position: absolute; left: 0; top: 1196px; width: 1080px; text-align: center; font: 600 52px/1 "Oswald", sans-serif; color: #bdbdbd; opacity: 0; letter-spacing: 0.02em; }
+    #r10-hn { position: absolute; left: 0; top: 1290px; width: 1080px; text-align: center; font: 700 66px/1 "Oswald", sans-serif; color: #FB8000; opacity: 0; }
+    #r10-pill { position: absolute; left: 0; top: 1392px; width: 1080px; text-align: center; }
+    #r10-pilli { display: inline-block; padding: 6px 40px; border-radius: 40px; background: #FB8000; color: #0A0A0A; font: 700 46px/1.3 "Oswald", sans-serif;
+      opacity: 0; box-shadow: 0 0 40px rgba(251,128,0,0.4); }
+      </style>
+
+  <div id="root" data-composition-id="10-cta" data-width="1080" data-height="1920" data-duration="6.5">
+    <div id="r10-ground" class="clip r10-ground" data-start="0" data-duration="6.5" data-track-index="0">
+      <div class="r10-grain"></div>
+    </div>
+    <div id="r10-push" class="r10-cam"><div id="r10-shk" class="r10-cam"><div id="r10-cran" class="r10-cam">
+      <div id="r10-meglow"></div><div id="r10-me"><img src="assets/img/guillaume.png"></div>
+    </div></div></div>
+    <div id="r10-hud" class="r10-cam r10-hudcam"><div id="r10-hp" class="r10-cam r10-hudcam">
+      <div class="r10-title" id="r10-nm" style="top:1070px;font-size:100px;"><span class="r10-tline" id="r10-nm-0">GUILLAUME HERBIN<i class="r10-stilt"><i class="r10-stk" id="r10-nm-s"></i></i></span></div><div id="r10-since">DANS L'AUTO DEPUIS 2010</div><div id="r10-hn">@guillaumeherbin_</div><div id="r10-pill"><span id="r10-pilli">SUIS-MOI</span></div>
+    </div></div>
+    <div id="r10-sub" class="r10-sub">
+      <div class="r10-chunk sub-chunk" data-out="1.077"><span class="r10-w sub-w" data-cue="0.350">Moi</span> <span class="r10-w sub-w" data-cue="0.458">c'est</span> <span class="r10-w sub-w" data-cue="0.566">Guillaume Herbin,</span></div>
+      <div class="r10-chunk sub-chunk" data-out="1.832"><span class="r10-w sub-w" data-cue="1.137">je</span> <span class="r10-w sub-w" data-cue="1.245">suis</span> <span class="r10-w sub-w" data-cue="1.353">dans</span> <span class="r10-w sub-w" data-cue="1.461">l'automobile</span></div>
+      <div class="r10-chunk sub-chunk" data-out="2.672"><span class="r10-w sub-w" data-cue="1.892">depuis</span> <span class="r10-w sub-w" data-cue="2.108">2010.</span></div>
+      <div class="r10-chunk sub-chunk" data-out="3.471"><span class="r10-w sub-w" data-cue="2.732">Suis-moi</span> <span class="r10-w sub-w" data-cue="2.948">si</span> <span class="r10-w sub-w" data-cue="3.055">tu</span> <span class="r10-w sub-w" data-cue="3.163">veux</span> <span class="r10-w sub-w" data-cue="3.271">voir</span></div>
+      <div class="r10-chunk sub-chunk" data-out="3.858"><span class="r10-w sub-w" data-cue="3.379">plus</span> <span class="r10-w sub-w" data-cue="3.487">de</span> <span class="r10-w sub-w" data-cue="3.595">contenus</span></div>
+      <div class="r10-chunk sub-chunk" data-out="4.850"><span class="r10-w sub-w" data-cue="3.918">comme</span> <span class="r10-w sub-w" data-cue="4.026">celui-ci.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "10-cta", P = "r10-", DUR = 6.5;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["moi", 0.35, 0.458], ["c'est", 0.458, 0.566], ["guillaumeherbin", 0.566, 0.997], ["je", 1.137, 1.245], ["suis", 1.245, 1.353], ["dans", 1.353, 1.461], ["l'automobile", 1.461, 1.892], ["depuis", 1.892, 2.108], ["2010", 2.108, 2.432], ["suis-moi", 2.732, 2.948], ["si", 2.948, 3.055], ["tu", 3.055, 3.163], ["veux", 3.163, 3.271], ["voir", 3.271, 3.379], ["plus", 3.379, 3.487], ["de", 3.487, 3.595], ["contenus", 3.595, 3.918], ["comme", 3.918, 4.026], ["celui-ci", 4.026, 4.35]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      // text: fast fade (6 frames), the orange stroke draws left to right in 6 frames
+      function fin(id, t, d) { pre(id, { opacity: 0 }); go(id, { opacity: 1 }, t, d || 0.2, "none"); }
+      function fout(id, t, d) { go(id, { opacity: 0 }, t, d || 0.2, "none"); }
+      function stroke6(tid, t) { tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "none", immediateRender: false }, Math.max(0, t)); init(tid + "-s", { scaleX: 1 }); }
+      function tin(tid, n, t, d) { for (var i = 0; i < n; i++) fin(tid + "-" + i, t, d); stroke6(tid, t + (d || 0.2)); }
+      function tout(tid, n, t) { for (var i = 0; i < n; i++) fout(tid + "-" + i, t); go(tid + "-s", { scaleX: 0 }, t, 0.2, "none"); }
+      // punch: a short zoom-out kick of the stage and the texts on a beat (Instagram rhythm)
+      function punch(t, k) { k = k || 0.05; ["hp", "shk"].forEach(function (id) { tl.fromTo($(id), { scale: 1 + k }, { scale: 1, duration: 0.32, ease: "expo.out", immediateRender: false }, Math.max(0, t)); }); }
+      // photos: fade in, slow zoom (k = 1.03 to 1.05) until t2
+      function photo(id, t, t2, k, op) { pre(id, { opacity: 0, scale: 1 }); go(id, { opacity: op || 1 }, t, 0.25, "none"); go(id, { scale: k || 1.04 }, t, Math.max(0.5, (t2 || DUR) - t), "none"); }
+
+      // who I am: the photo, the name, since 2010; then the handle and the button
+      pre("me", { opacity: 0, y: 60 }); go("me", { opacity: 1, y: 0 }, 0.05, 0.6, "power3.out");
+      pre("meglow", { opacity: 0, scale: 0.6 }); go("meglow", { opacity: 1, scale: 1 }, 0.15, 0.7, "power2.out");
+      tin("nm", 1, Math.max(0.2, at("guillaumeherbin") - 0.1)); punch(Math.max(0.2, at("guillaumeherbin") - 0.1), 0.04);
+      fin("since", at("depuis") - 0.1);
+      fin("hn", at("suis-moi") - 0.1);
+      pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("suis-moi") + 0.1, 0.3, "back.out(2)"); punch(at("suis-moi") + 0.1, 0.04);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
