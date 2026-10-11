@@ -62,7 +62,7 @@
     (function () {
       var FID = "01-hook", P = "r1-", DUR = 2.3;
       // word cues of this scene (local seconds), written by build.py from the voice timings
-      var W = [["l'annonce", 0.03, 0.353], ["que", 0.353, 0.514], ["personne", 0.514, 0.836], ["ne", 0.836, 0.998], ["voulait", 0.998, 1.32]];
+      var W = [["l'annonce", 0.03, 0.365], ["que", 0.365, 0.532], ["personne", 0.532, 0.867], ["ne", 0.867, 1.035], ["voulait", 1.035, 1.37]];
 
       var root = document.querySelector('[data-composition-id="' + FID + '"]');
       function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }

@@ -1,1330 +1,1330 @@
 {
- "duration": 75.669,
+ "duration": 76.745,
  "words": [
   {
    "w": "L'*annonce*",
    "start": 0.03,
-   "end": 0.353
+   "end": 0.365
   },
   {
    "w": "que",
-   "start": 0.353,
-   "end": 0.514
+   "start": 0.365,
+   "end": 0.532
   },
   {
    "w": "personne",
-   "start": 0.514,
-   "end": 0.836
+   "start": 0.532,
+   "end": 0.867
   },
   {
    "w": "ne",
-   "start": 0.836,
-   "end": 0.998
+   "start": 0.867,
+   "end": 1.035
   },
   {
    "w": "voulait.",
-   "start": 0.998,
-   "end": 1.32
+   "start": 1.035,
+   "end": 1.37
   },
   {
    "w": "Leboncoin,",
    "start": 2.4,
-   "end": 2.93
+   "end": 2.92
   },
   {
    "w": "2014.",
-   "start": 3.08,
+   "start": 3.05,
    "end": 3.71
   },
   {
    "w": "Des",
    "start": 3.89,
-   "end": 4.026
+   "end": 4.054
   },
   {
    "w": "photos",
-   "start": 4.026,
-   "end": 4.298
+   "start": 4.054,
+   "end": 4.382
   },
   {
    "w": "ratées.",
-   "start": 4.298,
-   "end": 4.57
+   "start": 4.382,
+   "end": 4.71
   },
   {
    "w": "Un",
-   "start": 4.77,
-   "end": 4.942
+   "start": 4.83,
+   "end": 4.998
   },
   {
    "w": "*vendeur*",
-   "start": 4.942,
-   "end": 5.286
+   "start": 4.998,
+   "end": 5.335
   },
   {
    "w": "pressé,",
-   "start": 5.286,
-   "end": 5.63
+   "start": 5.335,
+   "end": 5.672
   },
   {
    "w": "qui",
-   "start": 5.8,
-   "end": 5.936
+   "start": 5.672,
+   "end": 5.84
   },
   {
    "w": "connaît",
-   "start": 5.936,
-   "end": 6.207
+   "start": 5.84,
+   "end": 6.177
   },
   {
    "w": "mal",
-   "start": 6.207,
-   "end": 6.343
+   "start": 6.177,
+   "end": 6.345
   },
   {
    "w": "sa",
-   "start": 6.343,
-   "end": 6.479
+   "start": 6.345,
+   "end": 6.513
   },
   {
    "w": "voiture,",
-   "start": 6.479,
-   "end": 6.75
+   "start": 6.513,
+   "end": 6.85
   },
   {
    "w": "qu'on",
-   "start": 6.92,
-   "end": 7.123
+   "start": 6.98,
+   "end": 7.183
   },
   {
    "w": "n'arrive",
-   "start": 7.123,
-   "end": 7.327
+   "start": 7.183,
+   "end": 7.387
   },
   {
    "w": "pas",
-   "start": 7.327,
-   "end": 7.428
+   "start": 7.387,
+   "end": 7.488
   },
   {
    "w": "à",
-   "start": 7.428,
-   "end": 7.53
+   "start": 7.488,
+   "end": 7.59
   },
   {
    "w": "avoir",
-   "start": 7.53,
-   "end": 7.733
+   "start": 7.59,
+   "end": 7.793
   },
   {
    "w": "au",
-   "start": 7.733,
-   "end": 7.835
+   "start": 7.793,
+   "end": 7.895
   },
   {
    "w": "téléphone,",
-   "start": 7.835,
-   "end": 8.14
+   "start": 7.895,
+   "end": 8.2
   },
   {
    "w": "et",
-   "start": 8.32,
-   "end": 8.461
+   "start": 8.4,
+   "end": 8.546
   },
   {
    "w": "qui",
-   "start": 8.461,
-   "end": 8.603
+   "start": 8.546,
+   "end": 8.691
   },
   {
    "w": "ne",
-   "start": 8.603,
-   "end": 8.744
+   "start": 8.691,
+   "end": 8.837
   },
   {
    "w": "vend",
-   "start": 8.744,
-   "end": 8.886
+   "start": 8.837,
+   "end": 8.983
   },
   {
    "w": "rien",
-   "start": 8.886,
-   "end": 9.027
+   "start": 8.983,
+   "end": 9.129
   },
   {
    "w": "du",
-   "start": 9.027,
-   "end": 9.169
+   "start": 9.129,
+   "end": 9.274
   },
   {
    "w": "tout.",
-   "start": 9.169,
-   "end": 9.31
+   "start": 9.274,
+   "end": 9.42
   },
   {
    "w": "Cinq",
-   "start": 9.5,
-   "end": 9.629
+   "start": 9.61,
+   "end": 9.741
   },
   {
    "w": "raisons",
-   "start": 9.629,
-   "end": 9.887
+   "start": 9.741,
+   "end": 10.003
   },
   {
    "w": "de",
-   "start": 9.887,
-   "end": 10.016
+   "start": 10.003,
+   "end": 10.134
   },
   {
    "w": "passer",
-   "start": 10.016,
-   "end": 10.273
+   "start": 10.134,
+   "end": 10.397
   },
   {
    "w": "son",
-   "start": 10.273,
-   "end": 10.402
+   "start": 10.397,
+   "end": 10.528
   },
   {
    "w": "chemin.",
-   "start": 10.402,
-   "end": 10.66
+   "start": 10.528,
+   "end": 10.79
   },
   {
    "w": "Sauf",
-   "start": 10.85,
-   "end": 11.027
+   "start": 10.99,
+   "end": 11.174
   },
   {
    "w": "que",
-   "start": 11.027,
-   "end": 11.204
+   "start": 11.174,
+   "end": 11.358
   },
   {
    "w": "ces",
-   "start": 11.204,
-   "end": 11.381
+   "start": 11.358,
+   "end": 11.542
   },
   {
    "w": "cinq",
-   "start": 11.381,
-   "end": 11.558
+   "start": 11.542,
+   "end": 11.725
   },
   {
    "w": "warnings",
-   "start": 11.558,
-   "end": 11.912
+   "start": 11.725,
+   "end": 12.093
   },
   {
    "w": "portaient",
-   "start": 11.912,
-   "end": 12.265
+   "start": 12.093,
+   "end": 12.461
   },
   {
    "w": "tous",
-   "start": 12.265,
-   "end": 12.442
+   "start": 12.461,
+   "end": 12.645
   },
   {
    "w": "sur",
-   "start": 12.442,
-   "end": 12.619
+   "start": 12.645,
+   "end": 12.828
   },
   {
    "w": "le",
-   "start": 12.619,
-   "end": 12.796
+   "start": 12.828,
+   "end": 13.012
   },
   {
    "w": "*vendeur*.",
-   "start": 12.796,
-   "end": 13.15
+   "start": 13.012,
+   "end": 13.38
   },
   {
    "w": "Sur",
-   "start": 13.34,
-   "end": 13.48
+   "start": 13.57,
+   "end": 13.73
   },
   {
    "w": "la",
-   "start": 13.48,
-   "end": 13.62
+   "start": 13.73,
+   "end": 13.89
   },
   {
    "w": "voiture,",
-   "start": 13.62,
-   "end": 13.9
+   "start": 13.89,
+   "end": 14.21
   },
   {
    "w": "il",
-   "start": 14.1,
-   "end": 14.2
+   "start": 14.38,
+   "end": 14.479
   },
   {
    "w": "n'y",
-   "start": 14.2,
-   "end": 14.3
+   "start": 14.479,
+   "end": 14.577
   },
   {
    "w": "en",
-   "start": 14.3,
-   "end": 14.4
+   "start": 14.577,
+   "end": 14.676
   },
   {
    "w": "avait",
-   "start": 14.4,
-   "end": 14.6
+   "start": 14.676,
+   "end": 14.873
   },
   {
    "w": "aucun.",
-   "start": 14.6,
-   "end": 14.8
+   "start": 14.873,
+   "end": 15.07
   },
   {
    "w": "Encore",
-   "start": 14.99,
-   "end": 15.19
+   "start": 15.24,
+   "end": 15.444
   },
   {
    "w": "fallait-il",
-   "start": 15.19,
-   "end": 15.49
+   "start": 15.444,
+   "end": 15.75
   },
   {
    "w": "aller",
-   "start": 15.49,
-   "end": 15.69
+   "start": 15.75,
+   "end": 15.954
   },
   {
    "w": "*vérifier*.",
-   "start": 15.69,
-   "end": 15.99
+   "start": 15.954,
+   "end": 16.26
   },
   {
    "w": "Carnet",
-   "start": 16.17,
-   "end": 16.461
+   "start": 16.46,
+   "end": 16.73
   },
   {
    "w": "d'entretien",
-   "start": 16.461,
-   "end": 16.899
+   "start": 16.73,
+   "end": 17.136
   },
   {
    "w": "à",
-   "start": 16.899,
-   "end": 17.044
+   "start": 17.136,
+   "end": 17.271
   },
   {
    "w": "jour,",
-   "start": 17.044,
-   "end": 17.19
+   "start": 17.271,
+   "end": 17.407
   },
   {
    "w": "dernier",
-   "start": 17.36,
-   "end": 17.616
+   "start": 17.407,
+   "end": 17.677
   },
   {
    "w": "passage",
-   "start": 17.616,
-   "end": 17.871
+   "start": 17.677,
+   "end": 17.948
   },
   {
    "w": "à",
-   "start": 17.871,
-   "end": 17.999
+   "start": 17.948,
+   "end": 18.083
   },
   {
    "w": "54~000~km.",
-   "start": 17.999,
-   "end": 19.15
+   "start": 18.083,
+   "end": 19.3
   },
   {
    "w": "Contrôle",
-   "start": 19.36,
-   "end": 19.73
+   "start": 19.61,
+   "end": 19.97
   },
   {
    "w": "technique",
-   "start": 19.73,
-   "end": 20.285
+   "start": 19.97,
+   "end": 20.51
   },
   {
    "w": "vierge.",
-   "start": 20.285,
-   "end": 20.47
+   "start": 20.51,
+   "end": 20.69
   },
   {
    "w": "Rappel",
-   "start": 20.65,
-   "end": 20.98
+   "start": 20.89,
+   "end": 21.223
   },
   {
    "w": "constructeur",
-   "start": 20.98,
-   "end": 21.475
+   "start": 21.223,
+   "end": 21.721
   },
   {
    "w": "effectué.",
-   "start": 21.475,
-   "end": 21.97
+   "start": 21.721,
+   "end": 22.22
   },
   {
    "w": "Historique",
-   "start": 22.16,
-   "end": 22.62
+   "start": 22.41,
+   "end": 22.97
   },
   {
    "w": "complet.",
-   "start": 22.75,
-   "end": 23.0
+   "start": 22.97,
+   "end": 23.25
   },
   {
    "w": "Une",
-   "start": 23.18,
-   "end": 23.318
+   "start": 23.44,
+   "end": 23.575
   },
   {
    "w": "annonce",
-   "start": 23.318,
-   "end": 23.594
+   "start": 23.575,
+   "end": 23.844
   },
   {
    "w": "se",
-   "start": 23.594,
-   "end": 23.732
+   "start": 23.844,
+   "end": 23.979
   },
   {
    "w": "juge",
-   "start": 23.732,
-   "end": 23.87
+   "start": 23.979,
+   "end": 24.113
   },
   {
    "w": "sur",
-   "start": 23.87,
-   "end": 24.008
+   "start": 24.113,
+   "end": 24.248
   },
   {
    "w": "ce",
-   "start": 24.008,
-   "end": 24.146
+   "start": 24.248,
+   "end": 24.383
   },
   {
    "w": "qu'il",
-   "start": 24.146,
-   "end": 24.422
+   "start": 24.383,
+   "end": 24.652
   },
   {
    "w": "y",
-   "start": 24.422,
-   "end": 24.56
+   "start": 24.652,
+   "end": 24.787
   },
   {
    "w": "a",
-   "start": 24.56,
-   "end": 24.698
+   "start": 24.787,
+   "end": 24.921
   },
   {
    "w": "dans",
-   "start": 24.698,
-   "end": 24.836
+   "start": 24.921,
+   "end": 25.056
   },
   {
    "w": "le",
-   "start": 24.836,
-   "end": 24.974
+   "start": 25.056,
+   "end": 25.191
   },
   {
    "w": "*dossier*,",
-   "start": 24.974,
-   "end": 25.25
+   "start": 25.191,
+   "end": 25.46
   },
   {
    "w": "pas",
-   "start": 25.43,
-   "end": 25.539
+   "start": 25.65,
+   "end": 25.756
   },
   {
    "w": "sur",
-   "start": 25.539,
-   "end": 25.648
+   "start": 25.756,
+   "end": 25.861
   },
   {
    "w": "la",
-   "start": 25.648,
-   "end": 25.757
+   "start": 25.861,
+   "end": 25.967
   },
   {
    "w": "qualité",
-   "start": 25.757,
-   "end": 26.083
+   "start": 25.967,
+   "end": 26.283
   },
   {
    "w": "des",
-   "start": 26.083,
-   "end": 26.192
+   "start": 26.283,
+   "end": 26.389
   },
   {
    "w": "photos.",
-   "start": 26.192,
-   "end": 26.41
+   "start": 26.389,
+   "end": 26.6
   },
   {
    "w": "Une",
-   "start": 26.6,
-   "end": 26.748
+   "start": 26.8,
+   "end": 26.955
   },
   {
    "w": "911",
-   "start": 26.748,
-   "end": 27.342
+   "start": 26.955,
+   "end": 27.576
   },
   {
    "w": "type",
-   "start": 27.342,
-   "end": 27.491
+   "start": 27.576,
+   "end": 27.732
   },
   {
    "w": "997",
-   "start": 27.491,
-   "end": 28.381
+   "start": 27.732,
+   "end": 28.663
   },
   {
    "w": "phase",
-   "start": 28.381,
-   "end": 28.529
+   "start": 28.663,
+   "end": 28.818
   },
   {
    "w": "2",
-   "start": 28.529,
-   "end": 28.678
+   "start": 28.818,
+   "end": 28.974
   },
   {
    "w": "de",
-   "start": 28.678,
-   "end": 28.826
+   "start": 28.974,
+   "end": 29.129
   },
   {
    "w": "2009.",
-   "start": 28.826,
-   "end": 29.42
+   "start": 29.129,
+   "end": 29.75
   },
   {
    "w": "Flat",
-   "start": 29.61,
-   "end": 29.775
+   "start": 29.96,
+   "end": 30.167
   },
   {
    "w": "six",
-   "start": 29.775,
-   "end": 29.94
+   "start": 30.167,
+   "end": 30.373
   },
   {
    "w": "3,6~litres,",
-   "start": 29.94,
-   "end": 30.6
+   "start": 30.373,
+   "end": 31.2
   },
   {
    "w": "345~chevaux,",
-   "start": 30.6,
-   "end": 31.92
+   "start": 31.32,
+   "end": 32.54
   },
   {
    "w": "boîte",
-   "start": 32.06,
-   "end": 32.222
+   "start": 32.54,
+   "end": 32.693
   },
   {
    "w": "PDK.",
-   "start": 32.222,
-   "end": 32.71
+   "start": 32.693,
+   "end": 33.15
   },
   {
    "w": "Et",
-   "start": 32.87,
-   "end": 33.06
+   "start": 33.34,
+   "end": 33.51
   },
   {
    "w": "surtout",
-   "start": 33.06,
-   "end": 33.44
+   "start": 33.51,
+   "end": 33.85
   },
   {
    "w": "une",
-   "start": 33.44,
-   "end": 33.63
+   "start": 33.85,
+   "end": 34.02
   },
   {
    "w": "*phase~2*,",
-   "start": 33.63,
-   "end": 34.01
+   "start": 34.02,
+   "end": 34.36
   },
   {
    "w": "injection",
-   "start": 34.21,
-   "end": 34.672
+   "start": 34.56,
+   "end": 35.004
   },
   {
    "w": "directe,",
-   "start": 34.672,
-   "end": 34.98
+   "start": 35.004,
+   "end": 35.3
   },
   {
    "w": "et",
-   "start": 35.15,
-   "end": 35.256
+   "start": 35.46,
+   "end": 35.562
   },
   {
    "w": "plus",
-   "start": 35.256,
-   "end": 35.361
+   "start": 35.562,
+   "end": 35.664
   },
   {
    "w": "d'*arbre~intermédiaire*.",
-   "start": 35.361,
-   "end": 36.1
+   "start": 35.664,
+   "end": 36.38
   },
   {
    "w": "Le",
-   "start": 36.28,
-   "end": 36.428
+   "start": 36.58,
+   "end": 36.74
   },
   {
    "w": "fameux",
-   "start": 36.428,
-   "end": 36.724
+   "start": 36.74,
+   "end": 37.06
   },
   {
    "w": "problème",
-   "start": 36.724,
-   "end": 37.02
+   "start": 37.06,
+   "end": 37.38
   },
   {
    "w": "des",
-   "start": 37.02,
-   "end": 37.168
+   "start": 37.38,
+   "end": 37.54
   },
   {
    "w": "phases",
-   "start": 37.168,
-   "end": 37.316
+   "start": 37.54,
+   "end": 37.7
   },
   {
    "w": "1",
-   "start": 37.316,
-   "end": 37.464
+   "start": 37.7,
+   "end": 37.86
   },
   {
    "w": "n'existe",
-   "start": 37.464,
-   "end": 37.76
+   "start": 37.86,
+   "end": 38.18
   },
   {
    "w": "plus",
-   "start": 37.76,
-   "end": 37.908
+   "start": 38.18,
+   "end": 38.34
   },
   {
    "w": "sur",
-   "start": 37.908,
-   "end": 38.056
-  },
-  {
-   "w": "celle-là.",
-   "start": 38.056,
+   "start": 38.34,
    "end": 38.5
   },
   {
+   "w": "celle-là.",
+   "start": 38.5,
+   "end": 38.98
+  },
+  {
    "w": "C'est",
-   "start": 38.68,
-   "end": 38.815
+   "start": 39.17,
+   "end": 39.3
   },
   {
    "w": "ce",
-   "start": 38.815,
-   "end": 38.949
+   "start": 39.3,
+   "end": 39.43
   },
   {
    "w": "détail",
-   "start": 38.949,
-   "end": 39.218
+   "start": 39.43,
+   "end": 39.69
   },
   {
    "w": "qui",
-   "start": 39.218,
-   "end": 39.353
+   "start": 39.69,
+   "end": 39.82
   },
   {
    "w": "fait",
-   "start": 39.353,
-   "end": 39.487
+   "start": 39.82,
+   "end": 39.95
   },
   {
    "w": "sa",
-   "start": 39.487,
-   "end": 39.622
+   "start": 39.95,
+   "end": 40.08
   },
   {
    "w": "cote",
-   "start": 39.622,
-   "end": 39.756
+   "start": 40.08,
+   "end": 40.21
   },
   {
    "w": "aujourd'hui.",
-   "start": 39.756,
-   "end": 40.16
+   "start": 40.21,
+   "end": 40.6
   },
   {
    "w": "2014.",
-   "start": 40.35,
-   "end": 41.0
+   "start": 40.79,
+   "end": 41.43
   },
   {
    "w": "J'ai",
-   "start": 41.19,
-   "end": 41.328
+   "start": 41.63,
+   "end": 41.776
   },
   {
    "w": "25~ans,",
-   "start": 41.328,
-   "end": 41.881
+   "start": 41.776,
+   "end": 42.362
   },
   {
    "w": "et",
-   "start": 41.881,
-   "end": 42.019
+   "start": 42.362,
+   "end": 42.508
   },
   {
    "w": "je",
-   "start": 42.019,
-   "end": 42.157
+   "start": 42.508,
+   "end": 42.655
   },
   {
    "w": "réalise",
-   "start": 42.157,
-   "end": 42.434
+   "start": 42.655,
+   "end": 42.947
   },
   {
    "w": "un",
-   "start": 42.434,
-   "end": 42.572
+   "start": 42.947,
+   "end": 43.094
   },
   {
    "w": "*rêve*,",
-   "start": 42.572,
-   "end": 42.71
+   "start": 43.094,
+   "end": 43.24
   },
   {
    "w": "ma",
-   "start": 42.9,
-   "end": 43.118
+   "start": 43.44,
+   "end": 43.665
   },
   {
    "w": "première",
-   "start": 43.118,
-   "end": 43.553
+   "start": 43.665,
+   "end": 44.115
   },
   {
    "w": "Porsche.",
-   "start": 43.553,
-   "end": 43.77
+   "start": 44.115,
+   "end": 44.34
   },
   {
    "w": "44~000~euros.",
-   "start": 43.94,
-   "end": 44.65
+   "start": 44.53,
+   "end": 45.22
   },
   {
    "w": "Je",
-   "start": 44.85,
-   "end": 44.994
+   "start": 45.41,
+   "end": 45.566
   },
   {
    "w": "la",
-   "start": 44.994,
-   "end": 45.138
+   "start": 45.566,
+   "end": 45.722
   },
   {
    "w": "garde",
-   "start": 45.138,
-   "end": 45.282
+   "start": 45.722,
+   "end": 45.878
   },
   {
    "w": "deux",
-   "start": 45.282,
-   "end": 45.426
+   "start": 45.878,
+   "end": 46.034
   },
   {
    "w": "ans.",
-   "start": 45.426,
-   "end": 45.57
+   "start": 46.034,
+   "end": 46.19
   },
   {
    "w": "1~000~euros",
-   "start": 45.76,
-   "end": 46.244
+   "start": 46.37,
+   "end": 46.854
   },
   {
    "w": "d'entretien",
-   "start": 46.244,
-   "end": 46.608
+   "start": 46.854,
+   "end": 47.218
   },
   {
    "w": "courant,",
-   "start": 46.608,
-   "end": 46.85
+   "start": 47.218,
+   "end": 47.46
   },
   {
    "w": "450~euros",
-   "start": 47.01,
-   "end": 47.752
+   "start": 47.65,
+   "end": 48.327
   },
   {
    "w": "de",
-   "start": 47.752,
-   "end": 47.876
+   "start": 48.327,
+   "end": 48.44
   },
   {
    "w": "pneus.",
-   "start": 47.876,
-   "end": 48.0
+   "start": 48.57,
+   "end": 48.66
   },
   {
    "w": "Je",
-   "start": 48.18,
-   "end": 48.302
+   "start": 48.99,
+   "end": 49.149
   },
   {
    "w": "la",
-   "start": 48.302,
-   "end": 48.424
+   "start": 49.149,
+   "end": 49.308
   },
   {
    "w": "revends",
-   "start": 48.424,
-   "end": 48.669
+   "start": 49.308,
+   "end": 49.626
   },
   {
    "w": "52~000.",
-   "start": 48.669,
-   "end": 49.28
+   "start": 49.626,
+   "end": 50.42
   },
   {
    "w": "6~550~euros",
-   "start": 49.49,
-   "end": 50.853
+   "start": 50.64,
+   "end": 52.011
   },
   {
    "w": "d'écart,",
-   "start": 50.853,
-   "end": 51.125
+   "start": 52.011,
+   "end": 52.285
   },
   {
    "w": "après",
-   "start": 51.125,
-   "end": 51.398
+   "start": 52.285,
+   "end": 52.559
   },
   {
    "w": "avoir",
-   "start": 51.398,
-   "end": 51.67
+   "start": 52.559,
+   "end": 52.833
   },
   {
    "w": "roulé",
-   "start": 51.67,
-   "end": 51.943
+   "start": 52.833,
+   "end": 53.107
   },
   {
    "w": "avec",
-   "start": 51.943,
-   "end": 52.215
+   "start": 53.107,
+   "end": 53.382
   },
   {
    "w": "pendant",
-   "start": 52.215,
-   "end": 52.488
+   "start": 53.382,
+   "end": 53.656
   },
   {
    "w": "deux",
-   "start": 52.488,
-   "end": 52.624
+   "start": 53.656,
+   "end": 53.793
   },
   {
    "w": "ans.",
-   "start": 52.624,
-   "end": 52.76
+   "start": 53.793,
+   "end": 53.93
   },
   {
    "w": "Et",
-   "start": 52.95,
-   "end": 53.085
+   "start": 54.1,
+   "end": 54.238
   },
   {
    "w": "aujourd'hui,",
-   "start": 53.085,
-   "end": 53.49
+   "start": 54.238,
+   "end": 54.65
   },
   {
    "w": "plus",
-   "start": 53.63,
-   "end": 53.783
+   "start": 54.82,
+   "end": 54.958
   },
   {
    "w": "de",
-   "start": 53.783,
-   "end": 53.937
+   "start": 54.958,
+   "end": 55.097
   },
   {
    "w": "dix",
-   "start": 53.937,
-   "end": 54.09
+   "start": 55.097,
+   "end": 55.235
   },
   {
    "w": "ans",
-   "start": 54.09,
-   "end": 54.243
+   "start": 55.235,
+   "end": 55.373
   },
   {
    "w": "après,",
-   "start": 54.243,
-   "end": 54.55
+   "start": 55.373,
+   "end": 55.65
   },
   {
    "w": "les",
-   "start": 54.72,
-   "end": 54.855
+   "start": 55.83,
+   "end": 55.965
   },
   {
    "w": "mêmes",
-   "start": 54.855,
-   "end": 54.989
+   "start": 55.965,
+   "end": 56.099
   },
   {
    "w": "*s'affichent*",
-   "start": 54.989,
-   "end": 55.394
+   "start": 56.099,
+   "end": 56.504
   },
   {
    "w": "autour",
-   "start": 55.394,
-   "end": 55.663
+   "start": 56.504,
+   "end": 56.773
   },
   {
    "w": "de",
-   "start": 55.663,
-   "end": 55.798
+   "start": 56.773,
+   "end": 56.908
   },
   {
    "w": "60~000~euros",
-   "start": 55.798,
-   "end": 56.606
+   "start": 56.908,
+   "end": 57.716
   },
   {
    "w": "en",
-   "start": 56.606,
-   "end": 56.741
+   "start": 57.716,
+   "end": 57.851
   },
   {
    "w": "annonce.",
-   "start": 56.741,
-   "end": 57.01
+   "start": 57.851,
+   "end": 58.12
   },
   {
    "w": "Il",
-   "start": 57.2,
-   "end": 57.311
+   "start": 58.31,
+   "end": 58.421
   },
   {
    "w": "y",
-   "start": 57.311,
-   "end": 57.422
+   "start": 58.421,
+   "end": 58.532
   },
   {
    "w": "a",
-   "start": 57.422,
-   "end": 57.533
+   "start": 58.532,
+   "end": 58.643
   },
   {
    "w": "des",
-   "start": 57.533,
-   "end": 57.644
+   "start": 58.643,
+   "end": 58.754
   },
   {
    "w": "voitures",
-   "start": 57.644,
-   "end": 57.866
+   "start": 58.754,
+   "end": 58.976
   },
   {
    "w": "qui",
-   "start": 57.866,
-   "end": 57.977
+   "start": 58.976,
+   "end": 59.087
   },
   {
    "w": "décotent,",
-   "start": 57.977,
-   "end": 58.31
+   "start": 59.087,
+   "end": 59.42
   },
   {
    "w": "et",
-   "start": 58.49,
-   "end": 58.65
+   "start": 59.61,
+   "end": 59.755
   },
   {
    "w": "d'autres",
-   "start": 58.65,
-   "end": 58.81
+   "start": 59.755,
+   "end": 59.9
   },
   {
    "w": "qui",
-   "start": 58.94,
-   "end": 59.097
+   "start": 60.06,
+   "end": 60.227
   },
   {
    "w": "font",
-   "start": 59.097,
-   "end": 59.255
+   "start": 60.227,
+   "end": 60.395
   },
   {
    "w": "l'inverse.",
-   "start": 59.255,
-   "end": 59.57
+   "start": 60.395,
+   "end": 60.73
   },
   {
    "w": "La",
-   "start": 59.75,
-   "end": 59.884
+   "start": 60.92,
+   "end": 61.043
   },
   {
    "w": "vraie",
-   "start": 59.884,
-   "end": 60.019
+   "start": 61.043,
+   "end": 61.166
   },
   {
    "w": "leçon",
-   "start": 60.019,
-   "end": 60.287
+   "start": 61.166,
+   "end": 61.411
   },
   {
    "w": "n'est",
-   "start": 60.287,
-   "end": 60.421
+   "start": 61.411,
+   "end": 61.534
   },
   {
    "w": "pas",
-   "start": 60.421,
-   "end": 60.556
+   "start": 61.534,
+   "end": 61.657
   },
   {
    "w": "là.",
-   "start": 60.556,
-   "end": 60.69
+   "start": 61.657,
+   "end": 61.78
   },
   {
    "w": "Une",
-   "start": 60.88,
-   "end": 61.033
+   "start": 61.97,
+   "end": 62.119
   },
   {
    "w": "mauvaise",
-   "start": 61.033,
-   "end": 61.34
+   "start": 62.119,
+   "end": 62.418
   },
   {
    "w": "*annonce*",
-   "start": 61.34,
-   "end": 61.647
+   "start": 62.418,
+   "end": 62.716
   },
   {
    "w": "n'est",
-   "start": 61.647,
-   "end": 61.8
+   "start": 62.716,
+   "end": 62.865
   },
   {
    "w": "pas",
-   "start": 61.8,
-   "end": 61.953
+   "start": 62.865,
+   "end": 63.014
   },
   {
    "w": "une",
-   "start": 61.953,
-   "end": 62.107
+   "start": 63.014,
+   "end": 63.163
   },
   {
    "w": "mauvaise",
-   "start": 62.107,
-   "end": 62.413
+   "start": 63.163,
+   "end": 63.462
   },
   {
    "w": "voiture.",
-   "start": 62.413,
-   "end": 62.72
+   "start": 63.462,
+   "end": 63.76
   },
   {
    "w": "La",
-   "start": 62.89,
-   "end": 63.011
+   "start": 63.95,
+   "end": 64.073
   },
   {
    "w": "plupart",
-   "start": 63.011,
-   "end": 63.252
+   "start": 64.073,
+   "end": 64.318
   },
   {
    "w": "des",
-   "start": 63.252,
-   "end": 63.373
+   "start": 64.318,
+   "end": 64.441
   },
   {
    "w": "gens",
-   "start": 63.373,
-   "end": 63.493
+   "start": 64.441,
+   "end": 64.563
   },
   {
    "w": "éliminent",
-   "start": 63.493,
-   "end": 63.976
+   "start": 64.563,
+   "end": 65.054
   },
   {
    "w": "sur",
-   "start": 63.976,
-   "end": 64.097
+   "start": 65.054,
+   "end": 65.177
   },
   {
    "w": "la",
-   "start": 64.097,
-   "end": 64.217
+   "start": 65.177,
+   "end": 65.299
   },
   {
    "w": "*présentation*.",
-   "start": 64.217,
-   "end": 64.7
+   "start": 65.299,
+   "end": 65.79
   },
   {
    "w": "Moi",
-   "start": 64.89,
-   "end": 65.005
+   "start": 66.0,
+   "end": 66.13
   },
   {
    "w": "je",
-   "start": 65.005,
-   "end": 65.12
+   "start": 66.13,
+   "end": 66.26
   },
   {
    "w": "vérifie",
-   "start": 65.29,
-   "end": 65.74
+   "start": 66.41,
+   "end": 66.85
   },
   {
    "w": "le",
-   "start": 65.74,
-   "end": 65.89
+   "start": 66.85,
+   "end": 66.997
   },
   {
    "w": "*dossier*.",
-   "start": 65.89,
-   "end": 66.19
+   "start": 66.997,
+   "end": 67.29
   },
   {
    "w": "C'est",
-   "start": 66.37,
-   "end": 66.507
+   "start": 67.48,
+   "end": 67.617
   },
   {
    "w": "exactement",
-   "start": 66.507,
-   "end": 67.056
+   "start": 67.617,
+   "end": 68.166
   },
   {
    "w": "là",
-   "start": 67.056,
-   "end": 67.193
+   "start": 68.166,
+   "end": 68.303
   },
   {
    "w": "que",
-   "start": 67.193,
-   "end": 67.33
+   "start": 68.303,
+   "end": 68.44
   },
   {
    "w": "se",
-   "start": 67.33,
-   "end": 67.467
+   "start": 68.44,
+   "end": 68.577
   },
   {
    "w": "trouvent",
-   "start": 67.467,
-   "end": 67.741
+   "start": 68.577,
+   "end": 68.851
   },
   {
    "w": "les",
-   "start": 67.741,
-   "end": 67.879
+   "start": 68.851,
+   "end": 68.989
   },
   {
    "w": "bonnes",
-   "start": 67.879,
-   "end": 68.016
+   "start": 68.989,
+   "end": 69.126
   },
   {
    "w": "affaires,",
-   "start": 68.016,
-   "end": 68.29
+   "start": 69.126,
+   "end": 69.4
   },
   {
    "w": "dans",
-   "start": 68.47,
-   "end": 68.607
+   "start": 69.61,
+   "end": 69.745
   },
   {
    "w": "les",
-   "start": 68.607,
-   "end": 68.743
+   "start": 69.745,
+   "end": 69.881
   },
   {
    "w": "annonces",
-   "start": 68.743,
-   "end": 69.017
+   "start": 69.881,
+   "end": 70.151
   },
   {
    "w": "que",
-   "start": 69.017,
-   "end": 69.153
+   "start": 70.151,
+   "end": 70.287
   },
   {
    "w": "les",
-   "start": 69.153,
-   "end": 69.29
+   "start": 70.287,
+   "end": 70.422
   },
   {
    "w": "autres",
-   "start": 69.29,
-   "end": 69.427
+   "start": 70.422,
+   "end": 70.557
   },
   {
    "w": "ne",
-   "start": 69.427,
-   "end": 69.563
+   "start": 70.557,
+   "end": 70.693
   },
   {
    "w": "prennent",
-   "start": 69.563,
-   "end": 69.837
+   "start": 70.693,
+   "end": 70.963
   },
   {
    "w": "pas",
-   "start": 69.837,
-   "end": 69.973
+   "start": 70.963,
+   "end": 71.099
   },
   {
    "w": "la",
-   "start": 69.973,
-   "end": 70.11
+   "start": 71.099,
+   "end": 71.234
   },
   {
    "w": "peine",
-   "start": 70.11,
-   "end": 70.247
+   "start": 71.234,
+   "end": 71.369
   },
   {
    "w": "d'ouvrir.",
-   "start": 70.247,
-   "end": 70.52
+   "start": 71.369,
+   "end": 71.64
   },
   {
    "w": "Moi",
-   "start": 70.72,
-   "end": 70.877
+   "start": 71.84,
+   "end": 71.988
   },
   {
    "w": "c'est",
-   "start": 70.877,
-   "end": 71.033
+   "start": 71.988,
+   "end": 72.137
   },
   {
    "w": "Guillaume~Herbin,",
-   "start": 71.033,
-   "end": 71.66
+   "start": 72.137,
+   "end": 72.73
   },
   {
    "w": "je",
-   "start": 71.85,
-   "end": 71.978
+   "start": 72.87,
+   "end": 73.001
   },
   {
    "w": "suis",
-   "start": 71.978,
-   "end": 72.105
+   "start": 73.001,
+   "end": 73.132
   },
   {
    "w": "dans",
-   "start": 72.105,
-   "end": 72.232
+   "start": 73.132,
+   "end": 73.262
   },
   {
    "w": "l'automobile",
-   "start": 72.232,
-   "end": 72.743
+   "start": 73.262,
+   "end": 73.786
   },
   {
    "w": "depuis",
-   "start": 72.743,
-   "end": 72.997
+   "start": 73.786,
+   "end": 74.047
   },
   {
    "w": "2010.",
-   "start": 72.997,
-   "end": 73.38
+   "start": 74.047,
+   "end": 74.44
   },
   {
    "w": "Suis-moi",
-   "start": 73.57,
-   "end": 73.83
+   "start": 74.63,
+   "end": 74.889
   },
   {
    "w": "si",
-   "start": 73.83,
-   "end": 73.96
+   "start": 74.889,
+   "end": 75.018
   },
   {
    "w": "tu",
-   "start": 73.96,
-   "end": 74.09
+   "start": 75.018,
+   "end": 75.147
   },
   {
    "w": "veux",
-   "start": 74.09,
-   "end": 74.22
+   "start": 75.147,
+   "end": 75.277
   },
   {
    "w": "voir",
-   "start": 74.22,
-   "end": 74.35
+   "start": 75.277,
+   "end": 75.406
   },
   {
    "w": "plus",
-   "start": 74.35,
-   "end": 74.48
+   "start": 75.406,
+   "end": 75.535
   },
   {
    "w": "de",
-   "start": 74.48,
-   "end": 74.61
+   "start": 75.535,
+   "end": 75.665
   },
   {
    "w": "contenus",
-   "start": 74.61,
-   "end": 75.0
+   "start": 75.665,
+   "end": 76.053
   },
   {
    "w": "comme",
-   "start": 75.0,
-   "end": 75.13
+   "start": 76.053,
+   "end": 76.182
   },
   {
    "w": "celui-ci.",
-   "start": 75.13,
-   "end": 75.52
+   "start": 76.182,
+   "end": 76.57
   }
  ],
  "placed": true

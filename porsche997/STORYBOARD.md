@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "77.533s"
+duration: "78.567s"
 message: "Une annonce qui fait fuir tout le monde, un acheteur qui vérifie au lieu de juger : les cinq warnings portaient sur le vendeur, aucun sur la voiture. Une mauvaise annonce n'est pas une mauvaise voiture."
 arc: Hook → Les warnings → Le retournement → Ce que j'ai vérifié → La voiture → Le prix → Les deux ans → 2026 → La leçon → Qui je suis et CTA
 audience: "Personnes qui veulent se lancer dans l'achat-revente automobile"
@@ -37,10 +37,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: Les warnings · 2.30 → 10.73
+## Frame 2: Les warnings · 2.30 → 10.90
 
 - scene: Les warnings
-- duration: 8.43s
+- duration: 8.60s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-warnings.html
@@ -53,10 +53,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: Le retournement · 10.73 → 16.07
+## Frame 3: Le retournement · 10.90 → 16.37
 
 - scene: Le retournement
-- duration: 5.33s
+- duration: 5.47s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-retournement.html
@@ -69,10 +69,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: Ce que j'ai vérifié · 16.07 → 26.50
+## Frame 4: Ce que j'ai vérifié · 16.37 → 26.70
 
 - scene: Ce que j'ai vérifié
-- duration: 10.43s
+- duration: 10.33s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-verifie.html
@@ -85,10 +85,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: La voiture · 26.50 → 40.27
+## Frame 5: La voiture · 26.70 → 40.70
 
 - scene: La voiture
-- duration: 13.77s
+- duration: 14.00s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-voiture.html
@@ -101,10 +101,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 6: Le rêve et le prix · 40.27 → 44.73
+## Frame 6: Le rêve et le prix · 40.70 → 45.30
 
 - scene: Le rêve et le prix
-- duration: 4.47s
+- duration: 4.60s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/06-prix.html
@@ -117,10 +117,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 7: Les deux ans · 44.73 → 52.87
+## Frame 7: Les deux ans · 45.30 → 54.00
 
 - scene: Les deux ans
-- duration: 8.13s
+- duration: 8.70s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/07-deux-ans.html
@@ -133,10 +133,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 8: 2026 · 52.87 → 59.67
+## Frame 8: 2026 · 54.00 → 60.83
 
 - scene: 2026
-- duration: 6.80s
+- duration: 6.83s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/08-2026.html
@@ -149,10 +149,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 9: La leçon · 59.67 → 70.63
+## Frame 9: La leçon · 60.83 → 71.73
 
 - scene: La leçon
-- duration: 10.97s
+- duration: 10.90s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/09-lecon.html
@@ -165,10 +165,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 10: Qui je suis et CTA · 70.63 → 77.53
+## Frame 10: Qui je suis et CTA · 71.73 → 78.57
 
 - scene: Qui je suis et CTA
-- duration: 6.90s
+- duration: 6.83s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/10-cta.html
