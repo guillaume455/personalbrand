@@ -27,7 +27,7 @@ Deux mille quatorze. J'ai vingt-cinq ans, et je réalise un rêve, ma première 
 
 Je la garde deux ans. Mille euros d'entretien courant, quatre cent cinquante euros de pneus. Je la revends cinquante-deux mille. Six mille cinq cent cinquante euros d'écart, après avoir roulé avec pendant deux ans.
 
-Et aujourd'hui, plus de dix ans après, les mêmes s'affichent à partir de cinquante-sept mille euros. Il y a des voitures qui décotent, et d'autres qui font l'inverse.
+Et aujourd'hui, plus de dix ans après, les mêmes s'affichent autour de soixante mille euros en annonce. Il y a des voitures qui décotent, et d'autres qui font l'inverse.
 
 La vraie leçon n'est pas là. Une mauvaise annonce n'est pas une mauvaise voiture. La plupart des gens éliminent sur la présentation. Moi je vérifie le dossier. C'est exactement là que se trouvent les bonnes affaires : dans les annonces que les autres ne prennent pas la peine d'ouvrir.
 

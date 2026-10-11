@@ -46,7 +46,7 @@ SCENES = [
    "Je la garde deux ans.", "1~000~euros", "d'entretien courant,", "450~euros de pneus.", "Je la revends 52~000.",
    "6~550~euros d'écart,", "après avoir roulé avec", "pendant deux ans."]),
  dict(id="08-2026", name="2026", window=(64.5, 72), speak=(64.7, 71.6), chunks=[
-   "Et aujourd'hui,", "plus de dix ans après,", "les mêmes *s'affichent*", "à partir de", "57~000~euros.",
+   "Et aujourd'hui,", "plus de dix ans après,", "les mêmes *s'affichent*", "autour de", "60~000~euros", "en annonce.",
    "Il y a des voitures", "qui décotent,", "et d'autres", "qui font l'inverse."]),
  dict(id="09-lecon", name="La leçon", window=(72, 82.5), speak=(72.3, 82.1), chunks=[
    "La vraie leçon", "n'est pas là.", "Une mauvaise *annonce*", "n'est pas", "une mauvaise voiture.", "La plupart des gens",
@@ -58,7 +58,7 @@ SCENES = [
 ]
 SPOKEN_SYL = {"2014": 4, "54000km": 9, "911": 4, "997": 6, "2009": 4, "36litres": 4, "345chevaux": 8, "pdk": 3, "2": 1,
               "1": 1, "25ans": 4, "44000euros": 7, "1000euros": 4, "450euros": 6, "52000": 5, "6550euros": 10,
-              "57000euros": 7, "2010": 3, "guillaumeherbin": 4, "leboncoin": 3, "phase2": 2, "d'arbreintermédiaire": 7}
+              "60000euros": 6, "2010": 3, "guillaumeherbin": 4, "leboncoin": 3, "phase2": 2, "d'arbreintermédiaire": 7}
 
 
 def norm(tok):
@@ -556,7 +556,7 @@ def scene_08():
     hud = (f'<div id="§tlw"><svg viewBox="0 0 880 120"><path id="§ln" d="M20 36 L860 36" stroke="#FB8000" stroke-width="8" stroke-linecap="round" fill="none"/>{ticks}</svg>'
            '<div id="§y0" class="§yr" style="left:-20px">2014</div><div id="§y1" class="§yr" style="right:-20px;color:#FB8000">2026</div></div>'
            + title("t1", ["AUJOURD'HUI,", "LES MÊMES S'AFFICHENT"], 620, 92)
-           + '<div id="§since">À PARTIR DE</div><div id="§big">' + odo("bg", "57 000 €") + '</div>'
+           + '<div id="§since">AUTOUR DE</div><div id="§big">' + odo("bg", "60 000 €") + '</div>'
            + '<div id="§note">prix demandés, France, octobre 2026</div>')
     js = X_JS + """
       // a timeline from 2014 to 2026 draws in orange, one tick per year
@@ -564,9 +564,9 @@ def scene_08():
       for (var k = 0; k < 13; k++) { pre("tk" + k, { opacity: 0 }); go("tk" + k, { opacity: 1 }, 0.1 + k * 0.1, 0.12, "none"); }
       fin("y1", 1.35);
       tin("t1", 2, at("aujourd'hui") - 0.1);
-      fin("since", at("partir") - 0.15);
-      fin("big", at("57000euros") - 0.15); odo("bg", at("57000euros") - 0.1, 1.2, { from: "00 000", dimLead: true });
-      fin("note", at("57000euros") + 0.3);
+      fin("since", at("autour") - 0.15);
+      fin("big", at("60000euros") - 0.15); odo("bg", at("60000euros") - 0.1, 1.2, { from: "00 000", dimLead: true });
+      fin("note", at("60000euros") + 0.3);
     """
     return css, "", hud, js, None, []
 
@@ -736,7 +736,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **One world** : fond #0A0A0A, accent unique #FB8000, texte blanc, rouge #E03131 pour les seules pastilles de warning ; Oswald en capitales, trait orange tracé sous chaque titre en 6 frames ; sous-titres de la voix mot par mot à 12 % du bas, mot-clé en orange.
 - **Seams** : coupes franches sur la voix à chaque scène (whoosh court).
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
-- **Negative list** : les 5 photos de juin 2014 uniquement, pas d'image générée ; plaques et enseigne du garage floutées ; aucun logo ni capture de site d'annonces ; jamais « vaut 57 000 € » ; pas de billets.
+- **Negative list** : les photos de 2014 de Guillaume uniquement, pas d'image générée ; plaques et enseigne du garage floutées ; aucun logo ni capture de site d'annonces ; jamais « vaut 60 000 € », seulement « s'affichent autour de », prix demandés ; pas de billets.
 
 """
     for f in frames:

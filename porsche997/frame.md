@@ -37,7 +37,7 @@ fonts:
 
 typography:
   title:     { fontFamily: "Oswald", px: 104, weight: 700, upper: true, lineHeight: 1.12, note: "centred, white, the orange stroke drawn under the last line in 6 frames; one family for the whole film" }
-  jumbo:     { fontFamily: "Oswald", px: 230, weight: 700, upper: true, lineHeight: 1, note: "the big numbers (0, 44 000 €, + 6 550 €, 57 000 €), cash-register counters" }
+  jumbo:     { fontFamily: "Oswald", px: 230, weight: 700, upper: true, lineHeight: 1, note: "the big numbers (0, 44 000 €, + 6 550 €, 60 000 €), cash-register counters" }
   subtitle:  { fontFamily: "Oswald", px: 58, weight: 500, lineHeight: 70, note: "bottom of the text at 12 % of the height from the bottom (y 1690), white, soft shadow, no band; chunks of 2 to 5 words, 42 characters max; the key word turns orange" }
   ui:        { fontFamily: "Oswald", px: 40, weight: 600, note: "warning pills (red #E03131), labels" }
   handle:    { fontFamily: "Oswald", px: 72, weight: 700, note: "« @guillaumeherbin_ » in orange" }

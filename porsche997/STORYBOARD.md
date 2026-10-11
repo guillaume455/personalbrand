@@ -19,7 +19,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **One world** : fond #0A0A0A, accent unique #FB8000, texte blanc, rouge #E03131 pour les seules pastilles de warning ; Oswald en capitales, trait orange tracé sous chaque titre en 6 frames ; sous-titres de la voix mot par mot à 12 % du bas, mot-clé en orange.
 - **Seams** : coupes franches sur la voix à chaque scène (whoosh court).
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
-- **Negative list** : les 5 photos de juin 2014 uniquement, pas d'image générée ; plaques et enseigne du garage floutées ; aucun logo ni capture de site d'annonces ; jamais « vaut 57 000 € » ; pas de billets.
+- **Negative list** : les photos de 2014 de Guillaume uniquement, pas d'image générée ; plaques et enseigne du garage floutées ; aucun logo ni capture de site d'annonces ; jamais « vaut 60 000 € », seulement « s'affichent autour de », prix demandés ; pas de billets.
 
 ## Frame 1: Hook · 0.00 → 4.00
 
@@ -140,7 +140,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - transition_in: cut
 - status: animated
 - src: compositions/frames/08-2026.html
-- voiceover: "Et aujourd'hui, plus de dix ans après, les mêmes s'affichent à partir de 57 000 euros. Il y a des voitures qui décotent, et d'autres qui font l'inverse."
+- voiceover: "Et aujourd'hui, plus de dix ans après, les mêmes s'affichent autour de 60 000 euros en annonce. Il y a des voitures qui décotent, et d'autres qui font l'inverse."
 - type: demo
 - blueprint: none
 - focal: 2026
