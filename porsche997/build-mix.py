@@ -52,11 +52,11 @@ norm = "loudnorm=I=-14:TP=-1.5:LRA=11," if has_vo else ""
 fl.append("".join(mix) + f"amix=inputs={len(mix)}:normalize=0:duration=first,{norm}aresample=48000,alimiter=limit=0.85:level=false[out]")
 subprocess.run(["ffmpeg", "-v", "error", "-y", *args, "-filter_complex", ";".join(fl), "-map", "[out]", "-t", str(TOTAL),
                 "-ar", "48000", "-ac", "2", "assets/audio/mix.wav"], check=True)
-if has_vo:
-    # one-pass loudnorm lands within a dB: a last gain puts the film on -14 LUFS
+for _ in range(3 if has_vo else 0):
+    # one-pass loudnorm lands within a dB: a last gain (repeated, the limiter eats a little) puts the film on -14 LUFS
     out = subprocess.run(["ffmpeg", "-i", "assets/audio/mix.wav", "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True).stderr
     gain = -14 - float(out.rsplit("I:", 1)[1].split("LUFS")[0])
-    if abs(gain) > 0.2:
+    if abs(gain) > 0.1:
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", "assets/audio/mix.wav", "-af", f"volume={gain:.2f}dB,alimiter=limit=0.89:level=false",
                         "-ar", "48000", "-ac", "2", "assets/audio/mix.tmp.wav"], check=True)
         os.replace("assets/audio/mix.tmp.wav", "assets/audio/mix.wav")
