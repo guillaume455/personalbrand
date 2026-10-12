@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "78.633s"
+duration: "80.667s"
 message: "Une F-Type à 139 891 km que tout le monde refuse, un document que personne ne connaît (le Car-Pass belge), une marge que tout le monde surestime : 4 167 €, pas 6 200 €. Le risque n'était pas le kilométrage, c'était de ne pas pouvoir le prouver."
 arc: Hook → Pourquoi tout le monde fuit → Le Car-Pass → La nuance → Ce que j'ai engagé → La revente → La vraie marge → Le chiffre que personne ne regarde → La leçon → Qui je suis et CTA
 audience: "Personnes qui veulent se lancer dans l'achat-revente automobile"
@@ -133,10 +133,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 8: Le chiffre que personne ne regarde · 55.17 → 62.57
+## Frame 8: Le chiffre que personne ne regarde · 55.17 → 63.20
 
 - scene: Le chiffre que personne ne regarde
-- duration: 7.40s
+- duration: 8.03s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/08-rendement.html
@@ -149,10 +149,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 9: La leçon · 62.57 → 71.17
+## Frame 9: La leçon · 63.20 → 73.20
 
 - scene: La leçon
-- duration: 8.60s
+- duration: 10.00s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/09-lecon.html
@@ -165,7 +165,7 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 10: Qui je suis et CTA · 71.17 → 78.63
+## Frame 10: Qui je suis et CTA · 73.20 → 80.67
 
 - scene: Qui je suis et CTA
 - duration: 7.47s

@@ -4,9 +4,9 @@
 and a tail is added for the end card. Writes assets/audio/voix-montage.wav."""
 import re, subprocess
 SRC, OUT, SPEED, MAXGAP, TAIL = "assets/audio/voix.mp3", "assets/audio/voix-montage.wav", 1.15, 0.26, 0.0
-KEEP_LONGER = {}   # {phrase end (s, rounded): longer pause}
+KEEP_LONGER = {88.18: 0.42, 90.18: 0.36, 92.85: 0.36, 96.16: 0.32}   # {phrase end (s, rounded): longer pause}: the lesson breathes
 # passages kept at another speed (raw seconds): [(start, end, speed)]
-SLOW = []
+SLOW = [(84.5, 98.9, 1.0)]   # « aucun retour… » and the lesson: ElevenLabs rushes it, keep its own speed
 out = subprocess.run(["python3", "../.claude/skills/motion-design/scripts/onsets.py", SRC, "--no-whisper"],
                      capture_output=True, text=True, check=True).stdout
 spans = [(float(a), float(b)) for a, b in re.findall(r"^#\d+\s+([\d.]+) to\s+([\d.]+)", out, re.M)]

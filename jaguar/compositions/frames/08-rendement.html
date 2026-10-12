@@ -46,8 +46,8 @@
     #r8-note { position: absolute; left: 0; width: 1080px; text-align: center; font-family: "Oswald", sans-serif; font-weight: 700; white-space: nowrap; opacity: 0; top: 1020px; font-size: 38px; font-weight: 500; color: #8c8c8c; letter-spacing: 0.04em; }
       </style>
 
-  <div id="root" data-composition-id="08-rendement" data-width="1080" data-height="1920" data-duration="7.4">
-    <div id="r8-ground" class="clip r8-ground" data-start="0" data-duration="7.4" data-track-index="0">
+  <div id="root" data-composition-id="08-rendement" data-width="1080" data-height="1920" data-duration="8.033">
+    <div id="r8-ground" class="clip r8-ground" data-start="0" data-duration="8.033" data-track-index="0">
       <div class="r8-grain"></div>
     </div>
     <div id="r8-push" class="r8-cam"><div id="r8-shk" class="r8-cam"><div id="r8-cran" class="r8-cam">
@@ -59,20 +59,20 @@
     <div id="r8-sub" class="r8-sub">
       <div class="r8-chunk sub-chunk" data-out="1.525"><span class="r8-w sub-w" data-cue="0.093">4 167 euros</span></div>
       <div class="r8-chunk sub-chunk" data-out="3.403"><span class="r8-w sub-w" data-cue="1.585">sur</span> <span class="r8-w sub-w" data-cue="1.751">31 200</span> <span class="r8-w sub-w" data-cue="2.746">engagés,</span></div>
-      <div class="r8-chunk sub-chunk" data-out="4.413"><span class="r8-w sub-w" data-cue="3.463">en</span> <span class="r8-w sub-w" data-cue="3.595">90</span> <span class="r8-w sub-w" data-cue="4.121">jours.</span></div>
-      <div class="r8-chunk sub-chunk" data-out="5.083"><span class="r8-w sub-w" data-cue="4.473">Et</span> <span class="r8-w sub-w" data-cue="4.626">surtout,</span></div>
-      <div class="r8-chunk sub-chunk" data-out="5.983"><span class="r8-w sub-w" data-cue="5.143">aucun</span> <span class="r8-w sub-w" data-cue="5.483">retour,</span></div>
-      <div class="r8-chunk sub-chunk" data-out="6.899"><span class="r8-w sub-w" data-cue="6.043">aucun</span> <span class="r8-w sub-w sub-key" data-cue="6.272">service après-vente</span></div>
-      <div class="r8-chunk sub-chunk"><span class="r8-w sub-w" data-cue="6.959">à</span> <span class="r8-w sub-w" data-cue="7.074">gérer.</span></div>
+      <div class="r8-chunk sub-chunk" data-out="4.423"><span class="r8-w sub-w" data-cue="3.463">en</span> <span class="r8-w sub-w" data-cue="3.595">90</span> <span class="r8-w sub-w" data-cue="4.121">jours.</span></div>
+      <div class="r8-chunk sub-chunk" data-out="5.203"><span class="r8-w sub-w" data-cue="4.483">Et</span> <span class="r8-w sub-w" data-cue="4.656">surtout,</span></div>
+      <div class="r8-chunk sub-chunk" data-out="6.233"><span class="r8-w sub-w" data-cue="5.263">aucun</span> <span class="r8-w sub-w" data-cue="5.648">retour,</span></div>
+      <div class="r8-chunk sub-chunk" data-out="7.266"><span class="r8-w sub-w" data-cue="6.293">aucun</span> <span class="r8-w sub-w sub-key" data-cue="6.551">service après-vente</span></div>
+      <div class="r8-chunk sub-chunk"><span class="r8-w sub-w" data-cue="7.326">à</span> <span class="r8-w sub-w" data-cue="7.455">gérer.</span></div>
     </div>
   </div>
 
   <script src="assets/vendor/gsap.min.js"></script>
   <script>
     (function () {
-      var FID = "08-rendement", P = "r8-", DUR = 7.4;
+      var FID = "08-rendement", P = "r8-", DUR = 8.033;
       // word cues of this scene (local seconds), written by build.py from the voice timings
-      var W = [["4167euros", 0.093, 1.585], ["sur", 1.585, 1.751], ["31200", 1.751, 2.746], ["engagés", 2.746, 3.243], ["en", 3.463, 3.595], ["90", 3.595, 4.121], ["jours", 4.121, 4.253], ["et", 4.473, 4.626], ["surtout", 4.626, 4.933], ["aucun", 5.143, 5.483], ["retour", 5.483, 5.823], ["aucun", 6.043, 6.272], ["serviceaprès-vente", 6.272, 6.959], ["à", 6.959, 7.074], ["gérer", 7.074, 7.303]];
+      var W = [["4167euros", 0.093, 1.585], ["sur", 1.585, 1.751], ["31200", 1.751, 2.746], ["engagés", 2.746, 3.243], ["en", 3.463, 3.595], ["90", 3.595, 4.121], ["jours", 4.121, 4.253], ["et", 4.483, 4.656], ["surtout", 4.656, 5.003], ["aucun", 5.263, 5.648], ["retour", 5.648, 6.033], ["aucun", 6.293, 6.551], ["serviceaprès-vente", 6.551, 7.326], ["à", 7.326, 7.455], ["gérer", 7.455, 7.713]];
 
       var root = document.querySelector('[data-composition-id="' + FID + '"]');
       function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }

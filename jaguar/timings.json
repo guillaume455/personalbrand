@@ -1,6 +1,6 @@
 {
  "provisional": false,
- "total": 78.633,
+ "total": 80.667,
  "frames": [
   {
    "n": 1,
@@ -77,8 +77,8 @@
    "id": "08-rendement",
    "name": "Le chiffre que personne ne regarde",
    "start": 55.167,
-   "end": 62.567,
-   "dur": 7.4,
+   "end": 63.2,
+   "dur": 8.033,
    "src": "compositions/frames/08-rendement.html",
    "vo": "4 167 euros sur 31 200 engagés, en 90 jours. Et surtout, aucun retour, aucun service après-vente à gérer."
   },
@@ -86,9 +86,9 @@
    "n": 9,
    "id": "09-lecon",
    "name": "La leçon",
-   "start": 62.567,
-   "end": 71.167,
-   "dur": 8.6,
+   "start": 63.2,
+   "end": 73.2,
+   "dur": 10.0,
    "src": "compositions/frames/09-lecon.html",
    "vo": "Le kilométrage n'était pas le risque. Le risque, c'aurait été de ne pas pouvoir le prouver. Un compteur élevé avec un historique complet se vend. Un compteur bas sans historique, non."
   },
@@ -96,9 +96,9 @@
    "n": 10,
    "id": "10-cta",
    "name": "Qui je suis et CTA",
-   "start": 71.167,
-   "end": 78.633,
-   "dur": 7.466,
+   "start": 73.2,
+   "end": 80.667,
+   "dur": 7.467,
    "src": "compositions/frames/10-cta.html",
    "vo": "Moi c'est Guillaume Herbin, je suis dans l'automobile depuis 2010. Suis-moi si tu veux voir plus de contenus comme celui-ci."
   }
