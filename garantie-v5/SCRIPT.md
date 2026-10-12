@@ -5,7 +5,7 @@ rouge sombre #B3261E réservé à la facture de la boîte de vitesses (scène 6,
 capitales avec le trait orange. Sous-titres de la voix, mot-clé en orange. Jamais plus de 6 mots par bloc. Montants en
 compteur. Aucun billet ni espèce. Fin : « @guillaumeherbin_ ».
 
-**Statut** : brief et découpage écrits par Guillaume (2026-10-06), voix enregistrée le même jour
+
 (`assets/audio/voix.mp3`). Le texte de la voix est dans `build.py` (SCENES) : c'est la seule source.
 
 Scène 4 : facture stylisée (nom du garage, client, immatriculation et numéro flous) en attendant une vraie facture ou
