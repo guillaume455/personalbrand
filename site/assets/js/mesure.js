@@ -64,11 +64,19 @@
   /* ---------- Envoi d'un événement --------------------------------------
      Correspondance GA4 -> Meta pour les deux événements qui comptent
      vraiment côté publicité : le formulaire et l'achat.               */
+  // Événements standards de Meta : fbq('track', ...).
   var VERS_META = {
     application_complete: 'Lead',
     lead_magnet_signup: 'Lead',
     checkout_start: 'InitiateCheckout',
     purchase: 'Purchase',
+  };
+
+  // Événements propres à ce tunnel. Meta ne les connaît pas, ils passent donc
+  // par trackCustom : avec track, ils seraient simplement ignorés.
+  var META_PERSO = {
+    start_application: 'StartApplication',
+    qualified_lead: 'QualifiedLead',
   };
 
   function envoyer(nom, params) {
@@ -80,10 +88,15 @@
       return;
     }
     if (window.gtag) window.gtag('event', nom, params);
-    if (window.fbq && VERS_META[nom]) {
+    if (window.fbq && (VERS_META[nom] || META_PERSO[nom])) {
       var m = {};
       if (nom === 'purchase') { m.value = params.value; m.currency = params.currency; }
-      window.fbq('track', VERS_META[nom], m);
+      // L'identifiant d'événement permet à Meta de rapprocher cet envoi du
+      // navigateur et celui que Make envoie par l'API de conversions, et de ne
+      // compter l'événement qu'une fois. Sans lui, tout est compté double.
+      var opts = params.event_id ? { eventID: params.event_id } : undefined;
+      if (VERS_META[nom]) window.fbq('track', VERS_META[nom], m, opts);
+      else window.fbq('trackCustom', META_PERSO[nom], m, opts);
     }
     if (cfg.preprod) console.info('[mesure]', nom, params);
   }
@@ -126,6 +139,11 @@
     document.querySelectorAll('[data-cta]').forEach(function (b) {
       b.addEventListener('click', function () {
         envoyer('cta_click', { position: b.dataset.cta });
+        // §7.3 : le départ du questionnaire, et surtout pas InitiateCheckout,
+        // qui ne vaut que pour l'ouverture d'un paiement.
+        if (b.dataset.cta !== 'marge-vers-tunnel' && b.dataset.cta !== 'marge-merci') {
+          envoyer('start_application', { position: b.dataset.cta });
+        }
       });
     });
 

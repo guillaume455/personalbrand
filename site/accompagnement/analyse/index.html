@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Analyse de tes réponses | Guillaume Herbin</title>
+<meta name="description" content="Analyse automatique de tes réponses au questionnaire du Plan de lancement.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0C1016">
+
+<meta property="og:site_name" content="Guillaume Herbin">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Analyse de tes réponses | Guillaume Herbin">
+<meta property="og:description" content="Analyse automatique de tes réponses au questionnaire du Plan de lancement.">
+<meta property="og:url" content="https://guillaumeherbin.fr/accompagnement/analyse/">
+<meta property="og:image" content="https://guillaumeherbin.fr/assets/img/tunnel/og-accompagnement.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+<link rel="preload" href="../../assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/css/tunnel.css">
+
+<script src="../../assets/js/config.js"></script>
+<script src="../../assets/js/mesure.js" defer></script>
+<script src="../../assets/js/tunnel.js" defer></script>
+<script src="../../assets/js/analyse.js" defer></script>
+</head>
+<body class="page-analyse">
+
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+<header class="tete">
+  <div class="lire">
+    <a class="tete-nom" href="../../index.html">Guillaume Herbin<span>.</span></a>
+  </div>
+</header>
+
+<main id="contenu">
+
+<!-- ÉTAPE 1 — l'analyse. Trois lignes qui se cochent, environ 15 secondes.
+     Le texte dit ce qui se passe vraiment : les réponses sont relues par une
+     règle automatique. Personne ne lit le dossier en direct à cet instant. -->
+<section class="bloc analyse" data-ecran="analyse">
+  <div class="lire">
+    <h1>J'analyse tes réponses<span data-prenom-h1></span>.</h1>
+    <p class="chapo">Quelques secondes&nbsp;: tes réponses sont comparées aux conditions dans
+       lesquelles le Plan de lancement sert vraiment à quelque chose.</p>
+
+    <ol class="pas-analyse" data-pas-analyse aria-live="polite">
+      <li data-pas-a><span class="coche" aria-hidden="true"></span>Lecture de tes réponses</li>
+      <li data-pas-a><span class="coche" aria-hidden="true"></span>Comparaison avec ton budget et ton temps disponible</li>
+      <li data-pas-a><span class="coche" aria-hidden="true"></span>Préparation de ta réponse</li>
+    </ol>
+
+    <div class="jauge" aria-hidden="true"><i data-jauge-analyse style="width:0"></i></div>
+    <p class="micro" data-analyse-etat>Analyse en cours…</p>
+  </div>
+</section>
+
+<!-- ÉTAPE 2A — profil retenu. Le calendrier Cal.com porte le paiement. -->
+<section class="bloc" data-ecran="ok" hidden>
+  <div class="lire">
+    <div class="encart encart-ok">
+      <p><b data-prenom-ok></b>ton profil correspond.</p>
+    </div>
+    <p>D'après tes réponses, je peux t'aider à construire ton plan de lancement. Choisis ton
+       créneau ci-dessous&nbsp;: on va passer 1h30 ensemble, et sous 72&nbsp;heures tu reçois
+       ton plan écrit.</p>
+
+    <ul class="prix-liste" style="margin-top:26px">
+      <li>490&nbsp;€ TTC, réglés au moment de la réservation</li>
+      <li>1h30 en visio, à la date que tu choisis</li>
+      <li>Ton plan de lancement écrit, sous 72&nbsp;heures</li>
+      <li>Remboursé intégralement si, dans les 15 premières minutes, j'estime ne pas pouvoir
+          t'aider</li>
+    </ul>
+
+    <p class="micro" style="margin-top:22px">En réservant, tu acceptes les
+       <a href="../../cgv/">conditions générales de vente</a>, et notamment la demande
+       expresse d'exécution avant la fin du délai de rétractation de 14&nbsp;jours lorsque la
+       séance est programmée dans ce délai.</p>
+
+    <!-- Cal.com s'injecte ici, avec l'e-mail prérempli. Tant que
+         reservation.url est vide dans config.js, un encart le signale. -->
+    <div class="agenda" data-agenda style="margin-top:26px"></div>
+  </div>
+</section>
+
+<!-- ÉTAPE 2B — profil non retenu. Jamais de lien de paiement ici. -->
+<section class="bloc" data-ecran="non" hidden>
+  <div class="lire">
+    <div class="encart encart-attente">
+      <p><b data-prenom-non></b>merci pour tes réponses.</p>
+    </div>
+    <p>Pour l'instant, je ne pense pas que la séance soit le bon format pour toi&nbsp;: elle
+       demande du temps disponible et un projet à court terme.</p>
+    <p>Plutôt que de te faire payer quelque chose qui ne te servira pas tout de suite, je
+       t'envoie par e-mail le document que j'aurais aimé avoir avant mon premier achat&nbsp;:
+       le calcul de marge réel sur une voiture, une transaction rentable et un achat qui m'a
+       coûté cher.</p>
+    <p>Quand ton projet sera plus avancé, tu pourras refaire le questionnaire.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="pied">
+  <div class="lire">
+    <p class="pied-liens">
+      <a href="../../mentions-legales.html">Mentions légales</a>
+      <a href="../../cgv/">CGV</a>
+      <a href="../../confidentialite/">Confidentialité</a>
+      <a href="https://www.instagram.com/guillaumeherbin_/" target="_blank" rel="noopener">Instagram</a>
+    </p>
+  </div>
+</footer>
+
+<section class="cookies" data-cookies aria-label="Choix de mesure d'audience">
+  <div class="lire">
+    <p>Cette page peut mesurer sa fréquentation pour savoir ce qui fonctionne. Rien n'est déposé
+       ni envoyé tant que tu n'as pas accepté. Tu peux refuser sans rien perdre du contenu.
+       <a href="../../confidentialite/">En savoir plus</a>.</p>
+    <div class="cookies-boutons">
+      <button type="button" class="b-refus" data-refuser>Refuser</button>
+      <button type="button" class="b-accept" data-accepter>Accepter</button>
+    </div>
+  </div>
+</section>
+</body>
+</html>

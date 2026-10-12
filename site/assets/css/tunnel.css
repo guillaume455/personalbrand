@@ -963,3 +963,57 @@ textarea{min-height:130px;resize:vertical}
   .vsl-son{padding:8px 13px;font-size:13.5px;gap:7px}
   .vsl-son svg{width:16px;height:16px}
 }
+
+/* ============ 12. ÉCRAN D'ANALYSE =======================================
+   /accompagnement/analyse/ : les quinze secondes entre le questionnaire et
+   la réponse. Fond sombre, comme le hero de la page de vente. */
+.page-analyse{background:var(--sombre);color:var(--papier-sur-sombre)}
+.page-analyse .bloc{background:transparent}
+.page-analyse h1{color:#FFFFFF;text-transform:uppercase;font-weight:700;letter-spacing:-.022em}
+.page-analyse .chapo{color:var(--doux-sur-sombre)}
+.page-analyse p{color:var(--doux-sur-sombre)}
+.page-analyse .pied{background:transparent;border-top-color:var(--filet-sombre)}
+.page-analyse .pied-liens a{color:var(--doux-sur-sombre);border-bottom-color:var(--filet-sombre)}
+.page-analyse .pied-liens a:hover{color:var(--or);border-color:var(--or)}
+
+.analyse{padding-block:clamp(56px,9vw,120px)}
+
+.pas-analyse{
+  list-style:none;margin:clamp(28px,4vw,42px) 0 0;padding:0;
+  display:grid;gap:14px;max-width:46ch;
+}
+.pas-analyse li{
+  display:flex;align-items:flex-start;gap:14px;
+  font-size:16.5px;line-height:1.45;
+  color:var(--doux-sur-sombre);opacity:.42;
+  transition:opacity .4s ease, color .4s ease;
+}
+.pas-analyse li[data-fait="oui"]{opacity:1;color:var(--papier-sur-sombre)}
+.coche{
+  flex:0 0 auto;width:22px;height:22px;margin-top:1px;border-radius:50%;
+  border:2px solid var(--filet-sombre);position:relative;
+  transition:border-color .4s ease, background-color .4s ease;
+}
+.pas-analyse li[data-fait="oui"] .coche{background:var(--or);border-color:var(--or)}
+/* La coche elle-même, tracée en CSS : deux traits, pas d'image à charger. */
+.pas-analyse li[data-fait="oui"] .coche::after{
+  content:"";position:absolute;left:6px;top:2.5px;
+  width:5px;height:10px;border:solid #14100B;border-width:0 2px 2px 0;
+  transform:rotate(45deg);
+}
+@media (prefers-reduced-motion:reduce){
+  .pas-analyse li,.coche{transition:none}
+}
+
+.analyse .jauge{margin-top:clamp(30px,4vw,44px);background:var(--filet-sombre)}
+.analyse .jauge i{transition:width .12s linear}
+.analyse .micro{color:var(--doux-sur-sombre);margin-top:10px}
+
+/* Les deux issues gardent les encadrés du reste du tunnel, mais sur fond
+   sombre leur texte doit être clair : sans cette ligne il reste noir. */
+.page-analyse .encart-ok,.page-analyse .encart-attente{color:var(--encre)}
+.page-analyse .encart-ok p,.page-analyse .encart-attente p{color:var(--encre)}
+.page-analyse .encart p b{color:inherit}
+.page-analyse .prix-liste li{color:var(--doux-sur-sombre);border-bottom-color:var(--filet-sombre)}
+.page-analyse .micro a{color:var(--or)}
+.page-analyse .agenda{background:#FFFFFF;border-radius:var(--rayon);overflow:hidden}
