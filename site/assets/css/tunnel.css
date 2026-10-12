@@ -982,19 +982,23 @@ textarea{min-height:130px;resize:vertical}
   list-style:none;margin:clamp(28px,4vw,42px) 0 0;padding:0;
   display:grid;gap:14px;max-width:46ch;
 }
+/* L'étape en attente est plus sourde que l'étape faite, mais elle reste du
+   texte à lire : une opacité de 0,42 la faisait tomber à 2,42:1 sur le fond
+   nuit. On pose donc deux couleurs explicites, mesurables, plutôt qu'un voile
+   dont le résultat dépend du fond. */
 .pas-analyse li{
   display:flex;align-items:flex-start;gap:14px;
   font-size:16.5px;line-height:1.45;
-  color:var(--doux-sur-sombre);opacity:.42;
-  transition:opacity .4s ease, color .4s ease;
+  color:#7F8691;                 /* 5,20:1 sur --sombre */
+  transition:color .4s ease;
 }
-.pas-analyse li[data-fait="oui"]{opacity:1;color:var(--papier-sur-sombre)}
+.pas-analyse li[data-fait="oui"]{color:var(--papier-sur-sombre)}
 .coche{
   flex:0 0 auto;width:22px;height:22px;margin-top:1px;border-radius:50%;
-  border:2px solid var(--filet-sombre);position:relative;
+  border:2px solid var(--filet-sombre);position:relative;opacity:.55;
   transition:border-color .4s ease, background-color .4s ease;
 }
-.pas-analyse li[data-fait="oui"] .coche{background:var(--or);border-color:var(--or)}
+.pas-analyse li[data-fait="oui"] .coche{background:var(--or);border-color:var(--or);opacity:1}
 /* La coche elle-même, tracée en CSS : deux traits, pas d'image à charger. */
 .pas-analyse li[data-fait="oui"] .coche::after{
   content:"";position:absolute;left:6px;top:2.5px;

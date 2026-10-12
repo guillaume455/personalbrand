@@ -40,6 +40,13 @@ window.GH.config = {
   // avertissements de préproduction et les encarts « à fournir ».
   preprod: false,
 
+  /* --- Questionnaire -----------------------------------------------------
+     Le questionnaire vit chez Tally, hors du site. Les cinq boutons de la page
+     d'accompagnement pointent dessus. Sa redirection de fin doit mener vers
+     /accompagnement/analyse/ en portant r, prenom, email et event_id.
+  --------------------------------------------------------------------- */
+  tally: 'https://tally.so/r/44e11d',
+
   /* --- Backend du formulaire -------------------------------------------
      L'hébergement OVH est statique : aucun code ne s'exécute côté serveur.
      Les candidatures partent donc vers un service externe.
@@ -70,7 +77,7 @@ window.GH.config = {
     // Calendrier. Affiché UNIQUEMENT sur la page de confirmation, donc après
     // un paiement abouti (§34 et §37 : validation, puis Stripe, puis agenda).
     // Ne jamais l'exposer depuis la landing ni depuis la page de paiement.
-    url: '',
+    url: 'https://cal.com/guillaume-herbin/plan-de-lancement',
   },
 
   /* --- Mesure -----------------------------------------------------------
