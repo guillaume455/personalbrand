@@ -85,7 +85,7 @@ window.GH.config = {
   --------------------------------------------------------------------- */
   mesure: {
     ga4: '',                    // ex. G-XXXXXXXXXX
-    meta: '',                   // identifiant du pixel
+    meta: '28507263552236038',  // pixel guillaumeherbin.fr
   },
 
   /* --- Offre ------------------------------------------------------------ */
