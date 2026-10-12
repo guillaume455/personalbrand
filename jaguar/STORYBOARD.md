@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "87s"
+duration: "81.533s"
 message: "Une F-Type à 139 891 km que tout le monde refuse, un document que personne ne connaît (le Car-Pass belge), une marge que tout le monde surestime : 4 167 €, pas 6 200 €. Le risque n'était pas le kilométrage, c'était de ne pas pouvoir le prouver."
 arc: Hook → Pourquoi tout le monde fuit → Le Car-Pass → La nuance → Ce que j'ai engagé → La revente → La vraie marge → Le chiffre que personne ne regarde → La leçon → Qui je suis et CTA
 audience: "Personnes qui veulent se lancer dans l'achat-revente automobile"
@@ -21,10 +21,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : les photos de la série K08673 sans filigrane uniquement, pas d'image générée ; ni VIN, ni plaque, ni ville ou nom du marchand belge ; le Car-Pass est une maquette neutre aux dates et kilométrages fictifs, jamais le vrai document ; la nuance « pas infaillible » ne se coupe pas ; 13,4 % = résultat d'une opération, pas une promesse ; pas de billets.
 
-## Frame 1: Hook · 0.00 → 3.60
+## Frame 1: Hook · 0.00 → 3.27
 
 - scene: Hook
-- duration: 3.60s
+- duration: 3.27s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
@@ -37,10 +37,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: Pourquoi tout le monde fuit · 3.60 → 14.50
+## Frame 2: Pourquoi tout le monde fuit · 3.27 → 15.50
 
 - scene: Pourquoi tout le monde fuit
-- duration: 10.90s
+- duration: 12.23s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-fuite.html
@@ -53,10 +53,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: La révélation, le Car-Pass · 14.50 → 29.00
+## Frame 3: La révélation, le Car-Pass · 15.50 → 30.67
 
 - scene: La révélation, le Car-Pass
-- duration: 14.50s
+- duration: 15.17s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-carpass.html
@@ -69,10 +69,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: La nuance · 29.00 → 35.00
+## Frame 4: La nuance · 30.67 → 36.00
 
 - scene: La nuance
-- duration: 6.00s
+- duration: 5.33s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-nuance.html
@@ -85,10 +85,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: Ce que j'ai engagé · 35.00 → 43.50
+## Frame 5: Ce que j'ai engagé · 36.00 → 42.80
 
 - scene: Ce que j'ai engagé
-- duration: 8.50s
+- duration: 6.80s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-engage.html
@@ -101,10 +101,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 6: La revente · 43.50 → 50.50
+## Frame 6: La revente · 42.80 → 48.43
 
 - scene: La revente
-- duration: 7.00s
+- duration: 5.63s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/06-revente.html
@@ -117,10 +117,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 7: La vraie marge · 50.50 → 63.50
+## Frame 7: La vraie marge · 48.43 → 60.43
 
 - scene: La vraie marge
-- duration: 13.00s
+- duration: 12.00s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/07-vraie-marge.html
@@ -133,10 +133,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 8: Le chiffre que personne ne regarde · 63.50 → 71.50
+## Frame 8: Le chiffre que personne ne regarde · 60.43 → 67.10
 
 - scene: Le chiffre que personne ne regarde
-- duration: 8.00s
+- duration: 6.67s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/08-rendement.html
@@ -149,10 +149,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 9: La leçon · 71.50 → 80.50
+## Frame 9: La leçon · 67.10 → 74.83
 
 - scene: La leçon
-- duration: 9.00s
+- duration: 7.73s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/09-lecon.html
@@ -165,10 +165,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 10: Qui je suis et CTA · 80.50 → 87.00
+## Frame 10: Qui je suis et CTA · 74.83 → 81.53
 
 - scene: Qui je suis et CTA
-- duration: 6.50s
+- duration: 6.70s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/10-cta.html
