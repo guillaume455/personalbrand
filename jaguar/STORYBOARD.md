@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "81.533s"
+duration: "78.633s"
 message: "Une F-Type à 139 891 km que tout le monde refuse, un document que personne ne connaît (le Car-Pass belge), une marge que tout le monde surestime : 4 167 €, pas 6 200 €. Le risque n'était pas le kilométrage, c'était de ne pas pouvoir le prouver."
 arc: Hook → Pourquoi tout le monde fuit → Le Car-Pass → La nuance → Ce que j'ai engagé → La revente → La vraie marge → Le chiffre que personne ne regarde → La leçon → Qui je suis et CTA
 audience: "Personnes qui veulent se lancer dans l'achat-revente automobile"
@@ -21,10 +21,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : les photos de la série K08673 sans filigrane uniquement, pas d'image générée ; ni VIN, ni plaque, ni ville ou nom du marchand belge ; le Car-Pass est une maquette neutre aux dates et kilométrages fictifs, jamais le vrai document ; la nuance « pas infaillible » ne se coupe pas ; 13,4 % = résultat d'une opération, pas une promesse ; pas de billets.
 
-## Frame 1: Hook · 0.00 → 3.27
+## Frame 1: Hook · 0.00 → 3.67
 
 - scene: Hook
-- duration: 3.27s
+- duration: 3.67s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
@@ -37,14 +37,14 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: Pourquoi tout le monde fuit · 3.27 → 15.50
+## Frame 2: Pourquoi tout le monde fuit · 3.67 → 15.67
 
 - scene: Pourquoi tout le monde fuit
-- duration: 12.23s
+- duration: 12.00s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-fuite.html
-- voiceover: "Une Jaguar F-Type cabriolet S, V6 3 litres compressé, 380 chevaux, de mai 2014. Sur ce genre de voiture, la valeur tient au kilométrage, parce que ce sont des voitures de week-end. 140 000, c'est le double de ce qu'un acheteur accepte. Donc tout le monde passe son tour."
+- voiceover: "Une Jaguar F-Type cabriolet S, V6 3 litres compressé, 380 chevaux, de mai 2014. Sur ce genre de voiture, la valeur tient au kilométrage. 140 000, c'est le double de ce qu'un acheteur accepte. Donc tout le monde passe son tour."
 - type: demo
 - blueprint: none
 - focal: Pourquoi tout le monde fuit
@@ -53,10 +53,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: La révélation, le Car-Pass · 15.50 → 30.67
+## Frame 3: La révélation, le Car-Pass · 15.67 → 29.53
 
 - scene: La révélation, le Car-Pass
-- duration: 15.17s
+- duration: 13.87s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-carpass.html
@@ -69,14 +69,14 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: La nuance · 30.67 → 36.00
+## Frame 4: La nuance · 29.53 → 33.13
 
 - scene: La nuance
-- duration: 5.33s
+- duration: 3.60s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-nuance.html
-- voiceover: "Ce n'est pas infaillible. Les interventions faites hors de Belgique n'y figurent pas. Mais c'est ce qui se fait de mieux en Europe contre le compteur trafiqué."
+- voiceover: "Ce n'est pas infaillible. Mais c'est ce qui se fait de mieux en Europe contre le compteur trafiqué."
 - type: demo
 - blueprint: none
 - focal: La nuance
@@ -85,10 +85,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: Ce que j'ai engagé · 36.00 → 42.80
+## Frame 5: Ce que j'ai engagé · 33.13 → 40.73
 
 - scene: Ce que j'ai engagé
-- duration: 6.80s
+- duration: 7.60s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-engage.html
@@ -101,10 +101,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 6: La revente · 42.80 → 48.43
+## Frame 6: La revente · 40.73 → 47.00
 
 - scene: La revente
-- duration: 5.63s
+- duration: 6.27s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/06-revente.html
@@ -117,14 +117,14 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 7: La vraie marge · 48.43 → 60.43
+## Frame 7: La vraie marge · 47.00 → 55.17
 
 - scene: La vraie marge
-- duration: 12.00s
+- duration: 8.17s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/07-vraie-marge.html
-- voiceover: "Moins le transport. Moins la révision. Et la TVA, j'ai collecté 6 033 euros sur la vente, j'en avais déjà récupéré 5 200 sur l'achat et les frais. Il m'en reste 833 à reverser. Au final, 4 167 euros. Pas 6 200."
+- voiceover: "Moins le transport. Moins la révision. Et la TVA, il m'en reste 833 à reverser. Au final, 4 167 euros. Pas 6 200."
 - type: demo
 - blueprint: none
 - focal: La vraie marge
@@ -133,10 +133,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 8: Le chiffre que personne ne regarde · 60.43 → 67.10
+## Frame 8: Le chiffre que personne ne regarde · 55.17 → 62.57
 
 - scene: Le chiffre que personne ne regarde
-- duration: 6.67s
+- duration: 7.40s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/08-rendement.html
@@ -149,10 +149,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 9: La leçon · 67.10 → 74.83
+## Frame 9: La leçon · 62.57 → 71.17
 
 - scene: La leçon
-- duration: 7.73s
+- duration: 8.60s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/09-lecon.html
@@ -165,10 +165,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 10: Qui je suis et CTA · 74.83 → 81.53
+## Frame 10: Qui je suis et CTA · 71.17 → 78.63
 
 - scene: Qui je suis et CTA
-- duration: 6.70s
+- duration: 7.47s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/10-cta.html

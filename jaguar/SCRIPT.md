@@ -47,8 +47,11 @@ Moi c'est Guillaume Herbin, je suis dans l'automobile depuis deux mille dix. Sui
 
 - Fin : la présentation de Guillaume (« Moi c'est Guillaume Herbin… », sa photo, @guillaumeherbin_, SUIS-MOI), comme
   il l'a demandé sur le reel Porsche, à la place de « TU L'AURAIS ACHETÉE À 140 000 KM, TOI ? ».
-- « JE N'AI PAS ACHETÉ UN COMPTEUR. / J'AI ACHETÉ UN HISTORIQUE. » passe dans une pause de 2,6 s ajoutée après
-  « il se vérifie en ligne » (`place-voice.py`).
+- Coupes pour la durée (demande de Guillaume, marquées ✂ dans `build.py`, retirées de l'enregistrement par
+  `place-voice.py`) : le carton « JE N'AI PAS ACHETÉ UN COMPTEUR. / J'AI ACHETÉ UN HISTORIQUE. » ; « parce que ce sont
+  des voitures de week-end » ; « Les interventions faites hors de Belgique n'y figurent pas » (la nuance « Ce n'est pas
+  infaillible » reste, avec « le meilleur garde-fou d'Europe ») ; le détail dit de la TVA (« j'ai collecté… les
+  frais »), qui reste à l'écran (« 6 033 COLLECTÉS − 5 200 RÉCUPÉRÉS »). Voix accélérée ×1,15.
 - Sous 13,4 % : « résultat de cette opération, pas une promesse » (interdit n° 6).
 - Calculs vérifiés : 36 200 − 30 000 = 6 200 ; 6 200 − 600 − 600 − 833 = 4 167 ; TVA 36 200 / 1,2 × 0,2 = 6 033,
   31 200 / 1,2 × 0,2 = 5 200, net 833 ; 4 167 / 31 200 = 13,4 %.

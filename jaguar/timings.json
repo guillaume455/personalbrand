@@ -1,14 +1,14 @@
 {
  "provisional": false,
- "total": 81.533,
+ "total": 78.633,
  "frames": [
   {
    "n": 1,
    "id": "01-hook",
    "name": "Hook",
    "start": 0.0,
-   "end": 3.267,
-   "dur": 3.267,
+   "end": 3.667,
+   "dur": 3.667,
    "src": "compositions/frames/01-hook.html",
    "vo": "139 891 kilomètres. Sur une voiture plaisir."
   },
@@ -16,19 +16,19 @@
    "n": 2,
    "id": "02-fuite",
    "name": "Pourquoi tout le monde fuit",
-   "start": 3.267,
-   "end": 15.5,
-   "dur": 12.233,
+   "start": 3.667,
+   "end": 15.667,
+   "dur": 12.0,
    "src": "compositions/frames/02-fuite.html",
-   "vo": "Une Jaguar F-Type cabriolet S, V6 3 litres compressé, 380 chevaux, de mai 2014. Sur ce genre de voiture, la valeur tient au kilométrage, parce que ce sont des voitures de week-end. 140 000, c'est le double de ce qu'un acheteur accepte. Donc tout le monde passe son tour."
+   "vo": "Une Jaguar F-Type cabriolet S, V6 3 litres compressé, 380 chevaux, de mai 2014. Sur ce genre de voiture, la valeur tient au kilométrage. 140 000, c'est le double de ce qu'un acheteur accepte. Donc tout le monde passe son tour."
   },
   {
    "n": 3,
    "id": "03-carpass",
    "name": "La révélation, le Car-Pass",
-   "start": 15.5,
-   "end": 30.667,
-   "dur": 15.167,
+   "start": 15.667,
+   "end": 29.533,
+   "dur": 13.866,
    "src": "compositions/frames/03-carpass.html",
    "vo": "Sauf que cette voiture était belge. Et en Belgique, il existe un document que la plupart des Français ne connaissent pas, le Car-Pass. À chaque passage chez un professionnel, le kilométrage est relevé et enregistré. Le vendeur a l'obligation légale de le remettre à l'acheteur, et il se vérifie en ligne."
   },
@@ -36,19 +36,19 @@
    "n": 4,
    "id": "04-nuance",
    "name": "La nuance",
-   "start": 30.667,
-   "end": 36.0,
-   "dur": 5.333,
+   "start": 29.533,
+   "end": 33.133,
+   "dur": 3.6,
    "src": "compositions/frames/04-nuance.html",
-   "vo": "Ce n'est pas infaillible. Les interventions faites hors de Belgique n'y figurent pas. Mais c'est ce qui se fait de mieux en Europe contre le compteur trafiqué."
+   "vo": "Ce n'est pas infaillible. Mais c'est ce qui se fait de mieux en Europe contre le compteur trafiqué."
   },
   {
    "n": 5,
    "id": "05-engage",
    "name": "Ce que j'ai engagé",
-   "start": 36.0,
-   "end": 42.8,
-   "dur": 6.8,
+   "start": 33.133,
+   "end": 40.733,
+   "dur": 7.6,
    "src": "compositions/frames/05-engage.html",
    "vo": "Juillet 2019. 30 000 euros chez un marchand partenaire. 600 euros de transport pour me la faire livrer. 600 euros de révision. 31 200 engagés."
   },
@@ -56,9 +56,9 @@
    "n": 6,
    "id": "06-revente",
    "name": "La revente",
-   "start": 42.8,
-   "end": 48.433,
-   "dur": 5.633,
+   "start": 40.733,
+   "end": 47.0,
+   "dur": 6.267,
    "src": "compositions/frames/06-revente.html",
    "vo": "90 jours plus tard, elle part à 36 200. 6 200 euros de marge. C'est ce que tout le monde calcule. Et c'est faux."
   },
@@ -66,19 +66,19 @@
    "n": 7,
    "id": "07-vraie-marge",
    "name": "La vraie marge",
-   "start": 48.433,
-   "end": 60.433,
-   "dur": 12.0,
+   "start": 47.0,
+   "end": 55.167,
+   "dur": 8.167,
    "src": "compositions/frames/07-vraie-marge.html",
-   "vo": "Moins le transport. Moins la révision. Et la TVA, j'ai collecté 6 033 euros sur la vente, j'en avais déjà récupéré 5 200 sur l'achat et les frais. Il m'en reste 833 à reverser. Au final, 4 167 euros. Pas 6 200."
+   "vo": "Moins le transport. Moins la révision. Et la TVA, il m'en reste 833 à reverser. Au final, 4 167 euros. Pas 6 200."
   },
   {
    "n": 8,
    "id": "08-rendement",
    "name": "Le chiffre que personne ne regarde",
-   "start": 60.433,
-   "end": 67.1,
-   "dur": 6.667,
+   "start": 55.167,
+   "end": 62.567,
+   "dur": 7.4,
    "src": "compositions/frames/08-rendement.html",
    "vo": "4 167 euros sur 31 200 engagés, en 90 jours. Et surtout, aucun retour, aucun service après-vente à gérer."
   },
@@ -86,9 +86,9 @@
    "n": 9,
    "id": "09-lecon",
    "name": "La leçon",
-   "start": 67.1,
-   "end": 74.833,
-   "dur": 7.733,
+   "start": 62.567,
+   "end": 71.167,
+   "dur": 8.6,
    "src": "compositions/frames/09-lecon.html",
    "vo": "Le kilométrage n'était pas le risque. Le risque, c'aurait été de ne pas pouvoir le prouver. Un compteur élevé avec un historique complet se vend. Un compteur bas sans historique, non."
   },
@@ -96,9 +96,9 @@
    "n": 10,
    "id": "10-cta",
    "name": "Qui je suis et CTA",
-   "start": 74.833,
-   "end": 81.533,
-   "dur": 6.7,
+   "start": 71.167,
+   "end": 78.633,
+   "dur": 7.466,
    "src": "compositions/frames/10-cta.html",
    "vo": "Moi c'est Guillaume Herbin, je suis dans l'automobile depuis 2010. Suis-moi si tu veux voir plus de contenus comme celui-ci."
   }

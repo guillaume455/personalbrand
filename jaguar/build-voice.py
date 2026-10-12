@@ -3,7 +3,7 @@
 5 ms fades), then the whole voice is sped up ×SPEED (pitch kept)
 and a tail is added for the end card. Writes assets/audio/voix-montage.wav."""
 import re, subprocess
-SRC, OUT, SPEED, MAXGAP, TAIL = "assets/audio/voix.mp3", "assets/audio/voix-montage.wav", 1.25, 0.22, 0.0
+SRC, OUT, SPEED, MAXGAP, TAIL = "assets/audio/voix.mp3", "assets/audio/voix-montage.wav", 1.15, 0.26, 0.0
 KEEP_LONGER = {}   # {phrase end (s, rounded): longer pause}
 # passages kept at another speed (raw seconds): [(start, end, speed)]
 SLOW = []

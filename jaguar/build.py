@@ -16,7 +16,7 @@ import json, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 os.chdir(HERE)
 REAL = "assets/audio/voix-montage-mots.json"
-TAIL = 2.0          # hold after the last word (end card)
+TAIL = 2.3          # hold after the last word (end card)
 FPS = 30
 HOOK = 3.0          # the hook: the odometer and its line (place-voice.py pads it if the voice is shorter)
 
@@ -28,14 +28,14 @@ SCENES = [
    "139~891~kilomètres.", "Sur une voiture plaisir."]),
  dict(id="02-fuite", name="Pourquoi tout le monde fuit", window=(3.6, 14.5), speak=(3.8, 14.1), chunks=[
    "Une Jaguar F-Type", "cabriolet S,", "V6 3~litres compressé,", "380~chevaux,", "de mai 2014.", "Sur ce genre de voiture,",
-   "la valeur tient", "au *kilométrage*,", "parce que ce sont", "des voitures de week-end.", "140~000,", "c'est le double",
+   "la valeur tient", "au *kilométrage*.", "✂parce que ce sont", "✂des voitures de week-end.", "140~000,", "c'est le double",
    "de ce qu'un acheteur accepte.", "Donc tout le monde", "passe son tour."]),
  dict(id="03-carpass", name="La révélation, le Car-Pass", window=(14.5, 29), speak=(14.7, 25.6), chunks=[
    "Sauf que cette voiture", "était *belge*.", "Et en Belgique,", "il existe un document", "que la plupart des Français",
    "ne connaissent pas,", "le *Car-Pass*.", "À chaque passage", "chez un professionnel,", "le kilométrage est relevé",
    "et enregistré.", "Le vendeur a", "l'*obligation~légale*", "de le remettre à l'acheteur,", "et il se vérifie en ligne."]),
  dict(id="04-nuance", name="La nuance", window=(29, 35), speak=(29.2, 34.6), chunks=[
-   "Ce n'est pas *infaillible*.", "Les interventions faites", "hors de Belgique", "n'y figurent pas.",
+   "Ce n'est pas *infaillible*.", "✂Les interventions faites", "✂hors de Belgique", "✂n'y figurent pas.",
    "Mais c'est ce qui se fait", "de mieux en Europe", "contre le compteur trafiqué."]),
  dict(id="05-engage", name="Ce que j'ai engagé", window=(35, 43.5), speak=(35.2, 43.1), chunks=[
    "Juillet 2019.", "30~000~euros", "chez un marchand partenaire.", "600~euros de transport", "pour me la faire livrer.",
@@ -44,8 +44,8 @@ SCENES = [
    "90 jours plus tard,", "elle part à 36~200.", "6~200~euros de marge.", "C'est ce que", "tout le monde calcule.",
    "Et c'est *faux*."]),
  dict(id="07-vraie-marge", name="La vraie marge", window=(50.5, 63.5), speak=(50.7, 63.1), chunks=[
-   "Moins le transport.", "Moins la révision.", "Et la *TVA*,", "j'ai collecté", "6~033~euros sur la vente,",
-   "j'en avais déjà récupéré", "5~200", "sur l'achat et les frais.", "Il m'en reste", "833 à reverser.", "Au final,",
+   "Moins le transport.", "Moins la révision.", "Et la *TVA*,", "✂j'ai collecté", "✂6~033~euros sur la vente,",
+   "✂j'en avais déjà récupéré", "✂5~200", "✂sur l'achat et les frais.", "il m'en reste", "833 à reverser.", "Au final,",
    "4~167~euros.", "Pas 6~200."]),
  dict(id="08-rendement", name="Le chiffre que personne ne regarde", window=(63.5, 71.5), speak=(63.7, 71.1), chunks=[
    "4~167~euros", "sur 31~200 engagés,", "en 90 jours.", "Et surtout,", "aucun retour,", "aucun *service~après-vente*",
@@ -61,7 +61,7 @@ SPOKEN_SYL = {"139891kilomètres": 15, "f-type": 3, "v6": 3, "3litres": 3, "380c
               "car-pass": 2, "2019": 4, "30000euros": 5, "600euros": 4, "31200": 6, "90": 4, "36200": 6, "6200euros": 6,
               "6033euros": 7, "5200": 4, "833": 6, "4167euros": 9, "6200": 4, "obligationlégale": 6,
               "serviceaprès-vente": 6, "2010": 3, "guillaumeherbin": 4, "tva": 3}
-PAUSE_AFTER = {"03-carpass": 2.6}   # seconds of silence after the scene's last word (place-voice.py): the text card
+PAUSE_AFTER = {}   # seconds of silence after a scene's last word (place-voice.py), e.g. for a text card
 
 
 def norm(tok):
@@ -80,13 +80,20 @@ def syl(tok):
     return max(1, len(re.findall(r"[aeiouyàâéèêëîïôûùü]+", w)))
 
 
-def scene_tokens(sc):
-    return [t for ch in sc["chunks"] for t in ch.split(" ") if t]
+CUT = "✂"   # a chunk starting with ✂ is said in the recording but cut out of the film (place-voice.py removes it)
 
 
-def all_tokens():
-    """the whole voice text as tokens, in order (align.py uses it)"""
-    return [t for sc in SCENES for t in scene_tokens(sc)]
+def kept(sc, cut=False):
+    return [ch for ch in sc["chunks"] if cut or not ch.startswith(CUT)]
+
+
+def scene_tokens(sc, cut=False):
+    return [t for ch in kept(sc, cut) for t in ch.lstrip(CUT).split(" ") if t]
+
+
+def all_tokens(cut=False):
+    """the whole voice text as tokens, in order (align.py uses it with the cut chunks: they are in the recording)"""
+    return [t for sc in SCENES for t in scene_tokens(sc, cut)]
 
 
 def provisional():
@@ -433,9 +440,7 @@ def scene_03():
     doc = ('<div id="§doc"><div id="§dh">HISTORIQUE KILOMÉTRIQUE</div><div id="§dl"></div>'
            '<div class="§dc" style="left:50px">DATE</div><div class="§dc" style="left:300px">KILOMÉTRAGE RELEVÉ</div>' + rows + qr + "</div>")
     hud = (title("t1", ["LE VÉHICULE", "ÉTAIT BELGE."], 560, 140) + doc + title("t2", ["CAR-PASS COMPLET."], 270, 100)
-           + '<div id="§stmt"></div>'
-           + title("s1", ["JE N'AI PAS ACHETÉ", "UN COMPTEUR."], 560, 104, "color:#FB8000")
-           + title("s2", ["J'AI ACHETÉ", "UN HISTORIQUE."], 900, 104, "color:#FB8000"))
+)
     js = X_JS + """
       // the turn: the car was Belgian
       tin("t1", 2, at("belge") - 0.1); punch(at("belge") - 0.1, 0.05);
@@ -446,13 +451,8 @@ def scene_03():
       for (var i = 0; i < 6; i++) { pre("r" + i, { opacity: 0, x: -30 }); go("r" + i, { opacity: 1, x: 0 }, a + i * step, 0.2); draw("k" + i, a + i * step + 0.12, 0.18, "power2.out"); }
       tin("t2", 1, at("vendeur") - 0.1); punch(at("vendeur") - 0.1, 0.04);
       pre("qr", { opacity: 0, scale: 0.6 }); go("qr", { opacity: 1, scale: 1 }, at("ligne") - 0.15, 0.3, "back.out(2)");
-      // in the pause after the voice: what I really bought
-      var e = atEnd("ligne") + 0.25;
-      go("stmt", { opacity: 1 }, e, 0.25, "none"); tout("t2", 1, e);
-      tin("s1", 2, e + 0.15); punch(e + 0.15, 0.04);
-      tin("s2", 2, e + 1.15); punch(e + 1.15, 0.05);
     """
-    sfx = [("click-soft", "chaque", 1, 0.0, 0.25), ("impact-bass-2", "ligne", 1, 0.7, 0.4)]
+    sfx = [("click-soft", "chaque", 1, 0.0, 0.25)]
     return css, "", hud, js, None, sfx
 
 
@@ -461,11 +461,9 @@ def scene_04():
     #§hb { position: absolute; left: 0; top: 760px; width: 1080px; text-align: center; font: 600 50px/1 "Oswald", sans-serif; color: #8c8c8c; opacity: 0; letter-spacing: 0.02em; }
     """
     hud = (title("t1", ["CE N'EST PAS", "INFAILLIBLE."], 300, 120, "color:#9a9a9a")
-           + '<div id="§hb">HORS DE BELGIQUE : NON RELEVÉ</div>'
            + title("t2", ["MAIS C'EST LE MEILLEUR", "GARDE-FOU D'EUROPE."], 960, 100))
     js = X_JS + """
       tin("t1", 2, Math.max(0.05, at("ce") - 0.1)); punch(Math.max(0.05, at("ce") - 0.1), 0.03);
-      fin("hb", at("hors") - 0.1);
       tin("t2", 2, at("mais") - 0.1); punch(at("mais") - 0.1, 0.04);
     """
     return css, "", hud, js, None, []
@@ -558,7 +556,7 @@ def scene_07():
       odo("tp", at("{w}") + 0.25, 0.8, {{ to: "{after.replace(' ', '')}", spinLow: false }});
       tl.fromTo($("top"), {{ color: "{RED}" }}, {{ color: "#ffffff", duration: 0.6, immediateRender: false }}, at("{w}") + 0.25);"""
     js += """
-      fin("tvd", at("collecté") - 0.1);
+      fin("tvd", at("tva") + 0.3);
       // what is really left: 4 167, in orange, the biggest figure of the film
       for (var i = 0; i < 3; i++) go("d" + i, { opacity: 0 }, at("final") - 0.2, 0.3, "none");
       go("tvd", { opacity: 0 }, at("final") - 0.2, 0.3, "none");
@@ -668,7 +666,7 @@ def build():
         W = [[norm(t), round(words[k]["start"] - a, 3), round(words[k]["end"] - a, 3)] for t, k in zip(toks, range(i, j))]
         # chunks with local timings
         cw, k = [], 0
-        for ch in sc["chunks"]:
+        for ch in kept(sc):
             tt = [t for t in ch.split(" ") if t]
             cw.append([(t, W[k + m][1], W[k + m][2]) for m, t in enumerate(tt)]); k += len(tt)
         CUR.update(W=W, a=a, dur=dur, id=sc['id'])
