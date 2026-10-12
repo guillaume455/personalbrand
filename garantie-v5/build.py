@@ -382,15 +382,14 @@ def scene_01():
     """
     # the cover, exactly: frame 0 of the film is this image
     st = '<div id="§cov"><img src="assets/img/cover.png"></div>'
-    hud = (band() + title("t1", ["J’EN VENDS", '<span style="color:#FB8000">DEPUIS 16 ANS.</span>'], 560, 150)
+    hud = (band().replace('class="§band"', 'class="§band" style="opacity:0"') + title("t1", ["J’EN VENDS", '<span style="color:#FB8000">DEPUIS 16 ANS.</span>'], 560, 150)
            + title("t2", ["RÉPONSE AVEC", '<span style="color:#FB8000">2 CLIENTS.</span>'], 560, 150))
     js = """
       // frame 0 = the cover (text already there, no fade); then a slow push-in
       tl.set($("cov"), { opacity: 1, scale: 1 }, 0); init("cov", { opacity: 1, scale: 1 });
       go("cov", { scale: 1.04 }, 0.05, Math.max(0.6, at("j'en") - 0.2), "none");
-      pre("band", { opacity: 0 });
-      // « 16 years »: the cover steps back, the band stays
-      go("band", { opacity: 1 }, at("j'en") - 0.12, 0.01, "none");
+      // « 16 years »: the cover steps back, the band stays (hidden before: the cover has its own title)
+      tl.set($("band"), { opacity: 1 }, at("j'en") - 0.12);
       go("cov", { opacity: 0, scale: 1.08 }, at("j'en") - 0.12, 0.3, "power2.out");
       slam("t1-0", at("j'en") - 0.05); slam("t1-1", at("seizeans") - 0.05); stroke("t1", at("seizeans") + 0.15);
       go("t1", { opacity: 0, y: -30 }, at("réponse") - 0.15, 0.14, "power2.in");

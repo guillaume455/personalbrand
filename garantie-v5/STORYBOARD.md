@@ -1,6 +1,6 @@
 ---
 format: 1080x1920
-duration: "58.733s"
+duration: "52.867s"
 message: "Ne vends pas l'extension de garantie : montre trois preuves (une facture, un chiffre, une histoire), puis laisse le client choisir comment il la paie."
 arc: Hook → Problem → Turn → Proof → Proof → Proof → Close → Rule → CTA
 audience: "Vendeurs automobiles qui proposent l'extension de garantie"
@@ -21,10 +21,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - **Timing** : chaque animation est posée sur un mot de la voix (build.py), les durées des scènes suivent la piste voix.
 - **Negative list** : aucun billet ni espèce ; jamais plus de 6 mots par bloc de texte ; rouge sombre réservé à la facture de la boîte de vitesses (scène 6).
 
-## Frame 1: Hook (la cover dès l'image 0) · 0.00 → 6.67
+## Frame 1: Hook (la cover dès l'image 0) · 0.00 → 5.97
 
 - scene: Hook (la cover dès l'image 0)
-- duration: 6.67s
+- duration: 5.97s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-hook.html
@@ -37,10 +37,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 2: C'est quoi · 6.67 → 12.90
+## Frame 2: C'est quoi · 5.97 → 11.57
 
 - scene: C'est quoi
-- duration: 6.23s
+- duration: 5.60s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/02-principe.html
@@ -53,10 +53,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 3: Celui qui a dit non · 12.90 → 21.80
+## Frame 3: Celui qui a dit non · 11.57 → 19.50
 
 - scene: Celui qui a dit non
-- duration: 8.90s
+- duration: 7.93s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/03-non.html
@@ -69,10 +69,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 4: Celui qui a dit oui · 21.80 → 29.93
+## Frame 4: Celui qui a dit oui · 19.50 → 26.80
 
 - scene: Celui qui a dit oui
-- duration: 8.13s
+- duration: 7.30s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/04-oui.html
@@ -85,10 +85,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 5: Le face à face · 29.93 → 34.50
+## Frame 5: Le face à face · 26.80 → 30.83
 
 - scene: Le face à face
-- duration: 4.57s
+- duration: 4.03s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/05-face.html
@@ -101,10 +101,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 6: Les 4 lignes · 34.50 → 51.37
+## Frame 6: Les 4 lignes · 30.83 → 46.03
 
 - scene: Les 4 lignes
-- duration: 16.87s
+- duration: 15.20s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/06-lignes.html
@@ -117,10 +117,10 @@ patterns: ../patterns/STORYBOARD-CRAFT.md, ../patterns/PATTERNS.md
 - handoff_in: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 - handoff_out: aucun raccord de caméra (coupe franche voulue, changement de scène sur la voix)
 
-## Frame 7: La chute · 51.37 → 58.73
+## Frame 7: La chute · 46.03 → 52.87
 
 - scene: La chute
-- duration: 7.37s
+- duration: 6.83s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/07-chute.html

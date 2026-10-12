@@ -2,26 +2,22 @@
 @font-face { font-family: "Anton"; src: url("../assets/fonts/Anton-400.woff2") format("woff2"); }
 html, body { margin: 0; background: #0A0A0A; }
 #c { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #0A0A0A; }
-#halo { position: absolute; left: -60px; top: 260px; width: 1200px; height: 1200px; border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(251,128,0,0.18), rgba(251,128,0,0.05) 60%, rgba(251,128,0,0)); }
-/* the band: the same pill stays on screen for the whole video */
-#band { position: absolute; left: 0; top: 262px; width: 1080px; text-align: center; }
-#band span { display: inline-block; padding: 8px 34px; border-radius: 40px; background: #FB8000; color: #0A0A0A;
-  font: 54px/1.2 "Anton", sans-serif; letter-spacing: 0.02em; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
-.t { position: absolute; left: 0; width: 1080px; text-align: center; color: #fff; font-family: "Anton", sans-serif; line-height: 1.05;
-  text-shadow: 0 10px 50px rgba(0,0,0,0.6); }
+#halo { position: absolute; left: -60px; top: 160px; width: 1200px; height: 1200px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(251,128,0,0.22), rgba(251,128,0,0.06) 60%, rgba(251,128,0,0)); }
+.t { position: absolute; left: 0; width: 1080px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.02;
+  text-shadow: 0 10px 50px rgba(0,0,0,0.6); color: #fff; }
 .t i { position: relative; display: inline-block; font-style: normal; }
-.t i.u:after { content: ""; position: absolute; left: -2%; right: -2%; bottom: -0.04em; height: 0.09em; background: #FB8000;
+.t i.u:after { content: ""; position: absolute; left: -2%; right: -2%; bottom: -0.06em; height: 0.08em; background: #FB8000;
   border-radius: 999px; transform: rotate(-1.5deg); clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); }
-.o { color: #FB8000; }
-.p { position: absolute; width: 170px; height: 255px; }
-.lab { position: absolute; width: 300px; text-align: center; font: 52px/1 "Anton", sans-serif; }
+#q { position: absolute; left: 0; top: 1170px; width: 1080px; text-align: center; white-space: nowrap; }
+.pill { display: inline-block; vertical-align: middle; padding: 6px 28px; border-radius: 60px; font: 82px/1.15 "Anton", sans-serif; }
+#ou { display: inline-block; vertical-align: middle; margin: 0 16px; font: 56px/1 "Anton", sans-serif; color: #bdbdbd; }
 </style></head><body><div id="c"><div id="halo"></div>
-<div id="band"><span>EXTENSION DE GARANTIE</span></div>
-<div class="t" style="top:440px;font-size:232px">ARNAQUE ?</div>
-<div class="t" style="top:740px;font-size:170px">OU VRAI<br><i class="u"><span class="o">BON PLAN ?</span></i></div>
-<svg class="p" viewBox="0 0 200 300" style="left:205px;top:1150px;fill:#3a3a3a"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg>
-<svg class="p" viewBox="0 0 200 300" style="left:705px;top:1150px;fill:#FB8000"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg>
-<div class="lab" style="left:140px;top:1428px;color:#8c8c8c">NON</div>
-<div class="lab" style="left:640px;top:1428px;color:#FB8000">OUI</div>
+<svg style="position:absolute;left:400px;top:300px;width:280px;height:320px" viewBox="0 0 280 320">
+  <path d="M140 8 L262 52 L262 150 C262 230 210 284 140 312 C70 284 18 230 18 150 L18 52 Z" fill="#FB8000"/>
+  <path d="M140 34 L238 70 L238 150 C238 216 196 262 140 286 C84 262 42 216 42 150 L42 70 Z" fill="none" stroke="#0A0A0A" stroke-width="6" opacity="0.35"/>
+  <path d="M84 160 L124 200 L200 118" fill="none" stroke="#0A0A0A" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+<div class="t" style="top:660px;font-size:200px">EXTENSION<br><i class="u"><span style="color:#FB8000">DE GARANTIE</span></i></div>
+<div id="q"><span class="pill" style="background:#1c1c1c;color:#fff;border:5px solid #3a3a3a">ARNAQUE ?</span><span id="ou">OU</span><span class="pill" style="background:#FB8000;color:#0A0A0A">BON PLAN ?</span></div>
 </div></body></html>

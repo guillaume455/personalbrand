@@ -3,7 +3,7 @@
 5 ms fades), then the whole voice is sped up ×SPEED (pitch kept)
 and a tail is added for the end card. Writes assets/audio/voix-montage.wav."""
 import re, subprocess
-SRC, OUT, SPEED, MAXGAP, TAIL = "assets/audio/voix.mp3", "assets/audio/voix-montage.wav", 1.0, 0.42, 0.0
+SRC, OUT, SPEED, MAXGAP, TAIL = "assets/audio/voix.mp3", "assets/audio/voix-montage.wav", 1.1, 0.38, 0.0
 KEEP_LONGER = {}   # {phrase end (s, rounded): longer pause}, e.g. a beat after « Erreur. »
 out = subprocess.run(["python3", "../.claude/skills/motion-design/scripts/onsets.py", SRC, "--no-whisper"],
                      capture_output=True, text=True, check=True).stdout
