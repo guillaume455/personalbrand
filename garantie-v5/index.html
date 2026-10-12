@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #0A0A0A;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="58.74"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div
+        id="el-01-hook"
+        class="scene"
+        data-composition-id="01-hook"
+        data-composition-src="compositions/frames/01-hook.html"
+        data-start="0"
+        data-duration="6.67"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-02-principe"
+        class="scene"
+        data-composition-id="02-principe"
+        data-composition-src="compositions/frames/02-principe.html"
+        data-start="6.67"
+        data-duration="6.23"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-03-non"
+        class="scene"
+        data-composition-id="03-non"
+        data-composition-src="compositions/frames/03-non.html"
+        data-start="12.9"
+        data-duration="8.9"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-04-oui"
+        class="scene"
+        data-composition-id="04-oui"
+        data-composition-src="compositions/frames/04-oui.html"
+        data-start="21.8"
+        data-duration="8.13"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-05-face"
+        class="scene"
+        data-composition-id="05-face"
+        data-composition-src="compositions/frames/05-face.html"
+        data-start="29.93"
+        data-duration="4.57"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-06-lignes"
+        class="scene"
+        data-composition-id="06-lignes"
+        data-composition-src="compositions/frames/06-lignes.html"
+        data-start="34.5"
+        data-duration="16.87"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-07-chute"
+        class="scene"
+        data-composition-id="07-chute"
+        data-composition-src="compositions/frames/07-chute.html"
+        data-start="51.370000000000005"
+        data-duration="7.37"
+        data-track-index="1"
+      ></div>
+      <audio id="mix" data-start="0" data-duration="58.733" data-track-index="11" src="assets/audio/mix.wav" data-volume="1"></audio>
+
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

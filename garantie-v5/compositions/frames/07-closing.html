@@ -1,0 +1,213 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r7-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r7-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r7-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r7-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r7-hudcam { transform-origin: 540px 600px; }
+    .r7-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r7-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r7-tline { position: relative; display: inline-block; opacity: 0; }
+    .r7-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r7-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r7-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r7-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r7-ocol { display: block; }
+    .r7-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r7-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r7-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r7-person { position: absolute; transform-origin: 50% 100%; }
+    .r7-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r7-pgrey { fill: #2b2b2b; }
+    .r7-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r7-porange { fill: #FB8000; opacity: 0; }
+    .r7-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r7-car { position: absolute; transform-origin: 50% 100%; }
+    .r7-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r7-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r7-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r7-w { display: inline-block; opacity: 0; }
+
+    #r7-chip { position: absolute; left: 0; top: 760px; width: 1080px; text-align: center; opacity: 0; }
+    #r7-chipi { position: relative; display: inline-block; padding: 14px 40px; border-radius: 50px; border: 4px solid #6f6f6f; color: #bdbdbd;
+      font: 70px/1.15 "Anton", sans-serif; }
+    #r7-chipx { position: absolute; left: -10px; right: -10px; top: 48%; height: 12px; border-radius: 6px; background: #FB8000; transform: scaleX(0); transform-origin: 0 50%; }
+    .r7-btn { position: absolute; top: 840px; height: 150px; border-radius: 75px; border: 5px solid #ffffff; background: #151515;
+      font: 66px/140px "Anton", sans-serif; color: #ffffff; text-align: center; opacity: 0; }
+    .r7-btnhl { position: absolute; left: -5px; top: -5px; right: -5px; bottom: -5px; border-radius: 75px; background: #FB8000; opacity: 0; }
+    .r7-btnt { position: relative; }
+    #r7-ba { left: 70px; width: 440px; } #r7-bb { left: 560px; width: 380px; }
+    #r7-cur { position: absolute; left: 520px; top: 1080px; width: 70px; height: 90px; overflow: visible; opacity: 0; }
+      </style>
+
+  <div id="root" data-composition-id="07-closing" data-width="1080" data-height="1920" data-duration="7.2">
+    <div id="r7-ground" class="clip r7-ground" data-start="0" data-duration="7.2" data-track-index="0">
+      <div id="r7-halo" class="r7-halo" style="left:540px;top:900px"></div>
+      <div class="r7-grain"></div>
+    </div>
+    <div id="r7-push" class="r7-cam"><div id="r7-shk" class="r7-cam"><div id="r7-cran" class="r7-cam">
+      <div id="r7-chip"><span id="r7-chipi">OUI OU NON ?<i id="r7-chipx"></i></span></div><div id="r7-ba" class="r7-btn"><div id="r7-bahl" class="r7-btnhl"></div><span class="r7-btnt">AU COMPTANT</span></div><div id="r7-bb" class="r7-btn"><div id="r7-bbhl" class="r7-btnhl"></div><span class="r7-btnt">PAR MOIS</span></div><svg id="r7-cur" viewBox="0 0 70 90"><path d="M6 4 L6 70 L22 56 L34 84 L46 78 L34 52 L56 52 Z" fill="#ffffff" stroke="#0A0A0A" stroke-width="5" stroke-linejoin="round"/></svg>
+    </div></div></div>
+    <div id="r7-hud" class="r7-cam r7-hudcam">
+      <div class="r7-title" id="r7-t7" style="top:290px;font-size:116px;"><span class="r7-tline" id="r7-t7-0">LA SEULE QUESTION</span><br><span class="r7-tline" id="r7-t7-1">QUI RESTE<i class="r7-stilt"><i class="r7-stk" id="r7-t7-s"></i></i></span></div>
+    </div>
+    <div id="r7-sub" class="r7-sub">
+      <div class="r7-chunk sub-chunk" data-out="0.598"><span class="r7-w sub-w" data-cue="0.087">À</span> <span class="r7-w sub-w" data-cue="0.243">ce</span> <span class="r7-w sub-w" data-cue="0.398">stade,</span></div>
+      <div class="r7-chunk sub-chunk" data-out="1.377"><span class="r7-w sub-w" data-cue="0.554">la</span> <span class="r7-w sub-w" data-cue="0.710">question</span> <span class="r7-w sub-w" data-cue="1.021">n'est</span> <span class="r7-w sub-w" data-cue="1.177">plus</span></div>
+      <div class="r7-chunk sub-chunk" data-out="2.507"><span class="r7-w sub-w" data-cue="1.333">de</span> <span class="r7-w sub-w" data-cue="1.488">savoir</span> <span class="r7-w sub-w" data-cue="1.800">s'il</span> <span class="r7-w sub-w" data-cue="1.956">la</span> <span class="r7-w sub-w" data-cue="2.111">prend.</span></div>
+      <div class="r7-chunk sub-chunk" data-out="3.111"><span class="r7-w sub-w" data-cue="2.567">C'est</span> <span class="r7-w sub-w" data-cue="2.718">de</span> <span class="r7-w sub-w" data-cue="2.869">savoir</span></div>
+      <div class="r7-chunk sub-chunk" data-out="4.157"><span class="r7-w sub-w" data-cue="3.171">comment</span> <span class="r7-w sub-w" data-cue="3.474">il</span> <span class="r7-w sub-w" data-cue="3.625">la</span> <span class="r7-w sub-w sub-key" data-cue="3.776">paie :</span></div>
+      <div class="r7-chunk sub-chunk" data-out="4.539"><span class="r7-w sub-w" data-cue="4.217">au</span> <span class="r7-w sub-w" data-cue="4.339">comptant</span></div>
+      <div class="r7-chunk sub-chunk" data-out="5.557"><span class="r7-w sub-w" data-cue="4.585">ou</span> <span class="r7-w sub-w" data-cue="4.847">tous</span> <span class="r7-w sub-w" data-cue="5.000">les</span> <span class="r7-w sub-w" data-cue="5.154">mois.</span></div>
+      <div class="r7-chunk sub-chunk" data-out="6.567"><span class="r7-w sub-w" data-cue="5.617">Tu</span> <span class="r7-w sub-w" data-cue="5.767">lui</span> <span class="r7-w sub-w" data-cue="5.917">laisses</span> <span class="r7-w sub-w sub-key" data-cue="6.067">choisir,</span></div>
+      <div class="r7-chunk sub-chunk"><span class="r7-w sub-w" data-cue="6.627">c'est</span> <span class="r7-w sub-w" data-cue="6.802">tout.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "07-closing", P = "r7-", DUR = 7.2;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["à", 0.087, 0.243], ["ce", 0.243, 0.398], ["stade", 0.398, 0.554], ["la", 0.554, 0.71], ["question", 0.71, 1.021], ["n'est", 1.021, 1.177], ["plus", 1.177, 1.333], ["de", 1.333, 1.488], ["savoir", 1.488, 1.8], ["s'il", 1.8, 1.956], ["la", 1.956, 2.111], ["prend", 2.111, 2.267], ["c'est", 2.567, 2.718], ["de", 2.718, 2.869], ["savoir", 2.869, 3.171], ["comment", 3.171, 3.474], ["il", 3.474, 3.625], ["la", 3.625, 3.776], ["paie", 3.776, 3.927], ["au", 4.217, 4.339], ["comptant", 4.339, 4.585], ["ou", 4.585, 4.707], ["tous", 4.847, 5.0], ["les", 5.0, 5.154], ["mois", 5.154, 5.307], ["tu", 5.617, 5.767], ["lui", 5.767, 5.917], ["laisses", 5.917, 6.067], ["choisir", 6.067, 6.367], ["c'est", 6.627, 6.802], ["tout", 6.802, 6.977]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      pre("chip", { opacity: 0, scale: 0.6 }); go("chip", { opacity: 1, scale: 1 }, at("question") - 0.05, 0.28, "back.out(2)");
+      tl.fromTo($("chipx"), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power4.out", immediateRender: false }, at("prend") + 0.05);
+      go("chip", { opacity: 0, y: -40 }, at("c'est") - 0.12, 0.18, "power2.in");
+      slam("t7-0", at("c'est")); slam("t7-1", at("comment")); stroke("t7", at("paie"));
+      pre("ba", { opacity: 0, y: 60 }); pre("bb", { opacity: 0, y: 60 });
+      go("ba", { opacity: 1, y: 0 }, at("paie") - 0.1, 0.3, "back.out(1.6)"); go("bb", { opacity: 1, y: 0 }, at("paie"), 0.3, "back.out(1.6)");
+      // the cursor hesitates between the two
+      pre("cur", { opacity: 0, x: 0, y: 0 }); go("cur", { opacity: 1 }, at("paie") + 0.2, 0.2);
+      init("bahl", { opacity: 0 }); init("bbhl", { opacity: 0 });
+      go("cur", { x: -260, y: -130 }, at("comptant") - 0.15, 0.4, "power2.inOut"); go("bahl", { opacity: 0.9 }, at("comptant"), 0.15);
+      go("bahl", { opacity: 0 }, at("ou") - 0.05, 0.15);
+      go("cur", { x: 210, y: -130 }, at("ou") - 0.05, 0.45, "power2.inOut"); go("bbhl", { opacity: 0.9 }, at("mois"), 0.15);
+      go("bbhl", { opacity: 0 }, at("tu") - 0.05, 0.15);
+      go("cur", { x: -10, y: -60 }, at("tu") - 0.05, 0.5, "power2.inOut");
+      // « tu lui laisses choisir » : both answers are good ones
+      go("bahl", { opacity: 0.9 }, at("choisir") - 0.03, 0.2); go("bbhl", { opacity: 0.9 }, at("choisir") + 0.12, 0.2);
+      go("cur", { opacity: 0, y: 40 }, at("tout"), 0.3);
+      cam(0, -20, 1.05, at("paie"), 0.8);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

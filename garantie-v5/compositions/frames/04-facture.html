@@ -1,0 +1,214 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r4-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r4-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r4-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r4-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r4-hudcam { transform-origin: 540px 600px; }
+    .r4-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r4-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r4-tline { position: relative; display: inline-block; opacity: 0; }
+    .r4-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r4-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r4-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r4-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r4-ocol { display: block; }
+    .r4-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r4-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r4-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r4-person { position: absolute; transform-origin: 50% 100%; }
+    .r4-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r4-pgrey { fill: #2b2b2b; }
+    .r4-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r4-porange { fill: #FB8000; opacity: 0; }
+    .r4-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r4-car { position: absolute; transform-origin: 50% 100%; }
+    .r4-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r4-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r4-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r4-w { display: inline-block; opacity: 0; }
+
+    #r4-paper { position: absolute; left: 100px; top: 300px; width: 880px; height: 920px; border-radius: 10px; background: #f7f5f1;
+      box-shadow: 0 40px 90px rgba(0,0,0,0.7); transform: rotate(-1.5deg); color: #141414; font-family: "Instrument Sans", sans-serif; overflow: hidden; }
+    .r4-pa { position: absolute; }
+    .r4-blur { position: absolute; height: 26px; border-radius: 6px; background: #b8b4ad; filter: blur(5px); }
+    .r4-lab { font: 600 26px/1 "Instrument Sans", sans-serif; color: #8a857c; text-transform: uppercase; letter-spacing: 0.05em; }
+    .r4-row { position: absolute; left: 50px; width: 780px; height: 64px; }
+    .r4-rowt { position: absolute; left: 16px; top: 0; font: 600 34px/64px "Instrument Sans", sans-serif; }
+    .r4-rowv { position: absolute; right: 16px; top: 0; font: 40px/64px "Anton", sans-serif; }
+    .r4-hl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; border-radius: 10px; background: rgba(251,128,0,0.22);
+      border-left: 8px solid #FB8000; transform-origin: 0 50%; transform: scaleX(0); }
+    #r4-stamp { position: absolute; left: 520px; top: 740px; padding: 6px 30px; border: 8px solid #FB8000; border-radius: 16px;
+      font: 92px/1.1 "Anton", sans-serif; color: #FB8000; transform: rotate(-10deg); opacity: 0; }
+    #r4-badge { position: absolute; left: 60px; top: 236px; width: 110px; height: 110px; border-radius: 50%; background: #FB8000; color: #0A0A0A;
+      font: 76px/110px "Anton", sans-serif; text-align: center; opacity: 0; box-shadow: 0 0 40px rgba(251,128,0,0.5); }
+      </style>
+
+  <div id="root" data-composition-id="04-facture" data-width="1080" data-height="1920" data-duration="9.566">
+    <div id="r4-ground" class="clip r4-ground" data-start="0" data-duration="9.566" data-track-index="0">
+      <div id="r4-halo" class="r4-halo" style="left:540px;top:900px"></div>
+      <div class="r4-grain"></div>
+    </div>
+    <div id="r4-push" class="r4-cam"><div id="r4-shk" class="r4-cam"><div id="r4-cran" class="r4-cam">
+      <div id="r4-paper"><div class="r4-pa" style="left:50px;top:40px;font:72px/1 Anton,sans-serif">FACTURE</div><div class="r4-pa r4-lab" style="left:560px;top:52px">N°</div><div class="r4-blur" style="left:610px;top:48px;width:200px"></div><div class="r4-blur" style="left:50px;top:140px;width:300px"></div><div class="r4-blur" style="left:50px;top:182px;width:220px"></div><div class="r4-pa r4-lab" style="left:480px;top:140px">Client</div><div class="r4-blur" style="left:600px;top:136px;width:220px"></div><div class="r4-pa r4-lab" style="left:480px;top:186px">Immat.</div><div class="r4-blur" style="left:600px;top:182px;width:170px"></div><div class="r4-pa" style="left:50px;top:250px;width:780px;height:2px;background:#d8d3ca"></div><div class="r4-pa r4-lab" style="left:66px;top:282px">Désignation</div><div class="r4-pa r4-lab" style="right:66px;top:282px">Montant</div><div class="r4-row" style="top:330px"><div id="r4-r1-hl" class="r4-hl"></div><div class="r4-rowt" style="">Turbo (remplacement)</div><div class="r4-rowv">1 980,00 €</div></div><div class="r4-row" style="top:400px"><div id="r4-r2-hl" class="r4-hl"></div><div class="r4-rowt" style="">Main-d’œuvre</div><div class="r4-rowv">520,00 €</div></div><div class="r4-row" style="top:480px"><div id="r4-r3-hl" class="r4-hl"></div><div class="r4-rowt" style="font-weight:700">TOTAL TTC</div><div class="r4-rowv"><span id="r4-tot" class="r4-odo " data-to="2 500,00 €"><span class="r4-oc"><span class="r4-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r4-os">&nbsp;</span><span class="r4-oc"><span class="r4-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r4-oc"><span class="r4-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r4-oc"><span class="r4-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r4-os">,</span><span class="r4-oc"><span class="r4-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r4-oc"><span class="r4-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r4-os">&nbsp;</span><span class="r4-os">€</span></span></div></div><div class="r4-row" style="top:556px"><div id="r4-r4-hl" class="r4-hl"></div><div class="r4-rowt" style="">Garantie mécanique</div><div class="r4-rowv">− 2 500,00 €</div></div><div class="r4-row" style="top:650px;height:80px"><div id="r4-r5-hl" class="r4-hl"></div><div class="r4-rowt" style=";font:52px/80px Anton,sans-serif">RESTE À CHARGE</div><div class="r4-rowv" style=font-size:60px;line-height:80px><span id="r4-rac" class="r4-odo " data-to="0,00 €"><span class="r4-oc"><span class="r4-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r4-os">,</span><span class="r4-oc"><span class="r4-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r4-oc"><span class="r4-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r4-os">&nbsp;</span><span class="r4-os">€</span></span></div></div><div id="r4-stamp">PAYÉ</div></div><div id="r4-badge">1</div>
+    </div></div></div>
+    <div id="r4-hud" class="r4-cam r4-hudcam">
+      
+    </div>
+    <div id="r4-sub" class="r4-sub">
+      <div class="r4-chunk sub-chunk" data-out="1.593"><span class="r4-w sub-w" data-cue="0.093">Un :</span> <span class="r4-w sub-w" data-cue="0.613">une</span> <span class="r4-w sub-w" data-cue="0.798">vraie</span> <span class="r4-w sub-w sub-key" data-cue="0.983">facture.</span></div>
+      <div class="r4-chunk sub-chunk" data-out="2.933"><span class="r4-w sub-w" data-cue="1.653">Un</span> <span class="r4-w sub-w" data-cue="1.873">client,</span> <span class="r4-w sub-w" data-cue="2.303">un</span> <span class="r4-w sub-w sub-key" data-cue="2.456">turbo,</span></div>
+      <div class="r4-chunk sub-chunk" data-out="3.821"><span class="r4-w sub-w sub-key" data-cue="2.993">2 500</span> <span class="r4-w sub-w" data-cue="3.621">euros</span></div>
+      <div class="r4-chunk sub-chunk" data-out="4.593"><span class="r4-w sub-w" data-cue="3.830">de</span> <span class="r4-w sub-w" data-cue="3.935">réparation.</span></div>
+      <div class="r4-chunk sub-chunk" data-out="5.523"><span class="r4-w sub-w" data-cue="4.653">Reste</span> <span class="r4-w sub-w" data-cue="4.863">à</span> <span class="r4-w sub-w" data-cue="5.073">charge :</span></div>
+      <div class="r4-chunk sub-chunk" data-out="6.183"><span class="r4-w sub-w sub-key" data-cue="5.583">zéro.</span></div>
+      <div class="r4-chunk sub-chunk" data-out="7.025"><span class="r4-w sub-w" data-cue="6.243">Il</span> <span class="r4-w sub-w" data-cue="6.388">ne</span> <span class="r4-w sub-w" data-cue="6.534">t'écoute</span> <span class="r4-w sub-w" data-cue="6.825">plus</span></div>
+      <div class="r4-chunk sub-chunk" data-out="7.993"><span class="r4-w sub-w" data-cue="6.970">décrire</span> <span class="r4-w sub-w" data-cue="7.261">une</span> <span class="r4-w sub-w" data-cue="7.407">couverture,</span></div>
+      <div class="r4-chunk sub-chunk" data-out="8.797"><span class="r4-w sub-w" data-cue="8.053">il</span> <span class="r4-w sub-w" data-cue="8.187">regarde</span> <span class="r4-w sub-w" data-cue="8.455">ce</span> <span class="r4-w sub-w" data-cue="8.589">qu'elle</span></div>
+      <div class="r4-chunk sub-chunk"><span class="r4-w sub-w" data-cue="8.857">a</span> <span class="r4-w sub-w" data-cue="8.991">déjà</span> <span class="r4-w sub-w sub-key" data-cue="9.259">payé.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "04-facture", P = "r4-", DUR = 9.566;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["un", 0.093, 0.323], ["une", 0.613, 0.798], ["vraie", 0.798, 0.983], ["facture", 0.983, 1.353], ["un", 1.653, 1.873], ["client", 1.873, 2.093], ["un", 2.303, 2.456], ["turbo", 2.456, 2.763], ["2500", 2.993, 3.621], ["euros", 3.621, 3.83], ["de", 3.83, 3.935], ["réparation", 3.935, 4.353], ["reste", 4.653, 4.863], ["à", 4.863, 5.073], ["charge", 5.073, 5.283], ["zéro", 5.583, 5.953], ["il", 6.243, 6.388], ["ne", 6.388, 6.534], ["t'écoute", 6.534, 6.825], ["plus", 6.825, 6.97], ["décrire", 6.97, 7.261], ["une", 7.261, 7.407], ["couverture", 7.407, 7.843], ["il", 8.053, 8.187], ["regarde", 8.187, 8.455], ["ce", 8.455, 8.589], ["qu'elle", 8.589, 8.857], ["a", 8.857, 8.991], ["déjà", 8.991, 9.259], ["payé", 9.259, 9.393]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      pre("paper", { opacity: 0, y: 160, rotation: -5 }); go("paper", { opacity: 1, y: 0, rotation: -1.5 }, 0.02, 0.45, "expo.out");
+      pre("badge", { opacity: 0, scale: 0.3 }); go("badge", { opacity: 1, scale: 1 }, at("facture") - 0.05, 0.28, "back.out(2.2)");
+      odo("tot", 0, 0.01, { from: "0 000,00", spinLow: false });
+      tl.fromTo($("r1-hl"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, at("turbo") - 0.04);
+      tl.fromTo($("r3-hl"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, at("2500") - 0.06);
+      odo("tot", at("2500") - 0.06, 0.9);
+      cam(0, -60, 1.12, at("reste") - 0.1, 0.6);
+      tl.fromTo($("r5-hl"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, at("charge") - 0.05);
+      pre("rac", { opacity: 0 }); slam("rac", at("zéro") - 0.06, { s: 1.4 }); odo("rac", at("zéro") - 0.06, 0.5, { from: "0,00" });
+      init("halo", { y: 0 }); go("halo", { y: 220 }, at("reste"), 0.6);
+      cam(0, -10, 1.04, at("t'écoute") - 0.1, 0.7, "power2.inOut");
+      pre("stamp", { opacity: 0, scale: 2.4, rotation: -10 }); go("stamp", { opacity: 1, scale: 1, rotation: -10 }, at("payé") - 0.08, 0.16, "expo.in");
+      shake("shk", at("payé") + 0.08, 8);
+      cam(0, -40, 1.08, at("payé") + 0.1, 0.8, "power2.out");
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

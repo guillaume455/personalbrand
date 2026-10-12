@@ -1,0 +1,205 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
+      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r2-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r2-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+    .r2-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r2-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r2-hudcam { transform-origin: 540px 600px; }
+    .r2-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r2-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r2-tline { position: relative; display: inline-block; opacity: 0; }
+    .r2-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r2-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r2-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r2-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r2-ocol { display: block; }
+    .r2-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r2-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r2-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r2-person { position: absolute; transform-origin: 50% 100%; }
+    .r2-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r2-pgrey { fill: #2b2b2b; }
+    .r2-pwhite { fill: #f2f2f2; opacity: 0; }
+    .r2-porange { fill: #FB8000; opacity: 0; }
+    .r2-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+    .r2-car { position: absolute; transform-origin: 50% 100%; }
+    .r2-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r2-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r2-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r2-w { display: inline-block; opacity: 0; }
+
+    .r2-band { position: absolute; left: 0; top: 262px; width: 1080px; text-align: center; }
+    .r2-band span { display: inline-block; padding: 8px 34px; border-radius: 40px; background: #FB8000; color: #0A0A0A;
+      font: 54px/1.2 "Anton", sans-serif; letter-spacing: 0.02em; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+
+    #r2-tag { position: absolute; left: 600px; top: 650px; transform-origin: 30px 0; opacity: 0; }
+    #r2-tag b { display: block; margin-top: 70px; padding: 10px 26px; border-radius: 14px; background: #FB8000; color: #0A0A0A;
+      font: 56px/1.15 "Anton", sans-serif; font-weight: 400; box-shadow: 0 12px 30px rgba(0,0,0,0.5); white-space: nowrap; }
+    #r2-tag i { position: absolute; left: 30px; top: 0; width: 4px; height: 74px; background: #bdbdbd; }
+    #r2-warn { position: absolute; left: 470px; top: 610px; width: 140px; height: 124px; opacity: 0; }
+    .r2-btn { position: absolute; top: 1080px; width: 360px; height: 140px; border-radius: 70px; text-align: center; font: 90px/140px "Anton", sans-serif; opacity: 0; }
+      </style>
+
+  <div id="root" data-composition-id="02-principe" data-width="1080" data-height="1920" data-duration="6.233">
+    <div id="r2-ground" class="clip r2-ground" data-start="0" data-duration="6.233" data-track-index="0">
+      <div id="r2-halo" class="r2-halo" style="left:540px;top:900px"></div>
+      <div class="r2-grain"></div>
+    </div>
+    <div id="r2-push" class="r2-cam"><div id="r2-shk" class="r2-cam"><div id="r2-cran" class="r2-cam">
+      <div id="r2-car" class="r2-car" style="left:220px;top:760px;width:640px;height:265px"><svg viewBox="0 0 410 170" style="stroke:#ffffff;stroke-width:9"><path d="M28 128 L24 100 Q26 84 46 80 L118 70 L168 34 Q178 27 192 27 L276 27 Q294 27 306 40 L340 74 L366 80 Q384 85 384 102 L382 128 L336 128"/><path d="M64 128 L24 128"/><path d="M126 128 L274 128"/><circle cx="95" cy="128" r="30"/><circle cx="305" cy="128" r="30"/><circle cx="95" cy="128" r="7"/><circle cx="305" cy="128" r="7"/><path d="M136 70 L174 40 Q180 36 190 36 L234 36 L234 70 Z"/><path d="M248 36 L272 36 Q286 36 296 46 L320 70 L248 70 Z"/></svg></div><svg id="r2-warn" viewBox="0 0 140 124"><path d="M70 6 L134 118 L6 118 Z" fill="#FB8000"/><path d="M70 44 L70 82 M70 98 L70 102" stroke="#0A0A0A" stroke-width="12" stroke-linecap="round"/></svg>
+    </div></div></div>
+    <div id="r2-hud" class="r2-cam r2-hudcam">
+      <div id="r2-band" class="r2-band"><span>EXTENSION DE GARANTIE</span></div><div class="r2-title" id="r2-t1" style="top:420px;font-size:130px;"><span class="r2-tline" id="r2-t1-0">LE PRINCIPE<i class="r2-stilt"><i class="r2-stk" id="r2-t1-s"></i></i></span></div><div id="r2-tag"><i></i><b>EN OPTION</b></div><div id="r2-by" class="r2-btn" style="left:150px;background:#FB8000;color:#0A0A0A">OUI</div><div id="r2-bn" class="r2-btn" style="left:570px;background:#1c1c1c;color:#bdbdbd;border:4px solid #3a3a3a">NON</div>
+    </div>
+    <div id="r2-sub" class="r2-sub">
+      <div class="r2-chunk sub-chunk" data-out="1.073"><span class="r2-w sub-w" data-cue="0.093">Le</span> <span class="r2-w sub-w sub-key" data-cue="0.303">principe :</span></div>
+      <div class="r2-chunk sub-chunk" data-out="1.705"><span class="r2-w sub-w" data-cue="1.133">quand</span> <span class="r2-w sub-w" data-cue="1.291">tu</span> <span class="r2-w sub-w" data-cue="1.449">achètes</span></div>
+      <div class="r2-chunk sub-chunk" data-out="2.803"><span class="r2-w sub-w" data-cue="1.765">une</span> <span class="r2-w sub-w" data-cue="1.923">voiture</span> <span class="r2-w sub-w" data-cue="2.239">d'occasion,</span></div>
+      <div class="r2-chunk sub-chunk" data-out="3.422"><span class="r2-w sub-w" data-cue="2.863">tu</span> <span class="r2-w sub-w" data-cue="3.042">peux</span> <span class="r2-w sub-w" data-cue="3.222">payer</span></div>
+      <div class="r2-chunk sub-chunk" data-out="4.059"><span class="r2-w sub-w" data-cue="3.401">un</span> <span class="r2-w sub-w sub-key" data-cue="3.581">supplément</span></div>
+      <div class="r2-chunk sub-chunk" data-out="5.037"><span class="r2-w sub-w" data-cue="4.119">pour</span> <span class="r2-w sub-w" data-cue="4.298">que</span> <span class="r2-w sub-w" data-cue="4.478">les</span> <span class="r2-w sub-w" data-cue="4.657">grosses</span> <span class="r2-w sub-w sub-key" data-cue="4.837">pannes</span></div>
+      <div class="r2-chunk sub-chunk"><span class="r2-w sub-w" data-cue="5.016">ne</span> <span class="r2-w sub-w" data-cue="5.195">soient</span> <span class="r2-w sub-w" data-cue="5.375">plus</span> <span class="r2-w sub-w" data-cue="5.554">pour</span> <span class="r2-w sub-w" data-cue="5.734">toi.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "02-principe", P = "r2-", DUR = 6.233;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["le", 0.093, 0.303], ["principe", 0.303, 0.723], ["quand", 1.133, 1.291], ["tu", 1.291, 1.449], ["achètes", 1.449, 1.765], ["une", 1.765, 1.923], ["voiture", 1.923, 2.239], ["d'occasion", 2.239, 2.713], ["tu", 2.863, 3.042], ["peux", 3.042, 3.222], ["payer", 3.222, 3.401], ["un", 3.401, 3.581], ["supplément", 3.581, 4.119], ["pour", 4.119, 4.298], ["que", 4.298, 4.478], ["les", 4.478, 4.657], ["grosses", 4.657, 4.837], ["pannes", 4.837, 5.016], ["ne", 5.016, 5.195], ["soient", 5.195, 5.375], ["plus", 5.375, 5.554], ["pour", 5.554, 5.734], ["toi", 5.734, 5.913]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+            slam("t1-0", Math.max(0.02, at("principe") - 0.08)); stroke("t1", Math.max(0.2, at("principe") + 0.15));
+      // a used car rolls in
+      pre("car", { x: -900, opacity: 1 }); go("car", { x: 0 }, Math.max(0.1, at("achètes") - 0.2), 0.7, "power3.out");
+      // the option hooks onto it
+      pre("tag", { opacity: 0, rotation: -40, y: -120 }); go("tag", { opacity: 1, y: 0, rotation: 10 }, at("supplément") - 0.1, 0.35, "back.out(1.6)");
+      go("tag", { rotation: -4 }, at("supplément") + 0.25, 0.4, "sine.inOut"); go("tag", { rotation: 0 }, at("supplément") + 0.65, 0.4, "sine.inOut");
+      // the big breakdowns are not for you any more
+      pre("warn", { opacity: 0, scale: 0.3 }); go("warn", { opacity: 1, scale: 1 }, at("pannes") - 0.1, 0.25, "back.out(2)"); shake("car", at("pannes"), 10);
+      go("warn", { opacity: 0, scale: 0.6 }, at("toi") - 0.15, 0.2);
+      // yes or no
+      pre("by", { opacity: 0, y: 40 }); go("by", { opacity: 1, y: 0 }, at("toi") - 0.1, 0.25, "back.out(1.8)");
+      pre("bn", { opacity: 0, y: 40 }); go("bn", { opacity: 1, y: 0 }, at("toi") + 0.05, 0.25, "back.out(1.8)");
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
