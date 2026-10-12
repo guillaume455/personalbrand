@@ -34,8 +34,25 @@
   var p = new URLSearchParams(location.search);
   var resultat = p.get('r') === 'ok' ? 'ok' : 'non';
   var prenom = (p.get('prenom') || '').trim().slice(0, 40);
-  var email = (p.get('email') || '').trim().slice(0, 120);
+  var email = reparerPlus((p.get('email') || '').trim().slice(0, 120));
   var eventId = (p.get('event_id') || '').trim().slice(0, 80);
+
+  /* ---------- Le « + » des adresses e-mail --------------------------------
+     Dans une adresse web, « + » est la vieille notation de l'espace.
+     URLSearchParams respecte cette convention : si l'outil qui construit le
+     lien n'a pas encodé le « + » en %2B, « marie+auto@exemple.fr » nous
+     arrive en « marie auto@exemple.fr ».
+
+     On le remet, car une espace n'existe pas dans une adresse e-mail : il n'y
+     a donc aucun cas où cette réparation abîme une adresse valide. Si le lien
+     est correctement encodé, il n'y a pas d'espace et rien ne se passe — les
+     deux cas se rejoignent.
+
+     À ne surtout pas appliquer au prénom : « Jean Pierre » est un prénom,
+     pas une adresse abîmée. */
+  function reparerPlus(valeur) {
+    return valeur.indexOf(' ') === -1 ? valeur : valeur.replace(/ /g, '+');
+  }
 
   var ecranAnalyse = document.querySelector('[data-ecran="analyse"]');
   var ecranOk = document.querySelector('[data-ecran="ok"]');
