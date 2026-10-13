@@ -84,3 +84,18 @@ Ordre conseillé : du plus accessible (acheteur) au plus expert (entreprendre). 
 - Musique d'origine conservée sous la voix, avec un fondu de sortie de 0,4 s en fin de story.
 - Export H.264 High, 1080×1920, 30 fps (comme les sources), AAC 48 kHz 192 kb/s, -14 LUFS, `+faststart`.
 - Prototypes proposés : **01** (erreur vécue, deux passages raccordés) et **06** (calcul, avec le PNG 06b).
+
+## 5. Prototypes (étape 2)
+
+Sélection validée le 13/10. Prototypes livrés, en attente de validation avant la série :
+
+| Fichier | Passages réels (s du Reel) | Durée | Son |
+|---|---|---|---|
+| `02_EXPORTS/01_conseil_erreurs_achat.mp4` | 0,00–2,99 + 60,38–83,66 | 26,1 s | -14,1 LUFS, crête -1,5 dB |
+| `02_EXPORTS/06_conseil_vraie_marge.mp4` | 33,12–63,09 | 30,0 s | -14,1 LUFS, crête -1,4 dB |
+| `03_VISUELS_FIXES/06b-vraie-marge.png` | chiffres du Reel Jaguar | — | — |
+
+Story 01 : le compteur « TOTAL 66 800 € » du Reel (cumul propre au récit complet, incompréhensible seul) est effacé
+à partir de 2,6 s. Tout le reste de l'image est celui du Reel.
+
+Outils : `04_RECAP/tools/story.py` (montage d'une story), `04_RECAP/tools/visuels/` (visuels fixes).

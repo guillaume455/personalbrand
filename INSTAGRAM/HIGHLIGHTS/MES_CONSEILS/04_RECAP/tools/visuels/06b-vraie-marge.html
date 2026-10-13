@@ -1,0 +1,35 @@
+<meta charset="utf-8">
+<style>
+@font-face { font-family: "Oswald"; src: url("Oswald-var.woff2") format("woff2"); font-weight: 200 700; }
+* { margin: 0; box-sizing: border-box; }
+body { width: 1080px; height: 1920px; background: #0A0A0A; color: #fff; font-family: "Oswald", sans-serif; overflow: hidden;
+       background-image: radial-gradient(ellipse at 50% 45%, #1a1208 0%, #0A0A0A 60%); }
+.wrap { position: absolute; left: 90px; right: 90px; top: 280px; }
+h1 { font-size: 112px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
+.stroke { width: 470px; height: 12px; background: #FB8000; border-radius: 6px; margin: 18px 0 20px; transform: rotate(-1.2deg); }
+.sub { font-size: 40px; color: #9a9a9a; text-transform: uppercase; letter-spacing: 3px; font-weight: 400; margin-bottom: 36px; }
+.row { display: flex; justify-content: space-between; align-items: baseline; font-size: 50px; font-weight: 500;
+       text-transform: uppercase; padding: 13px 0; border-bottom: 2px solid #262626; }
+.row .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+.minus .l, .minus .v { color: #E03131; }
+.fake { color: #8a8a8a; }
+.fake .l small { display: block; font-size: 30px; letter-spacing: 2px; color: #6a6a6a; font-weight: 400; }
+.note { font-size: 30px; color: #8a8a8a; text-align: right; letter-spacing: 1px; margin-top: 8px; }
+.total { margin-top: 34px; border: 5px solid #FB8000; border-radius: 22px; padding: 22px 40px; display: flex;
+         justify-content: space-between; align-items: center; }
+.total .l { font-size: 48px; font-weight: 600; text-transform: uppercase; line-height: 1.25; }
+.total .v { font-size: 112px; font-weight: 700; color: #FB8000; }
+</style>
+<div class="wrap">
+  <h1>La vraie marge</h1>
+  <div class="stroke"></div>
+  <div class="sub">Une revente réelle, en 90 jours</div>
+  <div class="row"><span class="l">Prix de vente</span><span class="v">36 200 €</span></div>
+  <div class="row minus"><span class="l">− Prix d'achat</span><span class="v">30 000 €</span></div>
+  <div class="row fake"><span class="l">= Marge affichée<small>ce que tout le monde calcule</small></span><span class="v">6 200 €</span></div>
+  <div class="row minus"><span class="l">− Transport</span><span class="v">600 €</span></div>
+  <div class="row minus"><span class="l">− Révision</span><span class="v">600 €</span></div>
+  <div class="row minus"><span class="l">− TVA à reverser</span><span class="v">833 €</span></div>
+  <div class="note">6 033 € collectés sur la vente − 5 200 € récupérés sur l'achat et les frais</div>
+  <div class="total"><span class="l">Marge<br>réelle</span><span class="v">4 167 €</span></div>
+</div>
