@@ -1,4 +1,11 @@
-# Publie le contenu de site/ sur l'hébergement OVH, par FTPS.
+# Publie le contenu de site/ sur l'hébergement OVH, par SFTP.
+#
+# Pourquoi SFTP et pas FTPS : sur le mutualisé OVH, le serveur FTP du port 21
+# refuse la commande AUTH TLS (« 500 This security scheme is not
+# implemented »). Le chiffrement passe par SFTP, sur le port 22, et doit être
+# activé par utilisateur FTP dans l'espace client, onglet FTP-SSH. Du FTP en
+# clair ferait voyager le mot de passe en clair à chaque publication : on ne
+# le fait pas.
 #
 # Ce qui déclenche une publication :
 #   - un push sur `main` qui touche à site/ ;
@@ -9,8 +16,8 @@
 # fusion dans `main`, ou le clic, qui vaut accord de mise en ligne.
 #
 # Trois secrets à créer dans Settings → Secrets and variables → Actions :
-#   OVH_FTP_HOST      ftp.cluster0XX.hosting.ovh.net (voir l'espace client)
-#   OVH_FTP_USER      l'identifiant FTP
+#   OVH_FTP_HOST      ftp.clusterXXX.hosting.ovh.net (voir l'espace client)
+#   OVH_FTP_USER      l'identifiant du compte, SFTP activé
 #   OVH_FTP_PASSWORD  son mot de passe
 #
 # Une variable facultative, au même endroit, onglet « Variables » :
@@ -52,34 +59,74 @@ jobs:
           MOTDEPASSE: ${{ secrets.OVH_FTP_PASSWORD }}
         run: |
           manquants=""
-          [ -z "$HOTE" ]       && manquants="$manquants OVH_FTP_HOST"
-          [ -z "$UTILISATEUR" ] && manquants="$manquants OVH_FTP_USER"
-          [ -z "$MOTDEPASSE" ]  && manquants="$manquants OVH_FTP_PASSWORD"
+          [ -n "$HOTE" ] || manquants="$manquants OVH_FTP_HOST"
+          [ -n "$UTILISATEUR" ] || manquants="$manquants OVH_FTP_USER"
+          [ -n "$MOTDEPASSE" ] || manquants="$manquants OVH_FTP_PASSWORD"
           if [ -n "$manquants" ]; then
-            echo "::error::Secrets manquants :$manquants — à créer dans Settings → Secrets and variables → Actions."
+            echo "::error::Secrets manquants :$manquants. À créer dans Settings → Secrets and variables → Actions."
             exit 1
           fi
+          echo "Les trois secrets sont présents."
 
-      # Un garde-fou : si site/index.html a disparu, c'est que quelque chose
-      # s'est mal passé en amont. Mieux vaut échouer que vider le serveur.
       - name: Vérifier que le site est bien là
         run: |
           test -f site/index.html || { echo "::error::site/index.html est introuvable, publication annulée."; exit 1; }
           echo "Fichiers à publier : $(find site -type f | wc -l)"
 
-      - name: Envoyer par FTPS
-        # Version épinglée volontairement : cette action reçoit le mot de
-        # passe FTP, elle ne doit pas changer sans qu'on le décide.
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ secrets.OVH_FTP_HOST }}
-          username: ${{ secrets.OVH_FTP_USER }}
-          password: ${{ secrets.OVH_FTP_PASSWORD }}
-          protocol: ftps
-          local-dir: ./site/
-          server-dir: ${{ vars.OVH_SERVER_DIR || './www/' }}
-          # Les .htaccess des quatre dossiers du tunnel partent avec le reste :
-          # c'est ce que les clients FTP oublient en masquant les fichiers
-          # commençant par un point.
-          dangerous-clean-slate: false
-          log-level: standard
+      - name: Installer lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Envoyer par SFTP
+        env:
+          HOTE: ${{ secrets.OVH_FTP_HOST }}
+          UTILISATEUR: ${{ secrets.OVH_FTP_USER }}
+          # lftp lit le mot de passe dans cette variable : le passer en
+          # argument l'exposerait dans la liste des processus.
+          LFTP_PASSWORD: ${{ secrets.OVH_FTP_PASSWORD }}
+          CIBLE: ${{ vars.OVH_SERVER_DIR || './www/' }}
+        run: |
+          set -euo pipefail
+          echo "Envoi de ./site/ vers $CIBLE sur $HOTE, en SFTP."
+          # mirror -R envoie le local vers le distant. Pas de --delete : la
+          # publication n'efface jamais ce qu'elle n'a pas envoyé elle-même,
+          # sinon elle supprimerait tout ce que le dépôt ne connaît pas.
+          # --no-perms : sur un mutualisé, les chmod échouent et ne servent à
+          # rien. Les fichiers commençant par un point, dont les .htaccess,
+          # partent avec le reste.
+          lftp -c "
+            set cmd:fail-exit yes;
+            set sftp:auto-confirm yes;
+            set net:timeout 20;
+            set net:max-retries 3;
+            set net:reconnect-interval-base 5;
+            open -u '$UTILISATEUR' --env-password sftp://$HOTE;
+            mirror -R --verbose --no-perms --parallel=2 ./site/ '$CIBLE';
+            bye
+          "
+          echo "Transfert terminé."
+
+      - name: Vérifier que le site répond
+        # Sans cette étape, un mauvais dossier de destination donnerait une
+        # publication « réussie » alors que rien n'a changé pour le visiteur.
+        run: |
+          set -uo pipefail
+          echec=0
+          verifier() {
+            url="$1"; attendu="$2"; cherche="$3"
+            corps=$(curl -sS --http1.1 --max-time 30 -w '\n%{http_code}' "$url" 2>/dev/null)
+            code=$(printf '%s' "$corps" | tail -n1)
+            if [ "$code" != "$attendu" ]; then
+              echo "::error::$url répond $code au lieu de $attendu."
+              echec=1
+              return
+            fi
+            if [ -n "$cherche" ] && ! printf '%s' "$corps" | grep -q "$cherche"; then
+              echo "::error::$url répond bien mais ne contient pas « $cherche » : les fichiers sont peut-être partis dans le mauvais dossier."
+              echec=1
+              return
+            fi
+            echo "OK  $url"
+          }
+          verifier "https://guillaumeherbin.fr/accompagnement/" 200 "Plan de lancement"
+          verifier "https://guillaumeherbin.fr/accompagnement/analyse/" 200 "analyse tes réponses"
+          exit $echec
