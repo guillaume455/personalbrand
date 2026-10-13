@@ -9,3 +9,17 @@
 <IfModule mod_headers.c>
   Header set X-Robots-Tag "noindex, nofollow"
 </IfModule>
+
+# Anciennes pages du tunnel, remplacées par Tally, l'écran d'analyse et Cal.
+#
+# Leurs fichiers ont été supprimés du dépôt, mais ils restent présents sur
+# l'hébergement : la publication automatique n'efface jamais ce qu'elle n'a
+# pas envoyé elle-même, sinon elle supprimerait tout ce qu'elle ne connaît
+# pas. Ces redirections rendent donc ces pages inatteignables sans qu'on ait
+# à passer par le FTP : mod_alias agit à la traduction de l'URL, avant que le
+# fichier soit servi.
+#
+# Le motif accepte l'absence de barre oblique finale et tout sous-chemin.
+<IfModule mod_alias.c>
+  RedirectMatch 301 ^/accompagnement/(candidature|merci|reservation|confirmation)(/.*)?$ /accompagnement/
+</IfModule>

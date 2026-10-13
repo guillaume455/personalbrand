@@ -62,21 +62,20 @@ window.GH.config = {
   },
 
   /* --- Réservation et paiement -----------------------------------------
-     Cal.com de préférence, Calendly en repli (§6). L'événement doit être
-     réglé sur 90 min, Google Meet, Europe/Paris, 8 par semaine au plus,
-     48 h de préavis, tampons de 30 min, paiement Stripe obligatoire.
+     Le paiement n'est plus une étape séparée : Cal.com exige les 490 € TTC
+     au moment de la réservation, par Stripe, et un créneau non payé n'est
+     jamais bloqué. Il n'y a donc plus ni lien de paiement ni page de
+     confirmation à régler ici.
+
+     L'événement Cal doit être réglé sur 90 min, Google Meet, Europe/Paris,
+     8 réservations par semaine au plus, 48 h de préavis, tampons de 30 min,
+     et porter la case de renonciation au droit de rétractation à laquelle
+     l'article 5.3 des CGV renvoie.
   --------------------------------------------------------------------- */
   reservation: {
-    fournisseur: '',            // 'cal' | 'calendly' | ''
-
-    // Lien de paiement Stripe, 490 € TTC. Son adresse de succès doit pointer
-    // vers /accompagnement/confirmation/ : c'est cette redirection qui donne
-    // accès au calendrier, et rien d'autre.
-    checkoutStripe: '',
-
-    // Calendrier. Affiché UNIQUEMENT sur la page de confirmation, donc après
-    // un paiement abouti (§34 et §37 : validation, puis Stripe, puis agenda).
-    // Ne jamais l'exposer depuis la landing ni depuis la page de paiement.
+    // Le calendrier n'apparaît que sur l'issue « retenu » de
+    // /accompagnement/analyse/, jamais depuis la page de vente : on ne
+    // propose un créneau qu'à un profil que la règle a retenu.
     url: 'https://cal.com/guillaume-herbin/plan-de-lancement',
   },
 
