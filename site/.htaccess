@@ -1,0 +1,24 @@
+# Règles valables pour tout le site.
+#
+# Refuser les fichiers de travail
+# -------------------------------
+# La publication automatique n'efface jamais ce qu'elle n'a pas envoyé
+# elle-même, sinon elle supprimerait tout ce que le dépôt ne connaît pas.
+# Conséquence : un fichier retiré du dépôt reste servi par OVH. C'est arrivé
+# avec TUNNEL.md, README.md et BRIEF-APERCU-DOSSIER.md, déplacés dans
+# docs-site/ mais toujours lisibles publiquement à la racine du site.
+#
+# Plutôt que de les effacer à la main par SFTP — ce qui serait à refaire au
+# prochain oubli — on refuse ici les extensions qui ne sont jamais des
+# ressources web. Le site ne sert que : css, html, jpg, js, mp4, pdf, png,
+# svg, txt, webmanifest, webp, woff2, xml.
+#
+# Volontairement en mod_rewrite et non en « Require all denied » : un
+# .htaccess racine refusé par le serveur renverrait une erreur 500 sur tout
+# le site. Les redirections de /accompagnement/ prouvent que les directives
+# de cette classe passent sur cet hébergement ; rien ne le prouve pour les
+# directives d'autorisation. On reste donc sur ce qui est établi.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule \.(md|markdown|bak|log|sql|ini|sh|py|yml|yaml|lock)$ - [R=404,L]
+</IfModule>
