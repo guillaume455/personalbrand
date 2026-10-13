@@ -17,6 +17,7 @@
 :root{
   /* jetons des formulaires et pages d'issue, rétablis */
   --vert:#1B6B3A;
+  --vert-sur-sombre:#3FA76A;  /* vert lisible sur la nuit : 5,7:1 sur le voile vert */
   --vert-voile:#E8F5ED;
   --rouge:#A3231A;
   --or-pale:#FDF1E4;         /* aplat orange très pâle, fond d'encadré */
@@ -1013,11 +1014,51 @@ textarea{min-height:130px;resize:vertical}
 .analyse .jauge i{transition:width .12s linear}
 .analyse .micro{color:var(--doux-sur-sombre);margin-top:10px}
 
-/* Les deux issues gardent les encadrés du reste du tunnel, mais sur fond
-   sombre leur texte doit être clair : sans cette ligne il reste noir. */
-.page-analyse .encart-ok,.page-analyse .encart-attente{color:var(--encre)}
-.page-analyse .encart-ok p,.page-analyse .encart-attente p{color:var(--encre)}
-.page-analyse .encart p b{color:inherit}
+/* Les deux issues, sur fond nuit
+   ------------------------------
+   Les encadrés du reste du tunnel sont des aplats très pâles, faits pour du
+   papier. Posés tels quels sur la nuit, ils y font une tache. On garde leur
+   valeur de signal — vert pour « ton profil correspond », orange pour « pas
+   maintenant » — mais en voile sur le fond, avec un texte clair.
+
+   Mesuré sur le fond obtenu : texte #F7F5F1 à 15,9:1, accent vert #3FA76A à
+   5,7:1, accent orange #FF9A33 à 7,8:1. */
+.page-analyse .encart{padding:clamp(18px,3vw,24px)}
+.page-analyse .encart-ok{
+  background:rgba(27,107,58,.14);border-left:3px solid var(--vert-sur-sombre);
+}
+.page-analyse .encart-attente{
+  background:var(--or-voile);border-left:3px solid var(--or);
+}
+.page-analyse .encart-ok p,.page-analyse .encart-attente p{
+  color:var(--papier-sur-sombre);margin:0;
+  font-size:clamp(1.05rem,2.6vw,1.2rem);line-height:1.35;
+}
+.page-analyse .encart-ok p b{color:var(--vert-sur-sombre)}
+.page-analyse .encart-attente p b{color:var(--or-clair)}
+
+/* Le script donne le focus à cette phrase pour qu'un lecteur d'écran annonce
+   l'issue, au lieu de rester sur l'écran d'analyse qui vient de disparaître.
+   Mais elle porte tabindex="-1" : elle n'est pas atteignable au clavier, et
+   l'anneau de focus n'y signale donc rien d'actionnable. Un cadre orange
+   autour d'une phrase se lit comme un défaut d'affichage. On le retire ici,
+   et ici seulement — l'anneau général du site n'est pas touché. */
+.page-analyse .encart p[tabindex="-1"]:focus,
+.page-analyse .encart p[tabindex="-1"]:focus-visible{outline:none}
+
+/* L'offre, sa mention légale et le calendrier forment une seule colonne.
+   La liste des quatre points était centrée dans un bloc de 420 px, alors que
+   le paragraphe au-dessus et la mention en dessous s'alignaient à gauche :
+   trois bords gauches différents, et une mention qui flottait sans rattache.
+   Le filet la relie à l'offre qu'elle commente. */
+.page-analyse .prix-liste{margin-inline:0;max-width:46ch}
 .page-analyse .prix-liste li{color:var(--doux-sur-sombre);border-bottom-color:var(--filet-sombre)}
+.page-analyse .prix-liste + .micro{
+  max-width:46ch;margin-top:16px;padding-top:14px;
+  border-top:1px solid var(--filet-sombre);
+}
 .page-analyse .micro a{color:var(--or)}
-.page-analyse .agenda{background:#FFFFFF;border-radius:var(--rayon);overflow:hidden}
+.page-analyse .agenda{
+  background:#FFFFFF;border-radius:var(--rayon);overflow:hidden;
+  margin-top:clamp(22px,3vw,30px);
+}
