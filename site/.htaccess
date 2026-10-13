@@ -22,3 +22,40 @@
   RewriteEngine On
   RewriteRule \.(md|markdown|bak|log|sql|ini|sh|py|yml|yaml|lock)$ - [R=404,L]
 </IfModule>
+
+# Durée de vie des fichiers dans le navigateur
+# -------------------------------------------
+# Par défaut, l'hébergement annonce max-age=900 sur les scripts et la feuille
+# de style, et rien du tout sur les pages. Un visiteur pouvait donc exécuter
+# un script vieux d'un quart d'heure sur une page toute neuve, et une page
+# sans en-tête est mise en cache « au jugé » par le navigateur, pour une durée
+# qu'on ne maîtrise pas. Le site étant publié plusieurs fois par jour, une
+# page et son script finissaient par ne plus se parler.
+#
+# Pages, scripts et feuille de style : « no-cache » ne veut pas dire « ne pas
+# mettre en cache », mais « vérifier avant de réutiliser ». Le navigateur
+# garde le fichier et demande au serveur s'il a changé ; si non, le serveur
+# répond 304 sans renvoyer le contenu. L'hébergement sert en HTTP/2 : les cinq
+# validations d'une page partent sur la même connexion, donc le coût réel est
+# d'un aller-retour et de quelques centaines d'octets pour l'ensemble. C'est
+# le prix d'un tunnel dont le script correspond toujours à sa page — sur une
+# page qui encaisse 490 €, il est dérisoire.
+#
+# Polices et images : elles ne changent presque jamais et pèsent lourd. On
+# leur laisse une vraie durée de vie. Si l'une d'elles doit être remplacée,
+# publier le nouveau fichier sous un autre nom plutôt que d'attendre
+# l'expiration.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|css|webmanifest|xml)$">
+    Header set Cache-Control "no-cache"
+    Header unset Expires
+  </FilesMatch>
+  <FilesMatch "\.(webp|png|jpg|svg|mp4|pdf)$">
+    Header set Cache-Control "max-age=86400"
+    Header unset Expires
+  </FilesMatch>
+  <FilesMatch "\.woff2$">
+    Header set Cache-Control "max-age=2592000, immutable"
+    Header unset Expires
+  </FilesMatch>
+</IfModule>
