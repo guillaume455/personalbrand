@@ -76,7 +76,81 @@
   /* ---------- Le calendrier ----------------------------------------------
      Il n'apparaît que sur l'écran « retenu », et c'est lui qui encaisse.
      L'adresse vit dans config.js : tant qu'elle est vide, on le dit au lieu
-     d'afficher un cadre blanc. */
+     d'afficher un cadre blanc.
+
+     Pourquoi l'intégration officielle de Cal et non une iframe
+     ------------------------------------------------------------
+     Une iframe à hauteur fixe défile à l'intérieur d'elle-même. Or le
+     formulaire de réservation de Cal porte une case de renonciation au droit
+     de rétractation, obligatoire, placée juste avant le bouton de paiement :
+     dans un cadre de hauteur fixe elle se retrouve sous le bas du cadre, et
+     le client se heurte à un bouton qui refuse de valider sans qu'il voie
+     pourquoi. L'intégration « inline » de Cal ajuste la hauteur du cadre à
+     son contenu, ce qui supprime le défilement imbriqué.
+
+     Ne pas contraindre la hauteur de l'hôte : c'est tout l'intérêt.
+     min-height ne sert qu'à éviter un saut de mise en page au chargement. */
+
+  var SCRIPT_CAL = 'https://app.cal.com/embed/embed.js';
+
+  /* Extrait « guillaume-herbin/plan-de-lancement » de l'adresse de config.
+     Renvoie null si ce n'est pas un lien Cal : on retombe alors sur l'iframe,
+     pour qu'un changement de prestataire n'efface pas le calendrier. */
+  function lienCal(url) {
+    var m = /^https?:\/\/(?:app\.)?cal\.com\/([^?#]+)/.exec(url);
+    if (!m) return null;
+    return m[1].replace(/\/+$/, '') || null;
+  }
+
+  /* Chargeur officiel de Cal. Il met les appels en file d'attente tant que
+     embed.js n'est pas chargé, d'où sa forme compacte : ne pas le « ranger »,
+     c'est le code du prestataire. */
+  function amorcerCal() {
+    (function (C, A, L) {
+      var p = function (a, ar) { a.q.push(ar); };
+      var d = C.document;
+      C.Cal = C.Cal || function () {
+        var cal = C.Cal, ar = arguments;
+        if (!cal.loaded) {
+          cal.ns = {}; cal.q = cal.q || [];
+          d.head.appendChild(d.createElement('script')).src = A;
+          cal.loaded = true;
+        }
+        if (ar[0] === L) {
+          var api = function () { p(api, arguments); };
+          var nom = ar[1];
+          api.q = api.q || [];
+          if (typeof nom === 'string') {
+            cal.ns[nom] = cal.ns[nom] || api;
+            p(cal.ns[nom], ar);
+            p(cal, ['initNamespace', nom]);
+          } else p(cal, ar);
+          return;
+        }
+        p(cal, ar);
+      };
+    })(window, SCRIPT_CAL, 'init');
+  }
+
+  /* Secours : si Cal n'a rien affiché, un lien visible valant mieux qu'un
+     cadre vide. On ne perd pas la vente parce qu'un script n'a pas répondu. */
+  function secoursAgenda(hote, url) {
+    if (hote.querySelector('iframe')) return;     // Cal a fini par s'afficher
+    var sep = url.indexOf('?') === -1 ? '?' : '&';
+    var lien = url + (email ? sep + 'email=' + encodeURIComponent(email) : '');
+    hote.innerHTML = '';
+    var p = document.createElement('p');
+    p.textContent = 'Le calendrier met du temps à s’afficher. ';
+    var a = document.createElement('a');
+    a.className = 'cta';
+    a.href = lien;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = 'Choisir mon créneau';
+    p.appendChild(a);
+    hote.appendChild(p);
+  }
+
   function poserAgenda() {
     var hote = document.querySelector('[data-agenda]');
     if (!hote) return;
@@ -88,15 +162,33 @@
         + 'réservation.</div>';
       return;
     }
-    // L'e-mail prérempli évite une saisie déjà faite dans le questionnaire.
-    var sep = url.indexOf('?') === -1 ? '?' : '&';
-    var src = url + (email ? sep + 'email=' + encodeURIComponent(email) : '');
-    var cadre = document.createElement('iframe');
-    cadre.src = src;
-    cadre.title = 'Choix du créneau et paiement';
-    cadre.loading = 'lazy';
-    cadre.style.cssText = 'width:100%;min-height:720px;border:0;border-radius:3px';
-    hote.appendChild(cadre);
+
+    var lien = lienCal(url);
+    if (!lien) {
+      // Prestataire autre que Cal : on garde l'ancien cadre plutôt que rien.
+      var sep = url.indexOf('?') === -1 ? '?' : '&';
+      var cadre = document.createElement('iframe');
+      cadre.src = url + (email ? sep + 'email=' + encodeURIComponent(email) : '');
+      cadre.title = 'Choix du créneau et paiement';
+      cadre.style.cssText = 'width:100%;min-height:720px;border:0;border-radius:3px';
+      hote.appendChild(cadre);
+    } else {
+      hote.style.minHeight = '520px';
+      amorcerCal();
+      window.Cal('init');
+      // Le prénom et l'e-mail viennent du questionnaire : les redemander
+      // allonge le formulaire, et un formulaire plus long cache la case.
+      var pre = {};
+      if (prenom) pre.name = prenom;
+      if (email) pre.email = email;
+      window.Cal('inline', {
+        elementOrSelector: hote,
+        calLink: lien,
+        config: pre,
+      });
+      // Cal peut ne jamais répondre : script bloqué, réseau coupé, panne.
+      setTimeout(function () { secoursAgenda(hote, url); }, 9000);
+    }
 
     // §7.3 : InitiateCheckout à l'ouverture du paiement, et nulle part ailleurs.
     mesure.envoyer('checkout_start', {
