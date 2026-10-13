@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds one story of the « Mes conseils » highlight from the final export of a Reel.
-Each passage is given in Reel seconds (approximate); both ends are snapped to the middle of the pause between two
-words (voice word timings of the Reel), so a cut never falls inside a word. Passages that follow each other in the
+Each passage is given in Reel seconds (approximate); both ends are snapped to the middle of the pause after a
+sentence (voice word timings of the Reel), so a cut never falls inside a word. Passages that follow each other in the
 Reel are joined as is; distant passages are joined by a 0.2 s cross-dissolve (image and sound). 40 ms audio fades on
 every cut, 0.4 s fade out at the end, then the whole story is put back on -14 LUFS.
 MASK=x:y:w:h:from erases, from <from> seconds of the story, a Reel overlay that means nothing outside the Reel (the
@@ -14,7 +14,8 @@ SRC = f"{reel}/renders/" + {"jaguar": "jaguar.mp4", "porsche997": "porsche997.mp
 w = json.load(open(f"{reel}/assets/audio/voix-montage-mots.json"))["words"]
 total = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", SRC],
                              capture_output=True, text=True).stdout)
-gaps = [0.0] + [(a["end"] + b["start"]) / 2 for a, b in zip(w, w[1:])] + [total]
+# cut points: only the pauses that end a sentence (a word ending in . ? ! :), never inside a sentence
+gaps = [0.0] + [(a["end"] + b["start"]) / 2 for a, b in zip(w, w[1:]) if a["w"].rstrip("~").endswith((".", "?", "!", ":", "…"))] + [total]
 
 
 def snap(t):
@@ -32,8 +33,9 @@ for a, b in spans[1:]:
 X, F = 0.2, 0.04
 fl, n = [], len(merged)
 for i, (a, b) in enumerate(merged):
-    fl.append(f"[0:v]trim={a:.3f}:{b:.3f},setpts=PTS-STARTPTS,fps=30,format=yuv420p[v{i}]")
-    fl.append(f"[0:a]atrim={a:.3f}:{b:.3f},asetpts=PTS-STARTPTS,aresample=48000,"
+    # one input per passage, seeked: passages can come in any order without buffering the Reel in memory
+    fl.append(f"[{i}:v]setpts=PTS-STARTPTS,fps=30,format=yuv420p[v{i}]")
+    fl.append(f"[{i}:a]asetpts=PTS-STARTPTS,aresample=48000,"
               f"afade=t=in:d={F if i else 0.01},afade=t=out:st={b - a - F:.3f}:d={F}[a{i}]")
 v, a, length = "v0", "a0", merged[0][1] - merged[0][0]
 for i in range(1, n):
@@ -46,7 +48,8 @@ if os.environ.get("MASK"):
     fl.append(f"[{v}]delogo=x={x}:y={y}:w={mw}:h={mh}:enable='gte(t,{t0})'[vm]"); v = "vm"
 fl.append(f"[{a}]afade=t=out:st={length - 0.4:.3f}:d=0.4[aend]")
 tmp = out + ".tmp.mp4"
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SRC, "-filter_complex", ";".join(fl), "-map", f"[{v}]", "-map", "[aend]",
+ins = [x for a, b in merged for x in ("-ss", f"{a:.3f}", "-t", f"{b - a:.3f}", "-i", SRC)]
+subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(fl), "-map", f"[{v}]", "-map", "[aend]",
                 "-c:v", "libx264", "-preset", "slow", "-crf", "17", "-profile:v", "high", "-pix_fmt", "yuv420p",
                 "-c:a", "pcm_s16le", tmp], check=True)
 # loudness: two-pass loudnorm to -14 LUFS, true peak -1.5
