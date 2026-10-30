@@ -412,15 +412,17 @@ def card(fid, src, x, y, w, h, pos="50% 50%"):
 def scene_01():
     st = vids([("hook", 0), ("hook2", 0.93)], end=HOOK) + full("ph1", "w07.jpg") + full("ph2", "w10.jpg") + '<div class="§shadeT"></div>'
     # hook v2: the whole promise on frame 0 (the reel's first frame is also what a non-follower sees first)
-    hud = ('<div id="§c1" class="§cap" style="top:1120px;font-size:104px">ROULÉE TOUT UN ÉTÉ.</div>'
-           '<div id="§c2" class="§cap" style="top:1245px;font-size:104px"><span class="§o">REVENDUE PLUS CHER.</span></div>'
+    # visible on frame 0 by its own style (not by a timeline set), on a soft dark band: the nose camera is white
+    hud = ('<div id="§hb" style="position:absolute;left:0;top:640px;width:1080px;height:420px;opacity:1;'
+           'background:linear-gradient(rgba(10,10,10,0) 0%,rgba(10,10,10,0.62) 30%,rgba(10,10,10,0.62) 70%,rgba(10,10,10,0) 100%)"></div>'
+           '<div id="§c1" class="§cap" style="top:735px;font-size:108px;opacity:1">ROULÉE TOUT UN ÉTÉ.</div>'
+           '<div id="§c2" class="§cap" style="top:862px;font-size:108px;opacity:1"><span class="§o">REVENDUE PLUS CHER.</span></div>'
            + title("t1", ["ON VIENT ME", "LA PROPOSER."], 290, 120)
            + '<div id="§amt" class="§cap" style="top:330px;font-size:230px">' + odo("am", "40 000 €") + '</div>')
     js = X_JS + f"""
       // hook: the X-Bow crosses the moto, then the nose camera into the motos; the promise on screen from frame 0
-      tl.set($("c1"), {{ opacity: 1 }}, 0); tl.set($("c2"), {{ opacity: 1 }}, 0);
       tl.fromTo($("c2"), {{ scale: 1.0 }}, {{ scale: 1.06, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }}, 0.93);
-      fout("c1", {HOOK} - 0.15); fout("c2", {HOOK} - 0.15);
+      fout("c1", {HOOK} - 0.15); fout("c2", {HOOK} - 0.15); fout("hb", {HOOK} - 0.15);
       // the opportunity: still photos, slow zoom
       photo("ph1", {HOOK}, at("jamais")); tl.set($("ph1"), {{ opacity: 1 }}, {HOOK});
       photo("ph2", at("jamais") - 0.2);
