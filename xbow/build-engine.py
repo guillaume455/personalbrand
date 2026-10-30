@@ -41,10 +41,11 @@ def pull(t0, r0, steps):
 
 
 RPM, THR, SPD, LVL = [], [], [], []
-# hook: rolling, then a pull
-RPM += [(0, 2900), (0.55, 2950)]; THR += [(0, 0.3), (0.5, 0.3)]
-k, th, e = pull(0.6, 2950, [(1.55, 5300), (0.7, 4600)]); RPM += k; THR += th + [(3.0, 1.0)]
-SPD += [(0, 0.55), (3.0, 0.7)]; LVL += [(0, 0), (2.85, 0)]
+# hook v2: the X-Bow comes flat out at the moto and passes it (loud, then a doppler drop), cut on the nose camera at
+# 0.93 s and a pull through two gears
+RPM += [(0, 5600), (0.62, 5900), (0.80, 4700), (0.92, 3600)]; THR += [(0, 1.0), (0.78, 1.0), (0.86, 0.3)]
+k, th, e = pull(0.96, 3600, [(1.15, 6000), (0.75, 5200)]); RPM += k; THR += th + [(3.0, 1.0)]
+SPD += [(0, 0.9), (0.9, 0.9), (0.95, 0.6), (3.0, 0.75)]; LVL += [(0, -9), (0.6, 0), (0.85, -7), (0.97, -1), (2.85, 0)]
 # photos and titles: a distant cruise
 RPM += [(3.3, 2700), (ck - 0.2, 2650)]; THR += [(3.3, 0.3), (ck - 0.2, 0.3)]; SPD += [(3.3, 0.5), (ck, 0.5)]
 LVL += [(3.25, -21), (ck - 0.3, -21)]

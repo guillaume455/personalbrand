@@ -410,14 +410,17 @@ def card(fid, src, x, y, w, h, pos="50% 50%"):
 
 
 def scene_01():
-    st = vids([("hook", 0)], end=HOOK) + full("ph1", "w07.jpg") + full("ph2", "w10.jpg") + '<div class="§shadeT"></div>'
-    hud = ('<div id="§c1" class="§cap" style="top:1500px">JE NE CHERCHAIS PAS</div>'
-           '<div id="§c2" class="§cap" style="top:1500px">CETTE <span class="§o">VOITURE</span>.</div>'
+    st = vids([("hook", 0), ("hook2", 0.93)], end=HOOK) + full("ph1", "w07.jpg") + full("ph2", "w10.jpg") + '<div class="§shadeT"></div>'
+    # hook v2: the whole promise on frame 0 (the reel's first frame is also what a non-follower sees first)
+    hud = ('<div id="§c1" class="§cap" style="top:1120px;font-size:104px">ROULÉE TOUT UN ÉTÉ.</div>'
+           '<div id="§c2" class="§cap" style="top:1245px;font-size:104px"><span class="§o">REVENDUE PLUS CHER.</span></div>'
            + title("t1", ["ON VIENT ME", "LA PROPOSER."], 290, 120)
            + '<div id="§amt" class="§cap" style="top:330px;font-size:230px">' + odo("am", "40 000 €") + '</div>')
     js = X_JS + f"""
-      // hook: the raw rush, text at the bottom, no voice
-      fin("c1", 0.15); fout("c1", 1.45); fin("c2", 1.5); fout("c2", {HOOK} - 0.15);
+      // hook: the X-Bow crosses the moto, then the nose camera into the motos; the promise on screen from frame 0
+      tl.set($("c1"), {{ opacity: 1 }}, 0); tl.set($("c2"), {{ opacity: 1 }}, 0);
+      tl.fromTo($("c2"), {{ scale: 1.0 }}, {{ scale: 1.06, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }}, 0.93);
+      fout("c1", {HOOK} - 0.15); fout("c2", {HOOK} - 0.15);
       // the opportunity: still photos, slow zoom
       photo("ph1", {HOOK}, at("jamais")); tl.set($("ph1"), {{ opacity: 1 }}, {HOOK});
       photo("ph2", at("jamais") - 0.2);

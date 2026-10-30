@@ -42,8 +42,11 @@ for scene, lst in SHOTS.items():
                   f"drawbox=x=57:y={o.get('iy', 700) - 3}:w=966:h=546:color=0xFB8000:t=3")
         else:
             # 16:9 rush -> 9:16 window placed on the subject (vx: 0 = left edge, 1 = right edge)
-            f += f"crop='min(iw,ih*9/16)':ih:'(iw-min(iw,ih*9/16))*{o.get('vx', .5)}':0,"
+            vx = f"({lerp([(t, v) for t, v in o['vxk']], 1)})" if "vxk" in o else o.get("vx", .5)   # vxk: window that follows the subject
+            f += f"crop='min(iw,ih*9/16)':ih:'(iw-min(iw,ih*9/16))*{vx}':0,"
             f += f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,fps=30,eq=saturation={o.get('sat', 0.85)}:contrast=1.05"
+            if z >= 1.4:
+                f += ",unsharp=5:5:0.8"   # strong punch-in on a 720p rush: a little sharpening
         if "blur" in o:
             k = o["blur"]; bw, bh = int(W * o["bw"]) // 2 * 2, int(H * o["bh"]) // 2 * 2
             x, y = f"({lerp(k, 1)})*{W}-{bw}/2", f"({lerp(k, 2)})*{H}-{bh}/2"
