@@ -587,7 +587,11 @@ html:not(.js-anim) [data-reveal]{opacity:1;transform:none}
    ========================================================================= */
 :root{
   --accent:#FB8000;
-  --accent-ink:#B35A00;
+  /* 4,54:1 sur --bg-2 et 4,65:1 sur --accent-soft, les deux fonds où le
+     précédent #B35A00 tombait à 4,22:1 et 4,31:1. Ce bloc a introduit un
+     papier plus chaud sans recalculer l'orange, qui venait d'un fond blanc.
+     Même valeur que --or-fonce dans tunnel.css, pour la même raison. */
+  --accent-ink:#AB5600;
   --accent-soft:#FDF1E4;
   --accent-line:#F6D7B4;
 
@@ -596,7 +600,10 @@ html:not(.js-anim) [data-reveal]{opacity:1;transform:none}
   --surface:#FFFFFF;
   --ink:#12100E;
   --ink-2:#514B43;
-  --ink-3:#7A7269;
+  /* 4,62:1 sur --bg-2 et 5,03:1 sur --bg. Le précédent #7A7269 passait sur
+     blanc mais tombait à 4,16:1 sur le papier doux introduit par ce bloc.
+     Même valeur que --encre-clair dans tunnel.css. */
+  --ink-3:#726B63;
   --line:rgba(18,16,14,.12);
   --line-2:rgba(18,16,14,.07);
 
