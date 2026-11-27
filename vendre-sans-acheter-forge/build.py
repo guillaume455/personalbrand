@@ -27,7 +27,7 @@ FPS = 30
 # into one subtitle word (« 10~000 », « voitures~? »). Numbers are spoken « dix mille », « deux mille vingt-six ».
 SCENES = [
  dict(id="01-hook", name="Hook", window=(0, 4), chunks=[
-   "Tu savais qu'on peut", "*vendre* des voitures", "sans jamais les *acheter*~?", "Reste jusqu'au *bout*,", "je t'explique comment."]),
+   "Tu savais qu'on peut", "vendre des voitures", "sans jamais les acheter~?", "Reste jusqu'au bout,", "je t'explique comment."]),
  dict(id="02-histoire", name="Mon histoire", window=(4, 8), chunks=[
    "C'est comme ça", "que j'ai *commencé*.", "En *2010*.", "Avec *3~000* euros", "en poche."]),
  dict(id="03-acheter", name="Acheter pour revendre", window=(8, 18), chunks=[
@@ -413,152 +413,10 @@ BIG_CSS = """
 """
 
 
-def scene_01():
-    # hook: text readable and moving on frame 0, hard cut on « sans », strike on « acheter », then « reste jusqu'au bout »
-    css = BIG_CSS + """
-    #§h2 { opacity: 0; }
-    #§rest { position: absolute; left: 0; top: 1100px; width: 1080px; text-align: center; font: 60px/1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; opacity: 0; }
-    #§arrow { position: absolute; left: 500px; top: 1175px; width: 80px; height: 70px; overflow: visible; fill: none; stroke: ⟦LINE⟧;
-      stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
-    """
-    st = car("car", 220, 790, 470) + TAG
-    hud = ('<div id="§h1" class="§big" style="top:290px">VENDRE DES<br>VOITURES</div>'
-           '<div id="§h2" class="§big" style="top:290px;font-size:132px">SANS JAMAIS<br>LES <span class="§strk">ACHETER<i id="§sk"></i></span> ?</div>'
-           '<div id="§rest">RESTE JUSQU’AU BOUT</div><svg id="§arrow" viewBox="0 0 80 70"><path d="M40 4 L40 62 M12 36 L40 64 L68 36"/></svg>')
-    js = """
-      // frame 0: the text is there and moving, the car slides in
-      tl.fromTo($("h1"), { scale: 1.12 }, { scale: 1, duration: 0.5, ease: "expo.out", immediateRender: true }, 0);
-      tl.fromTo($("car"), { x: 160 }, { x: 0, duration: 0.7, ease: "expo.out", immediateRender: true }, 0);
-      tl.fromTo($("tag"), { x: 160, rotation: -8 }, { x: 0, rotation: 6, duration: 0.8, ease: "expo.out", immediateRender: true }, 0);
-      // hard cut on « sans »
-      var c = at("sans") - 0.04;
-      tl.set($("h1"), { opacity: 0 }, c); tl.set($("h2"), { opacity: 1 }, c);
-      tl.fromTo($("h2"), { scale: 1.1 }, { scale: 1, duration: 0.25, ease: "expo.out", immediateRender: false }, c);
-      tl.fromTo($("sk"), { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power3.out", immediateRender: false }, at("acheter") + 0.25);
-      shake("shk", at("acheter") + 0.3, 8);
-      // « reste jusqu'au bout » and an arrow down
-      pre("rest", { opacity: 0, y: 20 }); go("rest", { opacity: 1, y: 0 }, at("reste") - 0.05, 0.2);
-      pre("arrow", { opacity: 0, y: -20 }); go("arrow", { opacity: 1, y: 0 }, at("bout"), 0.25, "back.out(2)");
-      tl.fromTo($("arrow"), { y: 0 }, { y: 16, duration: 0.3, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, at("bout") + 0.3);
-      cam(0, -10, 1.06, at("t'explique"), 0.6);
-    """
-    sfx = [("impact-bass-1", None, 0, 0.0, .26), ("pop", "sans", 1, -.06, .2)]
-    return css, st, hud, js, (540, 900), sfx
-
-
-def scene_02():
-    css = """
-    #§y { position: absolute; left: 0; top: 620px; width: 1080px; text-align: center; font: 250px/1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; opacity: 0; }
-    #§mbox { position: absolute; left: 190px; top: 920px; width: 700px; height: 240px; border: 3px solid ⟦LINE⟧; border-radius: 12px; opacity: 0; }
-    #§m { position: absolute; left: 0; top: 40px; width: 100%; text-align: center; font: 170px/1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
-    """
-    hud = (title("t2", ["J’AI COMMENCÉ"], 340, 110)
-           + '<div id="§y">' + odo("yy", "2010") + '</div><div id="§mbox"><div id="§m">' + odo("mm", "3 000 €") + '</div></div>')
-    st = ""
-    js = """
-      slam("t2-0", 0.02, { s: 1.3 }); stroke("t2", at("commencé"));
-      pre("y", { opacity: 0, scale: 1.3 }); go("y", { opacity: 1, scale: 1 }, at("2010") - 0.1, 0.2, "expo.out");
-      odo("yy", at("2010") - 0.1, 0.5, { from: "1990" });
-      // 3 000 €: the counter stops dead
-      pre("mbox", { opacity: 0, y: 40 }); go("mbox", { opacity: 1, y: 0 }, at("3000") - 0.15, 0.2, "expo.out");
-      odo("mm", at("3000") - 0.1, 0.45, { from: "0 000" });
-      shake("shk", at("3000") + 0.38, 9);
-      cam(0, -10, 1.06, at("poche"), 0.5);
-    """
-    return css, st, hud, js, (540, 900), []
-
-
 STAMP_CSS = """
     .§stamp { position: absolute; padding: 14px 30px; border: 6px solid ⟦LINE⟧; border-radius: 10px; background: rgba(10,10,10,0.88);
       font: 64px/1.05 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; white-space: nowrap; opacity: 0; }
 """
-
-
-def scene_03():
-    css = STAMP_CSS + """
-    #§pk { position: absolute; left: 60px; top: 700px; width: 330px; height: 230px; border-radius: 22px; background: #121212; border: 2px solid #2e2e2e; opacity: 0; }
-    .§lab { position: absolute; left: 0; top: 28px; width: 100%; text-align: center; font: 30px/1 ⟦FU⟧, sans-serif; color: ⟦MUTED⟧; letter-spacing: 0.1em; }
-    .§val { position: absolute; left: 0; top: 96px; width: 100%; text-align: center; font: 84px/1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
-    #§pk0 { opacity: 0; }
-    #§cv { position: absolute; left: 520px; top: 680px; width: 460px; text-align: center; opacity: 0; }
-    #§cvl { font: 30px/1 ⟦FU⟧, sans-serif; color: ⟦MUTED⟧; letter-spacing: 0.1em; }
-    #§cvv { font: 96px/1.1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
-    .§coin { position: absolute; width: 26px; height: 26px; border-radius: 50%; background: ⟦LINE⟧; opacity: 0; }
-    """
-    coins = "".join(f'<i class="§coin" id="§co{k}" style="left:330px;top:{800 + (k % 3) * 18}px"></i>' for k in range(6))
-    st = car("car", 500, 860, 480) + coins
-    hud = (title("t3", [("CE QUE FONT LA PLUPART :", 64), "ACHETER POUR REVENDRE"], 320, 92)
-           + '<div id="§pk"><div class="§lab">TA POCHE</div><div class="§val" id="§pk1">13 000 €</div><div class="§val" id="§pk0">0 €</div></div>'
-           + '<div id="§cv"><div id="§cvl">DANS LA VOITURE</div><div id="§cvv">' + odo("cvo", "13 000 €") + '</div></div>'
-           + '<div id="§s1" class="§stamp" style="left:150px;top:1030px;transform:rotate(-6deg)">PANNE : POUR TOI</div>'
-           + '<div id="§s2" class="§stamp" style="left:240px;top:1130px;transform:rotate(4deg)">INVENDUE : POUR TOI</div>')
-    js = """
-      slam("t3-0", 0.02); slam("t3-1", at("achètent") - 0.05); stroke("t3", at("revendre"));
-      pre("car", { opacity: 0, x: 200 }); go("car", { opacity: 1, x: 0 }, at("voiture") - 0.1, 0.4, "expo.out");
-      pre("pk", { opacity: 0, x: -60 }); go("pk", { opacity: 1, x: 0 }, at("13000") - 0.1, 0.3, "expo.out");
-      // the money goes from your pocket into the car
-      var d0 = at("13000", 2) - 0.1, dd = 1.1;
-      pre("cv", { opacity: 0 }); go("cv", { opacity: 1 }, d0, 0.2);
-      odo("cvo", d0, dd, { from: "00 000" });
-      for (var k = 0; k < 6; k++) {
-        tl.fromTo($("co" + k), { opacity: 0, x: 0, y: 0 }, { opacity: 1, x: 280, y: 120, duration: 0.45, ease: "power2.in", immediateRender: false }, d0 + k * 0.15);
-        tl.set($("co" + k), { opacity: 0 }, d0 + k * 0.15 + 0.46);
-      }
-      tl.set($("pk1"), { opacity: 0 }, d0 + dd); tl.set($("pk0"), { opacity: 1 }, d0 + dd);
-      go("pk", { opacity: 0.45 }, at("dorment"), 0.3);
-      // it sleeps in the car
-      go("car", { opacity: 0.55 }, at("dorment") - 0.05, 0.4);
-      cam(0, -10, 1.05, at("panne") - 0.1, 0.5);
-      // two stamps slam
-      pre("s1", { opacity: 0, scale: 1.8 }); go("s1", { opacity: 1, scale: 1 }, at("toi", 2) - 0.12, 0.14, "expo.in");
-      pre("s2", { opacity: 0, scale: 1.8 }); go("s2", { opacity: 1, scale: 1 }, at("toi", 3) - 0.12, 0.14, "expo.in");
-      shake("shk", at("toi", 2) + 0.02, 12); shake("shk", at("toi", 3) + 0.02, 12);
-      cam(0, -20, 1.09, at("vend") - 0.1, 0.5);
-    """
-    sfx = [("impact-bass-2", "toi", 2, -.0, .3), ("impact-bass-2", "toi", 3, -.0, .3)]
-    return css, st, hud, js, (540, 900), sfx
-
-
-def scene_04():
-    css = """
-    #§grp { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 640px; }
-    #§cv { position: absolute; left: 520px; top: 690px; width: 460px; text-align: center; opacity: 0; }
-    #§cvl { font: 30px/1 ⟦FU⟧, sans-serif; color: ⟦MUTED⟧; letter-spacing: 0.1em; }
-    #§cvv { font: 96px/1.1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
-    #§own { position: absolute; left: 150px; top: 1110px; width: 300px; text-align: center; font: 30px/1 ⟦FU⟧, sans-serif; color: ⟦MUTED⟧; letter-spacing: 0.1em; opacity: 0; }
-    .§step { position: absolute; left: 90px; width: 900px; height: 100px; border-radius: 18px; background: #121212; border: 2px solid #2e2e2e; opacity: 0; }
-    .§step.§on { border-color: ⟦LINE⟧; }
-    .§sn { position: absolute; left: 24px; top: 16px; width: 68px; height: 68px; border-radius: 50%; background: ⟦CHIP_BG⟧; color: #0A0A0A; font: 48px/68px ⟦FT⟧, sans-serif; text-align: center; }
-    .§stx { position: absolute; left: 120px; top: 0; height: 100px; line-height: 100px; font: 54px/100px ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
-    """
-    steps = ["ESTIMER", "ANNONCER", "TROUVER L’ACHETEUR", "PAYÉ À LA VENTE"]
-    st = ('<div id="§grp">' + car("car", 500, 870, 480) + person("own", 200, 830, 180)
-          + '<div id="§cv"><div id="§cvl">DANS LA VOITURE</div><div id="§cvv">0 €</div></div><div id="§own">PROPRIÉTAIRE</div></div>')
-    hud = (title("t4", [("L’AUTRE FAÇON :", 64), "VENDRE SANS ACHETER"], 320, 92)
-           + "".join(f'<div id="§st{k}" class="§step" style="top:{660 + k * 130}px"><div class="§sn">{k + 1}</div><div class="§stx">{t}</div></div>'
-                     for k, t in enumerate(steps)))
-    js = """
-      slam("t4-0", 0.02); slam("t4-1", at("vends") - 0.05); stroke("t4", at("acheter"));
-      // the same car, nothing in it
-      pre("car", { opacity: 0, x: 200 }); go("car", { opacity: 1, x: 0 }, at("voiture") - 0.1, 0.4, "expo.out");
-      pre("cv", { opacity: 0, scale: 1.3 }); go("cv", { opacity: 1, scale: 1 }, at("voiture") + 0.3, 0.25, "expo.out");
-      init("own-w", { opacity: 0 }); init("own-o", { opacity: 0 }); init("own-glow", { opacity: 0 });
-      pre("own", { opacity: 0, y: 40 }); go("own", { opacity: 1, y: 0 }, at("propriétaire") - 0.15, 0.3, "back.out(1.6)");
-      lit("own", "white", at("propriétaire"), 0.3);
-      pre("own", { opacity: 0 }); go("own", { opacity: 1 }, at("propriétaire") - 0.1, 0.3);
-      // four steps light up one after the other
-      go("grp", { opacity: 0, y: -40 }, at("l'estimes") - 0.2, 0.3, "power2.inOut");
-      var cues = [at("l'estimes"), at("l'annonce"), at("l'acheteur"), at("payé")];
-      [0, 1, 2, 3].forEach(function (k) {
-        pre("st" + k, { opacity: 0, x: -60 }); go("st" + k, { opacity: 1, x: 0 }, cues[k] - 0.15, 0.3, "expo.out");
-        tl.set($("st" + k), { className: "+=on" }, cues[k]);
-        if (k > 0) go("st" + (k - 1), { opacity: 0.45 }, cues[k] - 0.15, 0.25);
-      });
-      go("st0", { opacity: 1 }, at("vend") , 0.3); go("st1", { opacity: 1 }, at("vend"), 0.3); go("st2", { opacity: 1 }, at("vend"), 0.3);
-    """
-    js = js.replace('tl.set($("st" + k), { className: "+=on" }, cues[k]);', '$("st" + k).classList.add(P + "on");')
-    return css, st, hud, js, (540, 900), []
-
 
 COL_CSS = """
     .§cmp { position: absolute; top: 620px; width: 460px; height: 580px; border-radius: 24px; background: #121212; border: 2px solid #2e2e2e; }
@@ -567,14 +425,212 @@ COL_CSS = """
     .§cr { position: absolute; left: 30px; width: 400px; height: 3px; background: ⟦LINE⟧; top: 140px; }
     .§cv2 { position: absolute; left: 30px; top: 200px; width: 400px; font: 92px/1.05 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
 """
+
+
+# ---- real images full frame: every scene runs on Guillaume's photos and driving footage, cut every 1 to 2 s
+BG_CSS = """
+    .§bg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; opacity: 0; }
+    .§bg img, .§bg .§spr { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) brightness(0.62) contrast(1.06); }
+    .§spr { background-repeat: no-repeat; background-size: 800% 600%; }
+    .§veil { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; pointer-events: none;
+      background: linear-gradient(rgba(10,10,10,0.82) 0%, rgba(10,10,10,0.35) 30%, rgba(10,10,10,0.1) 48%, rgba(10,10,10,0.55) 64%, rgba(10,10,10,0.9) 82%, #0A0A0A 100%); }
+"""
+BG_JS = """
+      // cut to a full-frame photo at t (hard cut), with a slow push-in until the next cut
+      var BGS = [];
+      function bgcut(id, t, dur, z0, z1, ox) {
+        tl.set($(id), { opacity: 1 }, Math.max(0, t));
+        BGS.forEach(function (b) { if (b[0] !== id && b[1] < t) tl.set($(b[0]), { opacity: 0 }, Math.max(0, t) + 0.001); });
+        BGS.push([id, t]);
+        tl.fromTo($(id), { scale: z0 || 1.0, x: 0 }, { scale: z1 || 1.12, x: ox || 0, duration: dur, ease: "none", immediateRender: t <= 0 }, Math.max(0, t));
+      }
+"""
+
+
+def bgs(items):
+    """items: [(id, image file, object-position)]; a file starting with sp- is a sprite sheet (video)"""
+    out = ""
+    for i, src, pos in items:
+        if src.startswith("sp-"):
+            out += f'<div id="§{i}" class="§bg"><div class="§spr" id="§{i}s" style="background-image:url(assets/img/{src})"></div></div>'
+        else:
+            out += f'<div id="§{i}" class="§bg"><img src="assets/img/{src}" style="object-position:{pos}"></div>'
+    return out + '<div class="§veil"></div>'
+
+
+def scene_01():
+    css = BG_CSS + MEDIA_CSS + BIG_CSS + """
+    #§h2 { opacity: 0; }
+    #§rest { position: absolute; left: 0; top: 1100px; width: 1080px; text-align: center; font: 64px/1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; opacity: 0;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.7); }
+    #§arrow { position: absolute; left: 500px; top: 1180px; width: 80px; height: 70px; overflow: visible; fill: none; stroke: ⟦LINE⟧;
+      stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+    #§tagw { position: absolute; left: 620px; top: 820px; opacity: 0; }
+    """
+    st = bgs([("b1", "sp-drive.jpg", ""), ("b2", "golf.jpg", "45% 50%"), ("b3", "20140606_174216.jpg", "50% 50%")])
+    hud = ('<div id="§h1" class="§big" style="top:290px">VENDRE DES<br>VOITURES</div>'
+           '<div id="§h2" class="§big" style="top:290px;font-size:132px">SANS JAMAIS<br>LES <span class="§strk">ACHETER<i id="§sk"></i></span> ?</div>'
+           '<div id="§tagw">' + TAG.replace('left:640px;top:690px;', 'left:0;top:0;') + '</div>'
+           '<div id="§rest">RESTE JUSQU’AU BOUT</div><svg id="§arrow" viewBox="0 0 80 70"><path d="M40 4 L40 62 M12 36 L40 64 L68 36"/></svg>')
+    js = MEDIA_JS + BG_JS + """
+      // frame 0: on the road (real footage), the text already there and moving
+      var c = at("sans") - 0.04;
+      bgcut("b1", 0, c, 1.08, 1.0); sprite("b1s", 0, c, 48, 8, 12);
+      tl.fromTo($("h1"), { scale: 1.12 }, { scale: 1, duration: 0.5, ease: "expo.out", immediateRender: true }, 0);
+      // hard cut: a car for sale, its price tag; « acheter » struck through
+      tl.set($("h1"), { opacity: 0 }, c); tl.set($("h2"), { opacity: 1 }, c);
+      tl.fromTo($("h2"), { scale: 1.1 }, { scale: 1, duration: 0.25, ease: "expo.out", immediateRender: false }, c);
+      bgcut("b2", c, at("reste") - c, 1.15, 1.0);
+      pre("tagw", { opacity: 0, rotation: -20, scale: 0.6 }); go("tagw", { opacity: 1, rotation: 6, scale: 1 }, c + 0.1, 0.3, "back.out(2)");
+      tl.fromTo($("sk"), { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power3.out", immediateRender: false }, at("acheter") + 0.25);
+      shake("shk", at("acheter") + 0.3, 8);
+      // « reste jusqu'au bout »
+      go("tagw", { opacity: 0 }, at("reste") - 0.05, 0.1);
+      bgcut("b3", at("reste") - 0.05, DUR - at("reste") + 0.1, 1.0, 1.15, -40);
+      pre("rest", { opacity: 0, y: 20 }); go("rest", { opacity: 1, y: 0 }, at("reste") - 0.05, 0.2);
+      pre("arrow", { opacity: 0, y: -20 }); go("arrow", { opacity: 1, y: 0 }, at("bout"), 0.25, "back.out(2)");
+      tl.fromTo($("arrow"), { y: 0 }, { y: 16, duration: 0.3, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, at("bout") + 0.3);
+    """
+    sfx = [("impact-bass-1", None, 0, 0.0, .26), ("pop", "sans", 1, -.06, .2)]
+    return css, st, hud, js, (540, 900), sfx
+
+
+def scene_02():
+    css = BG_CSS + """
+    #§y { position: absolute; left: 0; top: 640px; width: 1080px; text-align: center; font: 250px/1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; opacity: 0;
+      text-shadow: 0 8px 40px rgba(0,0,0,0.7); }
+    #§mbox { position: absolute; left: 190px; top: 930px; width: 700px; height: 240px; border: 3px solid ⟦LINE⟧; border-radius: 12px; opacity: 0;
+      background: rgba(10,10,10,0.6); }
+    #§m { position: absolute; left: 0; top: 40px; width: 100%; text-align: center; font: 170px/1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
+    """
+    st = bgs([("b1", "20140530_170820.jpg", "40% 50%"), ("b2", "20140606_174140.jpg", "50% 50%")])
+    hud = (title("t2", ["J’AI COMMENCÉ"], 340, 110)
+           + '<div id="§y">' + odo("yy", "2010") + '</div><div id="§mbox"><div id="§m">' + odo("mm", "3 000 €") + '</div></div>')
+    js = BG_JS + """
+      bgcut("b1", 0, at("3000") - 0.15, 1.15, 1.0, 30);
+      slam("t2-0", 0.02, { s: 1.3 }); stroke("t2", at("commencé"));
+      pre("y", { opacity: 0, scale: 1.3 }); go("y", { opacity: 1, scale: 1 }, at("2010") - 0.1, 0.2, "expo.out");
+      odo("yy", at("2010") - 0.1, 0.5, { from: "1990" });
+      // 3 000 €: the counter stops dead
+      bgcut("b2", at("3000") - 0.15, DUR - at("3000") + 0.2, 1.2, 1.05);
+      pre("mbox", { opacity: 0, y: 40 }); go("mbox", { opacity: 1, y: 0 }, at("3000") - 0.15, 0.2, "expo.out");
+      odo("mm", at("3000") - 0.1, 0.45, { from: "0 000" });
+      shake("shk", at("3000") + 0.38, 9);
+    """
+    return css, st, hud, js, (540, 900), []
+
+
+def scene_03():
+    css = BG_CSS + STAMP_CSS + """
+    #§pk { position: absolute; left: 60px; top: 700px; width: 330px; height: 230px; border-radius: 22px; background: rgba(10,10,10,0.78); border: 2px solid ⟦LINE⟧; opacity: 0; }
+    .§lab { position: absolute; left: 0; top: 28px; width: 100%; text-align: center; font: 30px/1 ⟦FU⟧, sans-serif; color: ⟦TEXT⟧; letter-spacing: 0.1em; }
+    .§val { position: absolute; left: 0; top: 96px; width: 100%; text-align: center; font: 84px/1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
+    #§pk0 { opacity: 0; }
+    #§cv { position: absolute; left: 470px; top: 700px; width: 550px; height: 230px; border-radius: 22px; background: rgba(10,10,10,0.78); border: 2px solid ⟦LINE⟧; text-align: center; opacity: 0; }
+    #§cvl { margin-top: 28px; font: 30px/1 ⟦FU⟧, sans-serif; color: ⟦TEXT⟧; letter-spacing: 0.1em; }
+    #§cvv { margin-top: 20px; font: 96px/1.1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
+    .§coin { position: absolute; width: 26px; height: 26px; border-radius: 50%; background: ⟦LINE⟧; opacity: 0; }
+    """
+    coins = "".join(f'<i class="§coin" id="§co{k}" style="left:390px;top:{800 + (k % 3) * 18}px"></i>' for k in range(6))
+    st = bgs([("b1", "parc4.jpg", "50% 50%"), ("b2", "parc3.jpg", "60% 50%"), ("b3", "parc2.jpg", "35% 50%"),
+              ("b4", "moteur.jpg", "55% 50%"), ("b5", "parc1.jpg", "30% 50%")]) + coins
+    hud = (title("t3", [("CE QUE FONT LA PLUPART :", 64), "ACHETER POUR REVENDRE"], 320, 92)
+           + '<div id="§pk"><div class="§lab">TA POCHE</div><div class="§val" id="§pk1">13 000 €</div><div class="§val" id="§pk0">0 €</div></div>'
+           + '<div id="§cv"><div id="§cvl">DANS LA VOITURE</div><div id="§cvv">' + odo("cvo", "13 000 €") + '</div></div>'
+           + '<div id="§s1" class="§stamp" style="left:150px;top:1030px;transform:rotate(-6deg)">PANNE : POUR TOI</div>'
+           + '<div id="§s2" class="§stamp" style="left:240px;top:1130px;transform:rotate(4deg)">INVENDUE : POUR TOI</div>')
+    js = BG_JS + """
+      var t1 = at("voiture") - 0.1, t2 = at("dorment") - 0.1, t3 = at("panne") - 0.1, t4 = at("vend") - 0.15;
+      bgcut("b1", 0, t1, 1.0, 1.12, -30);
+      slam("t3-0", 0.02); slam("t3-1", at("achètent") - 0.05); stroke("t3", at("revendre"));
+      bgcut("b2", t1, t2 - t1, 1.15, 1.0);
+      pre("pk", { opacity: 0, x: -60 }); go("pk", { opacity: 1, x: 0 }, at("13000") - 0.1, 0.3, "expo.out");
+      // the money goes from your pocket into the car
+      var d0 = at("13000", 2) - 0.1, dd = 1.1;
+      pre("cv", { opacity: 0 }); go("cv", { opacity: 1 }, d0, 0.2);
+      odo("cvo", d0, dd, { from: "00 000" });
+      for (var k = 0; k < 6; k++) {
+        tl.fromTo($("co" + k), { opacity: 0, x: 0, y: 0 }, { opacity: 1, x: 220, y: 0, duration: 0.4, ease: "power2.in", immediateRender: false }, d0 + k * 0.15);
+        tl.set($("co" + k), { opacity: 0 }, d0 + k * 0.15 + 0.41);
+      }
+      tl.set($("pk1"), { opacity: 0 }, d0 + dd); tl.set($("pk0"), { opacity: 1 }, d0 + dd);
+      // it sleeps: the stock, rows of cars
+      bgcut("b3", t2, t3 - t2, 1.0, 1.1, 40);
+      go("pk", { opacity: 0 }, t3, 0.15); go("cv", { opacity: 0 }, t3, 0.15); go("t3", { opacity: 0 }, t3, 0.15);
+      // it breaks down: for you (the engine out, in the garage)
+      bgcut("b4", t3, t4 - t3, 1.2, 1.0);
+      pre("s1", { opacity: 0, scale: 1.8 }); go("s1", { opacity: 1, scale: 1 }, at("toi", 2) - 0.12, 0.14, "expo.in");
+      shake("shk", at("toi", 2) + 0.02, 12);
+      // it does not sell: for you
+      bgcut("b5", t4, DUR - t4 + 0.1, 1.0, 1.15);
+      pre("s2", { opacity: 0, scale: 1.8 }); go("s2", { opacity: 1, scale: 1 }, at("toi", 3) - 0.12, 0.14, "expo.in");
+      shake("shk", at("toi", 3) + 0.02, 12);
+    """
+    sfx = [("impact-bass-2", "toi", 2, 0, .3), ("impact-bass-2", "toi", 3, 0, .3)]
+    return css, st, hud, js, (540, 900), sfx
+
+
+def scene_04():
+    css = BG_CSS + """
+    #§cv { position: absolute; left: 560px; top: 1010px; width: 440px; height: 190px; border-radius: 22px; background: rgba(10,10,10,0.78); border: 2px solid ⟦LINE⟧; text-align: center; opacity: 0; }
+    #§cvl { margin-top: 24px; font: 30px/1 ⟦FU⟧, sans-serif; color: ⟦TEXT⟧; letter-spacing: 0.1em; }
+    #§cvv { margin-top: 14px; font: 96px/1.1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
+    #§own { position: absolute; left: 80px; top: 1060px; padding: 14px 26px; border: 2px solid ⟦LINE⟧; border-radius: 10px; background: rgba(10,10,10,0.78);
+      font: 44px/1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; opacity: 0; }
+    .§step { position: absolute; left: 90px; width: 900px; height: 100px; border-radius: 18px; background: rgba(10,10,10,0.82); border: 2px solid #2e2e2e; opacity: 0; }
+    .§step.§on { border-color: ⟦LINE⟧; }
+    .§sn { position: absolute; left: 24px; top: 16px; width: 68px; height: 68px; border-radius: 50%; background: ⟦CHIP_BG⟧; color: #0A0A0A; font: 48px/68px ⟦FT⟧, sans-serif; text-align: center; }
+    .§stx { position: absolute; left: 120px; top: 0; height: 100px; font: 54px/100px ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
+    """
+    steps = ["ESTIMER", "ANNONCER", "TROUVER L’ACHETEUR", "PAYÉ À LA VENTE"]
+    st = bgs([("b1", "x4.jpg", "55% 50%"), ("b2", "fiat.jpg", "50% 50%"), ("b3", "jag-11.jpg", "50% 50%"), ("b4", "jag-01.jpg", "50% 50%"),
+              ("b5", "20140606_174128.jpg", "50% 50%"), ("b6", "mustang.jpg", "45% 50%")])
+    hud = (title("t4", [("L’AUTRE FAÇON :", 64), "VENDRE SANS ACHETER"], 320, 92)
+           + '<div id="§cv"><div id="§cvl">DANS LA VOITURE</div><div id="§cvv">0 €</div></div><div id="§own">SA VOITURE</div>'
+           + "".join(f'<div id="§st{k}" class="§step" style="top:{660 + k * 130}px"><div class="§sn">{k + 1}</div><div class="§stx">{t}</div></div>'
+                     for k, t in enumerate(steps)))
+    js = BG_JS + """
+      var cues = [at("l'estimes"), at("l'annonce"), at("l'acheteur"), at("payé")];
+      bgcut("b1", 0, at("voiture") - 0.1, 1.0, 1.12, -30);
+      slam("t4-0", 0.02); slam("t4-1", at("vends") - 0.05); stroke("t4", at("acheter"));
+      // the owner's car, nothing of yours in it
+      bgcut("b2", at("voiture") - 0.1, cues[0] - at("voiture"), 1.15, 1.0);
+      pre("cv", { opacity: 0, scale: 1.3 }); go("cv", { opacity: 1, scale: 1 }, at("voiture") + 0.3, 0.25, "expo.out");
+      pre("own", { opacity: 0, x: -40 }); go("own", { opacity: 1, x: 0 }, at("propriétaire") - 0.15, 0.25, "expo.out");
+      go("cv", { opacity: 0 }, cues[0] - 0.2, 0.15); go("own", { opacity: 0 }, cues[0] - 0.2, 0.15); go("t4", { opacity: 0.0 }, cues[0] - 0.2, 0.15);
+      // four steps, one photo each
+      ["b3", "b4", "b5", "b6"].forEach(function (b, k) {
+        var e = k < 3 ? cues[k + 1] - 0.15 : DUR + 0.1;
+        bgcut(b, cues[k] - 0.15, e - cues[k] + 0.15, k % 2 ? 1.0 : 1.15, k % 2 ? 1.15 : 1.0);
+      });
+      [0, 1, 2, 3].forEach(function (k) {
+        pre("st" + k, { opacity: 0, x: -60 }); go("st" + k, { opacity: 1, x: 0 }, cues[k] - 0.15, 0.3, "expo.out");
+        $("st" + k).classList.add(P + "on");
+        if (k > 0) go("st" + (k - 1), { opacity: 0.55 }, cues[k] - 0.15, 0.25);
+      });
+    """
+    return css, st, hud, js, (540, 900), []
+
+
+def split_bg():
+    return ('<div class="§bg" id="§bl" style="width:540px;opacity:1"><img src="assets/img/parc2.jpg" style="object-position:35% 50%"></div>'
+            '<div class="§bg" id="§br" style="left:540px;width:540px;opacity:1"><img src="assets/img/golf.jpg" style="object-position:40% 50%"></div>'
+            '<div class="§veil"></div>')
+
+
 COLS = ('<div id="§L" class="§cmp" style="left:50px"><div class="§ch">ACHETER POUR REVENDRE</div><i class="§cr"></i>'
         '<div id="§lv" class="§cv2">STOCK<br>ET RISQUE</div></div>'
         '<div id="§R" class="§cmp §right" style="left:570px"><div class="§ch">VENDRE SANS ACHETER</div><i class="§cr"></i>'
         '<div id="§rv" class="§cv2">RELATION</div></div>')
 
 
+COL_CSS2 = COL_CSS.replace("background: #121212; border: 2px solid #2e2e2e;", "background: rgba(10,10,10,0.8); border: 2px solid #2e2e2e;")
+
+
 def scene_05():
     js = """
+      tl.fromTo($("bl"), { scale: 1.12 }, { scale: 1.0, duration: DUR, ease: "none", immediateRender: true }, 0);
+      tl.fromTo($("br"), { scale: 1.0, opacity: 0.3 }, { scale: 1.12, opacity: 1, duration: DUR, ease: "none", immediateRender: true }, 0);
       pre("L", { opacity: 0, x: -80 }); go("L", { opacity: 1, x: 0 }, 0.0, 0.3, "expo.out");
       pre("lv", { opacity: 0, scale: 1.3 }); go("lv", { opacity: 1, scale: 1 }, at("stock") - 0.1, 0.2, "expo.out");
       pre("R", { opacity: 0, x: 80 }); go("R", { opacity: 1, x: 0 }, at("toi") - 0.1, 0.3, "expo.out");
@@ -582,20 +638,22 @@ def scene_05():
       go("L", { opacity: 0.4 }, at("relation"), 0.3);
     """
     sfx = [("whoosh-cinematic", None, 0, 0.0, .2)]
-    return COL_CSS, COLS, "", js, (540, 900), sfx
+    return BG_CSS + COL_CSS2, split_bg() + COLS, "", js, (540, 900), sfx
 
 
 def scene_06():
     hud = title("t6", ["UN VRAI MÉTIER"], 330, 116) + title("t6b", ["SANS IMMOBILISER", "TON ARGENT"], 300, 104)
     js = """
       tl.set($("L"), { opacity: 0.4 }, 0);
+      tl.fromTo($("bl"), { opacity: 0.6 }, { opacity: 0.15, duration: 0.6, immediateRender: true }, 0);
+      tl.fromTo($("br"), { scale: 1.12 }, { scale: 1.25, duration: DUR, ease: "none", immediateRender: true }, 0);
       slam("t6-0", at("métier") - 0.25, { s: 1.3 }); stroke("t6", at("métier") + 0.1);
       tl.fromTo($("R"), { scale: 1 }, { scale: 1.05, duration: 0.4, ease: "power2.out", immediateRender: false }, at("démarre") - 0.1);
       go("t6", { opacity: 0, y: -30 }, at("immobiliser") - 0.2, 0.12, "power2.in");
       slam("t6b-0", at("immobiliser") - 0.15); slam("t6b-1", at("argent") - 0.1); stroke("t6b", at("argent") + 0.1);
       go("L", { opacity: 0.15 }, at("argent"), 0.3);
     """
-    return COL_CSS, COLS, hud, js, (540, 900), []
+    return BG_CSS + COL_CSS2, split_bg() + COLS, hud, js, (540, 900), []
 
 
 def scene_07():
