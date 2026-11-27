@@ -1,13 +1,12 @@
 <template>
   <style>
-    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
-    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
-    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
-    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
-      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    @font-face { font-family: "Fujecka Titre"; src: url("assets/fonts/charte/FUJECKA-ExtraBold.ttf") format("truetype"); font-weight: 100 900; }
+    @font-face { font-family: "Fujecka Texte"; src: url("assets/fonts/charte/FUJECKA-Bold.ttf") format("truetype"); font-weight: 100 900; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #F8F6F3;
+      font-family: "Fujecka Texte", sans-serif; -webkit-font-smoothing: antialiased; }
     .r2-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
     .r2-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
-      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+      background: radial-gradient(closest-side, rgba(139,115,85,0.15) 0%, rgba(139,115,85,0.09) 38%, rgba(139,115,85,0.03) 70%, rgba(139,115,85,0) 100%); }
     .r2-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
       background-size: 240px 240px; }
@@ -16,12 +15,12 @@
     .r2-abs { position: absolute; }
 
     /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
-    .r2-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
-      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r2-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Fujecka Titre", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #F8F6F3; white-space: nowrap; }
     .r2-tline { position: relative; display: inline-block; opacity: 0; }
     .r2-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
       transform: rotate(-1.5deg); transform-origin: 0 50%; }
-    .r2-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+    .r2-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #8B7355;
       border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
 
     /* cash-register counter: one rolling column per digit */
@@ -37,10 +36,10 @@
     .r2-person { position: absolute; transform-origin: 50% 100%; }
     .r2-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
     .r2-pgrey { fill: #2b2b2b; }
-    .r2-pwhite { fill: #f2f2f2; opacity: 0; }
-    .r2-porange { fill: #FB8000; opacity: 0; }
+    .r2-pwhite { fill: #F8F6F3; opacity: 0; }
+    .r2-porange { fill: #8B7355; opacity: 0; }
     .r2-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
-      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+      background: radial-gradient(closest-side, rgba(139,115,85,0.55), rgba(139,115,85,0.18) 55%, rgba(139,115,85,0)); }
     .r2-car { position: absolute; transform-origin: 50% 100%; }
     .r2-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
       stroke-linecap: round; stroke-linejoin: round; }
@@ -48,38 +47,38 @@
     /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
     .r2-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
     .r2-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
-      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+      font: 700 60px/72px "Fujecka Texte", sans-serif; color: #F8F6F3; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
     .r2-w { display: inline-block; opacity: 0; }
 
     .r2-burst { position: absolute; overflow: hidden; }
     .r2-burst img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: saturate(0.72) contrast(1.04); }
-    .r2-sprite { position: absolute; border: 4px solid #FB8000; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
+    .r2-sprite { position: absolute; border: 2px solid #8B7355; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
       box-shadow: 0 30px 70px rgba(0,0,0,0.6); filter: saturate(0.72); }
 
-    #r2-tot { position: absolute; right: 50px; top: 226px; text-align: right; transform-origin: 100% 50%; }
-    .r2-totl { font: 600 24px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.16em; }
-    .r2-totv { font: 70px "Anton", sans-serif; color: #FB8000; margin-top: 4px; }
-    .r2-chip { position: absolute; padding: 6px 24px; border-radius: 30px; background: #FB8000; color: #0A0A0A; font: 50px/1.2 "Anton", sans-serif;
+    #r2-tot { position: absolute; right: 60px; top: 248px; text-align: right; transform-origin: 100% 50%; }
+    .r2-totl { font: 600 24px/1 "Fujecka Texte", sans-serif; color: rgba(248,246,243,0.62); letter-spacing: 0.16em; }
+    .r2-totv { font: 58px "Fujecka Titre", sans-serif; color: #F8F6F3; margin-top: 4px; border-top: 3px solid #8B7355; padding-top: 6px; }
+    .r2-chip { position: absolute; padding: 6px 24px; border-radius: 30px; background: #F8F6F3; color: #0A0A0A; border: 2px solid #8B7355; font: 50px/1.2 "Fujecka Titre", sans-serif;
       opacity: 0; white-space: nowrap; }
-    .r2-chips { display: block; font: 600 24px/1 "Instrument Sans", sans-serif; letter-spacing: 0.04em; text-align: center; margin-top: -2px; padding-bottom: 6px; }
+    .r2-chips { display: block; font: 600 24px/1 "Fujecka Texte", sans-serif; letter-spacing: 0.04em; text-align: center; margin-top: -2px; padding-bottom: 6px; }
 
     #r2-phone { position: absolute; left: 110px; top: 610px; width: 340px; height: 640px; border-radius: 46px; background: #050505; border: 6px solid #3a3a3a;
       box-shadow: 0 30px 80px rgba(0,0,0,0.7); opacity: 0; }
     #r2-scr { left: 14px; top: 46px; width: 300px; height: 540px; border-radius: 10px; background: #141414; }
     #r2-notch { position: absolute; left: 120px; top: 16px; width: 88px; height: 14px; border-radius: 7px; background: #222; }
-    #r2-carnet { left: 470px; top: 700px; width: 500px; height: 380px; border-radius: 8px; border: 4px solid #FB8000; opacity: 0; background: #1a1a1a; }
+    #r2-carnet { left: 470px; top: 700px; width: 500px; height: 380px; border-radius: 8px; border: 2px solid #8B7355; opacity: 0; background: #1a1a1a; }
     #r2-carnet img { object-fit: contain; filter: none; }
     #r2-list { position: absolute; left: 500px; top: 600px; width: 440px; height: 620px; overflow: hidden; opacity: 0;
       -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%); }
     #r2-lcol { position: absolute; left: 0; top: 0; width: 440px; }
     .r2-it { position: relative; height: 92px; margin-bottom: 18px; border-radius: 20px; background: #151515; border: 2px solid #2e2e2e;
-      font: 40px/92px "Anton", sans-serif; color: #ffffff; padding-left: 78px; white-space: nowrap; }
-    .r2-idoc { position: absolute; left: 22px; top: 22px; width: 40px; height: 48px; fill: none; stroke: #9a9a9a; stroke-width: 3.5; stroke-linejoin: round; }
-    .r2-tick { position: absolute; right: 22px; top: 22px; width: 48px; height: 48px; border-radius: 50%; background: #FB8000; }
+      font: 40px/92px "Fujecka Titre", sans-serif; color: #F8F6F3; padding-left: 78px; white-space: nowrap; }
+    .r2-idoc { position: absolute; left: 22px; top: 22px; width: 40px; height: 48px; fill: none; stroke: rgba(248,246,243,0.62); stroke-width: 3.5; stroke-linejoin: round; }
+    .r2-tick { position: absolute; right: 22px; top: 22px; width: 48px; height: 48px; border-radius: 50%; background: #8B7355; }
     .r2-tick svg { position: absolute; left: 0; top: 0; width: 48px; height: 48px; fill: none; stroke: #0A0A0A; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
-    #r2-truck { position: absolute; left: 240px; top: 860px; width: 600px; height: 230px; overflow: visible; fill: none; stroke: #ffffff;
+    #r2-truck { position: absolute; left: 240px; top: 860px; width: 600px; height: 230px; overflow: visible; fill: none; stroke: #F8F6F3;
       stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; opacity: 0; transform: scaleX(-1); }
-    #r2-nocheck { position: absolute; left: 700px; top: 620px; width: 220px; height: 220px; overflow: visible; fill: none; stroke: #ffffff; stroke-linecap: round; opacity: 0; }
+    #r2-nocheck { position: absolute; left: 700px; top: 620px; width: 220px; height: 220px; overflow: visible; fill: none; stroke: #F8F6F3; stroke-linecap: round; opacity: 0; }
       </style>
 
   <div id="root" data-composition-id="02-achat" data-width="1080" data-height="1920" data-duration="14.866">
@@ -88,7 +87,7 @@
       <div class="r2-grain"></div>
     </div>
     <div id="r2-push" class="r2-cam"><div id="r2-shk" class="r2-cam"><div id="r2-cran" class="r2-cam">
-      <div id="r2-phone"><div id="r2-notch"></div><div id="r2-scr" class="r2-burst"><img src="assets/img/achat.jpg"><img src="assets/img/ph-interieur.jpg"><img src="assets/img/ph-moteur19.jpg"><img src="assets/img/ph-feux.jpg"><img src="assets/img/ph-roue19.jpg"><img src="assets/img/achat.jpg"></div></div><div id="r2-carnet" class="r2-burst"><img src="assets/img/carnet1.jpg"><img src="assets/img/carnet2.jpg"><img src="assets/img/carnet3.jpg"><img src="assets/img/carnet4.jpg"><img src="assets/img/carnet5.jpg"><img src="assets/img/carnet6.jpg"></div><div id="r2-list"><div id="r2-lcol"><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>POMPE À EAU<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>DISTRIBUTION<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>EMBRAYAGE<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>JOINTS<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>VIDANGE HUILE<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>CALORSTAT<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>DURITES<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>SUPPORT MOTEUR<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div></div></div><svg id="r2-truck" viewBox="0 0 600 230"><path d="M440 196 L440 74 Q440 62 452 62 L522 62 L560 112 L588 122 L588 196 Z"/><path d="M456 78 L514 78 L544 114 L456 114 Z"/><path d="M30 160 L440 160 L440 182 L30 182 Z"/><circle cx="110" cy="200" r="24"/><circle cx="370" cy="200" r="24"/><circle cx="520" cy="200" r="24"/><g transform="translate(60 20) scale(0.86)"><path d="M28 128 L24 100 Q26 84 46 80 L118 70 L168 34 Q178 27 192 27 L276 27 Q294 27 306 40 L340 74 L366 80 Q384 85 384 102 L382 128 L336 128"/><path d="M64 128 L24 128"/><path d="M126 128 L274 128"/><circle cx="95" cy="128" r="30"/><circle cx="305" cy="128" r="30"/><circle cx="95" cy="128" r="7"/><circle cx="305" cy="128" r="7"/><path d="M136 70 L174 40 Q180 36 190 36 L234 36 L234 70 Z"/><path d="M248 36 L272 36 Q286 36 296 46 L320 70 L248 70 Z"/></g></svg><div id="r2-sel-glow" class="r2-glow" style="left:-75px;top:768px"></div><div id="r2-sel" class="r2-person" style="left:50px;top:870px;width:170px;height:255px"><svg viewBox="0 0 200 300" class="r2-pl r2-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r2-pl r2-pwhite" id="r2-sel-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r2-pl r2-porange" id="r2-sel-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><svg id="r2-nocheck" viewBox="0 0 160 160"><circle cx="64" cy="64" r="44" stroke-width="12"/><path d="M98 98 L144 144" stroke-width="18"/><path d="M10 150 L150 10" stroke="#FB8000" stroke-width="16"/></svg>
+      <div id="r2-phone"><div id="r2-notch"></div><div id="r2-scr" class="r2-burst"><img src="assets/img/achat.jpg"><img src="assets/img/ph-interieur.jpg"><img src="assets/img/ph-moteur19.jpg"><img src="assets/img/ph-feux.jpg"><img src="assets/img/ph-roue19.jpg"><img src="assets/img/achat.jpg"></div></div><div id="r2-carnet" class="r2-burst"><img src="assets/img/carnet1.jpg"><img src="assets/img/carnet2.jpg"><img src="assets/img/carnet3.jpg"><img src="assets/img/carnet4.jpg"><img src="assets/img/carnet5.jpg"><img src="assets/img/carnet6.jpg"></div><div id="r2-list"><div id="r2-lcol"><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>POMPE À EAU<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>DISTRIBUTION<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>EMBRAYAGE<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>JOINTS<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>VIDANGE HUILE<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>CALORSTAT<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>DURITES<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div><div class="r2-it"><svg viewBox="0 0 40 48" class="r2-idoc"><path d="M6 3 L26 3 L35 12 L35 45 L6 45 Z M26 3 L26 12 L35 12"/></svg>SUPPORT MOTEUR<i class="r2-tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div></div></div><svg id="r2-truck" viewBox="0 0 600 230"><path d="M440 196 L440 74 Q440 62 452 62 L522 62 L560 112 L588 122 L588 196 Z"/><path d="M456 78 L514 78 L544 114 L456 114 Z"/><path d="M30 160 L440 160 L440 182 L30 182 Z"/><circle cx="110" cy="200" r="24"/><circle cx="370" cy="200" r="24"/><circle cx="520" cy="200" r="24"/><g transform="translate(60 20) scale(0.86)"><path d="M28 128 L24 100 Q26 84 46 80 L118 70 L168 34 Q178 27 192 27 L276 27 Q294 27 306 40 L340 74 L366 80 Q384 85 384 102 L382 128 L336 128"/><path d="M64 128 L24 128"/><path d="M126 128 L274 128"/><circle cx="95" cy="128" r="30"/><circle cx="305" cy="128" r="30"/><circle cx="95" cy="128" r="7"/><circle cx="305" cy="128" r="7"/><path d="M136 70 L174 40 Q180 36 190 36 L234 36 L234 70 Z"/><path d="M248 36 L272 36 Q286 36 296 46 L320 70 L248 70 Z"/></g></svg><div id="r2-sel-glow" class="r2-glow" style="left:-75px;top:768px"></div><div id="r2-sel" class="r2-person" style="left:50px;top:870px;width:170px;height:255px"><svg viewBox="0 0 200 300" class="r2-pl r2-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r2-pl r2-pwhite" id="r2-sel-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r2-pl r2-porange" id="r2-sel-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><svg id="r2-nocheck" viewBox="0 0 160 160"><circle cx="64" cy="64" r="44" stroke-width="12"/><path d="M98 98 L144 144" stroke-width="18"/><path d="M10 150 L150 10" stroke="#8B7355" stroke-width="16"/></svg>
     </div></div></div>
     <div id="r2-hud" class="r2-cam r2-hudcam">
       <div class="r2-title" id="r2-t2" style="top:360px;font-size:96px;"><span class="r2-tline" id="r2-t2-0">2019. 30 ANS.</span><br><span class="r2-tline" id="r2-t2-1">ACHETÉE SUR PHOTOS.<i class="r2-stilt"><i class="r2-stk" id="r2-t2-s"></i></i></span></div><div id="r2-tot"><div class="r2-totl">TOTAL</div><div class="r2-totv"><span id="r2-totv" class="r2-odo " data-to="00 000 €"><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-oc"><span class="r2-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r2-os">&nbsp;</span><span class="r2-os">€</span></span></div></div>
@@ -198,7 +197,7 @@
           Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
             var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
             tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
-            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#F8F6F3" }, { color: "#F8F6F3", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
           });
           var out = ch.getAttribute("data-out");
           if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));

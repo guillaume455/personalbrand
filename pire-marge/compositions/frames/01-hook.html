@@ -1,13 +1,12 @@
 <template>
   <style>
-    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
-    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
-    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
-    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
-      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    @font-face { font-family: "Fujecka Titre"; src: url("assets/fonts/charte/FUJECKA-ExtraBold.ttf") format("truetype"); font-weight: 100 900; }
+    @font-face { font-family: "Fujecka Texte"; src: url("assets/fonts/charte/FUJECKA-Bold.ttf") format("truetype"); font-weight: 100 900; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #F8F6F3;
+      font-family: "Fujecka Texte", sans-serif; -webkit-font-smoothing: antialiased; }
     .r1-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
     .r1-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
-      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+      background: radial-gradient(closest-side, rgba(139,115,85,0.15) 0%, rgba(139,115,85,0.09) 38%, rgba(139,115,85,0.03) 70%, rgba(139,115,85,0) 100%); }
     .r1-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
       background-size: 240px 240px; }
@@ -16,12 +15,12 @@
     .r1-abs { position: absolute; }
 
     /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
-    .r1-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
-      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r1-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Fujecka Titre", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #F8F6F3; white-space: nowrap; }
     .r1-tline { position: relative; display: inline-block; opacity: 0; }
     .r1-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
       transform: rotate(-1.5deg); transform-origin: 0 50%; }
-    .r1-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+    .r1-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #8B7355;
       border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
 
     /* cash-register counter: one rolling column per digit */
@@ -37,10 +36,10 @@
     .r1-person { position: absolute; transform-origin: 50% 100%; }
     .r1-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
     .r1-pgrey { fill: #2b2b2b; }
-    .r1-pwhite { fill: #f2f2f2; opacity: 0; }
-    .r1-porange { fill: #FB8000; opacity: 0; }
+    .r1-pwhite { fill: #F8F6F3; opacity: 0; }
+    .r1-porange { fill: #8B7355; opacity: 0; }
     .r1-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
-      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+      background: radial-gradient(closest-side, rgba(139,115,85,0.55), rgba(139,115,85,0.18) 55%, rgba(139,115,85,0)); }
     .r1-car { position: absolute; transform-origin: 50% 100%; }
     .r1-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
       stroke-linecap: round; stroke-linejoin: round; }
@@ -48,19 +47,19 @@
     /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
     .r1-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
     .r1-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
-      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+      font: 700 60px/72px "Fujecka Texte", sans-serif; color: #F8F6F3; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
     .r1-w { display: inline-block; opacity: 0; }
 
     .r1-burst { position: absolute; overflow: hidden; }
     .r1-burst img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: saturate(0.72) contrast(1.04); }
-    .r1-sprite { position: absolute; border: 4px solid #FB8000; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
+    .r1-sprite { position: absolute; border: 2px solid #8B7355; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
       box-shadow: 0 30px 70px rgba(0,0,0,0.6); filter: saturate(0.72); }
 
     #r1-bg { left: 0; top: 0; width: 1080px; height: 1920px; }
     #r1-bg img { filter: saturate(0.6) brightness(0.38); }
-    #r1-sub1 { position: absolute; left: 0; top: 1060px; width: 1080px; text-align: center; font: 600 56px/1.2 "Instrument Sans", sans-serif;
-      color: #d0d0d0; letter-spacing: 0.08em; opacity: 0; }
-    #r1-sub1 b { color: #FB8000; font-weight: 600; }
+    #r1-sub1 { position: absolute; left: 0; top: 1060px; width: 1080px; text-align: center; font: 600 56px/1.2 "Fujecka Texte", sans-serif;
+      color: #F8F6F3; letter-spacing: 0.08em; opacity: 0; }
+    #r1-sub1 b { color: #F8F6F3; font-weight: 600; }
       </style>
 
   <div id="root" data-composition-id="01-hook" data-width="1080" data-height="1920" data-duration="3.067">
@@ -169,7 +168,7 @@
           Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
             var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
             tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
-            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#F8F6F3" }, { color: "#F8F6F3", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
           });
           var out = ch.getAttribute("data-out");
           if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));

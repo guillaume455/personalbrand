@@ -1,0 +1,46 @@
+{
+ "name": "perso (Guillaume Herbin, octobre 2026)",
+ "fonts": [
+  {
+   "family": "Anton",
+   "file": "perso/fonts/Anton-400.woff2",
+   "format": "woff2",
+   "weight": "400"
+  },
+  {
+   "family": "Instrument Sans",
+   "file": "perso/fonts/InstrumentSans-700.woff2",
+   "format": "woff2",
+   "weight": "700"
+  },
+  {
+   "family": "Instrument Sans",
+   "file": "perso/fonts/InstrumentSans-600.woff2",
+   "format": "woff2",
+   "weight": "600"
+  }
+ ],
+ "logo": {},
+ "end_card": "handle",
+ "tokens": {
+  "BG": "#0A0A0A",
+  "TEXT": "#ffffff",
+  "TEXT_SOFT": "#d0d0d0",
+  "MUTED": "#9a9a9a",
+  "LINE": "#FB8000",
+  "NUM": "#FB8000",
+  "KEY": "#FB8000",
+  "ALERT": "#B3261E",
+  "CHIP_BG": "#FB8000",
+  "CHIP_BORDER": "none",
+  "HALO_RGB": "251,128,0",
+  "PHOTO_BORDER": "4px",
+  "TOT_TOP": "226px",
+  "TOT_RIGHT": "50px",
+  "TOT_RULE": "none",
+  "TOT_PAD": "0",
+  "FT": "\"Anton\"",
+  "FU": "\"Instrument Sans\"",
+  "TOT_SIZE": "70px"
+ }
+}

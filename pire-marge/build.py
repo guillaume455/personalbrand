@@ -11,7 +11,10 @@ and every scene, cut, subtitle and sound effect lands back on the voice.
 Usage: python3 build.py [--provisional]
 Writes: compositions/frames/*.html, STORYBOARD.md, timings.json, assets/audio/sfx-events.json
 """
-import json, os, re, sys
+import json, os, re, shutil, sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "charte"))
+import charte   # colours, fonts and logo of the charte chosen by CHARTE (perso by default): charte/<name>.json
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 os.chdir(HERE)
@@ -55,7 +58,7 @@ SCENES = [
    "J'ai perdu", "*17~000* euros.", "J'ai gardé les *leçons*.", "*Abonne-toi*", "pour plus de contenu", "comme celui-ci."]),
 ]
 SPOKEN_SYL = {"16": 1, "2019": 5, "30": 2, "360": 5, "49000": 5, "2023": 5, "50000": 3, "17000": 3}
-RED = "#B3261E"   # dark red: temperature gauge and cylinder heads only
+RED = "⟦ALERT⟧"   # dark red: temperature gauge and cylinder heads only
 
 def norm(tok):
     return re.sub(r"[^\w'’-]", "", tok.lower().replace("*", "").replace("~", ""))
@@ -134,14 +137,11 @@ def boundaries(d, prov):
 # shared components (§ = the frame's id prefix, r1- ... r8-)
 
 SHARED_CSS = r"""
-    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
-    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
-    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
-    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
-      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+⟦FONT_FACES⟧    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: ⟦TEXT⟧;
+      font-family: ⟦FU⟧, sans-serif; -webkit-font-smoothing: antialiased; }
     .§ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
     .§halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
-      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+      background: radial-gradient(closest-side, rgba(⟦HALO_RGB⟧,0.15) 0%, rgba(⟦HALO_RGB⟧,0.09) 38%, rgba(⟦HALO_RGB⟧,0.03) 70%, rgba(⟦HALO_RGB⟧,0) 100%); }
     .§grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
       background-size: 240px 240px; }
@@ -150,12 +150,12 @@ SHARED_CSS = r"""
     .§abs { position: absolute; }
 
     /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
-    .§title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
-      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .§title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: ⟦FT⟧, sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: ⟦TEXT⟧; white-space: nowrap; }
     .§tline { position: relative; display: inline-block; opacity: 0; }
     .§stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
       transform: rotate(-1.5deg); transform-origin: 0 50%; }
-    .§stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+    .§stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: ⟦LINE⟧;
       border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
 
     /* cash-register counter: one rolling column per digit */
@@ -171,10 +171,10 @@ SHARED_CSS = r"""
     .§person { position: absolute; transform-origin: 50% 100%; }
     .§pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
     .§pgrey { fill: #2b2b2b; }
-    .§pwhite { fill: #f2f2f2; opacity: 0; }
-    .§porange { fill: #FB8000; opacity: 0; }
+    .§pwhite { fill: ⟦TEXT⟧; opacity: 0; }
+    .§porange { fill: ⟦LINE⟧; opacity: 0; }
     .§glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
-      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+      background: radial-gradient(closest-side, rgba(⟦HALO_RGB⟧,0.55), rgba(⟦HALO_RGB⟧,0.18) 55%, rgba(⟦HALO_RGB⟧,0)); }
     .§car { position: absolute; transform-origin: 50% 100%; }
     .§car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
       stroke-linecap: round; stroke-linejoin: round; }
@@ -182,7 +182,7 @@ SHARED_CSS = r"""
     /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
     .§sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
     .§chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
-      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+      font: 700 60px/72px ⟦FU⟧, sans-serif; color: ⟦TEXT⟧; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
     .§w { display: inline-block; opacity: 0; }
 """
 
@@ -268,7 +268,7 @@ SHARED_JS = r"""
           Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
             var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
             tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
-            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "⟦TEXT⟧" }, { color: "⟦KEY⟧", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
           });
           var out = ch.getAttribute("data-out");
           if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
@@ -316,7 +316,7 @@ def person(pid, x, y, w=160):
             f'<svg viewBox="0 0 200 300" class="§pl §porange" id="§{pid}-o">{PERSON}</svg></div>')
 
 
-def car(cid, x, y, w, color="#ffffff", sw=9):
+def car(cid, x, y, w, color="⟦TEXT⟧", sw=9):
     h = w * 170 / 410
     return (f'<div id="§{cid}" class="§car" style="left:{x}px;top:{y}px;width:{w}px;height:{h:.0f}px">'
             f'<svg viewBox="0 0 410 170" style="stroke:{color};stroke-width:{sw}">{CAR_SIDE}</svg></div>')
@@ -325,7 +325,7 @@ def car(cid, x, y, w, color="#ffffff", sw=9):
 def stage(car2=False, extra=""):
     s = '<div class="§floor"></div>'
     if car2:
-        s += car("car2", 610, 868, 300, "#8a8a8a", 10)
+        s += car("car2", 610, 868, 300, "⟦MUTED⟧", 10)
     s += person("pa", 90, 795, 190) + person("pb", 750, 795, 190)
     s += car("car", 300, 898, 440)
     return s + extra
@@ -337,16 +337,16 @@ def stage(car2=False, extra=""):
 
 
 PHOTO_CSS = """
-    .§photo { position: absolute; border: 4px solid #FB8000; border-radius: 8px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.6); }
+    .§photo { position: absolute; border: ⟦PHOTO_BORDER⟧ solid ⟦LINE⟧; border-radius: 8px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.6); }
     .§photo img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.72) contrast(1.04); }
 """
 TOT_CSS = """
-    #§tot { position: absolute; right: 50px; top: 226px; text-align: right; transform-origin: 100% 50%; }
-    .§totl { font: 600 24px/1 "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.16em; }
-    .§totv { font: 70px "Anton", sans-serif; color: #FB8000; margin-top: 4px; }
-    .§chip { position: absolute; padding: 6px 24px; border-radius: 30px; background: #FB8000; color: #0A0A0A; font: 50px/1.2 "Anton", sans-serif;
+    #§tot { position: absolute; right: ⟦TOT_RIGHT⟧; top: ⟦TOT_TOP⟧; text-align: right; transform-origin: 100% 50%; }
+    .§totl { font: 600 24px/1 ⟦FU⟧, sans-serif; color: ⟦MUTED⟧; letter-spacing: 0.16em; }
+    .§totv { font: ⟦TOT_SIZE⟧ ⟦FT⟧, sans-serif; color: ⟦NUM⟧; margin-top: 4px; border-top: ⟦TOT_RULE⟧; padding-top: ⟦TOT_PAD⟧; }
+    .§chip { position: absolute; padding: 6px 24px; border-radius: 30px; background: ⟦CHIP_BG⟧; color: #0A0A0A; border: ⟦CHIP_BORDER⟧; font: 50px/1.2 ⟦FT⟧, sans-serif;
       opacity: 0; white-space: nowrap; }
-    .§chips { display: block; font: 600 24px/1 "Instrument Sans", sans-serif; letter-spacing: 0.04em; text-align: center; margin-top: -2px; padding-bottom: 6px; }
+    .§chips { display: block; font: 600 24px/1 ⟦FU⟧, sans-serif; letter-spacing: 0.04em; text-align: center; margin-top: -2px; padding-bottom: 6px; }
 """
 TOT_JS = """
       function totInit(v) { odo("totv", 0, 0.01, { from: v, spinLow: false }); }
@@ -386,7 +386,7 @@ MAG = '<circle cx="64" cy="64" r="44" stroke-width="12"/><path d="M98 98 L144 14
 MEDIA_CSS = """
     .§burst { position: absolute; overflow: hidden; }
     .§burst img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: saturate(0.72) contrast(1.04); }
-    .§sprite { position: absolute; border: 4px solid #FB8000; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
+    .§sprite { position: absolute; border: ⟦PHOTO_BORDER⟧ solid ⟦LINE⟧; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
       box-shadow: 0 30px 70px rgba(0,0,0,0.6); filter: saturate(0.72); }
 """
 MEDIA_JS = """
@@ -416,9 +416,9 @@ def scene_01():
     css = MEDIA_CSS + """
     #§bg { left: 0; top: 0; width: 1080px; height: 1920px; }
     #§bg img { filter: saturate(0.6) brightness(0.38); }
-    #§sub1 { position: absolute; left: 0; top: 1060px; width: 1080px; text-align: center; font: 600 56px/1.2 "Instrument Sans", sans-serif;
-      color: #d0d0d0; letter-spacing: 0.08em; opacity: 0; }
-    #§sub1 b { color: #FB8000; font-weight: 600; }
+    #§sub1 { position: absolute; left: 0; top: 1060px; width: 1080px; text-align: center; font: 600 56px/1.2 ⟦FU⟧, sans-serif;
+      color: ⟦TEXT_SOFT⟧; letter-spacing: 0.08em; opacity: 0; }
+    #§sub1 b { color: ⟦KEY⟧; font-weight: 600; }
     """
     st = '<div id="§bg" class="§burst">' + "".join(f'<img src="assets/img/{p}">' for p in ["ph-feux.jpg", "ph-badge.jpg", "ph-profil.jpg", "ph-interieur.jpg"]) + '</div>'
     hud = (title("t1", ["MA PIRE", "MARGE."], 480, 200)
@@ -443,19 +443,19 @@ def scene_02():
       box-shadow: 0 30px 80px rgba(0,0,0,0.7); opacity: 0; }
     #§scr { left: 14px; top: 46px; width: 300px; height: 540px; border-radius: 10px; background: #141414; }
     #§notch { position: absolute; left: 120px; top: 16px; width: 88px; height: 14px; border-radius: 7px; background: #222; }
-    #§carnet { left: 470px; top: 700px; width: 500px; height: 380px; border-radius: 8px; border: 4px solid #FB8000; opacity: 0; background: #1a1a1a; }
+    #§carnet { left: 470px; top: 700px; width: 500px; height: 380px; border-radius: 8px; border: ⟦PHOTO_BORDER⟧ solid ⟦LINE⟧; opacity: 0; background: #1a1a1a; }
     #§carnet img { object-fit: contain; filter: none; }
     #§list { position: absolute; left: 500px; top: 600px; width: 440px; height: 620px; overflow: hidden; opacity: 0;
       -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%); }
     #§lcol { position: absolute; left: 0; top: 0; width: 440px; }
     .§it { position: relative; height: 92px; margin-bottom: 18px; border-radius: 20px; background: #151515; border: 2px solid #2e2e2e;
-      font: 40px/92px "Anton", sans-serif; color: #ffffff; padding-left: 78px; white-space: nowrap; }
-    .§idoc { position: absolute; left: 22px; top: 22px; width: 40px; height: 48px; fill: none; stroke: #9a9a9a; stroke-width: 3.5; stroke-linejoin: round; }
-    .§tick { position: absolute; right: 22px; top: 22px; width: 48px; height: 48px; border-radius: 50%; background: #FB8000; }
+      font: 40px/92px ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; padding-left: 78px; white-space: nowrap; }
+    .§idoc { position: absolute; left: 22px; top: 22px; width: 40px; height: 48px; fill: none; stroke: ⟦MUTED⟧; stroke-width: 3.5; stroke-linejoin: round; }
+    .§tick { position: absolute; right: 22px; top: 22px; width: 48px; height: 48px; border-radius: 50%; background: ⟦LINE⟧; }
     .§tick svg { position: absolute; left: 0; top: 0; width: 48px; height: 48px; fill: none; stroke: #0A0A0A; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
-    #§truck { position: absolute; left: 240px; top: 860px; width: 600px; height: 230px; overflow: visible; fill: none; stroke: #ffffff;
+    #§truck { position: absolute; left: 240px; top: 860px; width: 600px; height: 230px; overflow: visible; fill: none; stroke: ⟦TEXT⟧;
       stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; opacity: 0; transform: scaleX(-1); }
-    #§nocheck { position: absolute; left: 700px; top: 620px; width: 220px; height: 220px; overflow: visible; fill: none; stroke: #ffffff; stroke-linecap: round; opacity: 0; }
+    #§nocheck { position: absolute; left: 700px; top: 620px; width: 220px; height: 220px; overflow: visible; fill: none; stroke: ⟦TEXT⟧; stroke-linecap: round; opacity: 0; }
     """
     phones = ["achat.jpg", "ph-interieur.jpg", "ph-moteur19.jpg", "ph-feux.jpg", "ph-roue19.jpg", "achat.jpg"]
     items = "".join(f'<div class="§it">{DOC}{t}<i class="§tick"><svg viewBox="0 0 48 48"><path d="M13 25 L21 33 L36 16"/></svg></i></div>'
@@ -465,7 +465,7 @@ def scene_02():
           f'<div id="§list"><div id="§lcol">{items}</div></div>'
           f'<svg id="§truck" viewBox="0 0 600 230">{TRUCK}</svg>'
           + person("sel", 50, 870, 170) +
-          f'<svg id="§nocheck" viewBox="0 0 160 160">{MAG}<path d="M10 150 L150 10" stroke="#FB8000" stroke-width="16"/></svg>')
+          f'<svg id="§nocheck" viewBox="0 0 160 160">{MAG}<path d="M10 150 L150 10" stroke="⟦LINE⟧" stroke-width="16"/></svg>')
     hud = title("t2", ["2019. 30 ANS.", "ACHETÉE SUR PHOTOS."], 360, 96) + total("00 000 €")
     js = TOT_JS + MEDIA_JS + """
       totInit("00 000"); pre("tot", { opacity: 0 });
@@ -504,16 +504,16 @@ def scene_02():
 def scene_03():
     css = PHOTO_CSS + MEDIA_CSS + TOT_CSS + f"""
     #§ph {{ left: 90px; top: 620px; width: 900px; height: 470px; }}
-    #§hand {{ position: absolute; left: 330px; top: 1000px; width: 420px; height: 224px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 12;
+    #§hand {{ position: absolute; left: 330px; top: 1000px; width: 420px; height: 224px; overflow: visible; fill: none; stroke: ⟦TEXT⟧; stroke-width: 12;
       stroke-linecap: round; stroke-linejoin: round; opacity: 0; }}
     #§handbg {{ position: absolute; left: 300px; top: 980px; width: 480px; height: 260px; border-radius: 30px; background: rgba(10,10,10,0.9); opacity: 0; }}
     #§dash {{ left: 100px; top: 600px; width: 330px; height: 660px; opacity: 0; }}
-    #§ring {{ position: absolute; left: 600px; top: 590px; width: 240px; height: 352px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 10;
+    #§ring {{ position: absolute; left: 600px; top: 590px; width: 240px; height: 352px; overflow: visible; fill: none; stroke: ⟦TEXT⟧; stroke-width: 10;
       stroke-linecap: round; stroke-linejoin: round; opacity: 0; }}
-    .§wave {{ stroke: #FB8000; }}
+    .§wave {{ stroke: ⟦LINE⟧; }}
     #§gauge {{ position: absolute; left: 500px; top: 940px; width: 450px; height: 300px; overflow: visible; fill: none; stroke-linecap: round; opacity: 0; }}
-    #§glab {{ position: absolute; left: 500px; top: 1190px; width: 450px; text-align: center; font: 600 28px "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; opacity: 0; }}
-    #§truck {{ position: absolute; left: 240px; top: 880px; width: 600px; height: 230px; overflow: visible; fill: none; stroke: #ffffff;
+    #§glab {{ position: absolute; left: 500px; top: 1190px; width: 450px; text-align: center; font: 600 28px ⟦FU⟧, sans-serif; color: ⟦MUTED⟧; letter-spacing: 0.1em; opacity: 0; }}
+    #§truck {{ position: absolute; left: 240px; top: 880px; width: 600px; height: 230px; overflow: visible; fill: none; stroke: ⟦TEXT⟧;
       stroke-width: 8; stroke-linejoin: round; stroke-linecap: round; opacity: 0; }}
     """
     st = ('<div id="§ph" class="§photo"><img src="assets/img/ph-profil.jpg"></div>'
@@ -521,14 +521,14 @@ def scene_03():
           '<path d="M0 50 L26 50 L26 126 L0 126"/><path d="M300 50 L274 50 L274 126 L300 126"/>'
           '<path d="M26 64 L92 64 Q112 64 128 76 L176 108 Q188 117 180 127 Q172 135 160 128 L132 110"/>'
           '<path d="M274 64 L208 64 Q188 64 172 76 L124 110 Q112 119 120 129 Q128 137 140 130 L170 112"/>'
-          '<path d="M120 96 L150 118 M106 106 L136 128" stroke="#FB8000"/></svg>'
+          '<path d="M120 96 L150 118 M106 106 L136 128" stroke="⟦LINE⟧"/></svg>'
           '<div id="§dash" class="§sprite" style="background-image:url(assets/img/sp-dash.jpg)"></div>'
           '<svg id="§ring" viewBox="0 0 300 440"><g id="§ringph"><rect x="70" y="80" width="160" height="300" rx="28"/><path d="M128 110 L172 110"/>'
           '<path d="M130 350 L170 350"/></g><path class="§wave" d="M260 140 Q290 180 260 220"/><path class="§wave" d="M40 140 Q10 180 40 220"/>'
           '<path class="§wave" d="M280 110 Q330 180 280 250"/><path class="§wave" d="M20 110 Q-30 180 20 250"/></svg>'
           f'<svg id="§gauge" viewBox="0 0 300 200"><path d="M40 170 A110 110 0 0 1 260 170" stroke="#3a3a3a" stroke-width="20"/>'
           f'<path d="M226 92 A110 110 0 0 1 260 170" stroke="{RED}" stroke-width="20"/>'
-          '<line id="§needle" x1="150" y1="170" x2="150" y2="80" stroke="#ffffff" stroke-width="9"/><circle cx="150" cy="170" r="14" fill="#ffffff"/></svg>'
+          '<line id="§needle" x1="150" y1="170" x2="150" y2="80" stroke="⟦TEXT⟧" stroke-width="9"/><circle cx="150" cy="170" r="14" fill="⟦TEXT⟧"/></svg>'
           '<div id="§glab">TEMPÉRATURE MOTEUR</div>'
           f'<svg id="§truck" viewBox="0 0 600 230">{TRUCK}</svg>')
     hud = (title("t3", ["ELLE REVIENT."], 380, 120) + total("49 000 €")
@@ -569,10 +569,10 @@ def scene_03():
 def engine_css():
     return f"""
     #§eng {{ position: absolute; left: 140px; top: 640px; width: 800px; height: 560px; overflow: visible; fill: none; stroke-linejoin: round; stroke-linecap: round; }}
-    .§eb {{ stroke: #ffffff; stroke-width: 7; fill: #141414; }}
-    .§head {{ stroke: #ffffff; stroke-width: 7; fill: #141414; }}
-    .§dist circle, .§dist path {{ stroke: #FB8000; stroke-width: 7; fill: none; }}
-    #§hoist {{ stroke: #9a9a9a; stroke-width: 6; stroke-dasharray: 10 10; }}
+    .§eb {{ stroke: ⟦TEXT⟧; stroke-width: 7; fill: #141414; }}
+    .§head {{ stroke: ⟦TEXT⟧; stroke-width: 7; fill: #141414; }}
+    .§dist circle, .§dist path {{ stroke: ⟦LINE⟧; stroke-width: 7; fill: none; }}
+    #§hoist {{ stroke: ⟦MUTED⟧; stroke-width: 6; stroke-dasharray: 10 10; }}
     """
 
 
@@ -587,7 +587,7 @@ def scene_04():
       pre("eng", {{ opacity: 0, scale: 0.9 }}); go("eng", {{ opacity: 1, scale: 1 }}, 0.02, 0.4, "expo.out");
       slam("t4-0", at("culasse") - 0.05);
       ["hl", "hr"].forEach(function (h, k) {{
-        tl.fromTo($(h), {{ fill: "#141414", stroke: "#ffffff" }}, {{ fill: "{RED}", stroke: "{RED}", duration: 0.25, immediateRender: false }}, at("culasse") + k * 0.08);
+        tl.fromTo($(h), {{ fill: "#141414", stroke: "⟦TEXT⟧" }}, {{ fill: "{RED}", stroke: "{RED}", duration: 0.25, immediateRender: false }}, at("culasse") + k * 0.08);
         tl.fromTo($(h), {{ opacity: 1 }}, {{ opacity: 0.55, duration: 0.3, yoyo: true, repeat: 5, ease: "sine.inOut", immediateRender: false }}, at("culasse") + 0.4);
       }});
       // a Ferrari: the engine comes out
@@ -611,13 +611,13 @@ def scene_05():
     #§ph2 { left: 140px; top: 620px; width: 800px; height: 560px; opacity: 0; }
     #§gar { left: 320px; top: 590px; width: 330px; height: 660px; opacity: 0; }
     #§mech { opacity: 0; }
-    #§wrench { position: absolute; left: 840px; top: 900px; width: 110px; height: 110px; overflow: visible; fill: none; stroke: #ffffff; stroke-width: 10;
+    #§wrench { position: absolute; left: 840px; top: 900px; width: 110px; height: 110px; overflow: visible; fill: none; stroke: ⟦TEXT⟧; stroke-width: 10;
       stroke-linecap: round; opacity: 0; }
-    #§mag { position: absolute; left: 200px; top: 720px; width: 170px; height: 170px; overflow: visible; fill: none; stroke: #ffffff; stroke-linecap: round; opacity: 0; }
+    #§mag { position: absolute; left: 200px; top: 720px; width: 170px; height: 170px; overflow: visible; fill: none; stroke: ⟦TEXT⟧; stroke-linecap: round; opacity: 0; }
     #§cal { position: absolute; left: 600px; top: 900px; width: 340px; height: 300px; border-radius: 26px; background: #151515; border: 3px solid #2e2e2e; opacity: 0; overflow: hidden; }
     #§calh { position: absolute; left: 0; top: 0; width: 100%; height: 64px; background: #2a2a2a; }
-    #§calv { position: absolute; left: 0; top: 76px; width: 100%; text-align: center; font: 140px/1 "Anton", sans-serif; color: #ffffff; }
-    #§calm { position: absolute; left: 0; top: 236px; width: 100%; text-align: center; font: 600 32px "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; }
+    #§calv { position: absolute; left: 0; top: 76px; width: 100%; text-align: center; font: 140px/1 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
+    #§calm { position: absolute; left: 0; top: 236px; width: 100%; text-align: center; font: 600 32px ⟦FU⟧, sans-serif; color: ⟦MUTED⟧; letter-spacing: 0.1em; }
     """
     st = ('<div id="§ph" class="§photo"><img src="assets/img/moteur.jpg"></div>'
           '<div id="§ph2" class="§photo"><img src="assets/img/ph-moteur22.jpg"></div>'
@@ -666,20 +666,20 @@ def scene_05():
 def scene_06():
     css = PHOTO_CSS + MEDIA_CSS + TOT_CSS + engine_css() + """
     #§eng { left: 240px; top: 640px; width: 600px; height: 420px; }
-    #§clutch { stroke: #FB8000; stroke-width: 7; fill: none; }
-    #§ok { position: absolute; left: 860px; top: 660px; width: 90px; height: 90px; border-radius: 50%; background: #FB8000; opacity: 0; }
+    #§clutch { stroke: ⟦LINE⟧; stroke-width: 7; fill: none; }
+    #§ok { position: absolute; left: 860px; top: 660px; width: 90px; height: 90px; border-radius: 50%; background: ⟦LINE⟧; opacity: 0; }
     #§ok svg { position: absolute; left: 0; top: 0; width: 90px; height: 90px; fill: none; stroke: #0A0A0A; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
-    #§ph { left: 120px; top: 640px; width: 840px; height: 565px; border: 4px solid #FB8000; border-radius: 8px; box-shadow: 0 30px 70px rgba(0,0,0,0.6); opacity: 0; }
+    #§ph { left: 120px; top: 640px; width: 840px; height: 565px; border: ⟦PHOTO_BORDER⟧ solid ⟦LINE⟧; border-radius: 8px; box-shadow: 0 30px 70px rgba(0,0,0,0.6); opacity: 0; }
     #§face { position: absolute; left: 80px; top: 620px; width: 920px; height: 600px; opacity: 0; }
     .§col { position: absolute; top: 0; width: 430px; height: 300px; border-radius: 28px; background: #151515; border: 2px solid #2e2e2e; }
-    .§coll { position: absolute; left: 0; top: 40px; width: 100%; text-align: center; font: 600 32px "Instrument Sans", sans-serif; color: #9a9a9a; letter-spacing: 0.1em; }
-    .§colv { position: absolute; left: 0; top: 110px; width: 100%; text-align: center; font: 96px "Anton", sans-serif; color: #ffffff; }
-    #§res { position: absolute; left: 0; top: 350px; width: 920px; text-align: center; font: 190px "Anton", sans-serif; color: #FB8000; opacity: 0; }
-    .§minus { display: inline-block; width: 0.42em; height: 0.11em; margin-right: 0.12em; background: #FB8000; vertical-align: 0.5em; border-radius: 0.05em; }
+    .§coll { position: absolute; left: 0; top: 40px; width: 100%; text-align: center; font: 600 32px ⟦FU⟧, sans-serif; color: ⟦MUTED⟧; letter-spacing: 0.1em; }
+    .§colv { position: absolute; left: 0; top: 110px; width: 100%; text-align: center; font: 96px ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
+    #§res { position: absolute; left: 0; top: 350px; width: 920px; text-align: center; font: 190px ⟦FT⟧, sans-serif; color: ⟦NUM⟧; opacity: 0; }
+    .§minus { display: inline-block; width: 0.42em; height: 0.11em; margin-right: 0.12em; background: ⟦NUM⟧; vertical-align: 0.5em; border-radius: 0.05em; }
     """
     st = (f'<svg id="§eng" viewBox="0 0 600 420"><g id="§motor">{ENGINE}{DISTRI}</g>'
-          '<g id="§clg"><circle id="§clutch" cx="520" cy="320" r="62"/><circle cx="520" cy="320" r="22" stroke="#FB8000" stroke-width="7" fill="none"/>'
-          '<path d="M520 258 L520 298 M520 342 L520 382 M458 320 L498 320 M542 320 L582 320" stroke="#FB8000" stroke-width="7"/></g></svg>'
+          '<g id="§clg"><circle id="§clutch" cx="520" cy="320" r="62"/><circle cx="520" cy="320" r="22" stroke="⟦LINE⟧" stroke-width="7" fill="none"/>'
+          '<path d="M520 258 L520 298 M520 342 L520 382 M458 320 L498 320 M542 320 L582 320" stroke="⟦LINE⟧" stroke-width="7"/></g></svg>'
           '<div id="§ok"><svg viewBox="0 0 90 90"><path d="M24 46 L39 61 L66 32"/></svg></div>'
           '<div id="§ph" class="§burst">' + "".join(f'<img src="assets/img/{p}">' for p in ["ph-retro.jpg", "ph-jante.jpg", "ph-interieur22.jpg", "export.jpg"]) + '</div>'
           '<div id="§face"><div class="§col" style="left:0"><div class="§coll">DÉPENSÉ</div><div class="§colv">' + odo("dep", "66 800 €") + '</div></div>'
@@ -719,11 +719,11 @@ def scene_06():
 def scene_07():
     css = TOT_CSS + """
     .§err { position: absolute; left: 80px; width: 920px; height: 180px; border-radius: 28px; background: #151515; border: 2px solid #2e2e2e; opacity: 0; }
-    .§errn { position: absolute; left: 28px; top: 50px; width: 80px; height: 80px; border-radius: 50%; background: #FB8000; color: #0A0A0A;
-      font: 56px/80px "Anton", sans-serif; text-align: center; }
+    .§errn { position: absolute; left: 28px; top: 50px; width: 80px; height: 80px; border-radius: 50%; background: ⟦CHIP_BG⟧; color: #0A0A0A;
+      font: 56px/80px ⟦FT⟧, sans-serif; text-align: center; }
     .§errt { position: absolute; left: 136px; top: 0; width: 760px; height: 180px; display: flex; align-items: center;
-      font: 54px/1.15 "Anton", sans-serif; color: #ffffff; }
-    .§k { color: #ffffff; }
+      font: 54px/1.15 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; }
+    .§k { color: ⟦TEXT⟧; }
     """
     lines = [("e1", 600, "ACHETÉE AVEC LE <span id='§k1' class='§k'>CŒUR</span>, <span id='§k1b' class='§k'>SANS CONTRÔLE</span>."),
              ("e2", 810, "PAS À <span id='§k2' class='§k'>N’IMPORTE QUEL MÉCANO</span>."),
@@ -740,7 +740,7 @@ def scene_07():
         if (k > 0) go(["e1", "e2"][k - 1], { opacity: 0.4 }, cues[k] - 0.06, 0.3);
       });
       var keys = [["k1", at("cœur")], ["k1b", at("contrôle")], ["k2", at("monde")], ["k3", at("seul")]];
-      keys.forEach(function (kk) { tl.fromTo($(kk[0]), { color: "#ffffff" }, { color: "#FB8000", duration: 0.2, immediateRender: false }, kk[1] - 0.04); });
+      keys.forEach(function (kk) { tl.fromTo($(kk[0]), { color: "⟦TEXT⟧" }, { color: "⟦KEY⟧", duration: 0.2, immediateRender: false }, kk[1] - 0.04); });
       init("e3", { opacity: 1 }); go("e1", { opacity: 1 }, at("vraiment") + 0.3, 0.4); go("e2", { opacity: 1 }, at("vraiment") + 0.3, 0.4);
       cam(0, -10, 1.04, at("deux"), 1.0);
     """
@@ -758,23 +758,33 @@ def scene_08():
     #§shade { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px;
       background: linear-gradient(180deg, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.25) 30%, rgba(10,10,10,0) 50%, rgba(10,10,10,0.35) 62%, rgba(10,10,10,0.9) 80%, rgba(10,10,10,0.95) 100%); }
     #§handle { position: absolute; left: 60px; top: 380px; width: 960px; text-align: center; white-space: nowrap; }
-    #§hname { position: relative; display: inline-block; font: 96px/1.2 "Anton", sans-serif; color: #ffffff; opacity: 0; text-shadow: 0 4px 30px rgba(0,0,0,0.6); }
+    #§hname { position: relative; display: inline-block; font: 96px/1.2 ⟦FT⟧, sans-serif; color: ⟦TEXT⟧; opacity: 0; text-shadow: 0 4px 30px rgba(0,0,0,0.6); }
     #§pill { position: absolute; left: 50%; top: 175px; transform: translateX(-50%); }
-    #§pilli { display: inline-block; padding: 8px 40px; border-radius: 40px; background: #FB8000; color: #0A0A0A; font: 52px/1.25 "Anton", sans-serif; opacity: 0;
-      box-shadow: 0 0 46px rgba(251,128,0,0.45); }
+    #§pilli { display: inline-block; padding: 8px 40px; border-radius: 40px; background: ⟦CHIP_BG⟧; color: #0A0A0A; font: 52px/1.25 ⟦FT⟧, sans-serif; opacity: 0;
+      box-shadow: 0 0 46px rgba(⟦HALO_RGB⟧,0.45); }
     .§title { text-shadow: 0 4px 30px rgba(0,0,0,0.6); }
     """
     st = '<div id="§hap" class="§sprite" style="background-image:url(assets/img/sp-happy.jpg)"></div><div id="§shade"></div>'
-    hud = (title("t8", ["JE ME SUIS", "FAIT AVOIR."], 330, 130)
-           + '<div id="§handle"><span id="§hname">@guillaumeherbin_<i class="§stilt"><i class="§stk" id="§h-s"></i></i></span>'
-             '<div id="§pill"><span id="§pilli">S’ABONNER</span></div></div>')
+    if charte.C.get("end_card") == "logo":
+        # the charte's logo (dark-background version) and its end line, no personal handle
+        shutil.copy(charte.logo_path("logo_dark"), "assets/img/charte-logo.svg")
+        hud = ('<div style="position:absolute;left:0;top:250px;width:1080px;height:760px;'
+               'background:linear-gradient(rgba(10,10,10,0) 0%,rgba(10,10,10,0.78) 18%,rgba(10,10,10,0.78) 82%,rgba(10,10,10,0) 100%)"></div>'
+               + title("t8", ["JE ME SUIS", "FAIT AVOIR."], 330, 130)
+               + '<div id="§handle"><img id="§hname" src="assets/img/charte-logo.svg" style="width:560px;height:auto">'
+                 '<div id="§pill" style="top:330px;width:960px;text-align:center"><span id="§pilli" style="padding:0;border-radius:0;background:none;box-shadow:none;'
+                 'color:⟦TEXT⟧;font-size:58px;border-top:3px solid ⟦LINE⟧;padding-top:22px">' + charte.C["end_line"] + '</span></div></div>')
+    else:
+        hud = (title("t8", ["JE ME SUIS", "FAIT AVOIR."], 330, 130)
+               + '<div id="§handle"><span id="§hname">@guillaumeherbin_<i class="§stilt"><i class="§stk" id="§h-s"></i></i></span>'
+                 '<div id="§pill"><span id="§pilli">S’ABONNER</span></div></div>')
     js = MEDIA_JS + """
       // happy end: the car on the road, on the day it was sold (plate blurred)
       tl.set($("hap"), { backgroundPosition: "0% 0%" }, 0);
       sprite("hap", 0, DUR, 60, 10, Math.max(12, Math.min(15, 60 / DUR)));
       slam("t8-0", at("gardé") - 0.05); slam("t8-1", at("leçons") - 0.05); stroke("t8", at("leçons") + 0.2);
       go("t8", { opacity: 0, y: -40 }, at("abonne-toi") - 0.14, 0.15, "power2.in");
-      slam("hname", at("abonne-toi"), { s: 1.3 }); stroke("h", at("abonne-toi") + 0.2);
+      slam("hname", at("abonne-toi"), { s: 1.3 }); if (root.querySelector("#" + P + "h-s")) stroke("h", at("abonne-toi") + 0.2);
       pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("pour") - 0.06, 0.3, "back.out(2)");
     """
     sfx = [("whoosh-cinematic", None, 0, 0.02, .2), ("pop", "gardé", 1, -.05, .14), ("pop", "leçons", 1, -.05, .14),
@@ -807,6 +817,7 @@ def subs_html(chunks_words, scene_end):
 
 
 def build():
+    charte.fonts(HERE)
     d, prov = load_words()
     B, spans = boundaries(d, prov)
     words = d["words"]
@@ -871,7 +882,7 @@ def build():
   </script>
 </template>
 """
-        html = html.replace("§", P)
+        html = charte.apply(html.replace("§", P).replace("⟦FONT_FACES⟧", charte.font_face_css()))
         src = f"compositions/frames/{sc['id']}.html"
         open(src, "w", encoding="utf-8").write(html)
         frames.append(dict(n=n, id=sc["id"], name=sc["name"], start=a, end=b, dur=dur, src=src,

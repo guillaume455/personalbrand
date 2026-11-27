@@ -1,13 +1,12 @@
 <template>
   <style>
-    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-400.woff2") format("woff2"); font-weight: 400; }
-    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-700.woff2") format("woff2"); font-weight: 700; }
-    @font-face { font-family: "Instrument Sans"; src: url("assets/fonts/InstrumentSans-600.woff2") format("woff2"); font-weight: 600; }
-    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #ffffff;
-      font-family: "Instrument Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+    @font-face { font-family: "Fujecka Titre"; src: url("assets/fonts/charte/FUJECKA-ExtraBold.ttf") format("truetype"); font-weight: 100 900; }
+    @font-face { font-family: "Fujecka Texte"; src: url("assets/fonts/charte/FUJECKA-Bold.ttf") format("truetype"); font-weight: 100 900; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #F8F6F3;
+      font-family: "Fujecka Texte", sans-serif; -webkit-font-smoothing: antialiased; }
     .r8-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
     .r8-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
-      background: radial-gradient(closest-side, rgba(251,128,0,0.15) 0%, rgba(251,128,0,0.09) 38%, rgba(251,128,0,0.03) 70%, rgba(251,128,0,0) 100%); }
+      background: radial-gradient(closest-side, rgba(139,115,85,0.15) 0%, rgba(139,115,85,0.09) 38%, rgba(139,115,85,0.03) 70%, rgba(139,115,85,0) 100%); }
     .r8-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
       background-size: 240px 240px; }
@@ -16,12 +15,12 @@
     .r8-abs { position: absolute; }
 
     /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
-    .r8-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Anton", sans-serif; line-height: 1.2;
-      text-transform: uppercase; color: #ffffff; white-space: nowrap; }
+    .r8-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Fujecka Titre", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #F8F6F3; white-space: nowrap; }
     .r8-tline { position: relative; display: inline-block; opacity: 0; }
     .r8-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
       transform: rotate(-1.5deg); transform-origin: 0 50%; }
-    .r8-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #FB8000;
+    .r8-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #8B7355;
       border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
 
     /* cash-register counter: one rolling column per digit */
@@ -37,10 +36,10 @@
     .r8-person { position: absolute; transform-origin: 50% 100%; }
     .r8-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
     .r8-pgrey { fill: #2b2b2b; }
-    .r8-pwhite { fill: #f2f2f2; opacity: 0; }
-    .r8-porange { fill: #FB8000; opacity: 0; }
+    .r8-pwhite { fill: #F8F6F3; opacity: 0; }
+    .r8-porange { fill: #8B7355; opacity: 0; }
     .r8-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
-      background: radial-gradient(closest-side, rgba(251,128,0,0.55), rgba(251,128,0,0.18) 55%, rgba(251,128,0,0)); }
+      background: radial-gradient(closest-side, rgba(139,115,85,0.55), rgba(139,115,85,0.18) 55%, rgba(139,115,85,0)); }
     .r8-car { position: absolute; transform-origin: 50% 100%; }
     .r8-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
       stroke-linecap: round; stroke-linejoin: round; }
@@ -48,22 +47,22 @@
     /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
     .r8-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
     .r8-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
-      font: 700 60px/72px "Instrument Sans", sans-serif; color: #ffffff; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+      font: 700 60px/72px "Fujecka Texte", sans-serif; color: #F8F6F3; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
     .r8-w { display: inline-block; opacity: 0; }
 
     .r8-burst { position: absolute; overflow: hidden; }
     .r8-burst img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: saturate(0.72) contrast(1.04); }
-    .r8-sprite { position: absolute; border: 4px solid #FB8000; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
+    .r8-sprite { position: absolute; border: 2px solid #8B7355; border-radius: 8px; background-repeat: no-repeat; background-size: 600% 600%;
       box-shadow: 0 30px 70px rgba(0,0,0,0.6); filter: saturate(0.72); }
 
     #r8-hap { left: 0; top: 0; width: 1080px; height: 1920px; border: none; border-radius: 0; box-shadow: none; background-size: 1000% 600%; filter: saturate(0.85); }
     #r8-shade { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px;
       background: linear-gradient(180deg, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.25) 30%, rgba(10,10,10,0) 50%, rgba(10,10,10,0.35) 62%, rgba(10,10,10,0.9) 80%, rgba(10,10,10,0.95) 100%); }
     #r8-handle { position: absolute; left: 60px; top: 380px; width: 960px; text-align: center; white-space: nowrap; }
-    #r8-hname { position: relative; display: inline-block; font: 96px/1.2 "Anton", sans-serif; color: #ffffff; opacity: 0; text-shadow: 0 4px 30px rgba(0,0,0,0.6); }
+    #r8-hname { position: relative; display: inline-block; font: 96px/1.2 "Fujecka Titre", sans-serif; color: #F8F6F3; opacity: 0; text-shadow: 0 4px 30px rgba(0,0,0,0.6); }
     #r8-pill { position: absolute; left: 50%; top: 175px; transform: translateX(-50%); }
-    #r8-pilli { display: inline-block; padding: 8px 40px; border-radius: 40px; background: #FB8000; color: #0A0A0A; font: 52px/1.25 "Anton", sans-serif; opacity: 0;
-      box-shadow: 0 0 46px rgba(251,128,0,0.45); }
+    #r8-pilli { display: inline-block; padding: 8px 40px; border-radius: 40px; background: #F8F6F3; color: #0A0A0A; font: 52px/1.25 "Fujecka Titre", sans-serif; opacity: 0;
+      box-shadow: 0 0 46px rgba(139,115,85,0.45); }
     .r8-title { text-shadow: 0 4px 30px rgba(0,0,0,0.6); }
       </style>
 
@@ -76,7 +75,7 @@
       <div id="r8-hap" class="r8-sprite" style="background-image:url(assets/img/sp-happy.jpg)"></div><div id="r8-shade"></div>
     </div></div></div>
     <div id="r8-hud" class="r8-cam r8-hudcam">
-      <div class="r8-title" id="r8-t8" style="top:330px;font-size:130px;"><span class="r8-tline" id="r8-t8-0">JE ME SUIS</span><br><span class="r8-tline" id="r8-t8-1">FAIT AVOIR.<i class="r8-stilt"><i class="r8-stk" id="r8-t8-s"></i></i></span></div><div id="r8-handle"><span id="r8-hname">@guillaumeherbin_<i class="r8-stilt"><i class="r8-stk" id="r8-h-s"></i></i></span><div id="r8-pill"><span id="r8-pilli">S’ABONNER</span></div></div>
+      <div style="position:absolute;left:0;top:250px;width:1080px;height:760px;background:linear-gradient(rgba(10,10,10,0) 0%,rgba(10,10,10,0.78) 18%,rgba(10,10,10,0.78) 82%,rgba(10,10,10,0) 100%)"></div><div class="r8-title" id="r8-t8" style="top:330px;font-size:130px;"><span class="r8-tline" id="r8-t8-0">JE ME SUIS</span><br><span class="r8-tline" id="r8-t8-1">FAIT AVOIR.<i class="r8-stilt"><i class="r8-stk" id="r8-t8-s"></i></i></span></div><div id="r8-handle"><img id="r8-hname" src="assets/img/charte-logo.svg" style="width:560px;height:auto"><div id="r8-pill" style="top:330px;width:960px;text-align:center"><span id="r8-pilli" style="padding:0;border-radius:0;background:none;box-shadow:none;color:#F8F6F3;font-size:58px;border-top:3px solid #8B7355;padding-top:22px">LE KIT POUR DÉMARRER EST EN BIO.</span></div></div>
     </div>
     <div id="r8-sub" class="r8-sub">
       <div class="r8-chunk sub-chunk" data-out="0.511"><span class="r8-w sub-w" data-cue="0.113">J'ai</span> <span class="r8-w sub-w" data-cue="0.266">perdu</span></div>
@@ -176,7 +175,7 @@
           Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
             var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
             tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
-            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#ffffff" }, { color: "#FB8000", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#F8F6F3" }, { color: "#F8F6F3", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
           });
           var out = ch.getAttribute("data-out");
           if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
@@ -209,7 +208,7 @@
       sprite("hap", 0, DUR, 60, 10, Math.max(12, Math.min(15, 60 / DUR)));
       slam("t8-0", at("gardé") - 0.05); slam("t8-1", at("leçons") - 0.05); stroke("t8", at("leçons") + 0.2);
       go("t8", { opacity: 0, y: -40 }, at("abonne-toi") - 0.14, 0.15, "power2.in");
-      slam("hname", at("abonne-toi"), { s: 1.3 }); stroke("h", at("abonne-toi") + 0.2);
+      slam("hname", at("abonne-toi"), { s: 1.3 }); if (root.querySelector("#" + P + "h-s")) stroke("h", at("abonne-toi") + 0.2);
       pre("pilli", { opacity: 0, scale: 0.5 }); go("pilli", { opacity: 1, scale: 1 }, at("pour") - 0.06, 0.3, "back.out(2)");
     
       subs();

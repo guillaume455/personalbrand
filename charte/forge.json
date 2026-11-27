@@ -1,0 +1,57 @@
+{
+ "name": "FORGE (forge.automobile)",
+ "palette": {
+  "noir": "#0A0A0A",
+  "creme": "#F8F6F3",
+  "bronze": "#8B7355"
+ },
+ "rules": "Crème pour le texte, les chiffres et les titres des premières secondes. Bronze pour les filets, cadres et accents graphiques, jamais pour du petit texte ni pour le hook. Aucune autre couleur.",
+ "fonts": [
+  {
+   "family": "Fujecka Titre",
+   "file": "forge/fonts/FUJECKA-ExtraBold.ttf",
+   "format": "truetype",
+   "weight": "100 900"
+  },
+  {
+   "family": "Fujecka Texte",
+   "file": "forge/fonts/FUJECKA-Bold.ttf",
+   "format": "truetype",
+   "weight": "100 900"
+  }
+ ],
+ "fonts_available": [
+  "forge/fonts/FUJECKA-Medium.ttf",
+  "forge/fonts/FUJECKA-Bold.ttf",
+  "forge/fonts/FUJECKA-ExtraBold.ttf",
+  "forge/fonts/FUJECKA-Black.ttf"
+ ],
+ "logo": {
+  "logo_dark": "forge/logo/forge-logo-complet-fond-sombre.svg",
+  "monogram_dark": "forge/logo/forge-monogramme-fond-sombre.svg",
+  "header_dark": "forge/logo/forge-entete-fond-sombre.svg"
+ },
+ "end_card": "logo",
+ "end_line": "LE KIT POUR DÉMARRER EST EN BIO.",
+ "tokens": {
+  "BG": "#0A0A0A",
+  "TEXT": "#F8F6F3",
+  "TEXT_SOFT": "#F8F6F3",
+  "MUTED": "rgba(248,246,243,0.62)",
+  "LINE": "#8B7355",
+  "NUM": "#F8F6F3",
+  "KEY": "#F8F6F3",
+  "ALERT": "#8B7355",
+  "CHIP_BG": "#F8F6F3",
+  "CHIP_BORDER": "2px solid #8B7355",
+  "HALO_RGB": "139,115,85",
+  "PHOTO_BORDER": "2px",
+  "TOT_TOP": "248px",
+  "TOT_RIGHT": "60px",
+  "TOT_RULE": "3px solid #8B7355",
+  "TOT_PAD": "6px",
+  "FT": "\"Fujecka Titre\"",
+  "FU": "\"Fujecka Texte\"",
+  "TOT_SIZE": "58px"
+ }
+}
