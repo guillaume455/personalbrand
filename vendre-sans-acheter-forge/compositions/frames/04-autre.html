@@ -1,0 +1,210 @@
+<template>
+  <style>
+    @font-face { font-family: "Fujecka Titre"; src: url("assets/fonts/charte/FUJECKA-ExtraBold.ttf") format("truetype"); font-weight: 100 900; }
+    @font-face { font-family: "Fujecka Texte"; src: url("assets/fonts/charte/FUJECKA-Bold.ttf") format("truetype"); font-weight: 100 900; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #F8F6F3;
+      font-family: "Fujecka Texte", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r4-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r4-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(139,115,85,0.15) 0%, rgba(139,115,85,0.09) 38%, rgba(139,115,85,0.03) 70%, rgba(139,115,85,0) 100%); }
+    .r4-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r4-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r4-hudcam { transform-origin: 540px 600px; }
+    .r4-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r4-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Fujecka Titre", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #F8F6F3; white-space: nowrap; }
+    .r4-tline { position: relative; display: inline-block; opacity: 0; }
+    .r4-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r4-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #8B7355;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r4-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r4-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r4-ocol { display: block; }
+    .r4-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r4-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r4-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r4-person { position: absolute; transform-origin: 50% 100%; }
+    .r4-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r4-pgrey { fill: #2b2b2b; }
+    .r4-pwhite { fill: #F8F6F3; opacity: 0; }
+    .r4-porange { fill: #8B7355; opacity: 0; }
+    .r4-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(139,115,85,0.55), rgba(139,115,85,0.18) 55%, rgba(139,115,85,0)); }
+    .r4-car { position: absolute; transform-origin: 50% 100%; }
+    .r4-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r4-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r4-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 76px/90px "Fujecka Texte", sans-serif; color: #F8F6F3; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r4-w { display: inline-block; opacity: 0; }
+
+    #r4-grp { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 640px; }
+    #r4-cv { position: absolute; left: 520px; top: 690px; width: 460px; text-align: center; opacity: 0; }
+    #r4-cvl { font: 30px/1 "Fujecka Texte", sans-serif; color: rgba(248,246,243,0.62); letter-spacing: 0.1em; }
+    #r4-cvv { font: 96px/1.1 "Fujecka Titre", sans-serif; color: #F8F6F3; }
+    #r4-own { position: absolute; left: 150px; top: 1110px; width: 300px; text-align: center; font: 30px/1 "Fujecka Texte", sans-serif; color: rgba(248,246,243,0.62); letter-spacing: 0.1em; opacity: 0; }
+    .r4-step { position: absolute; left: 90px; width: 900px; height: 100px; border-radius: 18px; background: #121212; border: 2px solid #2e2e2e; opacity: 0; }
+    .r4-step.r4-on { border-color: #8B7355; }
+    .r4-sn { position: absolute; left: 24px; top: 16px; width: 68px; height: 68px; border-radius: 50%; background: #F8F6F3; color: #0A0A0A; font: 48px/68px "Fujecka Titre", sans-serif; text-align: center; }
+    .r4-stx { position: absolute; left: 120px; top: 0; height: 100px; line-height: 100px; font: 54px/100px "Fujecka Titre", sans-serif; color: #F8F6F3; }
+      </style>
+
+  <div id="root" data-composition-id="04-autre" data-width="1080" data-height="1920" data-duration="9.7">
+    <div id="r4-ground" class="clip r4-ground" data-start="0" data-duration="9.7" data-track-index="0">
+      <div id="r4-halo" class="r4-halo" style="left:540px;top:900px"></div>
+      <div class="r4-grain"></div>
+    </div>
+    <div id="r4-push" class="r4-cam"><div id="r4-shk" class="r4-cam"><div id="r4-cran" class="r4-cam">
+      <div id="r4-grp"><div id="r4-car" class="r4-car" style="left:500px;top:870px;width:480px;height:199px"><svg viewBox="0 0 410 170" style="stroke:#F8F6F3;stroke-width:9"><path d="M28 128 L24 100 Q26 84 46 80 L118 70 L168 34 Q178 27 192 27 L276 27 Q294 27 306 40 L340 74 L366 80 Q384 85 384 102 L382 128 L336 128"/><path d="M64 128 L24 128"/><path d="M126 128 L274 128"/><circle cx="95" cy="128" r="30"/><circle cx="305" cy="128" r="30"/><circle cx="95" cy="128" r="7"/><circle cx="305" cy="128" r="7"/><path d="M136 70 L174 40 Q180 36 190 36 L234 36 L234 70 Z"/><path d="M248 36 L272 36 Q286 36 296 46 L320 70 L248 70 Z"/></svg></div><div id="r4-own-glow" class="r4-glow" style="left:80px;top:735px"></div><div id="r4-own" class="r4-person" style="left:200px;top:830px;width:180px;height:270px"><svg viewBox="0 0 200 300" class="r4-pl r4-pgrey"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r4-pl r4-pwhite" id="r4-own-w"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg><svg viewBox="0 0 200 300" class="r4-pl r4-porange" id="r4-own-o"><circle cx="100" cy="62" r="46"/><path d="M14 300 C14 196 52 146 100 146 C148 146 186 196 186 300 Z"/></svg></div><div id="r4-cv"><div id="r4-cvl">DANS LA VOITURE</div><div id="r4-cvv">0 €</div></div><div id="r4-own">PROPRIÉTAIRE</div></div>
+    </div></div></div>
+    <div id="r4-hud" class="r4-cam r4-hudcam">
+      <div class="r4-title" id="r4-t4" style="top:320px;font-size:92px;"><span class="r4-tline" id="r4-t4-0" style="font-size:64px">L’AUTRE FAÇON :</span><br><span class="r4-tline" id="r4-t4-1">VENDRE SANS ACHETER<i class="r4-stilt"><i class="r4-stk" id="r4-t4-s"></i></i></span></div><div id="r4-st0" class="r4-step" style="top:660px"><div class="r4-sn">1</div><div class="r4-stx">ESTIMER</div></div><div id="r4-st1" class="r4-step" style="top:790px"><div class="r4-sn">2</div><div class="r4-stx">ANNONCER</div></div><div id="r4-st2" class="r4-step" style="top:920px"><div class="r4-sn">3</div><div class="r4-stx">TROUVER L’ACHETEUR</div></div><div id="r4-st3" class="r4-step" style="top:1050px"><div class="r4-sn">4</div><div class="r4-stx">PAYÉ À LA VENTE</div></div>
+    </div>
+    <div id="r4-sub" class="r4-sub">
+      <div class="r4-chunk sub-chunk" data-out="1.110"><span class="r4-w sub-w" data-cue="0.100">L'autre</span> <span class="r4-w sub-w" data-cue="0.370">façon :</span></div>
+      <div class="r4-chunk sub-chunk" data-out="2.530"><span class="r4-w sub-w" data-cue="1.170">tu</span> <span class="r4-w sub-w" data-cue="1.357">vends</span> <span class="r4-w sub-w sub-key" data-cue="1.543">sans</span> <span class="r4-w sub-w" data-cue="1.730">acheter.</span></div>
+      <div class="r4-chunk sub-chunk" data-out="3.372"><span class="r4-w sub-w" data-cue="2.590">La</span> <span class="r4-w sub-w" data-cue="2.784">voiture</span> <span class="r4-w sub-w" data-cue="3.172">reste</span></div>
+      <div class="r4-chunk sub-chunk" data-out="4.770"><span class="r4-w sub-w" data-cue="3.366">celle</span> <span class="r4-w sub-w" data-cue="3.560">de</span> <span class="r4-w sub-w" data-cue="3.754">son</span> <span class="r4-w sub-w sub-key" data-cue="3.948">propriétaire.</span></div>
+      <div class="r4-chunk sub-chunk" data-out="6.080"><span class="r4-w sub-w" data-cue="4.830">Toi,</span> <span class="r4-w sub-w" data-cue="5.085">tu</span> <span class="r4-w sub-w sub-key" data-cue="5.340">l'estimes.</span></div>
+      <div class="r4-chunk sub-chunk" data-out="7.080"><span class="r4-w sub-w" data-cue="6.140">Tu</span> <span class="r4-w sub-w" data-cue="6.315">fais</span> <span class="r4-w sub-w sub-key" data-cue="6.490">l'annonce.</span></div>
+      <div class="r4-chunk sub-chunk" data-out="8.080"><span class="r4-w sub-w" data-cue="7.140">Tu</span> <span class="r4-w sub-w" data-cue="7.282">trouves</span> <span class="r4-w sub-w sub-key" data-cue="7.424">l'acheteur.</span></div>
+      <div class="r4-chunk sub-chunk" data-out="8.850"><span class="r4-w sub-w" data-cue="8.140">Et</span> <span class="r4-w sub-w" data-cue="8.310">tu</span> <span class="r4-w sub-w" data-cue="8.480">es</span> <span class="r4-w sub-w sub-key" data-cue="8.650">payé</span></div>
+      <div class="r4-chunk sub-chunk"><span class="r4-w sub-w" data-cue="8.820">quand</span> <span class="r4-w sub-w" data-cue="8.990">elle</span> <span class="r4-w sub-w" data-cue="9.160">se</span> <span class="r4-w sub-w" data-cue="9.330">vend.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "04-autre", P = "r4-", DUR = 9.7;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["l'autre", 0.1, 0.37], ["façon", 0.37, 0.91], ["tu", 1.17, 1.357], ["vends", 1.357, 1.543], ["sans", 1.543, 1.73], ["acheter", 1.73, 2.29], ["la", 2.59, 2.784], ["voiture", 2.784, 3.172], ["reste", 3.172, 3.366], ["celle", 3.366, 3.56], ["de", 3.56, 3.754], ["son", 3.754, 3.948], ["propriétaire", 3.948, 4.53], ["toi", 4.83, 5.085], ["tu", 5.085, 5.34], ["l'estimes", 5.34, 5.85], ["tu", 6.14, 6.315], ["fais", 6.315, 6.49], ["l'annonce", 6.49, 6.84], ["tu", 7.14, 7.282], ["trouves", 7.282, 7.424], ["l'acheteur", 7.424, 7.85], ["et", 8.14, 8.31], ["tu", 8.31, 8.48], ["es", 8.48, 8.65], ["payé", 8.65, 8.82], ["quand", 8.82, 8.99], ["elle", 8.99, 9.16], ["se", 9.16, 9.33], ["vend", 9.33, 9.5]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#F8F6F3" }, { color: "#8B7355", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      slam("t4-0", 0.02); slam("t4-1", at("vends") - 0.05); stroke("t4", at("acheter"));
+      // the same car, nothing in it
+      pre("car", { opacity: 0, x: 200 }); go("car", { opacity: 1, x: 0 }, at("voiture") - 0.1, 0.4, "expo.out");
+      pre("cv", { opacity: 0, scale: 1.3 }); go("cv", { opacity: 1, scale: 1 }, at("voiture") + 0.3, 0.25, "expo.out");
+      init("own-w", { opacity: 0 }); init("own-o", { opacity: 0 }); init("own-glow", { opacity: 0 });
+      pre("own", { opacity: 0, y: 40 }); go("own", { opacity: 1, y: 0 }, at("propriétaire") - 0.15, 0.3, "back.out(1.6)");
+      lit("own", "white", at("propriétaire"), 0.3);
+      pre("own", { opacity: 0 }); go("own", { opacity: 1 }, at("propriétaire") - 0.1, 0.3);
+      // four steps light up one after the other
+      go("grp", { opacity: 0, y: -40 }, at("l'estimes") - 0.2, 0.3, "power2.inOut");
+      var cues = [at("l'estimes"), at("l'annonce"), at("l'acheteur"), at("payé")];
+      [0, 1, 2, 3].forEach(function (k) {
+        pre("st" + k, { opacity: 0, x: -60 }); go("st" + k, { opacity: 1, x: 0 }, cues[k] - 0.15, 0.3, "expo.out");
+        $("st" + k).classList.add(P + "on");
+        if (k > 0) go("st" + (k - 1), { opacity: 0.45 }, cues[k] - 0.15, 0.25);
+      });
+      go("st0", { opacity: 1 }, at("vend") , 0.3); go("st1", { opacity: 1 }, at("vend"), 0.3); go("st2", { opacity: 1 }, at("vend"), 0.3);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

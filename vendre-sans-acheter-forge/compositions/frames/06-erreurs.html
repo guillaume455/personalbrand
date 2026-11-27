@@ -1,0 +1,216 @@
+<template>
+  <style>
+    @font-face { font-family: "Fujecka Titre"; src: url("assets/fonts/charte/FUJECKA-ExtraBold.ttf") format("truetype"); font-weight: 100 900; }
+    @font-face { font-family: "Fujecka Texte"; src: url("assets/fonts/charte/FUJECKA-Bold.ttf") format("truetype"); font-weight: 100 900; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #F8F6F3;
+      font-family: "Fujecka Texte", sans-serif; -webkit-font-smoothing: antialiased; }
+    .r6-ground { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: #0A0A0A; overflow: hidden; }
+    .r6-halo { position: absolute; width: 1200px; height: 1200px; margin: -600px 0 0 -600px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(139,115,85,0.15) 0%, rgba(139,115,85,0.09) 38%, rgba(139,115,85,0.03) 70%, rgba(139,115,85,0) 100%); }
+    .r6-grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0.04; mix-blend-mode: screen; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+      background-size: 240px 240px; }
+    .r6-cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 900px; }
+    .r6-hudcam { transform-origin: 540px 600px; }
+    .r6-abs { position: absolute; }
+
+    /* title: Anton caps, white, centred (title zone y 260-640), orange stroke drawn under the last line */
+    .r6-title { position: absolute; left: 60px; width: 960px; text-align: center; font-family: "Fujecka Titre", sans-serif; line-height: 1.2;
+      text-transform: uppercase; color: #F8F6F3; white-space: nowrap; }
+    .r6-tline { position: relative; display: inline-block; opacity: 0; }
+    .r6-stilt { position: absolute; left: -0.078em; right: -0.078em; bottom: -0.02em; height: 0.11em; display: block;
+      transform: rotate(-1.5deg); transform-origin: 0 50%; }
+    .r6-stk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; background: #8B7355;
+      border-radius: 999px; clip-path: polygon(0 0, 100% 32%, 100% 68%, 0 100%); transform-origin: 0 50%; transform: scaleX(0); }
+
+    /* cash-register counter: one rolling column per digit */
+    .r6-odo { display: inline-block; white-space: nowrap; line-height: 1.15em; height: 1.15em; vertical-align: top; }
+    .r6-oc { display: inline-block; height: 1.15em; overflow: hidden; vertical-align: top; }
+    .r6-ocol { display: block; }
+    .r6-ocol span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .r6-os { display: inline-block; height: 1.15em; line-height: 1.15em; vertical-align: top; }
+
+    /* the stage: two buyers, the car between them */
+    .r6-floor { position: absolute; left: 40px; top: 1081px; width: 960px; height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.14) 20%, rgba(255,255,255,0.14) 80%, rgba(255,255,255,0)); }
+    .r6-person { position: absolute; transform-origin: 50% 100%; }
+    .r6-pl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .r6-pgrey { fill: #2b2b2b; }
+    .r6-pwhite { fill: #F8F6F3; opacity: 0; }
+    .r6-porange { fill: #8B7355; opacity: 0; }
+    .r6-glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(closest-side, rgba(139,115,85,0.55), rgba(139,115,85,0.18) 55%, rgba(139,115,85,0)); }
+    .r6-car { position: absolute; transform-origin: 50% 100%; }
+    .r6-car svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+    /* subtitles: the voice word by word in the band y 1260-1440, the key word turns orange */
+    .r6-sub { position: absolute; left: 0; top: 1260px; width: 1080px; height: 180px; pointer-events: none; }
+    .r6-chunk { position: absolute; left: 40px; top: 55px; width: 1000px; text-align: center; white-space: nowrap;
+      font: 700 60px/72px "Fujecka Texte", sans-serif; color: #F8F6F3; text-shadow: 0 3px 18px rgba(0,0,0,0.7); }
+    .r6-w { display: inline-block; opacity: 0; }
+
+    #r6-tot { position: absolute; right: 60px; top: 248px; text-align: right; transform-origin: 100% 50%; }
+    .r6-totl { font: 600 24px/1 "Fujecka Texte", sans-serif; color: rgba(248,246,243,0.62); letter-spacing: 0.16em; }
+    .r6-totv { font: 58px "Fujecka Titre", sans-serif; color: #F8F6F3; margin-top: 4px; border-top: 3px solid #8B7355; padding-top: 6px; }
+    .r6-chip { position: absolute; padding: 6px 24px; border-radius: 30px; background: #F8F6F3; color: #0A0A0A; border: 2px solid #8B7355; font: 50px/1.2 "Fujecka Titre", sans-serif;
+      opacity: 0; white-space: nowrap; }
+    .r6-chips { display: block; font: 600 24px/1 "Fujecka Texte", sans-serif; letter-spacing: 0.04em; text-align: center; margin-top: -2px; padding-bottom: 6px; }
+
+    .r6-err { position: absolute; left: 80px; width: 920px; height: 180px; border-radius: 28px; background: #151515; border: 2px solid #2e2e2e; opacity: 0; }
+    .r6-errn { position: absolute; left: 28px; top: 50px; width: 80px; height: 80px; border-radius: 50%; background: #F8F6F3; color: #0A0A0A;
+      font: 56px/80px "Fujecka Titre", sans-serif; text-align: center; }
+    .r6-errt { position: absolute; left: 136px; top: 0; width: 760px; height: 180px; display: flex; align-items: center;
+      font: 50px/1.15 "Fujecka Titre", sans-serif; color: #F8F6F3; }
+    .r6-k { color: #F8F6F3; }
+      </style>
+
+  <div id="root" data-composition-id="06-erreurs" data-width="1080" data-height="1920" data-duration="8.333">
+    <div id="r6-ground" class="clip r6-ground" data-start="0" data-duration="8.333" data-track-index="0">
+      <div id="r6-halo" class="r6-halo" style="left:540px;top:900px"></div>
+      <div class="r6-grain"></div>
+    </div>
+    <div id="r6-push" class="r6-cam"><div id="r6-shk" class="r6-cam"><div id="r6-cran" class="r6-cam">
+      <div id="r6-e1" class="r6-err" style="top:600px"><div class="r6-errn">1</div><div class="r6-errt"><div>ACHETÉE AVEC LE CŒUR, SANS MES CONTRÔLES.</div></div></div><div id="r6-e2" class="r6-err" style="top:810px"><div class="r6-errn">2</div><div class="r6-errt"><div>CONFIÉE À QUELQU’UN QUI N’EN ÉTAIT PAS CAPABLE.</div></div></div><div id="r6-e3" class="r6-err" style="top:1020px"><div class="r6-errn">3</div><div class="r6-errt"><div>J’AI VOULU GÉRER SEUL.</div></div></div>
+    </div></div></div>
+    <div id="r6-hud" class="r6-cam r6-hudcam">
+      <div class="r6-title" id="r6-t7" style="top:380px;font-size:116px;"><span class="r6-tline" id="r6-t7-0">TROIS ERREURS<i class="r6-stilt"><i class="r6-stk" id="r6-t7-s"></i></i></span></div><div id="r6-tot"><div class="r6-totl">TOTAL</div><div class="r6-totv"><span id="r6-totv" class="r6-odo " data-to="66 800 €"><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-os">&nbsp;</span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-oc"><span class="r6-ocol odo-col"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class="r6-os">&nbsp;</span><span class="r6-os">€</span></span></div></div>
+    </div>
+    <div id="r6-sub" class="r6-sub">
+      <div class="r6-chunk sub-chunk" data-out="1.180"><span class="r6-w sub-w" data-cue="0.110">Trois</span> <span class="r6-w sub-w sub-key" data-cue="0.300">erreurs.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="2.430"><span class="r6-w sub-w" data-cue="1.240">J'ai</span> <span class="r6-w sub-w" data-cue="1.375">acheté</span> <span class="r6-w sub-w" data-cue="1.780">avec</span> <span class="r6-w sub-w" data-cue="2.050">le</span> <span class="r6-w sub-w sub-key" data-cue="2.185">cœur,</span></div>
+      <div class="r6-chunk sub-chunk" data-out="4.070"><span class="r6-w sub-w" data-cue="2.490">sans</span> <span class="r6-w sub-w" data-cue="2.649">mes</span> <span class="r6-w sub-w" data-cue="2.807">contrôles</span> <span class="r6-w sub-w" data-cue="3.124">habituels.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="4.896"><span class="r6-w sub-w" data-cue="4.130">J'ai</span> <span class="r6-w sub-w" data-cue="4.268">confié</span> <span class="r6-w sub-w" data-cue="4.543">le</span> <span class="r6-w sub-w" data-cue="4.681">moteur</span></div>
+      <div class="r6-chunk sub-chunk" data-out="5.446"><span class="r6-w sub-w" data-cue="4.956">à</span> <span class="r6-w sub-w" data-cue="5.094">quelqu'un</span></div>
+      <div class="r6-chunk sub-chunk" data-out="6.890"><span class="r6-w sub-w" data-cue="5.506">qui</span> <span class="r6-w sub-w" data-cue="5.644">n'en</span> <span class="r6-w sub-w" data-cue="5.782">était</span> <span class="r6-w sub-w" data-cue="6.057">pas</span> <span class="r6-w sub-w sub-key" data-cue="6.195">capable.</span></div>
+      <div class="r6-chunk sub-chunk" data-out="7.421"><span class="r6-w sub-w" data-cue="6.950">Et</span> <span class="r6-w sub-w" data-cue="7.083">j'ai</span> <span class="r6-w sub-w" data-cue="7.216">voulu</span></div>
+      <div class="r6-chunk sub-chunk"><span class="r6-w sub-w" data-cue="7.481">gérer</span> <span class="r6-w sub-w sub-key" data-cue="7.747">seul.</span></div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "06-erreurs", P = "r6-", DUR = 8.333;
+      // word cues of this scene (local seconds), written by build.py from the voice timings
+      var W = [["trois", 0.11, 0.3], ["erreurs", 0.3, 0.68], ["j'ai", 1.24, 1.375], ["acheté", 1.375, 1.78], ["avec", 1.78, 2.05], ["le", 2.05, 2.185], ["cœur", 2.185, 2.32], ["sans", 2.49, 2.649], ["mes", 2.649, 2.807], ["contrôles", 2.807, 3.124], ["habituels", 3.124, 3.6], ["j'ai", 4.13, 4.268], ["confié", 4.268, 4.543], ["le", 4.543, 4.681], ["moteur", 4.681, 4.956], ["à", 4.956, 5.094], ["quelqu'un", 5.094, 5.506], ["qui", 5.506, 5.644], ["n'en", 5.644, 5.782], ["était", 5.782, 6.057], ["pas", 6.057, 6.195], ["capable", 6.195, 6.47], ["et", 6.95, 7.083], ["j'ai", 7.083, 7.216], ["voulu", 7.216, 7.481], ["gérer", 7.481, 7.747], ["seul", 7.747, 7.88]];
+
+      var root = document.querySelector('[data-composition-id="' + FID + '"]');
+      function $(id) { var e = root.querySelector("#" + P + id); if (!e) throw new Error(FID + ": #" + P + id + " missing"); return e; }
+      var tl = gsap.timeline({ paused: true });
+      // word cues: at("virement") = local start of that word in this scene, at("même", 2) = its 2nd occurrence
+      function at(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][1]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      function atEnd(w, n) { n = n || 1; var k = 0; for (var i = 0; i < W.length; i++) { if (W[i][0] === w && ++k === n) return W[i][2]; } throw new Error(FID + ": cue " + w + " #" + n); }
+      // state-tracked tweens: every tween is a fromTo from the last known value (seek-safe)
+      var S = {};
+      function cur(id) { return S[id] || (S[id] = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }); }
+      function init(id, p) { var c = cur(id); for (var k in p) c[k] = p[k]; }
+      function pre(id, p) { init(id, p); tl.set($(id), p, 0); }
+      function go(id, p, t, d, ease) {
+        var c = cur(id), from = {}, to = { duration: d == null ? 0.3 : d, ease: ease || "power3.out", immediateRender: false };
+        for (var k in p) { from[k] = (k in c) ? c[k] : 0; to[k] = p[k]; c[k] = p[k]; }
+        tl.fromTo($(id), from, to, Math.max(0, t));
+      }
+      function slam(id, t, o) {
+        o = o || {}; var c = cur(id);
+        tl.fromTo($(id), { opacity: 0, scale: o.s || 1.25, filter: "blur(10px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: o.d || 0.18, ease: "expo.out", immediateRender: false }, Math.max(0, t));
+        c.opacity = 1; c.scale = 1;
+      }
+      function stroke(tid, t) {
+        tl.fromTo($(tid + "-s"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function draw(id, t, d, ease) {
+        var el = $(id), len = 1000;
+        try { len = Math.ceil(el.getTotalLength()) + 2; } catch (e) {}
+        el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+        tl.fromTo(el, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: d || 0.3, ease: ease || "power3.out", immediateRender: false }, Math.max(0, t));
+      }
+      function cam(x, y, s, t, d, ease) { go("cran", { x: x, y: y, scale: s }, t, d || 0.45, ease || "power3.inOut"); }
+      function shake(id, t, amp) {
+        var e = $(id), a = amp || 14, k = [a, -a * 0.8, a * 0.55, -a * 0.3, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { x: i ? k[i - 1] : 0 }, { x: k[i], duration: 0.045, ease: "sine.inOut", immediateRender: false }, t + i * 0.045);
+      }
+      function wobble(id, t, deg) {
+        var e = $(id), a = deg || 4, k = [a, -a, a * 0.6, -a * 0.4, 0];
+        for (var i = 0; i < k.length; i++) tl.fromTo(e, { rotation: i ? k[i - 1] : 0 }, { rotation: k[i], duration: 0.06, ease: "sine.inOut", immediateRender: false }, t + i * 0.06);
+      }
+      // a buyer's light: grey | white | orange | dim
+      function lit(p, m, t, d) {
+        d = d || 0.3;
+        go(p + "-w", { opacity: m === "white" ? 1 : 0 }, t, d);
+        go(p + "-o", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p + "-glow", { opacity: m === "orange" ? 1 : 0 }, t, d);
+        go(p, { opacity: m === "dim" ? 0.3 : 1 }, t, d);
+      }
+      // cash-register counter: every digit column rolls to its target, the two last spin twice
+      var O = {};
+      function odo(id, t, d, o) {
+        o = o || {}; var el = $(id);
+        var to = (o.to || el.getAttribute("data-to")).replace(/\D/g, "");
+        var cols = el.querySelectorAll(".odo-col"), n = cols.length, st = O[id], i;
+        if (to.length !== n) throw new Error(FID + ": odo " + id + " digits " + to);
+        if (!st) {
+          var fr = (o.from || "").replace(/\D/g, ""); while (fr.length < n) fr = "0" + fr;
+          st = O[id] = { pos: [], op: [] };
+          for (i = 0; i < n; i++) { st.pos[i] = +fr[i]; st.op[i] = 1; tl.set(cols[i], { yPercent: -100 * st.pos[i] / 30 }, 0); }
+        }
+        var lead = true;
+        for (i = 0; i < n; i++) {
+          var a = st.pos[i] % 10, b = +to[i], low = n - i <= 2;
+          var spin = a !== b || (low && o.spinLow !== false);
+          var ib = spin ? b + 10 * (low ? 2 : 1) : a;
+          if (b !== 0) lead = false;
+          if (ib !== a) tl.fromTo(cols[i], { yPercent: -100 * a / 30 }, { yPercent: -100 * ib / 30,
+            duration: d * (0.5 + 0.5 * (i + 1) / n), ease: "power3.out", immediateRender: false }, Math.max(0, t));
+          st.pos[i] = ib;
+          if (o.dimLead) {
+            var op = lead && i < n - 1 ? 0.12 : 1;
+            if (op !== st.op[i]) { tl.fromTo(cols[i].parentNode, { opacity: st.op[i] }, { opacity: op, duration: 0.2, immediateRender: false }, op < 1 ? t + d * 0.7 : t); st.op[i] = op; }
+          }
+        }
+      }
+      // subtitles: each word 1 frame before its cue, the chunk leaves at data-out
+      function subs() {
+        Array.prototype.forEach.call($("sub").querySelectorAll(".sub-chunk"), function (ch) {
+          Array.prototype.forEach.call(ch.querySelectorAll(".sub-w"), function (w) {
+            var t = Math.max(0, parseFloat(w.getAttribute("data-cue")) - 1 / 30);
+            tl.fromTo(w, { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+            if (w.classList.contains("sub-key")) tl.fromTo(w, { color: "#F8F6F3" }, { color: "#F8F6F3", duration: 0.12, ease: "power3.out", immediateRender: false }, t);
+          });
+          var out = ch.getAttribute("data-out");
+          if (out) tl.fromTo(ch, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(6px)", duration: 0.1, ease: "power3.out", immediateRender: false }, parseFloat(out));
+        });
+      }
+
+      tl.fromTo($("push"), { scale: 1 }, { scale: 1 + Math.min(0.012 * DUR, 0.05), duration: DUR, ease: "none" }, 0);
+      tl.fromTo($("hud"), { scale: 1 }, { scale: 1 + 0.005 * DUR, duration: DUR, ease: "none" }, 0);
+
+      function totInit(v) { odo("totv", 0, 0.01, { from: v, spinLow: false }); }
+      // a cost chip pops, flies into the TOTAL counter, the counter rolls up
+      function bump(chip, t, to) {
+        var el = $(chip), dx = 900 - (el.offsetLeft + el.offsetWidth / 2), dy = 280 - (el.offsetTop + el.offsetHeight / 2);
+        pre(chip, { opacity: 0, scale: 0.5, x: 0, y: 0 });
+        go(chip, { opacity: 1, scale: 1 }, t, 0.25, "back.out(2)");
+        go(chip, { x: dx, y: dy, opacity: 0, scale: 0.5 }, t + 0.75, 0.42, "power3.in");
+        odo("totv", t + 1.1, 0.8, { to: to });
+        init("tot", { scale: 1 }); go("tot", { scale: 1.14 }, t + 1.1, 0.12); go("tot", { scale: 1 }, t + 1.22, 0.35);
+      }
+
+      totInit("66 800");
+      slam("t7-0", Math.max(0.02, at("trois") - 0.02)); stroke("t7", at("erreurs"));
+      var cues = [at("acheté"), at("confié"), at("voulu")];
+      ["e1", "e2", "e3"].forEach(function (e, k) {
+        pre(e, { opacity: 0, x: -80 }); go(e, { opacity: 1, x: 0 }, cues[k] - 0.1, 0.35, "expo.out");
+        if (k > 0) go(["e1", "e2"][k - 1], { opacity: 0.4 }, cues[k] - 0.1, 0.3);
+      });
+      init("e3", { opacity: 1 }); go("e1", { opacity: 1 }, at("seul") + 0.3, 0.4); go("e2", { opacity: 1 }, at("seul") + 0.3, 0.4);
+      cam(0, -10, 1.04, at("confié"), 1.0);
+    
+      subs();
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

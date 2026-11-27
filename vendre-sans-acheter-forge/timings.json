@@ -1,0 +1,86 @@
+{
+ "provisional": false,
+ "total": 41.833,
+ "frames": [
+  {
+   "n": 1,
+   "id": "01-hook",
+   "name": "Hook",
+   "start": 0.0,
+   "end": 5.0,
+   "dur": 5.0,
+   "src": "compositions/frames/01-hook.html",
+   "vo": "Tu savais qu'on peut vendre des voitures sans jamais les acheter ? Reste jusqu'au bout, je t'explique comment."
+  },
+  {
+   "n": 2,
+   "id": "02-histoire",
+   "name": "Mon histoire",
+   "start": 5.0,
+   "end": 8.967,
+   "dur": 3.967,
+   "src": "compositions/frames/02-histoire.html",
+   "vo": "C'est comme ça que j'ai commencé. En 2010. Avec 3 000 euros en poche."
+  },
+  {
+   "n": 3,
+   "id": "03-acheter",
+   "name": "Acheter pour revendre",
+   "start": 8.967,
+   "end": 18.3,
+   "dur": 9.333,
+   "src": "compositions/frames/03-acheter.html",
+   "vo": "La plupart des gens achètent pour revendre. Une voiture à 13 000 euros, c'est 13 000 euros à toi qui dorment dedans. Elle tombe en panne ? C'est pour toi. Elle ne se vend pas ? C'est pour toi."
+  },
+  {
+   "n": 4,
+   "id": "04-autre",
+   "name": "Vendre sans acheter",
+   "start": 18.3,
+   "end": 28.0,
+   "dur": 9.7,
+   "src": "compositions/frames/04-autre.html",
+   "vo": "L'autre façon : tu vends sans acheter. La voiture reste celle de son propriétaire. Toi, tu l'estimes. Tu fais l'annonce. Tu trouves l'acheteur. Et tu es payé quand elle se vend."
+  },
+  {
+   "n": 5,
+   "id": "05-face",
+   "name": "Face à face",
+   "start": 28.0,
+   "end": 31.967,
+   "dur": 3.967,
+   "src": "compositions/frames/05-face.html",
+   "vo": "Le premier porte le stock et le risque. Toi, tu portes la relation."
+  },
+  {
+   "n": 6,
+   "id": "06-chute",
+   "name": "La chute",
+   "start": 31.967,
+   "end": 35.4,
+   "dur": 3.433,
+   "src": "compositions/frames/06-chute.html",
+   "vo": "C'est un vrai métier. Et il se démarre sans immobiliser ton argent."
+  },
+  {
+   "n": 7,
+   "id": "07-signature",
+   "name": "Signature",
+   "start": 35.4,
+   "end": 38.467,
+   "dur": 3.067,
+   "src": "compositions/frames/07-signature.html",
+   "vo": "Moi, c'est Guillaume Herbin, fondateur du programme FORGE."
+  },
+  {
+   "n": 8,
+   "id": "08-fin",
+   "name": "Carton de fin",
+   "start": 38.467,
+   "end": 41.833,
+   "dur": 3.366,
+   "src": "compositions/frames/08-fin.html",
+   "vo": "Si tu veux en savoir plus sur ce métier, abonne-toi."
+  }
+ ]
+}
