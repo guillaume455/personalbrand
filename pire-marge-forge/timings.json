@@ -1,0 +1,106 @@
+{
+ "provisional": false,
+ "total": 70.167,
+ "frames": [
+  {
+   "n": 1,
+   "id": "01-hook",
+   "name": "Hook",
+   "start": 0.0,
+   "end": 3.4,
+   "dur": 3.4,
+   "src": "compositions/frames/01-hook.html",
+   "vo": "Ma pire marge en 16 ans de métier, c'est sur une Ferrari."
+  },
+  {
+   "n": 2,
+   "id": "02-achat",
+   "name": "L'achat",
+   "start": 3.4,
+   "end": 10.2,
+   "dur": 6.8,
+   "src": "compositions/frames/02-achat.html",
+   "vo": "Une 360 Modena. Achetée 49 000 euros. Sur photos. À quelqu'un avec qui je travaillais depuis des années."
+  },
+  {
+   "n": 3,
+   "id": "03-retour",
+   "name": "Le retour",
+   "start": 10.2,
+   "end": 17.1,
+   "dur": 6.9,
+   "src": "compositions/frames/03-retour.html",
+   "vo": "Je la revends en quelques semaines. Le client revient : moteur qui chauffe. Je rembourse tout, carte grise comprise."
+  },
+  {
+   "n": 4,
+   "id": "04-mecanique",
+   "name": "La mécanique",
+   "start": 17.1,
+   "end": 25.0,
+   "dur": 7.9,
+   "src": "compositions/frames/04-mecanique.html",
+   "vo": "Joint de culasse. Dépose moteur. Le mécano abandonne en plein chantier. Je repars de zéro. Plus d'un an immobilisée."
+  },
+  {
+   "n": 5,
+   "id": "05-resultat",
+   "name": "Revente et résultat",
+   "start": 25.0,
+   "end": 32.4,
+   "dur": 7.4,
+   "src": "compositions/frames/05-resultat.html",
+   "vo": "15 000 euros de mécanique. Je finis par la revendre 50 000 euros à l'export. Résultat : moins 16 800 euros."
+  },
+  {
+   "n": 6,
+   "id": "06-erreurs",
+   "name": "Les trois erreurs",
+   "start": 32.4,
+   "end": 40.733,
+   "dur": 8.333,
+   "src": "compositions/frames/06-erreurs.html",
+   "vo": "Trois erreurs. J'ai acheté avec le cœur, sans mes contrôles habituels. J'ai confié le moteur à quelqu'un qui n'en était pas capable. Et j'ai voulu gérer seul."
+  },
+  {
+   "n": 7,
+   "id": "07-pivot",
+   "name": "Le pivot",
+   "start": 40.733,
+   "end": 49.833,
+   "dur": 9.1,
+   "src": "compositions/frames/07-pivot.html",
+   "vo": "Mais le vrai problème est ailleurs. C'était mon argent dans la voiture. 49 000 euros bloqués pendant plus de trois ans. Chaque erreur, c'est moi qui l'ai payée."
+  },
+  {
+   "n": 8,
+   "id": "08-comparaison",
+   "name": "La comparaison",
+   "start": 49.833,
+   "end": 57.567,
+   "dur": 7.734,
+   "src": "compositions/frames/08-comparaison.html",
+   "vo": "Quand tu vends la voiture de quelqu'un d'autre sans l'acheter, tu ne mets pas un euro dedans. Si ça se passe mal, tu perds du temps. Pas 16 800 euros."
+  },
+  {
+   "n": 9,
+   "id": "09-signature",
+   "name": "Signature",
+   "start": 57.567,
+   "end": 62.633,
+   "dur": 5.066,
+   "src": "compositions/frames/09-signature.html",
+   "vo": "C'est le métier qu'on apprend chez FORGE. Moi, c'est Guillaume Herbin, fondateur du programme FORGE."
+  },
+  {
+   "n": 10,
+   "id": "10-fin",
+   "name": "Carton de fin",
+   "start": 62.633,
+   "end": 70.167,
+   "dur": 7.534,
+   "src": "compositions/frames/10-fin.html",
+   "vo": "Si tu veux plus de contenus comme celui-ci, ou si tu t'intéresses aux métiers de la vente automobile, abonne-toi."
+  }
+ ]
+}

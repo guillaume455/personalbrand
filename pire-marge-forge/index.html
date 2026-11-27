@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #0A0A0A;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="70.16"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div
+        id="el-01-hook"
+        class="scene"
+        data-composition-id="01-hook"
+        data-composition-src="compositions/frames/01-hook.html"
+        data-start="0"
+        data-duration="3.4"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-02-achat"
+        class="scene"
+        data-composition-id="02-achat"
+        data-composition-src="compositions/frames/02-achat.html"
+        data-start="3.4"
+        data-duration="6.8"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-03-retour"
+        class="scene"
+        data-composition-id="03-retour"
+        data-composition-src="compositions/frames/03-retour.html"
+        data-start="10.2"
+        data-duration="6.9"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-04-mecanique"
+        class="scene"
+        data-composition-id="04-mecanique"
+        data-composition-src="compositions/frames/04-mecanique.html"
+        data-start="17.1"
+        data-duration="7.9"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-05-resultat"
+        class="scene"
+        data-composition-id="05-resultat"
+        data-composition-src="compositions/frames/05-resultat.html"
+        data-start="25"
+        data-duration="7.4"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-06-erreurs"
+        class="scene"
+        data-composition-id="06-erreurs"
+        data-composition-src="compositions/frames/06-erreurs.html"
+        data-start="32.4"
+        data-duration="8.33"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-07-pivot"
+        class="scene"
+        data-composition-id="07-pivot"
+        data-composition-src="compositions/frames/07-pivot.html"
+        data-start="40.73"
+        data-duration="9.1"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-08-comparaison"
+        class="scene"
+        data-composition-id="08-comparaison"
+        data-composition-src="compositions/frames/08-comparaison.html"
+        data-start="49.83"
+        data-duration="7.73"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-09-signature"
+        class="scene"
+        data-composition-id="09-signature"
+        data-composition-src="compositions/frames/09-signature.html"
+        data-start="57.56"
+        data-duration="5.07"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-10-fin"
+        class="scene"
+        data-composition-id="10-fin"
+        data-composition-src="compositions/frames/10-fin.html"
+        data-start="62.63"
+        data-duration="7.53"
+        data-track-index="1"
+      ></div>
+      <audio id="mix" data-start="0" data-duration="70.167" data-track-index="11" src="assets/audio/mix.wav" data-volume="1"></audio>
+
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>
